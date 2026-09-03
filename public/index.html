@@ -3,33 +3,34 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>INVENT · DSSE Day · 31 Jan 2027 · IIT Bombay</title>
-  <meta name="description" content="INVENT is the Desai Sethi School of Entrepreneurship foundation-day gathering at IIT Bombay. 31 January 2027. Queries: support@iitbinvent.com" />
-  <meta property="og:title" content="INVENT — Make something India needs." />
-  <meta property="og:description" content="DSSE Day. Foundation day of the Desai Sethi School of Entrepreneurship, IIT Bombay. 31 January 2027." />
+  <title>Inv.ent · DSSE Day · 31 Jan 2027 · IIT Bombay</title>
+  <meta name="description" content="Inv.ent is Innovation and Entrepreneurship at DSSE, IIT Bombay — where entrepreneurship research meets venture practice. 31 January, annually. Queries: support@iitbinvent.com" />
+  <meta property="og:title" content="Inv.ent — Where entrepreneurship research meets venture practice" />
+  <meta property="og:description" content="DSSE Day. Innovation and Entrepreneurship at IIT Bombay. 31 January, annually." />
   <meta property="og:type" content="website" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2308A8B5'/%3E%3Ctext x='5' y='23' font-size='16' font-family='Arial Black,sans-serif' font-weight='800' fill='%23fff'%3EI%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23034A56'/%3E%3Ctext x='4' y='23' font-size='14' font-family='Arial Black,sans-serif' font-weight='800' fill='%235ED4FF'%3Ei%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #0b2a32;
-      --ink-soft: #3a5c66;
-      --mute: #5f7f88;
-      --paper: #f4fbfb;
-      --paper-2: #e8f6f5;
-      --teal: #0aa8b5;
-      --teal-deep: #067a86;
-      --aqua: #1fd4c0;
-      --mint: #9ef0d8;
-      --sky: #3ec4e8;
-      --inv: #067a9a;
-      --ent: #0cb88a;
-      --line: rgba(10, 168, 181, 0.18);
+      --ink: #06262f;
+      --ink-soft: #2c4f59;
+      --mute: #4d6b74;
+      --paper: #f2f8f8;
+      --teal: #0a7f8c;
+      --teal-deep: #055f6e;
+      --aqua: #12b8a8;
+      --inv: #1a9fd4;
+      --ent: #12b86a;
+      --inv-bright: #5ed4ff;
+      --ent-bright: #3dff9a;
+      --line: rgba(5, 95, 110, 0.16);
       --white: #ffffff;
+      --hero-deep: #034a56;
+      --hero-mid: #067a72;
+      --hero-edge: #0a9a7a;
     }
-
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     html, body { margin: 0; }
@@ -42,7 +43,6 @@
     a { color: var(--teal-deep); }
     img { display: block; max-width: 100%; }
 
-    /* ——— Hero ——— */
     .hero {
       position: relative;
       min-height: 100svh;
@@ -51,37 +51,27 @@
       color: var(--white);
       overflow: hidden;
       isolation: isolate;
-      background:
-        linear-gradient(145deg, #0596a8 0%, #0bb5a4 42%, #2ad4c0 72%, #7ee8d4 100%);
+      background: linear-gradient(148deg, var(--hero-deep) 0%, #046678 28%, var(--hero-mid) 58%, var(--hero-edge) 100%);
     }
-
     .hero-photo {
       position: absolute;
       inset: 0;
       z-index: 0;
       background:
-        linear-gradient(125deg, rgba(4, 110, 130, 0.78) 0%, rgba(8, 150, 145, 0.58) 48%, rgba(25, 185, 170, 0.38) 100%),
+        linear-gradient(125deg, rgba(2, 55, 68, 0.9) 0%, rgba(4, 90, 95, 0.76) 45%, rgba(6, 110, 95, 0.62) 100%),
         url("/assets/dsse-building.jpg") center 32% / cover no-repeat;
-      opacity: 0.55;
+      opacity: 0.68;
       transform: scale(1.04);
       animation: heroDrift 28s ease-in-out infinite alternate;
     }
-
     .hero-stripes {
       position: absolute;
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      background: repeating-linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.045) 0,
-        rgba(255, 255, 255, 0.045) 1px,
-        transparent 1px,
-        transparent 14px
-      );
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 14px);
       mix-blend-mode: soft-light;
     }
-
     #hero-canvas {
       position: absolute;
       inset: 0;
@@ -90,7 +80,6 @@
       height: 100%;
       pointer-events: none;
     }
-
     .hero-top {
       position: relative;
       z-index: 5;
@@ -100,7 +89,6 @@
       gap: 16px;
       padding: 22px clamp(18px, 3vw, 36px);
     }
-
     .logo-dsse {
       justify-self: start;
       display: flex;
@@ -112,14 +100,9 @@
     .logo-dsse img {
       height: clamp(72px, 11vw, 112px);
       width: auto;
-      filter: brightness(0) invert(1) drop-shadow(0 8px 18px rgba(0, 40, 50, 0.25));
+      filter: brightness(0) invert(1) drop-shadow(0 8px 18px rgba(0, 20, 30, 0.45));
     }
-
-    .hero-nav {
-      display: flex;
-      gap: 10px;
-      justify-self: center;
-    }
+    .hero-nav { display: flex; gap: 10px; justify-self: center; }
     .hero-nav a {
       color: var(--white);
       text-decoration: none;
@@ -128,18 +111,17 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       padding: 9px 18px;
-      border: 1.5px solid rgba(255, 255, 255, 0.7);
+      border: 1.5px solid rgba(255, 255, 255, 0.8);
       border-radius: 999px;
       backdrop-filter: blur(8px);
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(0, 30, 40, 0.28);
       transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
     }
     .hero-nav a:hover {
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.18);
       border-color: #fff;
       transform: translateY(-1px);
     }
-
     .logo-iitb {
       justify-self: end;
       display: flex;
@@ -149,16 +131,12 @@
       width: clamp(64px, 8.5vw, 88px);
       height: clamp(64px, 8.5vw, 88px);
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 10px 28px rgba(0, 40, 50, 0.22);
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 10px 28px rgba(0, 20, 30, 0.35);
       transition: transform 0.35s ease;
     }
     .logo-iitb:hover { transform: scale(1.05); }
-    .logo-iitb img {
-      height: 82%;
-      width: 82%;
-      object-fit: contain;
-    }
+    .logo-iitb img { height: 82%; width: 82%; object-fit: contain; }
 
     .hero-stage {
       position: relative;
@@ -170,107 +148,112 @@
       padding: clamp(8px, 1.5vw, 20px) clamp(18px, 4vw, 48px) clamp(28px, 4vw, 44px);
       min-height: 0;
     }
-
     .hero-title-block {
       margin-top: clamp(12px, 4vh, 48px);
-      max-width: 14ch;
+      max-width: min(960px, 100%);
       animation: riseIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
-
     .coming {
-      margin: 0;
+      margin: 0 0 6px;
       font-family: "Bebas Neue", sans-serif;
-      font-weight: 400;
-      font-size: clamp(48px, 9.5vw, 110px);
+      font-size: clamp(40px, 8vw, 96px);
       line-height: 0.92;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: #ffffff;
-      white-space: nowrap;
-      text-shadow: 0 10px 40px rgba(0, 50, 60, 0.28);
+      color: #fff;
+      text-shadow: 0 8px 28px rgba(0, 20, 30, 0.5);
     }
-
     .brand-word {
       margin: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
       font-family: "Bebas Neue", sans-serif;
       font-weight: 400;
-      font-size: clamp(84px, 17vw, 200px);
-      line-height: 0.84;
-      letter-spacing: 0.01em;
       text-transform: uppercase;
     }
-    /* Inv = cool blue · Ent = lively green */
-    .brand-word .inv {
-      color: #8fdfff;
-      text-shadow: 0 8px 32px rgba(0, 70, 110, 0.4);
+    .brand-half {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
     }
-    .brand-word .ent {
-      color: #49ff8f;
-      text-shadow: 0 8px 32px rgba(0, 90, 50, 0.35);
+    .brand-half .word {
+      font-size: clamp(68px, 15vw, 180px);
+      letter-spacing: 0.01em;
+      line-height: 0.84;
+    }
+    .brand-half .meaning {
+      margin-top: 0.18em;
+      font-family: Sora, system-ui, sans-serif;
+      font-size: clamp(10px, 1.45vw, 17px);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      line-height: 1.25;
+      text-transform: uppercase;
+      max-width: 15ch;
+    }
+    .brand-dot {
+      font-size: clamp(68px, 15vw, 180px);
+      line-height: 0.84;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 8px 28px rgba(0, 20, 30, 0.45);
+    }
+    .inv-col .word {
+      color: var(--inv-bright);
+      text-shadow: 0 8px 28px rgba(0, 40, 80, 0.55);
+    }
+    .inv-col .meaning { color: #c4f0ff; }
+    .ent-col .word {
+      color: var(--ent-bright);
+      text-shadow: 0 8px 28px rgba(0, 60, 35, 0.5);
+    }
+    .ent-col .meaning { color: #c4ffe0; }
+    .hero-tagline {
+      margin: clamp(20px, 3vw, 30px) 0 0;
+      max-width: 34ch;
+      font-size: clamp(14px, 1.8vw, 19px);
+      font-weight: 500;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.94);
+      text-shadow: 0 4px 18px rgba(0, 20, 30, 0.45);
     }
 
     .hero-bottom {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.1fr);
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: end;
       gap: 24px;
       animation: riseIn 1s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
-
     .hero-blurb {
-      max-width: 42ch;
+      max-width: 26ch;
       margin: 0;
-      font-size: clamp(11px, 1.15vw, 13px);
-      font-weight: 500;
-      line-height: 1.55;
-      letter-spacing: 0.08em;
+      font-size: clamp(11px, 1.1vw, 13px);
+      font-weight: 600;
+      line-height: 1.5;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.78);
     }
-    .hero-blurb .eyebrow {
-      display: block;
-      font-family: "Bebas Neue", sans-serif;
-      font-size: clamp(22px, 2.6vw, 32px);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-    .hero-blurb .eyebrow .inv { color: #8fdfff; }
-    .hero-blurb .eyebrow .ent { color: #49ff8f; }
-    .hero-blurb .line {
-      display: block;
-    }
-    .hero-blurb .tagline {
-      display: block;
-      margin-top: 6px;
-      color: rgba(255, 255, 255, 0.82);
-      letter-spacing: 0.06em;
-      text-transform: none;
-      font-size: clamp(12px, 1.2vw, 14px);
-      font-weight: 500;
-      line-height: 1.45;
-    }
-
     .scroll-hint {
       justify-self: center;
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255, 255, 255, 0.75);
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
       display: grid;
       place-items: center;
       color: var(--white);
       text-decoration: none;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(0, 30, 40, 0.32);
       backdrop-filter: blur(6px);
       animation: bob 2.2s ease-in-out infinite;
       transition: background 0.25s ease;
       margin-bottom: 8px;
     }
-    .scroll-hint:hover { background: rgba(255, 255, 255, 0.25); }
+    .scroll-hint:hover { background: rgba(255, 255, 255, 0.22); }
     .scroll-hint svg { width: 16px; height: 16px; }
-
     .hero-meta {
       justify-self: end;
       text-align: right;
@@ -282,15 +265,14 @@
       display: block;
       font-size: clamp(48px, 9vw, 104px);
       letter-spacing: 0.02em;
-      color: #ffffff;
-      text-shadow: 0 10px 36px rgba(0, 40, 50, 0.28);
+      color: #fff;
+      text-shadow: 0 10px 36px rgba(0, 20, 30, 0.45);
     }
     .hero-meta .place {
       display: block;
-      font-size: clamp(28px, 5vw, 56px);
-      letter-spacing: 0.01em;
+      font-size: clamp(36px, 6.5vw, 72px);
+      letter-spacing: 0.04em;
       color: rgba(255, 255, 255, 0.92);
-      max-width: 12ch;
       margin-left: auto;
     }
 
@@ -307,10 +289,9 @@
       to { transform: scale(1.08) translate(-1.5%, 1%); }
     }
 
-    /* ——— Content ——— */
     .band {
       border-block: 1px solid var(--line);
-      background: linear-gradient(90deg, #e6faf7, #eef9fc, #e6faf7);
+      background: linear-gradient(90deg, #d8f0ee, #dff2f6, #d8f0ee);
       overflow: hidden;
       white-space: nowrap;
       padding: 14px 0;
@@ -336,10 +317,7 @@
       max-width: 1200px;
       margin: 0 auto;
     }
-    .facts > div {
-      background: var(--paper);
-      padding: 22px 24px;
-    }
+    .facts > div { background: var(--paper); padding: 22px 24px; }
     .facts small {
       display: block;
       color: var(--mute);
@@ -356,13 +334,11 @@
       color: var(--teal-deep);
       font-weight: 400;
     }
-
     section {
       padding: clamp(56px, 8vw, 96px) clamp(18px, 4vw, 40px);
       max-width: 1120px;
       margin: 0 auto;
     }
-
     .section-kicker {
       margin: 0 0 10px;
       color: var(--teal);
@@ -371,7 +347,6 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
-
     h2 {
       margin: 0 0 18px;
       font-family: "Bebas Neue", sans-serif;
@@ -382,7 +357,6 @@
       text-transform: uppercase;
       color: var(--ink);
     }
-
     .lead {
       max-width: 62ch;
       color: var(--ink-soft);
@@ -390,14 +364,14 @@
       font-size: 16px;
       margin: 0 0 16px;
     }
-
+    .brand-inline .inv { color: var(--inv); font-weight: 700; }
+    .brand-inline .ent { color: var(--ent); font-weight: 700; }
     .split {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
       gap: 36px;
       align-items: start;
     }
-
     .aside {
       padding: 28px 0 0;
       border-top: 2px solid var(--aqua);
@@ -417,7 +391,6 @@
       line-height: 1.6;
       font-size: 15px;
     }
-
     .agenda { display: grid; gap: 0; border-top: 1px solid var(--line); }
     .agenda article {
       display: grid;
@@ -444,7 +417,6 @@
       font-size: 14px;
       line-height: 1.55;
     }
-
     .rfs {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -479,7 +451,6 @@
       font-size: 14px;
       line-height: 1.55;
     }
-
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -501,7 +472,6 @@
       font-size: 13px;
       line-height: 1.45;
     }
-
     .cta-row {
       display: flex;
       flex-wrap: wrap;
@@ -528,17 +498,16 @@
       background: var(--teal-deep);
       border-color: var(--teal-deep);
       transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(10, 168, 181, 0.28);
+      box-shadow: 0 12px 28px rgba(5, 95, 110, 0.28);
     }
     .btn.ghost {
       background: transparent;
       color: var(--teal-deep);
     }
     .btn.ghost:hover {
-      background: rgba(10, 168, 181, 0.08);
+      background: rgba(10, 127, 140, 0.08);
       box-shadow: none;
     }
-
     .mail {
       font-family: "Bebas Neue", sans-serif;
       font-size: clamp(28px, 5vw, 42px);
@@ -547,7 +516,6 @@
       text-decoration: none;
     }
     .mail:hover { color: var(--ent); }
-
     footer {
       border-top: 1px solid var(--line);
       padding: 28px clamp(18px, 4vw, 40px) 64px;
@@ -562,11 +530,18 @@
     }
 
     @media (max-width: 860px) {
+      .hero {
+        background: linear-gradient(160deg, #023943 0%, #045f68 40%, #067066 75%, #088868 100%);
+      }
+      .hero-photo {
+        opacity: 0.55;
+        background:
+          linear-gradient(125deg, rgba(1, 40, 50, 0.92) 0%, rgba(3, 70, 75, 0.82) 50%, rgba(4, 90, 80, 0.7) 100%),
+          url("/assets/dsse-building.jpg") center 32% / cover no-repeat;
+      }
       .hero-top {
         grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-          "dsse iitb"
-          "nav nav";
+        grid-template-areas: "dsse iitb" "nav nav";
       }
       .logo-dsse { grid-area: dsse; }
       .logo-iitb { grid-area: iitb; }
@@ -576,10 +551,12 @@
         justify-content: center;
         flex-wrap: wrap;
       }
-      .hero-bottom {
-        grid-template-columns: 1fr;
-        gap: 28px;
+      .brand-half .meaning {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        max-width: 12ch;
       }
+      .hero-bottom { grid-template-columns: 1fr; gap: 28px; }
       .scroll-hint { display: none; }
       .hero-meta { justify-self: start; text-align: left; }
       .hero-meta .place { margin-left: 0; }
@@ -588,11 +565,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .band span,
-      .scroll-hint,
-      .hero-photo,
-      .hero-title-block,
-      .hero-bottom { animation: none; }
+      .band span, .scroll-hint, .hero-photo, .hero-title-block, .hero-bottom { animation: none; }
       .band span { padding-left: 0; }
       html { scroll-behavior: auto; }
     }
@@ -622,17 +595,22 @@
     <div class="hero-stage">
       <div class="hero-title-block">
         <p class="coming">Coming Soon</p>
-        <h1 class="brand-word" aria-label="INVENT">
-          <span class="inv">Inv</span><span class="ent">ent</span>
+        <h1 class="brand-word" aria-label="Inv.ent — Innovation and Entrepreneurship">
+          <span class="brand-half inv-col">
+            <span class="word">Inv</span>
+            <span class="meaning">Innovation</span>
+          </span>
+          <span class="brand-dot" aria-hidden="true">.</span>
+          <span class="brand-half ent-col">
+            <span class="word">ent</span>
+            <span class="meaning">Entrepreneurship</span>
+          </span>
         </h1>
+        <p class="hero-tagline">Where entrepreneurship research meets venture practice</p>
       </div>
 
       <div class="hero-bottom">
-        <p class="hero-blurb">
-          <span class="eyebrow">IITB <span class="inv">INV</span>.<span class="ent">ENT</span></span>
-          <span class="line">Innovation and Entrepreneurship</span>
-          <span class="tagline">Where entrepreneurship research meets venture practice</span>
-        </p>
+        <p class="hero-blurb">DSSE foundation day · IIT Bombay</p>
         <a class="scroll-hint" href="#about" aria-label="Scroll to about">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M6 9l6 6 6-6" />
@@ -640,14 +618,14 @@
         </a>
         <div class="hero-meta">
           <span class="date">Jan 31</span>
-          <span class="place">31 January, annually</span>
+          <span class="place">annually</span>
         </div>
       </div>
     </div>
   </header>
 
   <div class="band" aria-hidden="true">
-    <span>INVENT 2027 · IITB INV.ENT · INNOVATION AND ENTREPRENEURSHIP · 31 JANUARY ANNUALLY · WHERE RESEARCH MEETS VENTURE PRACTICE · SUPPORT@IITBINVENT.COM · </span>
+    <span>INV.ENT 2027 · INNOVATION · ENTREPRENEURSHIP · 31 JANUARY ANNUALLY · WHERE RESEARCH MEETS VENTURE PRACTICE · IIT BOMBAY · SUPPORT@IITBINVENT.COM · </span>
   </div>
 
   <div class="facts">
@@ -658,15 +636,15 @@
   </div>
 
   <section id="about">
-    <p class="section-kicker">About INVENT</p>
+    <p class="section-kicker">About <span class="brand-inline"><span class="inv">Inv</span>.<span class="ent">ent</span></span></p>
     <div class="split">
       <div>
         <h2>Not a fest.<br>A founding day.</h2>
-        <p class="lead">On 31 January 2014 the Board of Governors of IIT Bombay approved the Desai Sethi Centre for Entrepreneurship. That date is DSSE Day — the school’s foundation day. INVENT is the public face of that anniversary in 2027: a focused gathering for people who build companies out of IITB labs, hostels, and stubborn ideas.</p>
+        <p class="lead">On 31 January 2014 the Board of Governors of IIT Bombay approved the Desai Sethi Centre for Entrepreneurship. That date is DSSE Day — the school’s foundation day. <span class="brand-inline"><span class="inv">Inv</span>.<span class="ent">ent</span></span> is the public face of that anniversary in 2027: Innovation and Entrepreneurship in one room — founders, faculty, and people who ship from IITB labs, hostels, and stubborn ideas.</p>
         <p class="lead">DSSE trains founders in public. Since 2014: 4,300+ students through courses, ~950 mentored, ~340 venture teams, 100+ startups registered. The school sits between E-Cell, SINE, and the rest of the IIT Bombay startup stack.</p>
         <div class="cta-row">
-          <a class="btn" href="mailto:support@iitbinvent.com?subject=INVENT%20RSVP%20%2F%20pitch">Request a seat</a>
-          <a class="btn ghost" href="mailto:support@iitbinvent.com?subject=INVENT%20query">Ask anything</a>
+          <a class="btn" href="mailto:support@iitbinvent.com?subject=Inv.ent%20RSVP%20%2F%20pitch">Request a seat</a>
+          <a class="btn ghost" href="mailto:support@iitbinvent.com?subject=Inv.ent%20query">Ask anything</a>
         </div>
       </div>
       <aside class="aside">
@@ -698,7 +676,7 @@
       <article>
         <time>1400</time>
         <div>
-          <strong>Invent pitches</strong>
+          <strong><span class="brand-inline"><span class="inv">Inv</span>.<span class="ent">ent</span></span> pitches</strong>
           <p>Short, brutal, useful. No 40-slide decks. Problem, wedge, proof, ask.</p>
         </div>
       </article>
@@ -752,7 +730,7 @@
   </section>
 
   <footer>
-    <div>INVENT · DSSE Day · 31 January 2027 · IIT Bombay</div>
+    <div><span class="brand-inline"><span class="inv">Inv</span>.<span class="ent">ent</span></span> · DSSE Day · 31 January 2027 · IIT Bombay</div>
     <div>Desai Sethi School of Entrepreneurship</div>
   </footer>
 
