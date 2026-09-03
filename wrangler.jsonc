@@ -1,21 +1,9 @@
-# Legacy Cloudflare Worker config.
-# Prefer: npm run cf:dev / cf:deploy (uses legacy-cloudflare/wrangler.jsonc).
-# Kept at repo root only for older muscle memory until Amplify DNS cutover.
-
 {
   "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
   "name": "iitbinvent",
   "main": "legacy-cloudflare/index.js",
   "compatibility_date": "2026-05-03",
-  "workers_dev": true,
-  "preview_urls": true,
-  "assets": {
-    "directory": "./public",
-    "not_found_handling": "404-page"
-  },
-  "observability": {
-    "enabled": true
-  },
+  "workers_dev": false,
   "routes": [
     { "pattern": "iitbinvent.com", "custom_domain": true },
     { "pattern": "www.iitbinvent.com", "custom_domain": true }
