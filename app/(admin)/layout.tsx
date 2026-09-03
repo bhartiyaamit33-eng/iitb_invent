@@ -4,11 +4,11 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { AuthError, requireRole } from "@/lib/auth/roles";
 import { Role } from "@prisma/client";
 import { logoutAction } from "@/app/(public)/login/actions";
+import { AdminNav } from "@/components/admin/AdminNav";
 
 /**
  * Server-side lock for all `/admin/*` routes.
  * Only ADMIN_EMAILS (default admin@iitbinvent.com) with role ADMIN.
- * Unauthenticated users are sent to /login.
  */
 export default async function AdminLayout({
   children,
@@ -36,9 +36,6 @@ export default async function AdminLayout({
           Access denied
         </h1>
         <p className="mt-4 text-ink-soft">{message}</p>
-        <p className="mt-2 text-sm text-mute">
-          Admin UI is limited to allowlisted organisers.
-        </p>
         <form action={logoutAction} className="mt-8">
           <button
             type="submit"
@@ -52,11 +49,11 @@ export default async function AdminLayout({
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-paper">
       <div className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <p className="text-sm text-mute">
-            Signed in as <span className="font-medium text-ink">{user.email}</span>
+            CMS · <span className="font-medium text-ink">{user.email}</span>
           </p>
           <form action={logoutAction}>
             <button
@@ -68,7 +65,8 @@ export default async function AdminLayout({
           </form>
         </div>
       </div>
-      {children}
+      <AdminNav />
+      <div className="mx-auto max-w-6xl">{children}</div>
     </div>
   );
 }

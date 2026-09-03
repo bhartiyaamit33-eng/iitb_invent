@@ -1,0 +1,8 @@
+; Leave Proxy unchecked when importing these records into Cloudflare.
+; SPF already exists on Cloudflare (v=spf1 include:_spf.google.com include:amazonses.com ~all) — do NOT add a second SPF here.
+; SES DNS is already live/verified; this file is for reference/backup import only.
+
+vzjmoypemjbwtaf5ffgg35ugb5b4dd2m._domainkey 3600 IN CNAME vzjmoypemjbwtaf5ffgg35ugb5b4dd2m.dkim.amazonses.com.
+56wo6hcl4p6knou6va6zgei3qv23apz6._domainkey 3600 IN CNAME 56wo6hcl4p6knou6va6zgei3qv23apz6.dkim.amazonses.com.
+aum3yoagdlvct35cchbqvolnz6zsneuu._domainkey 3600 IN CNAME aum3yoagdlvct35cchbqvolnz6zsneuu.dkim.amazonses.com.
+_dmarc 3600 IN TXT "v=DMARC1; p=none; rua=mailto:admin@iitbinvent.com"

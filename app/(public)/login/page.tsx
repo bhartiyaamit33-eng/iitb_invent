@@ -25,7 +25,7 @@ export default async function LoginPage({
     if (session.user.role === Role.ADMIN) {
       redirect(callbackUrl.startsWith("/admin") ? callbackUrl : "/admin");
     }
-    redirect(callbackUrl === "/" ? "/programme" : callbackUrl);
+    redirect(callbackUrl === "/" ? "/dashboard" : callbackUrl);
   }
 
   async function loginAction(formData: FormData) {
@@ -40,7 +40,7 @@ export default async function LoginPage({
         ? requested
         : "/admin"
       : requested === "/"
-        ? "/programme"
+        ? "/dashboard"
         : requested;
 
     try {
@@ -113,6 +113,14 @@ export default async function LoginPage({
       </form>
 
       <p className="mt-8 text-sm text-mute">
+        No account yet?{" "}
+        <Link
+          href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          className="font-semibold text-teal-deep underline-offset-2 hover:underline"
+        >
+          Sign up
+        </Link>
+        {" · "}
         <Link href="/" className="text-teal-deep underline-offset-2 hover:underline">
           ← Back to Inv.ent
         </Link>

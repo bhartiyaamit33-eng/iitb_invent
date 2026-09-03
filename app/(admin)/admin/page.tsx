@@ -1,33 +1,68 @@
 import Link from "next/link";
+import { prisma } from "@/lib/db";
 
-export default function AdminStubPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminOverviewPage() {
+  const [
+    users,
+    registrations,
+    sessions,
+    speakers,
+    pages,
+    faqs,
+    stats,
+    edition,
+  ] = await Promise.all([
+    prisma.user.count({ where: { deletedAt: null } }),
+    prisma.registration.count(),
+    prisma.session_.count({ where: { deletedAt: null } }),
+    prisma.speaker.count({ where: { deletedAt: null } }),
+    prisma.page.count(),
+    prisma.faq.count(),
+    prisma.editionStat.count(),
+    prisma.edition.findFirst({ where: { isCurrent: true } }),
+  ]);
+
+  const cards = [
+    { label: "Users", value: users, href: "/admin/users" },
+    { label: "Registrations", value: registrations, href: "/admin/users" },
+    { label: "Sessions", value: sessions, href: "/admin/sessions" },
+    { label: "Speakers", value: speakers, href: "/admin/speakers" },
+    { label: "Pages", value: pages, href: "/admin/pages" },
+    { label: "FAQs", value: faqs, href: "/admin/faqs" },
+    { label: "Stats", value: stats, href: "/admin/stats" },
+  ];
+
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
+    <main className="px-6 py-10">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Admin · Organiser
+        Admin CMS
       </p>
-      <h1 className="mt-3 font-display text-4xl tracking-wide text-teal-deep">
-        Organiser CMS
+      <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
+        Overview
       </h1>
-      <p className="mt-4 text-ink-soft">
-        You are signed in with admin access. Programme editing, check-in, and
-        audit log UI land in later milestones — this console is reserved.
+      <p className="mt-3 max-w-2xl text-ink-soft">
+        Current edition:{" "}
+        <strong className="text-ink">{edition?.name ?? "—"}</strong>. Edit the
+        DSSE Day programme mock, speakers, site copy, and every registered user
+        from the nav above.
       </p>
-      <ul className="mt-8 space-y-2 text-sm text-ink-soft">
-        <li>
-          <Link className="text-teal-deep underline-offset-2 hover:underline" href="/">
-            ← Landing
-          </Link>
-        </li>
-        <li>
+
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((c) => (
           <Link
-            className="text-teal-deep underline-offset-2 hover:underline"
-            href="/programme"
+            key={c.label}
+            href={c.href}
+            className="rounded-xl border border-line bg-white p-5 hover:border-teal"
           >
-            Programme stub
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
+              {c.label}
+            </p>
+            <p className="mt-2 text-3xl font-semibold text-teal-deep">{c.value}</p>
           </Link>
-        </li>
-      </ul>
+        ))}
+      </div>
     </main>
   );
 }
