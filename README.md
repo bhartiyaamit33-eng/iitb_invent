@@ -2,8 +2,8 @@
 
 Multi-year event platform for **INVENT** (Desai Sethi School of Entrepreneurship foundation day). First target edition: **Sunday 31 January 2027**, Asia/Kolkata.
 
-- Live (Cloudflare — **do not cut over yet**): [iitbinvent.com](https://iitbinvent.com)
-- AWS preview (EC2): [http://15.206.84.172](http://15.206.84.172)
+- Live (Cloudflare edge; origin on EC2 EIP): [iitbinvent.com](https://iitbinvent.com)
+- AWS preview (EC2): [http://43.205.7.101](http://43.205.7.101)
 - Queries: [support@iitbinvent.com](mailto:support@iitbinvent.com)
 - Venue: Desai Sethi School of Entrepreneurship · **DSSE Building** · IIT Bombay · Powai, Mumbai 400076
 
