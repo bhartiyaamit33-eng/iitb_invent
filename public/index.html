@@ -154,14 +154,25 @@
       animation: riseIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     .coming {
-      margin: 0 0 6px;
+      margin: 0;
       font-family: "Bebas Neue", sans-serif;
-      font-size: clamp(40px, 8vw, 96px);
-      line-height: 0.92;
+      font-size: clamp(36px, 7vw, 84px);
+      line-height: 0.9;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: #fff;
       text-shadow: 0 8px 28px rgba(0, 20, 30, 0.5);
+    }
+    .owner {
+      margin: 0 0 4px;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(42px, 8.4vw, 102px);
+      line-height: 0.9;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.94);
+      text-shadow: 0 8px 28px rgba(0, 20, 30, 0.5);
+      white-space: nowrap;
     }
     .brand-word {
       margin: 0;
@@ -556,6 +567,10 @@
         letter-spacing: 0.08em;
         max-width: 12ch;
       }
+      .owner {
+        font-size: clamp(32px, 10vw, 56px);
+        white-space: normal;
+      }
       .hero-bottom { grid-template-columns: 1fr; gap: 28px; }
       .scroll-hint { display: none; }
       .hero-meta { justify-self: start; text-align: left; }
@@ -595,6 +610,7 @@
     <div class="hero-stage">
       <div class="hero-title-block">
         <p class="coming">Coming Soon</p>
+        <p class="owner">IIT Bombay’s</p>
         <h1 class="brand-word" aria-label="Inv.ent — Innovation and Entrepreneurship">
           <span class="brand-half inv-col">
             <span class="word">Inv</span>
