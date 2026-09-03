@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { TicketQr } from "@/components/TicketQr";
 import { formatIstRange } from "@/lib/editions";
 import { getNextForUser, isLiveStatus } from "@/lib/live";
+import { ticketBadgeUrl } from "@/lib/ticket";
 
 type SearchParams = Promise<{ welcome?: string }>;
 
@@ -100,7 +101,10 @@ export default async function DashboardPage({
                 </p>
               )}
               <div className="mt-4">
-                <TicketQr token={registration.qrToken} />
+                <TicketQr
+                  token={registration.qrToken}
+                  badgeUrl={ticketBadgeUrl(registration.qrToken)}
+                />
               </div>
             </>
           ) : (

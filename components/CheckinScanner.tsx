@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { extractQrToken } from "@/lib/ticket";
 
 type ScanResult = {
   ok: boolean;
@@ -44,8 +45,8 @@ export function CheckinScanner({
   modeRef.current = mode;
   sessionIdRef.current = sessionId;
 
-  const submitToken = useCallback(async (token: string) => {
-    const trimmed = token.trim();
+  const submitToken = useCallback(async (raw: string) => {
+    const trimmed = extractQrToken(raw);
     if (!trimmed) return;
 
     const now = Date.now();
@@ -252,7 +253,7 @@ export function CheckinScanner({
         <input
           value={manual}
           onChange={(e) => setManual(e.target.value)}
-          placeholder="Paste qrToken"
+          placeholder="Paste badge URL or qrToken"
           className="min-w-[16rem] flex-1 rounded-md border border-line px-3 py-2 font-mono text-sm"
         />
         <button

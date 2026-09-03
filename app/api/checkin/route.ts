@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { requireOrganiserOrAdmin } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
 import { writeAuditLog } from "@/lib/admin/audit";
+import { extractQrToken } from "@/lib/ticket";
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -17,7 +18,7 @@ export async function POST(req: Request) {
     mode?: "gate" | "session";
     sessionId?: string;
   };
-  const token = body.token?.trim();
+  const token = extractQrToken(body.token ?? "");
   if (!token) {
     return NextResponse.json({ ok: false, message: "Missing token" }, { status: 400 });
   }
