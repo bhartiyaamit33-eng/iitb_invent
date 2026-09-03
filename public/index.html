@@ -218,7 +218,7 @@
     }
 
     .hero-blurb {
-      max-width: 34ch;
+      max-width: 42ch;
       margin: 0;
       font-size: clamp(11px, 1.15vw, 13px);
       font-weight: 500;
@@ -226,6 +226,30 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.9);
+    }
+    .hero-blurb .eyebrow {
+      display: block;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(22px, 2.6vw, 32px);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .hero-blurb .eyebrow .inv { color: #8fdfff; }
+    .hero-blurb .eyebrow .ent { color: #49ff8f; }
+    .hero-blurb .line {
+      display: block;
+    }
+    .hero-blurb .tagline {
+      display: block;
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.82);
+      letter-spacing: 0.06em;
+      text-transform: none;
+      font-size: clamp(12px, 1.2vw, 14px);
+      font-weight: 500;
+      line-height: 1.45;
     }
 
     .scroll-hint {
@@ -263,9 +287,11 @@
     }
     .hero-meta .place {
       display: block;
-      font-size: clamp(40px, 7.5vw, 88px);
+      font-size: clamp(28px, 5vw, 56px);
       letter-spacing: 0.01em;
       color: rgba(255, 255, 255, 0.92);
+      max-width: 12ch;
+      margin-left: auto;
     }
 
     @keyframes riseIn {
@@ -602,7 +628,9 @@
 
       <div class="hero-bottom">
         <p class="hero-blurb">
-          Foundation day of the Desai Sethi School of Entrepreneurship — founders, faculty, and builders in one room at IIT Bombay.
+          <span class="eyebrow">IITB <span class="inv">INV</span>.<span class="ent">ENT</span></span>
+          <span class="line">Innovation and Entrepreneurship</span>
+          <span class="tagline">Where entrepreneurship research meets venture practice</span>
         </p>
         <a class="scroll-hint" href="#about" aria-label="Scroll to about">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -611,14 +639,14 @@
         </a>
         <div class="hero-meta">
           <span class="date">Jan 31</span>
-          <span class="place">IIT Bombay</span>
+          <span class="place">31 January, annually</span>
         </div>
       </div>
     </div>
   </header>
 
   <div class="band" aria-hidden="true">
-    <span>INVENT 2027 · DSSE FOUNDATION DAY · 31 JANUARY · IIT BOMBAY · MAKE SOMETHING INDIA NEEDS · LAB TO MARKET · SUPPORT@IITBINVENT.COM · </span>
+    <span>INVENT 2027 · IITB INV.ENT · INNOVATION AND ENTREPRENEURSHIP · 31 JANUARY ANNUALLY · WHERE RESEARCH MEETS VENTURE PRACTICE · SUPPORT@IITBINVENT.COM · </span>
   </div>
 
   <div class="facts">
