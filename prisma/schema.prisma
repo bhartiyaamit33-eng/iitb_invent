@@ -2,7 +2,9 @@
 // Hosting target: AWS Amplify + RDS Postgres (ap-south-1)
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // native = local Mac/dev; rhel = Amazon Linux 2023 / EC2 standalone
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
