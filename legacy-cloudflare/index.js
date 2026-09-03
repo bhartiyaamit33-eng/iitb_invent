@@ -1,8 +1,13 @@
 /**
  * Cloudflare edge proxy → EC2 Next.js origin (iitbinvent.com cutover).
- * SSL terminates at Cloudflare; origin is HTTP on Elastic IP.
+ * SSL terminates at Cloudflare; origin is HTTP.
+ *
+ * Workers cannot fetch() a raw IP (error 1003). Origin must be a hostname
+ * on this Cloudflare zone as a DNS-only (grey cloud) A record, e.g.:
+ *   origin.iitbinvent.com  A  43.205.7.101  (DNS only, not proxied)
  */
-const ORIGIN = "http://43.205.7.101";
+const ORIGIN_HOST = "origin.iitbinvent.com";
+const ORIGIN = `http://${ORIGIN_HOST}`;
 
 export default {
   async fetch(request) {
@@ -10,7 +15,7 @@ export default {
     const target = new URL(incoming.pathname + incoming.search, ORIGIN);
 
     const headers = new Headers(request.headers);
-    headers.set("Host", incoming.hostname);
+    headers.delete("host");
     headers.set("X-Forwarded-Host", incoming.hostname);
     headers.set("X-Forwarded-Proto", "https");
     headers.set("X-Forwarded-For", request.headers.get("CF-Connecting-IP") || "");
@@ -30,13 +35,14 @@ export default {
     const upstream = await fetch(target.toString(), init);
     const outHeaders = new Headers(upstream.headers);
 
-    // Keep visitors on the public hostname if origin redirects to the IP/http
     const loc = outHeaders.get("Location");
     if (loc) {
       try {
         const u = new URL(loc, ORIGIN);
         if (
+          u.hostname === ORIGIN_HOST ||
           u.hostname === "43.205.7.101" ||
+          u.hostname === "ec2-43-205-7-101.ap-south-1.compute.amazonaws.com" ||
           u.hostname === "127.0.0.1" ||
           u.protocol === "http:"
         ) {
