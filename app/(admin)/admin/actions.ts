@@ -297,4 +297,28 @@ export async function setEditionCurrentAction(formData: FormData) {
   });
   revalidatePath("/admin/editions");
   revalidatePath("/programme");
+  revalidatePath("/now");
+}
+
+export async function setEditionStatusAction(formData: FormData) {
+  const user = await actor();
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "ANNOUNCED") as
+    | "DRAFT"
+    | "ANNOUNCED"
+    | "REGISTRATION_OPEN"
+    | "LIVE"
+    | "ARCHIVED";
+  await prisma.edition.update({ where: { id }, data: { status } });
+  await writeAuditLog({
+    actorId: user.id,
+    action: "edition.set_status",
+    entityType: "Edition",
+    entityId: id,
+    after: { status },
+  });
+  revalidatePath("/admin/editions");
+  revalidatePath("/programme");
+  revalidatePath("/now");
+  revalidatePath("/");
 }

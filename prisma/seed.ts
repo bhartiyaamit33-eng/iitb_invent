@@ -40,7 +40,9 @@ type Slot = {
   end: [number, number];
   format: SessionFormat;
   description?: string;
-  speakers?: string[]; // speaker names to link
+  speakers?: string[];
+  capacity?: number;
+  rsvpRequired?: boolean;
 };
 
 /** DSSE DAY schedule from organiser artwork (mock / editable placeholders). */
@@ -75,6 +77,8 @@ const DSSE_DAY_SLOTS: Slot[] = [
     start: [12, 30],
     end: [13, 15],
     format: SessionFormat.RESEARCH_PAPER,
+    capacity: 80,
+    rsvpRequired: true,
   },
   {
     title: "Lunch & Poster Session",
@@ -110,6 +114,8 @@ const DSSE_DAY_SLOTS: Slot[] = [
     format: SessionFormat.PANEL,
     speakers: ["Mr. Kishore Biyani", "Prof. Chintan Vaishnav"],
     description: "Fireside chat with moderator.",
+    capacity: 120,
+    rsvpRequired: true,
   },
   {
     title: "Coffee Break & Poster Session",
@@ -128,6 +134,8 @@ const DSSE_DAY_SLOTS: Slot[] = [
       "Ms. Poyni Bhatt",
       "Prof. Sankalp Pratap",
     ],
+    capacity: 150,
+    rsvpRequired: true,
   },
   {
     title: "Closing Plenary & Awards Ceremony",
@@ -279,6 +287,9 @@ async function seedProgrammeForEdition(
         endsAt: ist(year, slot.end[0], slot.end[1]),
         room: "DSSE Building",
         floor: "TBA",
+        capacity: slot.capacity ?? null,
+        rsvpRequired: slot.rsvpRequired ?? false,
+        waitlistOpen: true,
         isPublished: publish,
         sortOrder: sortOrder++,
       },

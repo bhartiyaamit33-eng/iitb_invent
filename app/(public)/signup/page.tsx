@@ -95,10 +95,14 @@ export default async function SignupPage({
     }
 
     const next = isAdminEmail(email)
-      ? "/admin"
+      ? "/dashboard"
       : requested === "/"
         ? "/dashboard?welcome=1"
-        : requested;
+        : requested.includes("welcome")
+          ? requested
+          : requested === "/dashboard"
+            ? "/dashboard?welcome=1"
+            : requested;
 
     try {
       await signIn("credentials", {

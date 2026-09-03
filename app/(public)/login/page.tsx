@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
-import { auth, signIn } from "@/auth";
+import { auth, oauthProvidersEnabled, signIn } from "@/auth";
+import { attendeeHome } from "@/lib/auth/attendee";
 import { isAdminEmail } from "@/lib/auth/roles";
-import { Role } from "@prisma/client";
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 
 function safeCallback(raw: string | undefined): string {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/";
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/dashboard";
   return raw;
 }
 
@@ -20,12 +20,14 @@ export default async function LoginPage({
   const params = await searchParams;
   const callbackUrl = safeCallback(params.callbackUrl);
   const session = await auth();
+  const oauth = oauthProvidersEnabled();
 
   if (session?.user) {
-    if (session.user.role === Role.ADMIN) {
-      redirect(callbackUrl.startsWith("/admin") ? callbackUrl : "/admin");
+    // Login is for attendees. Admin CMS only via explicit /admin callback.
+    if (callbackUrl.startsWith("/admin") && isAdminEmail(session.user.email)) {
+      redirect(callbackUrl);
     }
-    redirect(callbackUrl === "/" ? "/dashboard" : callbackUrl);
+    redirect(attendeeHome(callbackUrl));
   }
 
   async function loginAction(formData: FormData) {
@@ -34,14 +36,12 @@ export default async function LoginPage({
       .trim()
       .toLowerCase();
     const password = String(formData.get("password") ?? "");
-    const requested = safeCallback(String(formData.get("callbackUrl") ?? "/"));
-    const next = isAdminEmail(email)
-      ? requested.startsWith("/admin")
+    const requested = safeCallback(String(formData.get("callbackUrl") ?? "/dashboard"));
+    // Attendee home by default — admin console only if they asked for /admin
+    const next =
+      requested.startsWith("/admin") && isAdminEmail(email)
         ? requested
-        : "/admin"
-      : requested === "/"
-        ? "/dashboard"
-        : requested;
+        : attendeeHome(requested);
 
     try {
       await signIn("credentials", {
@@ -59,17 +59,26 @@ export default async function LoginPage({
     }
   }
 
+  async function googleAction() {
+    "use server";
+    await signIn("google", { redirectTo: attendeeHome(callbackUrl) });
+  }
+
+  async function linkedInAction() {
+    "use server";
+    await signIn("linkedin", { redirectTo: attendeeHome(callbackUrl) });
+  }
+
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Inv.ent · Sign in
+        Inv.ent · Attendee sign in
       </p>
       <h1 className="mt-3 font-display text-4xl tracking-wide text-teal-deep">
         Login
       </h1>
       <p className="mt-3 text-ink-soft">
-        Use your email and password. Organisers land on the admin console after
-        sign-in.
+        Sign in to RSVP, complete your profile, and join the attendee directory.
       </p>
 
       {params.error ? (
@@ -81,7 +90,35 @@ export default async function LoginPage({
         </p>
       ) : null}
 
-      <form action={loginAction} className="mt-8 space-y-5">
+      <div className="mt-8 space-y-3">
+        {oauth.google ? (
+          <form action={googleAction}>
+            <button
+              type="submit"
+              className="w-full rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm hover:border-teal"
+            >
+              Continue with Google
+            </button>
+          </form>
+        ) : null}
+        {oauth.linkedin ? (
+          <form action={linkedInAction}>
+            <button
+              type="submit"
+              className="w-full rounded-md border border-line bg-[#0A66C2] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-95"
+            >
+              Continue with LinkedIn
+            </button>
+          </form>
+        ) : null}
+        {(oauth.google || oauth.linkedin) && (
+          <p className="text-center text-xs uppercase tracking-[0.14em] text-mute">
+            or email
+          </p>
+        )}
+      </div>
+
+      <form action={loginAction} className="mt-4 space-y-5">
         <input type="hidden" name="callbackUrl" value={callbackUrl} />
         <label className="block">
           <span className="text-sm font-medium text-ink">Email</span>
@@ -111,6 +148,13 @@ export default async function LoginPage({
           Sign in
         </button>
       </form>
+
+      {!oauth.google && !oauth.linkedin ? (
+        <p className="mt-4 text-xs text-mute">
+          Google / LinkedIn buttons appear once OAuth client IDs are set in env (
+          <code>AUTH_GOOGLE_*</code>, <code>AUTH_LINKEDIN_*</code>).
+        </p>
+      ) : null}
 
       <p className="mt-8 text-sm text-mute">
         No account yet?{" "}

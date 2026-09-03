@@ -2,6 +2,9 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { TicketQr } from "@/components/TicketQr";
+import { formatIstRange } from "@/lib/editions";
+import { getNextForUser, isLiveStatus } from "@/lib/live";
 
 type SearchParams = Promise<{ welcome?: string }>;
 
@@ -21,6 +24,25 @@ export default async function DashboardPage({
   });
 
   const completeness = profile?.completeness ?? 0;
+  const now = new Date();
+  const nextRsvp =
+    registration && isLiveStatus(registration.edition.status)
+      ? await getNextForUser(user.id, registration.editionId, now)
+      : registration
+        ? await getNextForUser(user.id, registration.editionId, now)
+        : null;
+
+  const mySchedule = registration
+    ? await prisma.rsvp.findMany({
+        where: {
+          userId: user.id,
+          status: { in: ["GOING", "WAITLISTED"] },
+          session: { editionId: registration.editionId, deletedAt: null },
+        },
+        include: { session: true },
+        orderBy: { session: { startsAt: "asc" } },
+      })
+    : [];
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -29,7 +51,7 @@ export default async function DashboardPage({
           <p className="font-semibold text-teal-deep">You&apos;re in.</p>
           <p className="mt-1 text-sm text-ink-soft">
             Want people to know you&apos;re coming? Add LinkedIn and turn on the
-            directory — optional, anytime.
+            directory.
           </p>
           <Link
             href="/dashboard/profile"
@@ -47,6 +69,15 @@ export default async function DashboardPage({
         Hi, {user.name.split(" ")[0] || "there"}
       </h1>
 
+      {nextRsvp?.session ? (
+        <p className="mt-4 rounded-lg border border-teal/30 bg-white px-4 py-3 text-sm text-ink-soft">
+          Your next session:{" "}
+          <strong className="text-ink">{nextRsvp.session.title}</strong>
+          {nextRsvp.session.room ? `, ${nextRsvp.session.room}` : ""} ·{" "}
+          {formatIstRange(nextRsvp.session.startsAt, nextRsvp.session.endsAt)} IST
+        </p>
+      ) : null}
+
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-line bg-white p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
@@ -58,11 +89,19 @@ export default async function DashboardPage({
                 {registration.edition.name}
               </p>
               <p className="mt-1 text-sm text-ink-soft">
-                Ticket <code className="text-teal-deep">{registration.ticketCode}</code>
+                Ticket{" "}
+                <code className="text-teal-deep">{registration.ticketCode}</code>
               </p>
-              <p className="mt-1 text-sm capitalize text-mute">
-                {registration.status.toLowerCase()}
-              </p>
+              {registration.checkedInAt ? (
+                <p className="mt-1 text-sm text-ent">Checked in</p>
+              ) : (
+                <p className="mt-1 text-sm capitalize text-mute">
+                  {registration.status.toLowerCase()}
+                </p>
+              )}
+              <div className="mt-4">
+                <TicketQr token={registration.qrToken} />
+              </div>
             </>
           ) : (
             <p className="mt-2 text-sm text-ink-soft">No active registration yet.</p>
@@ -74,36 +113,61 @@ export default async function DashboardPage({
           </p>
           <p className="mt-2 text-3xl font-semibold text-teal-deep">{completeness}%</p>
           <p className="mt-1 text-sm text-ink-soft">completeness</p>
-          {completeness < 60 ? (
+          <Link
+            href="/dashboard/profile"
+            className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+          >
+            Edit profile →
+          </Link>
+          {registration ? (
             <Link
-              href="/dashboard/profile"
-              className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+              href={`/${registration.edition.slug}/attendees`}
+              className="mt-2 block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
             >
-              Add LinkedIn so others can find you →
+              Attendee directory →
             </Link>
-          ) : (
-            <Link
-              href="/dashboard/profile"
-              className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-            >
-              Edit profile →
-            </Link>
-          )}
+          ) : null}
         </div>
       </div>
+
+      <section className="mt-10">
+        <h2 className="font-display text-3xl tracking-wide text-teal-deep">
+          My schedule
+        </h2>
+        {mySchedule.length === 0 ? (
+          <p className="mt-3 text-sm text-ink-soft">
+            No RSVPs yet.{" "}
+            <Link href="/programme" className="text-teal-deep underline">
+              Browse programme
+            </Link>
+          </p>
+        ) : (
+          <ul className="mt-4 space-y-2">
+            {mySchedule.map((r) => (
+              <li
+                key={r.id}
+                className="rounded-lg border border-line bg-white px-4 py-3 text-sm"
+              >
+                <span className="font-semibold text-teal-deep">
+                  {formatIstRange(r.session.startsAt, r.session.endsAt)}
+                </span>{" "}
+                — {r.session.title}
+                <span className="text-mute">
+                  {" "}
+                  · {r.status === "GOING" ? "Going" : `Waitlist #${r.position}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           href="/programme"
           className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
         >
-          View programme
-        </Link>
-        <Link
-          href="/dashboard/profile"
-          className="rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-teal-deep hover:border-teal"
-        >
-          Profile
+          Programme & RSVP
         </Link>
       </div>
     </main>

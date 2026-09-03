@@ -1,7 +1,13 @@
+import { EditionStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
-import { setEditionCurrentAction } from "../actions";
+import {
+  setEditionCurrentAction,
+  setEditionStatusAction,
+} from "../actions";
 
 export const dynamic = "force-dynamic";
+
+const STATUSES = Object.values(EditionStatus);
 
 export default async function AdminEditionsPage() {
   const editions = await prisma.edition.findMany({
@@ -24,7 +30,8 @@ export default async function AdminEditionsPage() {
         Editions
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
-        Flip <code>isCurrent</code> to change what the public programme renders.
+        Set status to <strong>LIVE</strong> to enable Happening now /{" "}
+        <code>/now</code> lobby screen. Flip current edition for the public site.
       </p>
 
       <div className="mt-8 space-y-4">
@@ -40,25 +47,45 @@ export default async function AdminEditionsPage() {
                     </span>
                   ) : null}
                 </h2>
-                <p className="mt-1 text-sm text-ink-soft">
-                  {e.status} · {e.venueName}
-                </p>
+                <p className="mt-1 text-sm text-ink-soft">{e.venueName}</p>
                 <p className="mt-2 text-xs text-mute">
                   {e._count.sessions} sessions · {e._count.speakers} speakers ·{" "}
                   {e._count.registrations} registrations · {e._count.pages} pages
                 </p>
               </div>
-              {!e.isCurrent ? (
-                <form action={setEditionCurrentAction}>
+              <div className="flex flex-wrap items-center gap-2">
+                <form action={setEditionStatusAction} className="flex gap-2">
                   <input type="hidden" name="id" value={e.id} />
+                  <select
+                    name="status"
+                    defaultValue={e.status}
+                    className="rounded-md border border-line px-3 py-2 text-sm"
+                  >
+                    {STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
                   <button
                     type="submit"
-                    className="rounded-md border border-teal px-4 py-2 text-sm font-semibold text-teal-deep"
+                    className="rounded-md border border-teal px-3 py-2 text-sm font-semibold text-teal-deep"
                   >
-                    Set current
+                    Set status
                   </button>
                 </form>
-              ) : null}
+                {!e.isCurrent ? (
+                  <form action={setEditionCurrentAction}>
+                    <input type="hidden" name="id" value={e.id} />
+                    <button
+                      type="submit"
+                      className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      Set current
+                    </button>
+                  </form>
+                ) : null}
+              </div>
             </div>
           </div>
         ))}
