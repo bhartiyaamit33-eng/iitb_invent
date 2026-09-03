@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/db";
 import { createSpeakerAction, updateSpeakerAction } from "../actions";
+import { SpeakerPhotoUpload } from "@/components/admin/SpeakerPhotoUpload";
+import { isS3Configured } from "@/lib/s3";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +13,7 @@ export default async function AdminSpeakersPage() {
         orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
       })
     : [];
+  const s3Ready = isS3Configured();
 
   return (
     <main className="px-6 py-10">
@@ -19,6 +22,11 @@ export default async function AdminSpeakersPage() {
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
         Seeded from DSSE Day 2026 artwork — fully editable.
+        {!s3Ready ? (
+          <span className="block text-amber-800">
+            Photo upload needs S3_BUCKET in the server env.
+          </span>
+        ) : null}
       </p>
 
       <form action={createSpeakerAction} className="mt-8 grid gap-3 rounded-xl border border-line bg-white p-5 sm:grid-cols-2">
@@ -44,11 +52,15 @@ export default async function AdminSpeakersPage() {
         {speakers.map((s) => (
           <form key={s.id} action={updateSpeakerAction} className="rounded-xl border border-line bg-white p-5">
             <input type="hidden" name="id" value={s.id} />
+            <div className="mb-4">
+              <SpeakerPhotoUpload speakerId={s.id} photoUrl={s.photoUrl} />
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <input name="name" defaultValue={s.name} className="rounded-md border border-line px-3 py-2 font-semibold" />
               <input name="title" defaultValue={s.title ?? ""} className="rounded-md border border-line px-3 py-2" />
               <input name="organisation" defaultValue={s.organisation ?? ""} className="rounded-md border border-line px-3 py-2" />
               <input name="linkedinUrl" defaultValue={s.linkedinUrl ?? ""} placeholder="LinkedIn URL" className="rounded-md border border-line px-3 py-2" />
+              <input name="websiteUrl" defaultValue={s.websiteUrl ?? ""} placeholder="Website" className="rounded-md border border-line px-3 py-2" />
               <input name="sortOrder" type="number" defaultValue={s.sortOrder} className="rounded-md border border-line px-3 py-2" />
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="isKeynote" defaultChecked={s.isKeynote} /> Keynote

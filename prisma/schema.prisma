@@ -81,6 +81,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   auditLogs     AuditLog[]
+  connectionRequestsFrom ConnectionRequest[] @relation("ConnectionFrom")
+  connectionRequestsTo   ConnectionRequest[] @relation("ConnectionTo")
 }
 
 model Profile {
@@ -92,6 +94,7 @@ model Profile {
   organisation String?
   bio          String?      @db.Text
   city         String?
+  phone        String?
   linkedinUrl  String?
   websiteUrl   String?
   twitterUrl   String?
@@ -103,6 +106,21 @@ model Profile {
   completeness Int          @default(0)
   updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
+}
+
+/// Soft intro: we email the recipient (no CC). Requester contact stays in the body.
+model ConnectionRequest {
+  id        String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  fromUser   User     @relation("ConnectionFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User     @relation("ConnectionTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  message   String   @db.Text
+  editionId String?
+  createdAt DateTime @default(now())
+
+  @@index([toUserId, createdAt])
+  @@index([fromUserId, createdAt])
 }
 
 // ─── Edition (year container) ─────────────────────────────────────────────────
@@ -400,15 +418,6 @@ model VerificationToken {
 //   score        Int?
 //   comments     String?  @db.Text
 //   createdAt    DateTime @default(now())
-// }
-//
-// model Connection {
-//   id        String   @id @default(cuid())
-//   fromUserId String
-//   toUserId   String
-//   createdAt  DateTime @default(now())
-//   deletedAt  DateTime?
-//   @@unique([fromUserId, toUserId])
 // }
 //
 // model Feedback {

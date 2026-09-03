@@ -149,7 +149,14 @@ export default async function ProgrammePage() {
                 {formatIstRange(s.startsAt, s.endsAt)}
               </time>
               <div>
-                <h2 className="font-semibold text-ink">{s.title}</h2>
+                <h2 className="font-semibold text-ink">
+                  <Link
+                    href={`/programme/${s.slug}`}
+                    className="underline-offset-2 hover:underline"
+                  >
+                    {s.title}
+                  </Link>
+                </h2>
                 <p className="mt-0.5 text-xs uppercase tracking-[0.1em] text-mute">
                   {s.room}
                   {s.floor ? ` · ${s.floor}` : ""} · {s.format.replaceAll("_", " ")}

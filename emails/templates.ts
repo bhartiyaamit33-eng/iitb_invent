@@ -88,3 +88,47 @@ export function magicLinkEmail(opts: {
   const text = `${opts.name ? `Hi ${opts.name},` : "Hi,"}\n\nSign in to INVENT:\n${opts.url}\n\nIf you did not request this, ignore this email.\n`;
   return { subject, html, text };
 }
+
+export function connectionRequestEmail(opts: {
+  toName: string;
+  fromName: string;
+  fromEmail: string;
+  fromPhone?: string | null;
+  fromLinkedIn?: string | null;
+  fromHeadline?: string | null;
+  message: string;
+  editionName: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `${opts.fromName} wants to connect at ${opts.editionName}`;
+  const contactBits = [
+    `Email: ${escapeHtml(opts.fromEmail)}`,
+    opts.fromPhone ? `Phone: ${escapeHtml(opts.fromPhone)}` : null,
+    opts.fromLinkedIn
+      ? `LinkedIn: <a href="${escapeHtml(opts.fromLinkedIn)}">${escapeHtml(opts.fromLinkedIn)}</a>`
+      : null,
+    opts.fromHeadline ? `About: ${escapeHtml(opts.fromHeadline)}` : null,
+  ]
+    .filter(Boolean)
+    .join("<br/>");
+
+  const html = layout(
+    "Connection request",
+    `<p>Hi ${escapeHtml(opts.toName)},</p>
+     <p><strong>${escapeHtml(opts.fromName)}</strong> (attending ${escapeHtml(opts.editionName)}) asked us to introduce them. They are not CC'd on this email.</p>
+     <p style="padding:12px 16px;background:#0b1f24;border-left:3px solid #7ec8c8;color:#e8f2f4;">${escapeHtml(opts.message).replace(/\n/g, "<br/>")}</p>
+     <p style="padding-top:12px;">${contactBits}</p>
+     <p>Reply directly to them if you'd like to connect.</p>`,
+  );
+  const text = `Hi ${opts.toName},
+
+${opts.fromName} (attending ${opts.editionName}) asked us to introduce them.
+
+Message:
+${opts.message}
+
+Contact:
+Email: ${opts.fromEmail}
+${opts.fromPhone ? `Phone: ${opts.fromPhone}\n` : ""}${opts.fromLinkedIn ? `LinkedIn: ${opts.fromLinkedIn}\n` : ""}${opts.fromHeadline ? `About: ${opts.fromHeadline}\n` : ""}
+— INVENT · conference@iitbinvent.com`;
+  return { subject, html, text };
+}

@@ -1,5 +1,6 @@
 import { sendEmail } from "@/lib/email/ses";
 import {
+  connectionRequestEmail,
   magicLinkEmail,
   profileConfirmationEmail,
   registrationConfirmedEmail,
@@ -62,5 +63,31 @@ export async function sendMagicLink(opts: {
     text: tpl.text,
     action: "email.magic_link",
     entityType: "Auth",
+  });
+}
+
+export async function sendConnectionRequest(opts: {
+  to: string;
+  toName: string;
+  fromName: string;
+  fromEmail: string;
+  fromPhone?: string | null;
+  fromLinkedIn?: string | null;
+  fromHeadline?: string | null;
+  message: string;
+  editionName: string;
+  actorId?: string;
+  requestId?: string;
+}) {
+  const tpl = connectionRequestEmail(opts);
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.connection_request",
+    actorId: opts.actorId ?? null,
+    entityType: "ConnectionRequest",
+    entityId: opts.requestId ?? null,
   });
 }

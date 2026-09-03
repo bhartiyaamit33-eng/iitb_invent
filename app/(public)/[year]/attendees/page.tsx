@@ -3,6 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { PersonaType } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
+import { fillConnectNote, firstNameFromFullName } from "@/lib/connect";
+import { ConnectOnLinkedIn } from "@/components/ConnectOnLinkedIn";
+import { RequestConnectForm } from "@/components/RequestConnectForm";
 
 export const dynamic = "force-dynamic";
 
@@ -135,6 +138,17 @@ export default async function AttendeesPage({
     return ha - hb;
   });
 
+  const me = await prisma.user.findUnique({
+    where: { id: user.id },
+    include: { profile: true },
+  });
+  const eventDateShort = edition.startsAt.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "Asia/Kolkata",
+  });
+
   return (
     <main className="mx-auto max-w-4xl px-6 py-12">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
@@ -239,16 +253,19 @@ export default async function AttendeesPage({
                     {p.interests.join(" · ")}
                   </p>
                 ) : null}
-                <div className="mt-3 flex flex-wrap gap-3 text-sm">
-                  {p.linkedinUrl ? (
-                    <a
-                      href={p.linkedinUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-teal-deep underline-offset-2 hover:underline"
-                    >
-                      LinkedIn
-                    </a>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                  {p.linkedinUrl && me ? (
+                    <ConnectOnLinkedIn
+                      linkedinUrl={p.linkedinUrl}
+                      note={fillConnectNote(edition.connectNoteTemplate, {
+                        firstName: firstNameFromFullName(a.name),
+                        senderName: me.name,
+                        senderHeadline: me.profile?.headline ?? "",
+                        eventName: edition.name,
+                        eventDateShort,
+                        sessionName: "",
+                      })}
+                    />
                   ) : null}
                   {p.websiteUrl ? (
                     <a
@@ -266,6 +283,15 @@ export default async function AttendeesPage({
                     </a>
                   ) : null}
                 </div>
+                {a.id !== user.id ? (
+                  <div className="mt-3">
+                    <RequestConnectForm
+                      toUserId={a.id}
+                      toName={a.name}
+                      year={year}
+                    />
+                  </div>
+                ) : null}
               </article>
             );
           })

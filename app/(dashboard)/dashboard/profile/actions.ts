@@ -35,6 +35,7 @@ export async function saveProfileAction(formData: FormData) {
   const organisation = String(formData.get("organisation") ?? "").trim() || null;
   const bio = String(formData.get("bio") ?? "").trim().slice(0, 500) || null;
   const city = String(formData.get("city") ?? "").trim() || null;
+  const phone = String(formData.get("phone") ?? "").trim().slice(0, 32) || null;
   const linkedinRaw = String(formData.get("linkedinUrl") ?? "");
   const linkedinUrl = linkedinRaw
     ? normaliseLinkedInUrl(linkedinRaw)
@@ -79,6 +80,7 @@ export async function saveProfileAction(formData: FormData) {
       organisation,
       bio,
       city,
+      phone,
       linkedinUrl,
       websiteUrl,
       twitterUrl,
@@ -95,6 +97,7 @@ export async function saveProfileAction(formData: FormData) {
       organisation,
       bio,
       city,
+      phone,
       linkedinUrl,
       websiteUrl,
       twitterUrl,

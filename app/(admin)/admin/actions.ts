@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { requireAdmin } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
 import { writeAuditLog } from "@/lib/admin/audit";
+import { isS3Configured, uploadSpeakerPhoto } from "@/lib/s3";
 
 /** Treat naked datetime-local strings as Asia/Kolkata wall time. */
 function parseIstDate(raw: string): Date {
@@ -129,6 +130,7 @@ export async function updateSpeakerAction(formData: FormData) {
     organisation: String(formData.get("organisation") ?? "").trim() || null,
     bio: String(formData.get("bio") ?? "").trim() || null,
     linkedinUrl: String(formData.get("linkedinUrl") ?? "").trim() || null,
+    websiteUrl: String(formData.get("websiteUrl") ?? "").trim() || null,
     isKeynote: formData.get("isKeynote") === "on",
     isPublished: formData.get("isPublished") === "on",
     sortOrder: Number(formData.get("sortOrder") ?? 0),
@@ -145,6 +147,53 @@ export async function updateSpeakerAction(formData: FormData) {
   });
   revalidatePath("/admin/speakers");
   revalidatePath("/programme");
+}
+
+export async function uploadSpeakerPhotoAction(
+  formData: FormData,
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  const user = await actor();
+  if (!isS3Configured()) {
+    return { ok: false, error: "S3_BUCKET is not set on the server" };
+  }
+  const speakerId = String(formData.get("speakerId") ?? "");
+  const file = formData.get("file");
+  if (!speakerId || !(file instanceof File)) {
+    return { ok: false, error: "Missing speaker or file" };
+  }
+  const speaker = await prisma.speaker.findUnique({ where: { id: speakerId } });
+  if (!speaker || speaker.deletedAt) {
+    return { ok: false, error: "Speaker not found" };
+  }
+
+  try {
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const { url } = await uploadSpeakerPhoto({
+      speakerId,
+      bytes,
+      contentType: file.type || "image/jpeg",
+    });
+    const after = await prisma.speaker.update({
+      where: { id: speakerId },
+      data: { photoUrl: url },
+    });
+    await writeAuditLog({
+      actorId: user.id,
+      action: "speaker.photo_upload",
+      entityType: "Speaker",
+      entityId: speakerId,
+      before: { photoUrl: speaker.photoUrl },
+      after: { photoUrl: after.photoUrl },
+    });
+    revalidatePath("/admin/speakers");
+    revalidatePath("/programme");
+    return { ok: true, url };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Upload failed",
+    };
+  }
 }
 
 export async function createSpeakerAction(formData: FormData) {

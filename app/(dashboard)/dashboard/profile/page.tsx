@@ -99,6 +99,16 @@ export default async function ProfilePage() {
         </label>
 
         <label className="block">
+          <span className="text-sm font-medium">Phone (for connection requests)</span>
+          <input
+            name="phone"
+            defaultValue={profile?.phone ?? ""}
+            placeholder="+91 …"
+            className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-teal"
+          />
+        </label>
+
+        <label className="block">
           <span className="text-sm font-medium">LinkedIn URL</span>
           <input
             name="linkedinUrl"
