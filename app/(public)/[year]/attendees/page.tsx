@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { fillConnectNote, firstNameFromFullName } from "@/lib/connect";
 import { ConnectOnLinkedIn } from "@/components/ConnectOnLinkedIn";
 import { RequestConnectForm } from "@/components/RequestConnectForm";
+import { IconGlobe, IconMail } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
 
@@ -253,9 +254,10 @@ export default async function AttendeesPage({
                     {p.interests.join(" · ")}
                   </p>
                 ) : null}
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <div className="mt-3 flex flex-wrap items-center gap-2">
                   {p.linkedinUrl && me ? (
                     <ConnectOnLinkedIn
+                      variant="icon"
                       linkedinUrl={p.linkedinUrl}
                       note={fillConnectNote(edition.connectNoteTemplate, {
                         firstName: firstNameFromFullName(a.name),
@@ -269,17 +271,28 @@ export default async function AttendeesPage({
                   ) : null}
                   {p.websiteUrl ? (
                     <a
-                      href={p.websiteUrl}
+                      href={
+                        /^https?:\/\//i.test(p.websiteUrl)
+                          ? p.websiteUrl
+                          : `https://${p.websiteUrl}`
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-teal-deep underline-offset-2 hover:underline"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-lg hover:bg-paper"
+                      title="Website"
+                      aria-label="Website"
                     >
-                      Website
+                      <IconGlobe className="h-5 w-5" />
                     </a>
                   ) : null}
                   {p.showEmail ? (
-                    <a href={`mailto:${a.email}`} className="text-mute">
-                      {a.email}
+                    <a
+                      href={`mailto:${a.email}`}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-teal-deep hover:bg-paper"
+                      title={a.email}
+                      aria-label={`Email ${a.name}`}
+                    >
+                      <IconMail className="h-4 w-4" />
                     </a>
                   ) : null}
                 </div>

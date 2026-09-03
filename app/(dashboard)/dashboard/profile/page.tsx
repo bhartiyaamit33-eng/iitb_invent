@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { saveProfileAction } from "./actions";
+import { LinkedInUrlField } from "@/components/LinkedInUrlField";
+import { ProfilePhotoUpload } from "@/components/ProfilePhotoUpload";
+import { ProfileSavedBanner } from "@/components/ProfileSavedBanner";
 
 const PERSONA_OPTIONS: { value: PersonaType; label: string }[] = [
   { value: "STUDENT", label: "Student" },
@@ -14,11 +17,27 @@ const PERSONA_OPTIONS: { value: PersonaType; label: string }[] = [
   { value: "OTHER", label: "Other" },
 ];
 
-export default async function ProfilePage() {
+type SearchParams = Promise<{ saved?: string; pct?: string; error?: string }>;
+
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
+  const sp = await searchParams;
   const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { image: true },
+  });
+
+  const percent =
+    sp.saved === "1" && sp.pct != null
+      ? Number(sp.pct)
+      : (profile?.completeness ?? 0);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -33,7 +52,34 @@ export default async function ProfilePage() {
         opt in.
       </p>
 
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-paper">
+        <div
+          className="h-full rounded-full bg-teal transition-[width]"
+          style={{
+            width: `${Math.min(100, Math.max(0, profile?.completeness ?? 0))}%`,
+          }}
+        />
+      </div>
+
+      <ProfileSavedBanner saved={sp.saved === "1"} percent={Number.isFinite(percent) ? percent : 0} />
+
+      {sp.error === "linkedin" ? (
+        <p
+          className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          role="alert"
+        >
+          That LinkedIn value didn&apos;t look valid. Use your handle (e.g.{" "}
+          <code className="text-xs">jane-doe</code>) or paste the full profile
+          URL.
+        </p>
+      ) : null}
+
       <form action={saveProfileAction} className="mt-8 space-y-5 rounded-xl border border-line bg-white p-6">
+        <ProfilePhotoUpload
+          imageUrl={dbUser?.image ?? null}
+          name={user.name}
+        />
+
         <label className="block">
           <span className="text-sm font-medium">Name</span>
           <input
@@ -108,15 +154,7 @@ export default async function ProfilePage() {
           />
         </label>
 
-        <label className="block">
-          <span className="text-sm font-medium">LinkedIn URL</span>
-          <input
-            name="linkedinUrl"
-            defaultValue={profile?.linkedinUrl ?? ""}
-            placeholder="https://www.linkedin.com/in/…"
-            className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-teal"
-          />
-        </label>
+        <LinkedInUrlField defaultValue={profile?.linkedinUrl} />
 
         <div className="grid gap-4 sm:grid-cols-3">
           <label className="block">

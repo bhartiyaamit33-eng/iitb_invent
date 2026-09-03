@@ -1,10 +1,33 @@
 import { sendEmail } from "@/lib/email/ses";
 import {
+  accountCreatedEmail,
   connectionRequestEmail,
   magicLinkEmail,
   profileConfirmationEmail,
   registrationConfirmedEmail,
 } from "@/emails/templates";
+
+export async function sendAccountCreated(opts: {
+  to: string;
+  name: string;
+  editionName?: string | null;
+  dashboardUrl: string;
+  ticketCode?: string | null;
+  eventDate?: string | null;
+  userId?: string;
+}) {
+  const tpl = accountCreatedEmail(opts);
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.account_created",
+    actorId: opts.userId ?? null,
+    entityType: "User",
+    entityId: opts.userId ?? null,
+  });
+}
 
 export async function sendRegistrationConfirmed(opts: {
   to: string;

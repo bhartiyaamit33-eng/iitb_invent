@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { PersonaType } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -8,8 +9,8 @@ import {
   computeCompleteness,
   normaliseLinkedInUrl,
 } from "@/lib/profile/completeness";
-import { sendProfileConfirmation } from "@/lib/email/transactions";
 import { writeAuditLog } from "@/lib/admin/audit";
+import { isS3Configured, uploadAttendeePhoto } from "@/lib/s3";
 
 const PERSONAS = new Set(Object.values(PersonaType));
 
@@ -40,8 +41,10 @@ export async function saveProfileAction(formData: FormData) {
   const linkedinUrl = linkedinRaw
     ? normaliseLinkedInUrl(linkedinRaw)
     : null;
-  if (linkedinRaw && !linkedinUrl) {
-    throw new Error("Invalid LinkedIn URL");
+  if (linkedinRaw.trim() && !linkedinUrl) {
+    redirect(
+      `/dashboard/profile?error=linkedin&pct=${encodeURIComponent(String(0))}`,
+    );
   }
   const websiteUrl = String(formData.get("websiteUrl") ?? "").trim() || null;
   const twitterUrl = String(formData.get("twitterUrl") ?? "").trim() || null;
@@ -118,13 +121,73 @@ export async function saveProfileAction(formData: FormData) {
     after: { completeness, directoryOptIn },
   });
 
-  void sendProfileConfirmation({
-    to: user.email,
-    name,
-    isFirstSave: false,
-    userId: user.id,
-  }).catch(() => undefined);
-
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/profile");
+  revalidatePath("/2027/attendees");
+  redirect(`/dashboard/profile?saved=1&pct=${completeness}`);
+}
+
+export async function uploadProfilePhotoAction(
+  formData: FormData,
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: "Sign in required" };
+  if (!isS3Configured()) {
+    return { ok: false, error: "Photo upload is not configured yet" };
+  }
+  const file = formData.get("file");
+  if (!(file instanceof File)) {
+    return { ok: false, error: "Choose an image file" };
+  }
+
+  try {
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const { url } = await uploadAttendeePhoto({
+      userId: user.id,
+      bytes,
+      contentType: file.type || "image/jpeg",
+    });
+
+    const profile = await prisma.profile.findUnique({
+      where: { userId: user.id },
+    });
+    const completeness = computeCompleteness({
+      personaType: profile?.personaType,
+      headline: profile?.headline,
+      organisation: profile?.organisation,
+      linkedinUrl: profile?.linkedinUrl,
+      image: url,
+      bio: profile?.bio,
+      interests: profile?.interests,
+    });
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { image: url },
+    });
+    if (profile) {
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: { completeness },
+      });
+    }
+
+    await writeAuditLog({
+      actorId: user.id,
+      action: "profile.photo_upload",
+      entityType: "User",
+      entityId: user.id,
+      after: { image: url, completeness },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/profile");
+    revalidatePath("/2027/attendees");
+    return { ok: true, url };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Upload failed",
+    };
+  }
 }

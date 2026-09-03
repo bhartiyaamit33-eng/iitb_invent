@@ -71,6 +71,42 @@ export function profileConfirmationEmail(opts: {
   return { subject, html, text };
 }
 
+export function accountCreatedEmail(opts: {
+  name: string;
+  editionName?: string | null;
+  dashboardUrl: string;
+  ticketCode?: string | null;
+  eventDate?: string | null;
+}): { subject: string; html: string; text: string } {
+  const subject = "Your INVENT account is ready";
+  const ticketBlock = opts.ticketCode
+    ? `<p>You're registered for <strong>${escapeHtml(opts.editionName ?? "INVENT")}</strong>${
+        opts.eventDate ? ` (${escapeHtml(opts.eventDate)})` : ""
+      }.<br/>Ticket code: <strong style="letter-spacing:0.08em;">${escapeHtml(opts.ticketCode)}</strong></p>`
+    : opts.editionName
+      ? `<p>You're set up for <strong>${escapeHtml(opts.editionName)}</strong>.</p>`
+      : "";
+  const html = layout(
+    "Welcome to INVENT",
+    `<p>Hi ${escapeHtml(opts.name)},</p>
+     <p>Your account on <strong>iitbinvent.com</strong> has been created. This message is from <strong>conference@iitbinvent.com</strong>.</p>
+     ${ticketBlock}
+     <p>Next step: complete your profile (LinkedIn, role, photo) so other attendees can find you.</p>
+     <p style="padding:16px 0;"><a href="${escapeHtml(opts.dashboardUrl)}" style="background:#1a6b6b;color:#fff;padding:12px 18px;text-decoration:none;border-radius:3px;">Open your dashboard</a></p>
+     <p>Sign in with the email and password you just chose anytime.</p>`,
+  );
+  const text = `Hi ${opts.name},
+
+Your INVENT account on iitbinvent.com has been created (from conference@iitbinvent.com).
+
+${opts.ticketCode ? `Registered for ${opts.editionName ?? "INVENT"}${opts.eventDate ? ` (${opts.eventDate})` : ""}.\nTicket code: ${opts.ticketCode}\n\n` : ""}${opts.editionName && !opts.ticketCode ? `You're set up for ${opts.editionName}.\n\n` : ""}Complete your profile so others can find you.
+
+Dashboard: ${opts.dashboardUrl}
+
+— INVENT · DSSE Building, IIT Bombay`;
+  return { subject, html, text };
+}
+
 export function magicLinkEmail(opts: {
   name?: string;
   url: string;

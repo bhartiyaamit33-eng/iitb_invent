@@ -7,7 +7,7 @@ import { randomBytes } from "crypto";
 import { auth, signIn } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/auth/roles";
-import { sendRegistrationConfirmed } from "@/lib/email/transactions";
+import { sendAccountCreated } from "@/lib/email/transactions";
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 
@@ -69,9 +69,17 @@ export default async function SignupPage({
       },
     });
 
+    const site =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.AUTH_URL ||
+      "https://iitbinvent.com";
+    const dashboardUrl = `${site.replace(/\/$/, "")}/dashboard`;
+
     const edition = await prisma.edition.findFirst({
       where: { isCurrent: true },
     });
+
+    let ticketCode: string | null = null;
     if (edition) {
       const reg = await prisma.registration.create({
         data: {
@@ -83,16 +91,18 @@ export default async function SignupPage({
           source: "signup",
         },
       });
-      void sendRegistrationConfirmed({
-        to: email,
-        name,
-        editionName: edition.name,
-        ticketCode: reg.ticketCode,
-        eventDate: "31 January 2027",
-        userId: user.id,
-        registrationId: reg.id,
-      }).catch(() => undefined);
+      ticketCode = reg.ticketCode;
     }
+
+    void sendAccountCreated({
+      to: email,
+      name,
+      editionName: edition?.name ?? null,
+      dashboardUrl,
+      ticketCode,
+      eventDate: edition ? "31 January 2027" : null,
+      userId: user.id,
+    }).catch(() => undefined);
 
     const next = isAdminEmail(email)
       ? "/dashboard"
