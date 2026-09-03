@@ -55,6 +55,12 @@ export default {
       }
     }
 
+    // Never let Cloudflare keep the old static homepage cached at the edge
+    outHeaders.set("Cache-Control", "private, no-store, no-cache, must-revalidate");
+    outHeaders.set("CDN-Cache-Control", "no-store");
+    outHeaders.delete("ETag");
+    outHeaders.delete("Last-Modified");
+
     return new Response(upstream.body, {
       status: upstream.status,
       statusText: upstream.statusText,
