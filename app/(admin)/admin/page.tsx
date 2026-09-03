@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function AdminStubPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -13,17 +15,17 @@ export default function AdminStubPage() {
       </p>
       <ul className="mt-8 space-y-2 text-sm text-ink-soft">
         <li>
-          <a className="text-teal-deep underline-offset-2 hover:underline" href="/">
+          <Link className="text-teal-deep underline-offset-2 hover:underline" href="/">
             ← Landing
-          </a>
+          </Link>
         </li>
         <li>
-          <a
+          <Link
             className="text-teal-deep underline-offset-2 hover:underline"
             href="/programme"
           >
             Programme stub
-          </a>
+          </Link>
         </li>
       </ul>
     </main>

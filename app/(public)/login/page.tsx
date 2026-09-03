@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { auth, signIn } from "@/auth";
@@ -112,9 +113,9 @@ export default async function LoginPage({
       </form>
 
       <p className="mt-8 text-sm text-mute">
-        <a href="/" className="text-teal-deep underline-offset-2 hover:underline">
+        <Link href="/" className="text-teal-deep underline-offset-2 hover:underline">
           ← Back to Inv.ent
-        </a>
+        </Link>
       </p>
     </main>
   );
