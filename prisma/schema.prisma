@@ -1,0 +1,421 @@
+// INVENT platform — multi-year data model (PRD Section 5)
+// Hosting target: AWS Amplify + RDS Postgres (ap-south-1)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  ATTENDEE
+  SPEAKER
+  VOLUNTEER
+  ORGANISER
+  ADMIN
+}
+
+enum EditionStatus {
+  DRAFT
+  ANNOUNCED
+  REGISTRATION_OPEN
+  LIVE
+  ARCHIVED
+}
+
+enum SessionFormat {
+  KEYNOTE
+  PANEL
+  RESEARCH_PAPER
+  POSTER
+  WORKSHOP
+  PITCH
+  VC_FORUM
+  NETWORKING
+  BREAK
+}
+
+enum RegStatus {
+  CONFIRMED
+  WAITLISTED
+  CANCELLED
+}
+
+enum RsvpStatus {
+  GOING
+  WAITLISTED
+  CANCELLED
+}
+
+enum PersonaType {
+  STUDENT
+  FACULTY
+  FOUNDER
+  INVESTOR
+  OPERATOR
+  RESEARCHER
+  OTHER
+}
+
+// ─── Identity (edition-independent) ──────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String
+  passwordHash  String? // null if they only ever use OAuth
+  image         String?
+  role          Role      @default(ATTENDEE)
+  createdAt     DateTime  @default(now())
+  deletedAt     DateTime?
+
+  profile       Profile?
+  registrations Registration[]
+  rsvps         Rsvp[]
+  accounts      Account[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+}
+
+model Profile {
+  id           String       @id @default(cuid())
+  userId       String       @unique
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personaType  PersonaType?
+  headline     String?
+  organisation String?
+  bio          String?      @db.Text
+  city         String?
+  linkedinUrl  String?
+  websiteUrl   String?
+  twitterUrl   String?
+  githubUrl    String?
+  interests    String[]
+  lookingFor   String[]
+  directoryOptIn Boolean    @default(false)
+  showEmail    Boolean      @default(false)
+  completeness Int          @default(0)
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+}
+
+// ─── Edition (year container) ─────────────────────────────────────────────────
+
+model Edition {
+  id        String @id @default(cuid())
+  year      Int    @unique
+  slug      String @unique
+  name      String
+  tagline   String?
+  theme     String?
+  startsAt  DateTime
+  endsAt    DateTime
+  venueName String
+  venueAddress String
+  venueLat  Float?
+  venueLng  Float?
+  timezone  String @default("Asia/Kolkata")
+
+  status    EditionStatus @default(DRAFT)
+  isCurrent Boolean       @default(false)
+
+  registrationOpensAt  DateTime?
+  registrationClosesAt DateTime?
+
+  /// LinkedIn connect note template — tokens: {firstName}, {senderName}, {senderHeadline}, {eventName}, {eventDateShort}, {sessionName}
+  connectNoteTemplate String @default("Hi {firstName}, I'm {senderName}, attending IIT Bombay INVENT on {eventDateShort}. Nice to connect.")
+
+  deletedAt DateTime?
+
+  tracks        Track[]
+  sessions      Session_[]
+  speakers      Speaker[]
+  sponsors      Sponsor[]
+  registrations Registration[]
+  pages         Page[]
+  faqs          Faq[]
+  stats         EditionStat[]
+  notifySignups NotifySignup[]
+}
+
+// ─── Programme ────────────────────────────────────────────────────────────────
+
+model Track {
+  id          String    @id @default(cuid())
+  editionId   String
+  edition     Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String
+  description String?   @db.Text
+  colour      String?
+  sortOrder   Int       @default(0)
+  deletedAt   DateTime?
+  sessions    Session_[]
+
+  @@unique([editionId, slug])
+}
+
+/// Named Session_ to avoid colliding with Auth.js Session
+model Session_ {
+  id           String        @id @default(cuid())
+  editionId    String
+  edition      Edition       @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  trackId      String?
+  track        Track?        @relation(fields: [trackId], references: [id])
+  title        String
+  slug         String
+  description  String?       @db.Text
+  format       SessionFormat
+  startsAt     DateTime
+  endsAt       DateTime
+  room         String?
+  floor        String?
+  capacity     Int?
+  rsvpRequired Boolean       @default(false)
+  waitlistOpen Boolean       @default(true)
+  streamUrl    String?
+  slidesUrl    String?
+  recordingUrl String?
+  isPublished  Boolean       @default(false)
+  sortOrder    Int           @default(0)
+  deletedAt    DateTime?
+
+  speakers SessionSpeaker[]
+  rsvps    Rsvp[]
+
+  @@unique([editionId, slug])
+  @@index([editionId, startsAt])
+}
+
+model Speaker {
+  id           String    @id @default(cuid())
+  editionId    String
+  edition      Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  userId       String?
+  name         String
+  title        String?
+  organisation String?
+  bio          String?   @db.Text
+  photoUrl     String?
+  linkedinUrl  String?
+  websiteUrl   String?
+  isKeynote    Boolean   @default(false)
+  isPublished  Boolean   @default(false)
+  sortOrder    Int       @default(0)
+  deletedAt    DateTime?
+  sessions     SessionSpeaker[]
+}
+
+model SessionSpeaker {
+  sessionId String
+  speakerId String
+  role      String?
+  session   Session_ @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  speaker   Speaker  @relation(fields: [speakerId], references: [id], onDelete: Cascade)
+
+  @@id([sessionId, speakerId])
+}
+
+// ─── Registration & RSVP ─────────────────────────────────────────────────────
+
+model Registration {
+  id          String    @id @default(cuid())
+  userId      String
+  editionId   String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition     Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  status      RegStatus @default(CONFIRMED)
+  ticketCode  String    @unique
+  qrToken     String    @unique
+  checkedInAt DateTime?
+  checkedInBy String?
+  source      String?
+  answers     Json?
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+
+  @@unique([userId, editionId])
+  @@index([editionId, status])
+}
+
+model Rsvp {
+  id         String     @id @default(cuid())
+  userId     String
+  sessionId  String
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session    Session_   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  status     RsvpStatus @default(GOING)
+  position   Int?
+  attendedAt DateTime?
+  createdAt  DateTime   @default(now())
+  deletedAt  DateTime?
+
+  @@unique([userId, sessionId])
+  @@index([sessionId, status])
+}
+
+// ─── CMS content ──────────────────────────────────────────────────────────────
+
+model Page {
+  id          String    @id @default(cuid())
+  editionId   String
+  edition     Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  slug        String
+  title       String
+  body        String    @db.Text
+  isPublished Boolean   @default(false)
+  deletedAt   DateTime?
+
+  @@unique([editionId, slug])
+}
+
+model Faq {
+  id          String    @id @default(cuid())
+  editionId   String
+  edition     Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  question    String
+  answer      String    @db.Text
+  sortOrder   Int       @default(0)
+  isPublished Boolean   @default(true)
+  deletedAt   DateTime?
+}
+
+model EditionStat {
+  id        String  @id @default(cuid())
+  editionId String
+  edition   Edition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  label     String
+  value     String
+  sortOrder Int     @default(0)
+}
+
+model Sponsor {
+  id         String    @id @default(cuid())
+  editionId  String
+  edition    Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  name       String
+  logoUrl    String
+  websiteUrl String?
+  tier       String
+  sortOrder  Int       @default(0)
+  deletedAt  DateTime?
+}
+
+model NotifySignup {
+  id        String   @id @default(cuid())
+  email     String
+  editionId String
+  edition   Edition  @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  converted Boolean  @default(false)
+
+  @@unique([email, editionId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+// ─── Auth.js (NextAuth v5) adapter tables ─────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── LATER (schema room only — do not build in v1) ────────────────────────────
+// model Ticket {
+//   id               String   @id @default(cuid())
+//   editionId        String
+//   name             String
+//   priceCents       Int
+//   currency         String   @default("INR")
+//   razorpayOrderId  String?
+//   deletedAt        DateTime?
+// }
+//
+// model Submission {
+//   id           String   @id @default(cuid())
+//   editionId    String
+//   userId       String
+//   track        String
+//   title        String
+//   abstract     String   @db.Text
+//   fileUrl      String?
+//   status       String
+//   createdAt    DateTime @default(now())
+//   deletedAt    DateTime?
+// }
+//
+// model Review {
+//   id           String   @id @default(cuid())
+//   submissionId String
+//   reviewerId   String
+//   score        Int?
+//   comments     String?  @db.Text
+//   createdAt    DateTime @default(now())
+// }
+//
+// model Connection {
+//   id        String   @id @default(cuid())
+//   fromUserId String
+//   toUserId   String
+//   createdAt  DateTime @default(now())
+//   deletedAt  DateTime?
+//   @@unique([fromUserId, toUserId])
+// }
+//
+// model Feedback {
+//   id        String   @id @default(cuid())
+//   sessionId String
+//   userId    String
+//   rating    Int
+//   comment   String?  @db.Text
+//   createdAt DateTime @default(now())
+// }

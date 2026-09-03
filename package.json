@@ -1,11 +1,45 @@
 {
   "name": "iitbinvent",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "dev": "next dev --turbopack",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate",
+    "cf:dev": "wrangler dev --config legacy-cloudflare/wrangler.jsonc",
+    "cf:deploy": "wrangler deploy --config legacy-cloudflare/wrangler.jsonc"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.11.3",
+    "@prisma/client": "^6.19.3",
+    "next": "15.5.25",
+    "next-auth": "^5.0.0-beta.32",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22.20.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.25",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.13",
+    "typescript": "^5",
     "wrangler": "^4.34.0"
   }
 }
