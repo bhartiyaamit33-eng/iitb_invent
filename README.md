@@ -19,7 +19,8 @@ Campus partners: [E-Cell](https://ecell.in) · [SINE](https://sineiitb.org)
 | App | Next.js 15 App Router + TypeScript (strict) + Tailwind v4 (`output: "standalone"`) |
 | Data | Prisma + PostgreSQL (Docker on EC2 / local) |
 | **AWS runtime (now)** | **EC2 `t3.micro`** `i-011126e849f5cbeb6` · `15.206.84.172` · `ap-south-1` |
-| Optional later | Amplify Hosting · RDS · SES; S3 bucket `invent-m1-uploads-221237747582` (5 GB cap) |
+| Email | **AWS SES** FROM `conference@iitbinvent.com` (`ap-south-1`) |
+| Optional later | Amplify Hosting · RDS; S3 `invent-m1-uploads-221237747582` (5 GB cap) |
 | Legacy | Cloudflare Worker in `legacy-cloudflare/` until DNS cutover |
 
 The homepage at `/` serves `public/index.html` **unchanged** (hero visuals untouched). React pixel-match of the landing is **M2**.
@@ -118,6 +119,50 @@ sudo systemctl restart invent
 4. When DNS eventually moves off Cloudflare, terminate TLS (ACM + ALB, or nginx + Let’s Encrypt) — not required while Cloudflare remains live.
 
 **DNS:** leave `iitbinvent.com` on Cloudflare. EC2 IP is preview only until M2 landing acceptance.
+
+---
+
+## Admin allowlist
+
+Only **`admin@iitbinvent.com`** (override with `ADMIN_EMAILS=…` comma-separated) may hold role `ADMIN` or open `/admin`.
+
+- Seed upserts that user as `ADMIN`.
+- `requireRole('ADMIN')` / admin layout reject everyone else with **401/403**.
+- Attendees, speakers, volunteers, and non-allowlisted users never reach admin UI or admin mutations.
+- First Auth.js magic-link/OAuth for an allowlisted email should set `ADMIN` (see `lib/auth/config-notes.ts`); non-allowlisted emails are never elevated.
+
+---
+
+## AWS SES (`conference@iitbinvent.com`)
+
+Region: **ap-south-1** (sandbox until production access is approved). EC2 uses instance profile **`invent-ec2-profile`** (`ses:SendEmail` / `ses:SendRawEmail`).
+
+**FROM:** `EMAIL_FROM=conference@iitbinvent.com`
+
+### Cloudflare DNS to add (do **not** remove existing website records)
+
+| Type | Name | Target / value |
+| --- | --- | --- |
+| **CNAME** | `vzjmoypemjbwtaf5ffgg35ugb5b4dd2m._domainkey` | `vzjmoypemjbwtaf5ffgg35ugb5b4dd2m.dkim.amazonses.com` |
+| **CNAME** | `56wo6hcl4p6knou6va6zgei3qv23apz6._domainkey` | `56wo6hcl4p6knou6va6zgei3qv23apz6.dkim.amazonses.com` |
+| **CNAME** | `aum3yoagdlvct35cchbqvolnz6zsneuu._domainkey` | `aum3yoagdlvct35cchbqvolnz6zsneuu.dkim.amazonses.com` |
+| **TXT** | `_dmarc` | `v=DMARC1; p=none; rua=mailto:admin@iitbinvent.com` |
+| **TXT** | `@` (SPF) | Merge `include:amazonses.com` into existing SPF, e.g. `v=spf1 include:amazonses.com ~all` |
+
+Also created SES identities: `conference@iitbinvent.com`, `admin@iitbinvent.com`, domain `iitbinvent.com` (pending until DKIM CNAMEs propagate).
+
+**Sandbox:** you can only send **to** verified identities. Click-verify those mailboxes in SES Console (or wait for domain DKIM), then request production access. Failed sends are logged to `AuditLog` and do not crash the request.
+
+### Transactional triggers (wired)
+
+| Action | Helper / route |
+| --- | --- |
+| Registration confirmed | `POST /api/registration` → SES |
+| Profile created/updated | `POST /api/profile` → SES |
+| Magic-link stub | `POST /api/auth/magic-link` → SES |
+| Admin SES test | `POST /api/admin/ses-test` (allowlisted ADMIN only) |
+
+Templates: `emails/templates.ts`. Sender: `lib/email/ses.ts` (`@aws-sdk/client-sesv2`).
 
 ---
 

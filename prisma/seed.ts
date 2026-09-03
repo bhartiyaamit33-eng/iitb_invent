@@ -1,6 +1,9 @@
-import { PrismaClient, EditionStatus, SessionFormat } from "@prisma/client";
+import { PrismaClient, EditionStatus, SessionFormat, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+/** Only this allowlisted mailbox is seeded as ADMIN (see ADMIN_EMAILS). */
+const ADMIN_EMAIL = "admin@iitbinvent.com";
 
 /** IIT Bombay DSSE Building, Powai — approximate campus coordinates */
 const DSSE_LAT = 19.1334;
@@ -19,6 +22,22 @@ const JAN_31_2027_END = new Date("2027-01-31T23:59:59+05:30");
 
 async function main() {
   console.log("Seeding INVENT editions…");
+
+  // Bootstrap sole ADMIN — allowlist-enforced at runtime too.
+  const admin = await prisma.user.upsert({
+    where: { email: ADMIN_EMAIL },
+    create: {
+      email: ADMIN_EMAIL,
+      name: "INVENT Admin",
+      role: Role.ADMIN,
+      emailVerified: new Date(),
+    },
+    update: {
+      role: Role.ADMIN,
+      name: "INVENT Admin",
+    },
+  });
+  console.log(`  • Admin user: ${admin.email} (${admin.role})`);
 
   // Wipe programme/CMS rows so seed is idempotent in local/dev.
   await prisma.notifySignup.deleteMany();
@@ -288,6 +307,7 @@ async function main() {
   });
 
   console.log("Seeded:");
+  console.log(`  • Admin: ${ADMIN_EMAIL} (ADMIN) — only ADMIN_EMAILS may access /admin`);
   console.log(`  • ${edition2026.name} (${edition2026.status}, isCurrent=${edition2026.isCurrent})`);
   console.log(`  • ${edition2027.name} (${edition2027.status}, isCurrent=${edition2027.isCurrent})`);
   console.log(`  • Venue: ${VENUE_ADDRESS}`);
