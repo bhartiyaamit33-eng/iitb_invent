@@ -1,9 +1,17 @@
 import { PrismaClient, EditionStatus, SessionFormat, Role } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 /** Only this allowlisted mailbox is seeded as ADMIN (see ADMIN_EMAILS). */
 const ADMIN_EMAIL = "admin@iitbinvent.com";
+
+/**
+ * Bcrypt hash only — never store or log the plaintext password in the repo.
+ * Override at seed time with ADMIN_SEED_PASSWORD (hashed here) if rotating.
+ */
+const ADMIN_PASSWORD_HASH =
+  "$2b$12$S3h8akhtuDhXy5yZJDOrF.4jKqFdNlm.khAFZoSpXvzAn6wO/OQS6";
 
 /** IIT Bombay DSSE Building, Powai — approximate campus coordinates */
 const DSSE_LAT = 19.1334;
@@ -24,6 +32,12 @@ async function main() {
   console.log("Seeding INVENT editions…");
 
   // Bootstrap sole ADMIN — allowlist-enforced at runtime too.
+  // Password: hash only in DB; optional ADMIN_SEED_PASSWORD to rotate on seed.
+  const seedPlain = process.env.ADMIN_SEED_PASSWORD?.trim();
+  const passwordHash = seedPlain
+    ? await bcrypt.hash(seedPlain, 12)
+    : ADMIN_PASSWORD_HASH;
+
   const admin = await prisma.user.upsert({
     where: { email: ADMIN_EMAIL },
     create: {
@@ -31,14 +45,15 @@ async function main() {
       name: "INVENT Admin",
       role: Role.ADMIN,
       emailVerified: new Date(),
+      passwordHash,
     },
     update: {
       role: Role.ADMIN,
       name: "INVENT Admin",
+      passwordHash,
     },
   });
-  console.log(`  • Admin user: ${admin.email} (${admin.role})`);
-
+  console.log(`  • Admin user: ${admin.email} (${admin.role}, passwordHash set)`);
   // Wipe programme/CMS rows so seed is idempotent in local/dev.
   await prisma.notifySignup.deleteMany();
   await prisma.editionStat.deleteMany();
@@ -307,8 +322,9 @@ async function main() {
   });
 
   console.log("Seeded:");
-  console.log(`  • Admin: ${ADMIN_EMAIL} (ADMIN) — only ADMIN_EMAILS may access /admin`);
-  console.log(`  • ${edition2026.name} (${edition2026.status}, isCurrent=${edition2026.isCurrent})`);
+  console.log(
+    `  • Admin: ${ADMIN_EMAIL} (ADMIN, bcrypt passwordHash) — only ADMIN_EMAILS may access /admin`,
+  );  console.log(`  • ${edition2026.name} (${edition2026.status}, isCurrent=${edition2026.isCurrent})`);
   console.log(`  • ${edition2027.name} (${edition2027.status}, isCurrent=${edition2027.isCurrent})`);
   console.log(`  • Venue: ${VENUE_ADDRESS}`);
   console.log("  • Placeholder stats/programme flagged TODO: confirm with organisers");

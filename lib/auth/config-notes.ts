@@ -1,8 +1,9 @@
 /**
- * Auth.js (NextAuth v5) stub — full OAuth/UI in M3.
- * Magic-link emails go through SES (`lib/email/transactions.sendMagicLink`).
+ * Auth.js is wired for credentials (email + password) in auth.ts.
+ * Magic-link emails still go through SES (`lib/email/transactions.sendMagicLink`)
+ * when email provider is enabled later.
  *
- * When enabling Auth.js, use:
+ * When adding OAuth/email providers:
  *   sendVerificationRequest: async ({ identifier, url }) => {
  *     await sendMagicLink({ to: identifier, url });
  *   }
@@ -14,4 +15,5 @@ export const authConfigNotes = {
   emailFrom: "conference@iitbinvent.com",
   adminEmailsEnv: "ADMIN_EMAILS",
   defaultAdmin: "admin@iitbinvent.com",
+  credentialsLogin: "/login",
 } as const;

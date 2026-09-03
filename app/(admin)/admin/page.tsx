@@ -2,15 +2,30 @@ export default function AdminStubPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Admin · M1 stub
+        Admin · Organiser
       </p>
       <h1 className="mt-3 font-display text-4xl tracking-wide text-teal-deep">
         Organiser CMS
       </h1>
       <p className="mt-4 text-ink-soft">
-        Programme editing, check-in, and audit log UI are out of scope for M1.
-        This route group is reserved.
+        You are signed in with admin access. Programme editing, check-in, and
+        audit log UI land in later milestones — this console is reserved.
       </p>
+      <ul className="mt-8 space-y-2 text-sm text-ink-soft">
+        <li>
+          <a className="text-teal-deep underline-offset-2 hover:underline" href="/">
+            ← Landing
+          </a>
+        </li>
+        <li>
+          <a
+            className="text-teal-deep underline-offset-2 hover:underline"
+            href="/programme"
+          >
+            Programme stub
+          </a>
+        </li>
+      </ul>
     </main>
   );
 }

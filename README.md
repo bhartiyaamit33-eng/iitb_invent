@@ -61,18 +61,19 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) — Inv.ent landing (hero identical to production).
 
-Useful stubs (no auth/CMS yet): `/programme` · `/dashboard` · `/admin`
+Useful stubs: `/programme` · `/login` · `/dashboard` · `/admin` (admin requires sign-in)
 
 ### Scripts
 
 | Script | Purpose |
 | --- | --- |
 | `npm run dev` | Next.js dev (Turbopack) |
-| `npm run build` | Production build (standalone) |
+| `npm run build` | Production build + copy `public` / static into standalone |
+| `npm run prepare:standalone` | Re-copy assets into `.next/standalone` (idempotent) |
 | `npm run start` | Serve production build |
 | `npm run db:migrate` | `prisma migrate dev` |
 | `npm run db:deploy` | `prisma migrate deploy` (EC2 / CI) |
-| `npm run db:seed` | Seed 2026 + 2027 editions |
+| `npm run db:seed` | Seed editions + admin (`passwordHash` bcrypt; optional `ADMIN_SEED_PASSWORD`) |
 | `npm run db:studio` | Prisma Studio |
 | `npm run cf:dev` / `cf:deploy` | Legacy Cloudflare (optional) |
 
@@ -107,9 +108,12 @@ cd /opt/invent
 git pull
 npm ci
 npx prisma migrate deploy
-npm run build
+npm run db:seed
+npm run build   # includes prepare-standalone (public/assets + .next/static)
 sudo systemctl restart invent
 ```
+
+Do **not** run `cp -r public .next/standalone/public` after build — that nests `public/public` and breaks `/assets/*`. Use `npm run prepare:standalone` (or the post-build step above).
 
 ### Security hardening (SHOULD)
 
@@ -126,10 +130,10 @@ sudo systemctl restart invent
 
 Only **`admin@iitbinvent.com`** (override with `ADMIN_EMAILS=…` comma-separated) may hold role `ADMIN` or open `/admin`.
 
-- Seed upserts that user as `ADMIN`.
+- Seed upserts that user as `ADMIN` with a **bcrypt `passwordHash`** (plaintext password is never committed; rotate via `ADMIN_SEED_PASSWORD` when seeding).
+- Sign in at `/login` (email + password). Admins are redirected to `/admin`.
 - `requireRole('ADMIN')` / admin layout reject everyone else with **401/403**.
 - Attendees, speakers, volunteers, and non-allowlisted users never reach admin UI or admin mutations.
-- First Auth.js magic-link/OAuth for an allowlisted email should set `ADMIN` (see `lib/auth/config-notes.ts`); non-allowlisted emails are never elevated.
 
 ---
 
