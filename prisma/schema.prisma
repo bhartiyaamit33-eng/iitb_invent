@@ -64,6 +64,12 @@ enum PersonaType {
   OTHER
 }
 
+enum VentureKind {
+  STARTUP
+  PROJECT
+  IDEA
+}
+
 // ─── Identity (edition-independent) ──────────────────────────────────────────
 
 model User {
@@ -83,6 +89,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   auditLogs     AuditLog[]
+  ventures      Venture[]
   connectionRequestsFrom ConnectionRequest[] @relation("ConnectionFrom")
   connectionRequestsTo   ConnectionRequest[] @relation("ConnectionTo")
 }
@@ -162,6 +169,31 @@ model Edition {
   faqs          Faq[]
   stats         EditionStat[]
   notifySignups NotifySignup[]
+  ventures      Venture[]
+}
+
+/// IIT Bombay startups / projects / ideas — public directory listings.
+model Venture {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  editionId   String?
+  edition     Edition?    @relation(fields: [editionId], references: [id], onDelete: SetNull)
+  kind        VentureKind
+  name        String
+  slug        String      @unique
+  tagline     String?
+  description String?     @db.Text
+  websiteUrl  String?
+  logoUrl     String?
+  isPublished Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+
+  @@index([kind, isPublished, deletedAt])
+  @@index([userId])
+  @@index([editionId])
 }
 
 // ─── Programme ────────────────────────────────────────────────────────────────
