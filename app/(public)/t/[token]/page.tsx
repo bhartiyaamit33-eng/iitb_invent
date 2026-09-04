@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { ShowBio } from "@/components/ShowBio";
 import { IconGlobe, IconLinkedIn, IconMail } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
@@ -102,7 +103,9 @@ export default async function TicketBadgePage({
           </p>
 
           {profile?.bio ? (
-            <p className="mt-4 text-sm text-ink-soft">{profile.bio}</p>
+            <div className="mt-4">
+              <ShowBio bio={profile.bio} />
+            </div>
           ) : null}
 
           {(profile?.interests?.length ?? 0) > 0 ? (

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { fillConnectNote, firstNameFromFullName } from "@/lib/connect";
 import { ConnectOnLinkedIn } from "@/components/ConnectOnLinkedIn";
 import { RequestConnectForm } from "@/components/RequestConnectForm";
+import { ShowBio } from "@/components/ShowBio";
 import { IconGlobe, IconMail } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
@@ -249,6 +250,7 @@ export default async function AttendeesPage({
                 {p.organisation ? (
                   <p className="mt-1 text-sm text-mute">{p.organisation}</p>
                 ) : null}
+                {p.bio ? <ShowBio bio={p.bio} /> : null}
                 {p.interests.length > 0 ? (
                   <p className="mt-2 text-xs text-mute">
                     {p.interests.join(" · ")}
