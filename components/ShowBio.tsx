@@ -5,11 +5,11 @@ import { useState } from "react";
 const PREVIEW_LEN = 120;
 
 export function ShowBio({ bio }: { bio: string }) {
+  const [open, setOpen] = useState(false);
   const text = bio.trim();
   if (!text) return null;
 
   const needsExpand = text.length > PREVIEW_LEN;
-  const [open, setOpen] = useState(false);
 
   return (
     <div className="mt-3">
