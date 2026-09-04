@@ -18,7 +18,7 @@ function parseKind(raw: FormDataEntryValue | null): VentureKind | null {
 }
 
 async function uniqueSlug(base: string, excludeId?: string) {
-  let slug = slugifyVenture(base) || "venture";
+  const slug = slugifyVenture(base) || "venture";
   let n = 0;
   for (;;) {
     const candidate = n === 0 ? slug : `${slug}-${n}`;
