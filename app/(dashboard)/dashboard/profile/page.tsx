@@ -2,7 +2,7 @@ import { PersonaType } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
-import { saveProfileAction } from "./actions";
+import { saveProfileAction, deleteMyAccountAction } from "./actions";
 import { LinkedInUrlField } from "@/components/LinkedInUrlField";
 import { ProfilePhotoUpload } from "@/components/ProfilePhotoUpload";
 import { ProfileSavedBanner } from "@/components/ProfileSavedBanner";
@@ -71,6 +71,24 @@ export default async function ProfilePage({
           That LinkedIn value didn&apos;t look valid. Use your handle (e.g.{" "}
           <code className="text-xs">jane-doe</code>) or paste the full profile
           URL.
+        </p>
+      ) : null}
+      {sp.error === "delete_confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          role="alert"
+        >
+          Type DELETE to confirm account deletion.
+        </p>
+      ) : null}
+      {sp.error &&
+      sp.error !== "linkedin" &&
+      sp.error !== "delete_confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          role="alert"
+        >
+          {sp.error}
         </p>
       ) : null}
 
@@ -236,6 +254,33 @@ export default async function ProfilePage({
           Save profile
         </button>
       </form>
+
+      <section className="mt-12 rounded-xl border border-red-200 bg-red-50/40 p-6">
+        <h2 className="font-display text-2xl tracking-wide text-red-900">
+          Delete my account
+        </h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          Permanently removes your profile, registrations, RSVPs, and sign-in
+          data. This cannot be undone. Admins must ask another admin to remove
+          their account.
+        </p>
+        <form action={deleteMyAccountAction} className="mt-4 flex flex-wrap items-end gap-3">
+          <label className="block text-sm">
+            <span className="font-medium text-ink">Type DELETE to confirm</span>
+            <input
+              name="confirm"
+              autoComplete="off"
+              className="mt-1.5 block w-40 rounded-md border border-red-200 bg-white px-3 py-2 outline-none focus:border-red-400"
+            />
+          </label>
+          <button
+            type="submit"
+            className="rounded-md border border-red-700 bg-red-700 px-4 py-2 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-red-800"
+          >
+            Delete my account
+          </button>
+        </form>
+      </section>
     </main>
   );
 }

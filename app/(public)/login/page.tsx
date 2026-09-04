@@ -4,6 +4,7 @@ import { AuthError } from "next-auth";
 import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { attendeeHome } from "@/lib/auth/attendee";
 import { isAdminEmail } from "@/lib/auth/roles";
+import { IconGoogle } from "@/components/icons";
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 
@@ -95,8 +96,9 @@ export default async function LoginPage({
           <form action={googleAction}>
             <button
               type="submit"
-              className="w-full rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm hover:border-teal"
+              className="flex w-full items-center justify-center gap-2.5 rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm hover:border-teal"
             >
+              <IconGoogle className="h-5 w-5 shrink-0" />
               Continue with Google
             </button>
           </form>

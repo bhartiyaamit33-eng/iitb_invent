@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sendMagicLink } from "@/lib/email/transactions";
 import { getEmailFromAddress, getSesRegion } from "@/lib/email/ses";
+import { siteOrigin } from "@/lib/ticket";
 
 /**
  * Stub magic-link sender (Auth.js Email provider will call the same helper).
@@ -14,13 +15,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "email required" }, { status: 400 });
     }
 
-    const base =
-      process.env.AUTH_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://15.206.84.172";
+    const base = siteOrigin();
     const url =
       body.callbackUrl ||
-      `${base.replace(/\/$/, "")}/api/auth/callback/email?email=${encodeURIComponent(email)}`;
+      `${base}/api/auth/callback/email?email=${encodeURIComponent(email)}`;
 
     const mail = await sendMagicLink({ to: email, url });
 

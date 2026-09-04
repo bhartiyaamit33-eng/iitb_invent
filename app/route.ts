@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth/session";
 import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
 import { formatIstRange } from "@/lib/editions";
 
@@ -8,10 +9,12 @@ import { formatIstRange } from "@/lib/editions";
  * Serve the existing static landing HTML at `/`.
  * When the current edition is LIVE, inject a happening-now strip above the hero
  * without rewriting the hero markup itself.
+ * When the visitor is signed in, swap auth CTAs for dashboard links.
  */
 export async function GET() {
   const filePath = path.join(process.cwd(), "public", "index.html");
   let html = await readFile(filePath, "utf8");
+  const user = await getCurrentUser();
 
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
   if (edition && isLiveStatus(edition.status)) {
@@ -63,10 +66,34 @@ export async function GET() {
     html = html.replace("<body>", `<body>${strip}`);
   }
 
+  if (user) {
+    const display =
+      escapeHtml(user.name.trim().split(/\s+/)[0] || user.name || "Account");
+    html = html
+      .replace(
+        `<a class="nav-login" href="/login">Login</a>`,
+        `<a class="nav-login" href="/dashboard">${display}</a>`,
+      )
+      .replace(
+        `<a class="btn" href="/signup">Create free account</a>`,
+        `<a class="btn" href="/dashboard">Go to dashboard</a>`,
+      )
+      .replace(
+        `<a class="btn" href="/login">Log in to connect</a>`,
+        `<a class="btn" href="/dashboard">Go to dashboard</a>`,
+      )
+      .replace(
+        `<a class="btn ghost" href="/signup">Create account</a>`,
+        `<a class="btn ghost" href="/2027/attendees">Browse attendees</a>`,
+      );
+  }
+
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "public, max-age=0, must-revalidate",
+      "Cache-Control": user
+        ? "private, no-store"
+        : "public, max-age=0, must-revalidate",
     },
   });
 }

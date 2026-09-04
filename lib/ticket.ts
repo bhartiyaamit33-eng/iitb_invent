@@ -1,10 +1,22 @@
+const PUBLIC_FALLBACK = "https://iitbinvent.com";
+
 /** Resolve public site origin for QR / absolute links. */
 export function siteOrigin(): string {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.AUTH_URL ||
-    "https://iitbinvent.com";
-  return raw.replace(/\/$/, "");
+    PUBLIC_FALLBACK;
+  const cleaned = raw.replace(/\/$/, "");
+  // Never encode preview IPs (e.g. old 15.206.*) in badge QR URLs.
+  try {
+    const host = new URL(cleaned).hostname;
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
+      return PUBLIC_FALLBACK;
+    }
+  } catch {
+    return PUBLIC_FALLBACK;
+  }
+  return cleaned;
 }
 
 /** Public badge URL encoded in the attendee QR. */

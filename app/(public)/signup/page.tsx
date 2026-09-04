@@ -4,10 +4,13 @@ import { AuthError } from "next-auth";
 import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
 import { randomBytes } from "crypto";
-import { auth, signIn } from "@/auth";
+import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/auth/roles";
+import { attendeeHome } from "@/lib/auth/attendee";
 import { sendAccountCreated } from "@/lib/email/transactions";
+import { siteOrigin } from "@/lib/ticket";
+import { IconGoogle } from "@/components/icons";
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 
@@ -24,8 +27,14 @@ export default async function SignupPage({
   const params = await searchParams;
   const callbackUrl = safeCallback(params.callbackUrl);
   const session = await auth();
+  const oauth = oauthProvidersEnabled();
   if (session?.user) {
     redirect(isAdminEmail(session.user.email) ? "/admin" : "/dashboard");
+  }
+
+  async function googleAction() {
+    "use server";
+    await signIn("google", { redirectTo: attendeeHome(callbackUrl) });
   }
 
   async function signupAction(formData: FormData) {
@@ -69,11 +78,7 @@ export default async function SignupPage({
       },
     });
 
-    const site =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      process.env.AUTH_URL ||
-      "https://iitbinvent.com";
-    const dashboardUrl = `${site.replace(/\/$/, "")}/dashboard`;
+    const dashboardUrl = `${siteOrigin()}/dashboard`;
 
     const edition = await prisma.edition.findFirst({
       where: { isCurrent: true },
@@ -155,7 +160,26 @@ export default async function SignupPage({
         </p>
       ) : null}
 
-      <form action={signupAction} className="mt-8 space-y-5">
+      <div className="mt-8 space-y-3">
+        {oauth.google ? (
+          <form action={googleAction}>
+            <button
+              type="submit"
+              className="flex w-full items-center justify-center gap-2.5 rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm hover:border-teal"
+            >
+              <IconGoogle className="h-5 w-5 shrink-0" />
+              Continue with Google
+            </button>
+          </form>
+        ) : null}
+        {oauth.google ? (
+          <p className="text-center text-xs uppercase tracking-[0.14em] text-mute">
+            or email
+          </p>
+        ) : null}
+      </div>
+
+      <form action={signupAction} className="mt-4 space-y-5">
         <input type="hidden" name="callbackUrl" value={callbackUrl} />
         <label className="block">
           <span className="text-sm font-medium text-ink">Name</span>

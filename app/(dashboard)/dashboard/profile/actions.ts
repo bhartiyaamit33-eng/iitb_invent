@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { PersonaType } from "@prisma/client";
+import { signOut } from "@/auth";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/lib/profile/completeness";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { isS3Configured, uploadAttendeePhoto } from "@/lib/s3";
+import { deleteUserAccount } from "@/lib/users/delete";
 
 const PERSONAS = new Set(Object.values(PersonaType));
 
@@ -125,6 +127,33 @@ export async function saveProfileAction(formData: FormData) {
   revalidatePath("/dashboard/profile");
   revalidatePath("/2027/attendees");
   redirect(`/dashboard/profile?saved=1&pct=${completeness}`);
+}
+
+export async function deleteMyAccountAction(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const confirm = String(formData.get("confirm") ?? "");
+  if (confirm !== "DELETE") {
+    redirect("/dashboard/profile?error=delete_confirm");
+  }
+
+  const result = await deleteUserAccount(user.id, { actorId: user.id });
+  if (!result.ok) {
+    redirect(
+      `/dashboard/profile?error=${encodeURIComponent(result.error)}`,
+    );
+  }
+
+  await writeAuditLog({
+    actorId: null,
+    action: "user.self_delete",
+    entityType: "User",
+    entityId: user.id,
+    after: { email: user.email },
+  });
+
+  await signOut({ redirectTo: "/" });
 }
 
 export async function uploadProfilePhotoAction(

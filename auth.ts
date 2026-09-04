@@ -33,9 +33,10 @@ const providers: Provider[] = [
           role: true,
           passwordHash: true,
           image: true,
+          deletedAt: true,
         },
       });
-      if (!user?.passwordHash) return null;
+      if (!user?.passwordHash || user.deletedAt) return null;
 
       const valid = await bcrypt.compare(password, user.passwordHash);
       if (!valid) return null;
