@@ -26,3 +26,6 @@ next-env.d.ts
 *.pem
 
 invent-next-tmp/
+
+# Reticle: generated landing SDK bundle (rebuild with esbuild)
+.reticle/landing-sdk.js

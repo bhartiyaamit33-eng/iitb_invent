@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "name": "programme-session",
+  "projectId": "iitbinvent-7d4eb21c",
+  "createdAt": 1788615077249,
+  "steps": [
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "role",
+        "role": "link",
+        "name": "Welcome Address & Program Launch"
+      },
+      "args": {},
+      "action": "click",
+      "expect": {
+        "console": {
+          "level": "error",
+          "absent": true
+        }
+      }
+    },
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "role",
+        "role": "link",
+        "name": "Welcome Address & Program Launch"
+      },
+      "args": {},
+      "action": "click",
+      "expect": {
+        "console": {
+          "level": "error",
+          "absent": true
+        }
+      }
+    }
+  ],
+  "startPath": "/programme",
+  "intent": "an attendee opens a session from the programme list and lands on that session's detail route",
+  "intentId": "flow:programme-session"
+}

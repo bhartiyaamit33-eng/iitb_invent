@@ -66,6 +66,10 @@ export async function GET() {
     html = html.replace("<body>", `<body>${strip}`);
   }
 
+  if (process.env.NODE_ENV !== "production") {
+    html = injectReticleLanding(html);
+  }
+
   if (user) {
     const display =
       escapeHtml(user.name.trim().split(/\s+/)[0] || user.name || "Account");
@@ -96,6 +100,22 @@ export async function GET() {
         : "public, max-age=0, must-revalidate",
     },
   });
+}
+
+/** `/` is a Route Handler, so app/layout.tsx never mounts <ReticleDev />. */
+function injectReticleLanding(html: string) {
+  const token = process.env.NEXT_PUBLIC_RETICLE_TOKEN;
+  const root = process.env.NEXT_PUBLIC_RETICLE_ROOT;
+  const url = process.env.NEXT_PUBLIC_RETICLE_URL;
+  const opts: Record<string, string> = { projectId: "iitbinvent-7d4eb21c" };
+  if (url) opts.url = url;
+  if (token) opts.token = token;
+  if (root) opts.root = root;
+  const snippet = `<script type="module">
+    import { reticle } from ${JSON.stringify("/reticle-sdk")};
+    reticle.connect(${JSON.stringify(opts)});
+  </script>`;
+  return html.replace("</body>", `${snippet}</body>`);
 }
 
 function escapeHtml(s: string) {
