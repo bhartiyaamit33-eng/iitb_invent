@@ -6,7 +6,6 @@ import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
 import { cancelRsvpAction, rsvpAction } from "./actions";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 60;
 
 export default async function ProgrammePage() {
   const user = await getCurrentUser();
@@ -152,6 +151,7 @@ export default async function ProgrammePage() {
                 <h2 className="font-semibold text-ink">
                   <Link
                     href={`/programme/${s.slug}`}
+                    prefetch={false}
                     className="underline-offset-2 hover:underline"
                   >
                     {s.title}
