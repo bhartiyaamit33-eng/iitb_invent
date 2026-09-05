@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "id": "1788615514365-e419",
+  "createdAt": 1788615514366,
+  "origin": "failed-assert",
+  "expected": "declared consequence",
+  "observed": "current route (no route change in the window) '/programme', expected '/programme/welcome-address-program-launch'",
+  "steps": [
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "testid",
+        "value": "e419",
+        "source": {
+          "file": "app/(public)/programme/page.tsx",
+          "line": 152,
+          "column": 16
+        }
+      },
+      "action": "click"
+    }
+  ]
+}

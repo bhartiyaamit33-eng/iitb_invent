@@ -1,0 +1,57 @@
+{
+  "counts": {
+    "calls": 36,
+    "verdicts": 14,
+    "passed": 13,
+    "failed": 1,
+    "unknown": 0,
+    "refusals": 0,
+    "marks": 0,
+    "sessions": 1,
+    "tokensReturned": 12643,
+    "drivingMs": 40444
+  },
+  "days": [
+    {
+      "date": "2026-09-05",
+      "counts": {
+        "calls": 36,
+        "verdicts": 14,
+        "passed": 13,
+        "failed": 1,
+        "unknown": 0,
+        "refusals": 0,
+        "marks": 0,
+        "sessions": 1,
+        "tokensReturned": 12643,
+        "drivingMs": 40444
+      }
+    }
+  ],
+  "records": {
+    "longestRunMs": 0,
+    "bestVerdictDay": 14,
+    "bestDefectDay": 1,
+    "streakDays": 1,
+    "bestStreakDays": 1
+  },
+  "savings": {
+    "tokens": {
+      "value": 9757,
+      "basis": "vs an agent reading the app through screenshots"
+    },
+    "minutes": {
+      "value": 4,
+      "basis": "vs one re-prompt cycle per defect caught"
+    }
+  },
+  "since": 1788614932195,
+  "defects": [
+    {
+      "at": 1788615514375,
+      "title": "Welcome Address & Program Launch",
+      "detail": "current route (no route change in the window) '/programme', expected '/programme/welcome-address-program-launch'",
+      "source": "app/(public)/programme/page.tsx:152"
+    }
+  ]
+}

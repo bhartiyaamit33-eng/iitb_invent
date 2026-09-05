@@ -1,0 +1,479 @@
+{
+  "version": 1,
+  "intents": {
+    "inline:clicking-a-programme-session-opens-its-detail-pa-333d19ba": {
+      "id": "inline:clicking-a-programme-session-opens-its-detail-pa-333d19ba",
+      "statement": "clicking a programme session opens its detail page with the session title",
+      "state": "bound",
+      "declaredAt": 1788615017417,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Welcome Address & Program Launch"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      }
+    },
+    "inline:clicking-welcome-address-on-the-programme-list-n-0cc093af": {
+      "id": "inline:clicking-welcome-address-on-the-programme-list-n-0cc093af",
+      "statement": "clicking Welcome Address on the programme list navigates to the session detail route",
+      "state": "proved",
+      "declaredAt": 1788615049518,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/programme/welcome-address-program-launch"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/programme/welcome-address-program-launch",
+        "files": [
+          "app/(public)/programme/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788615050074",
+        "grade": "presence",
+        "at": 1788615050074
+      }
+    },
+    "flow:programme-session": {
+      "id": "flow:programme-session",
+      "statement": "an attendee opens a session from the programme list and lands on that session's detail route",
+      "state": "declared",
+      "declaredAt": 1788615077249,
+      "surface": {
+        "flow": "programme-session"
+      }
+    },
+    "inline:the-inv-ent-landing-is-serving-at-with-programme-55692917": {
+      "id": "inline:the-inv-ent-landing-is-serving-at-with-programme-55692917",
+      "statement": "the Inv.ent landing is serving at / with Programme in the nav",
+      "state": "proved",
+      "declaredAt": 1788615489667,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "link",
+              "name": "Programme"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788615489679",
+        "grade": "presence",
+        "at": 1788615489679
+      }
+    },
+    "inline:clicking-programme-in-the-landing-nav-opens-the-a04ab84f": {
+      "id": "inline:clicking-programme-in-the-landing-nav-opens-the-a04ab84f",
+      "statement": "clicking Programme in the landing nav opens the current-edition programme list",
+      "state": "proved",
+      "declaredAt": 1788615495089,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/programme"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Programme"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/programme"
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788615497364",
+        "grade": "presence",
+        "at": 1788615497364
+      }
+    },
+    "inline:the-programme-list-includes-published-sessions-f-f614b105": {
+      "id": "inline:the-programme-list-includes-published-sessions-f-f614b105",
+      "statement": "the programme list includes published sessions for the current edition",
+      "state": "proved",
+      "declaredAt": 1788615505195,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "text",
+            "contains": "INVENT 2027"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "link",
+              "name": "Welcome Address & Program Launch"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/programme"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788615505202",
+        "grade": "presence",
+        "at": 1788615505202
+      }
+    },
+    "inline:opening-a-listed-session-navigates-to-its-detail-2e5371b9": {
+      "id": "inline:opening-a-listed-session-navigates-to-its-detail-2e5371b9",
+      "statement": "opening a listed session navigates to its detail page",
+      "state": "bound",
+      "declaredAt": 1788615509881,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/programme/welcome-address-program-launch"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Welcome Address & Program Launch"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      }
+    },
+    "inline:an-unsigned-in-visitor-opening-dashboard-is-sent-5681847e": {
+      "id": "inline:an-unsigned-in-visitor-opening-dashboard-is-sent-5681847e",
+      "statement": "an unsigned-in visitor opening Dashboard is sent to the login form",
+      "state": "proved",
+      "declaredAt": 1788615689165,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "/login"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "textbox"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/login",
+        "files": [
+          "app/(public)/programme/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788615691257",
+        "grade": "presence",
+        "at": 1788615691257
+      }
+    },
+    "inline:the-login-page-shows-email-and-password-fields-a-d3cfc4aa": {
+      "id": "inline:the-login-page-shows-email-and-password-fields-a-d3cfc4aa",
+      "statement": "the login page shows email and password fields and a sign-in control",
+      "state": "proved",
+      "declaredAt": 1788615696896,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/login"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "textbox",
+              "name": "Email"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "button",
+              "name": "Sign in"
+            },
+            "state": "visible"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/login",
+        "files": [
+          "app/(public)/programme/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788615696905",
+        "grade": "presence",
+        "at": 1788615696905
+      }
+    },
+    "inline:sign-up-from-login-opens-the-registration-form-cb247819": {
+      "id": "inline:sign-up-from-login-opens-the-registration-form-cb247819",
+      "statement": "Sign up from login opens the registration form",
+      "state": "proved",
+      "declaredAt": 1788615701731,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/signup"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/signup",
+        "files": [
+          "app/(public)/login/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788615703233",
+        "grade": "presence",
+        "at": 1788615703233
+      }
+    },
+    "inline:the-lobby-screen-explains-the-edition-is-not-liv-f174bbb8": {
+      "id": "inline:the-lobby-screen-explains-the-edition-is-not-liv-f174bbb8",
+      "statement": "the lobby screen explains the edition is not live yet",
+      "state": "proved",
+      "declaredAt": 1788615717986,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/now"
+          },
+          {
+            "kind": "text",
+            "contains": "Not live yet"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/now"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788615717995",
+        "grade": "presence",
+        "at": 1788615717995
+      }
+    },
+    "inline:the-session-detail-page-shows-the-welcome-addres-6985af59": {
+      "id": "inline:the-session-detail-page-shows-the-welcome-addres-6985af59",
+      "statement": "the session detail page shows the Welcome Address title and speakers",
+      "state": "proved",
+      "declaredAt": 1788615727003,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/programme/welcome-address-program-launch"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Welcome Address & Program Launch"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "text",
+            "contains": "Prof. Trupti Mishra"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/programme/welcome-address-program-launch"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788615727011",
+        "grade": "presence",
+        "at": 1788615727011
+      }
+    },
+    "inline:opening-admin-while-signed-out-lands-on-login-wi-18df30ba": {
+      "id": "inline:opening-admin-while-signed-out-lands-on-login-wi-18df30ba",
+      "statement": "opening /admin while signed out lands on login with an admin callback",
+      "state": "proved",
+      "declaredAt": 1788615743994,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "callbackUrl=%2Fadmin"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Login"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/login"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788615744002",
+        "grade": "presence",
+        "at": 1788615744002
+      }
+    },
+    "inline:clicking-a-session-title-on-the-programme-list-o-fecfef69": {
+      "id": "inline:clicking-a-session-title-on-the-programme-list-o-fecfef69",
+      "statement": "Clicking a session title on the programme list opens that session's detail page.",
+      "state": "proved",
+      "declaredAt": 1788617262533,
+      "binding": {
+        "kind": "route",
+        "pathname": "/programme/welcome-address-program-launch"
+      },
+      "surface": {
+        "route": "/programme/welcome-address-program-launch",
+        "files": [
+          "app/(public)/programme/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788617263257",
+        "grade": "presence",
+        "at": 1788617263257
+      }
+    },
+    "inline:the-startups-and-projects-directory-loads-withou-5e938fbb": {
+      "id": "inline:the-startups-and-projects-directory-loads-withou-5e938fbb",
+      "statement": "The startups and projects directory loads without a server error.",
+      "state": "proved",
+      "declaredAt": 1788617228991,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/ventures"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Startups & projects"
+            }
+          }
+        ]
+      },
+      "surface": {
+        "route": "/ventures"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788617228999",
+        "grade": "presence",
+        "at": 1788617228999
+      }
+    }
+  }
+}
