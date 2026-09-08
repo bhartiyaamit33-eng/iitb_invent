@@ -14,10 +14,11 @@ import { formatIstRange } from "@/lib/editions";
 export async function GET() {
   const filePath = path.join(process.cwd(), "public", "index.html");
   let html = await readFile(filePath, "utf8");
-  const user = await getCurrentUser();
+  const user = await getCurrentUser().catch(() => null);
 
-  const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
-  if (edition && isLiveStatus(edition.status)) {
+  try {
+    const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
+    if (edition && isLiveStatus(edition.status)) {
     const now = new Date();
     const [happening, upNext] = await Promise.all([
       getHappeningNow(edition.id, now),
@@ -53,17 +54,20 @@ export async function GET() {
             .join("");
 
     const strip = `
-<div id="live-strip" style="position:relative;z-index:30;background:#034a56;color:#fff;padding:14px 18px;font-family:Sora,system-ui,sans-serif">
+<div id="live-strip" style="position:relative;z-index:70;background:#07111F;color:#F5F7FA;padding:14px 18px;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(200,255,61,0.22)">
   <div style="max-width:1220px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start">
     <div>
-      <p style="margin:0 0 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8">Happening now · ${escapeHtml(clock)} IST</p>
+      <p style="margin:0 0 6px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#C8FF3D">Happening now · ${escapeHtml(clock)} IST</p>
       ${happeningHtml}
       ${upNextHtml}
     </div>
-    <p style="margin:0"><a href="/now" style="color:#fff;font-weight:600">Lobby screen</a> · <a href="/programme" style="color:#fff">Programme</a></p>
+    <p style="margin:0"><a href="/now" style="color:#C8FF3D;font-weight:600">Lobby screen</a> · <a href="/programme" style="color:#F5F7FA">Programme</a></p>
   </div>
 </div>`;
     html = html.replace("<body>", `<body>${strip}`);
+    }
+  } catch {
+    // Landing is a public teaser; a down database must not 500 the page.
   }
 
   if (process.env.NODE_ENV !== "production") {
@@ -74,19 +78,19 @@ export async function GET() {
     const display =
       escapeHtml(user.name.trim().split(/\s+/)[0] || user.name || "Account");
     html = html
-      .replace(
+      .replaceAll(
         `<a class="nav-login" href="/login">Login</a>`,
         `<a class="nav-login" href="/dashboard">${display}</a>`,
       )
-      .replace(
+      .replaceAll(
         `<a class="btn" href="/signup">Create free account</a>`,
         `<a class="btn" href="/dashboard">Go to dashboard</a>`,
       )
-      .replace(
+      .replaceAll(
         `<a class="btn" href="/login">Log in to connect</a>`,
         `<a class="btn" href="/dashboard">Go to dashboard</a>`,
       )
-      .replace(
+      .replaceAll(
         `<a class="btn ghost" href="/signup">Create account</a>`,
         `<a class="btn ghost" href="/2027/attendees">Browse attendees</a>`,
       );
