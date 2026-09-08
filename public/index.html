@@ -280,10 +280,17 @@
       opacity: 0;
       animation: riseIn 1.05s 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
+    /* Wordmark + full form share one inline-flex column so the sub-line spans exactly the wordmark width. */
+    .brand-lockup {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 100%;
+    }
     .brand-word {
       margin: 0;
       display: flex;
-      align-items: flex-start;
+      align-items: flex-end;
       gap: 0;
       font-family: var(--font-sans);
       font-weight: 800;
@@ -296,27 +303,38 @@
       min-width: 0;
     }
     .brand-half .word {
+      display: block;
       font-size: clamp(68px, 15vw, 180px);
       font-weight: 800;
       letter-spacing: -0.045em;
       line-height: 0.86;
       color: var(--white);
     }
-    .brand-half .meaning {
-      margin-top: 0.22em;
-      font-family: var(--font-sans);
-      font-size: clamp(10px, 1.35vw, 16px);
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      line-height: 1.25;
-      text-transform: uppercase;
-      max-width: 16ch;
-      color: var(--soft);
-    }
     .inv-col { opacity: 0; animation: fadeIn 1s 0.95s ease both; }
     .ent-col { opacity: 0; animation: fadeIn 1s 1.4s ease both; }
-    .ent-col .word { color: var(--blue); }
-    .ent-col .meaning { color: rgba(53, 200, 255, 0.85); }
+    .ent-col .word {
+      color: var(--blue);
+      background: linear-gradient(118deg, #5FD4FF 0%, var(--blue) 46%, #1F6EE6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding-right: 0.04em; /* keeps the clipped T from being shaved by the tight tracking */
+    }
+    .fullform {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: 0.55em 0 0;
+      padding-right: 0.24em; /* offsets trailing letter-spacing so the last letter ends flush */
+      font-size: clamp(10px, 1.3vw, 15px);
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--soft);
+      opacity: 0;
+      animation: fadeIn 1s 1.7s ease both;
+    }
+    .fullform .amp { color: var(--lime); font-weight: 500; }
     .brand-dot {
       position: relative;
       z-index: 2;
@@ -346,7 +364,7 @@
       line-height: 1.45;
       color: rgba(245, 247, 250, 0.9);
       opacity: 0;
-      animation: riseIn 1s 1.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: riseIn 1s 2.05s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     .journey {
       list-style: none;
@@ -356,7 +374,7 @@
       margin: 22px 0 0;
       padding: 0;
       opacity: 0;
-      animation: fadeIn 1s 2.15s ease both;
+      animation: fadeIn 1s 2.35s ease both;
     }
     .journey li {
       display: flex;
@@ -382,7 +400,7 @@
       align-items: end;
       gap: 24px;
       opacity: 0;
-      animation: riseIn 1s 2.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: riseIn 1s 2.5s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     .hero-blurb {
       max-width: 26ch;
@@ -433,6 +451,27 @@
       color: var(--soft);
       margin-left: auto;
     }
+
+    /* Variant B: no campus photograph. Deep gradient field, stronger blueprint grid, glow behind the wordmark. */
+    .hero[data-hero="plain"] .hero-photo { display: none; }
+    .hero[data-hero="plain"] .hero-veil {
+      background:
+        radial-gradient(ellipse 52% 48% at 22% 42%, rgba(46, 143, 255, 0.26) 0%, rgba(46, 143, 255, 0) 100%),
+        radial-gradient(ellipse 40% 36% at 78% 78%, rgba(53, 200, 255, 0.12) 0%, rgba(53, 200, 255, 0) 100%),
+        radial-gradient(ellipse 22% 20% at 14% 46%, rgba(200, 255, 61, 0.09) 0%, rgba(200, 255, 61, 0) 100%),
+        linear-gradient(180deg, #0B1E36 0%, #08162A 55%, var(--midnight) 100%);
+    }
+    .hero[data-hero="plain"] .hero-grid {
+      background-image:
+        linear-gradient(rgba(46, 143, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(46, 143, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(rgba(53, 200, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(53, 200, 255, 0.04) 1px, transparent 1px);
+      mask-image: radial-gradient(ellipse at 40% 50%, #000 20%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at 40% 50%, #000 20%, transparent 80%);
+    }
+    .hero[data-hero="plain"] .hero-orbits ellipse { stroke: rgba(200, 255, 61, 0.24); }
+    .hero[data-hero="plain"] .hero-orbits .orbit-b { stroke: rgba(53, 200, 255, 0.2); }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes riseIn {
@@ -730,11 +769,7 @@
         justify-content: center;
         flex-wrap: wrap;
       }
-      .brand-half .meaning {
-        font-size: 10px;
-        letter-spacing: 0.12em;
-        max-width: 12ch;
-      }
+      .fullform { font-size: 9px; letter-spacing: 0.16em; padding-right: 0.16em; }
       .owner {
         font-size: clamp(32px, 10vw, 56px);
         white-space: normal;
@@ -750,10 +785,10 @@
 
     @media (prefers-reduced-motion: reduce) {
       .band span, .scroll-hint, .hero-photo, .hero-grid, .hero-orbits, .hero-top,
-      .coming, .owner, .inv-col, .ent-col, .hero-tagline, .journey, .hero-bottom,
+      .coming, .owner, .inv-col, .ent-col, .fullform, .hero-tagline, .journey, .hero-bottom,
       .brand-dot i, .hero-orbits .orbit-a, .hero-orbits .orbit-b, #hero-canvas, .hero-noise { animation: none !important; }
       .hero-photo { opacity: 0.68; transform: none; }
-      .hero-grid, .hero-orbits, .hero-top, .coming, .owner, .inv-col, .ent-col,
+      .hero-grid, .hero-orbits, .hero-top, .coming, .owner, .inv-col, .ent-col, .fullform,
       .hero-tagline, .journey, .hero-bottom, #hero-canvas { opacity: 1; }
       .hero-noise { opacity: 0.045; }
       .brand-dot i { transform: scale(1); }
@@ -802,17 +837,14 @@
       <div class="hero-title-block">
         <p class="coming" data-testid="coming-soon">Coming soon<i aria-hidden="true"></i></p>
         <p class="owner">IIT Bombay</p>
-        <h1 class="brand-word" aria-label="INV.ENT: Innovation and Entrepreneurship" data-testid="brand-mark">
-          <span class="brand-half inv-col">
-            <span class="word">INV</span>
-            <span class="meaning">Innovation</span>
-          </span>
-          <span class="brand-dot" data-spark-node aria-hidden="true"><i></i></span>
-          <span class="brand-half ent-col">
-            <span class="word">ENT</span>
-            <span class="meaning">Entrepreneurship</span>
-          </span>
-        </h1>
+        <div class="brand-lockup">
+          <h1 class="brand-word" aria-label="INV.ENT: Innovation and Entrepreneurship" data-testid="brand-mark">
+            <span class="brand-half inv-col"><span class="word">INV</span></span>
+            <span class="brand-dot" data-spark-node aria-hidden="true"><i></i></span>
+            <span class="brand-half ent-col"><span class="word">ENT</span></span>
+          </h1>
+          <p class="fullform" aria-hidden="true"><span>Innovation</span><span class="amp">&amp;</span><span>Entrepreneurship</span></p>
+        </div>
         <p class="hero-tagline">Where entrepreneurship research meets venture practice</p>
         <ol class="journey" aria-label="The INV.ENT journey" data-testid="journey">
           <li>Research</li>
@@ -968,6 +1000,14 @@
   </footer>
 
   <script>
+    /* Hero background variant: ?hero=plain drops the campus photograph. Default keeps it. */
+    (function () {
+      var hero = document.getElementById("top");
+      if (!hero) return;
+      var m = /[?&]hero=(plain|photo)/.exec(window.location.search);
+      if (m) hero.setAttribute("data-hero", m[1]);
+    })();
+
     (function () {
       var startAt = new Date("2027-01-31T09:00:00+05:30").getTime();
       var endAt = new Date("2027-01-31T19:30:00+05:30").getTime();
