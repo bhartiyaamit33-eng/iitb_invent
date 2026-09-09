@@ -8,7 +8,7 @@ import { AdminNav } from "@/components/admin/AdminNav";
 
 /**
  * Server-side lock for all `/admin/*` routes.
- * Only ADMIN_EMAILS (default admin@iitbinvent.com) with role ADMIN.
+ * ADMIN grants are stored in the database and checked on every request.
  */
 export default async function AdminLayout({
   children,

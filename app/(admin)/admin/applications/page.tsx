@@ -67,6 +67,11 @@ export default async function AdminApplicationsPage({
               }
             : {}),
         },
+        include: {
+          reviews: {
+            select: { status: true, score: true, recommendation: true },
+          },
+        },
         orderBy: { createdAt: "desc" },
         take: 500,
       })
@@ -144,6 +149,7 @@ export default async function AdminApplicationsPage({
               <th className="px-4 py-3">Participation</th>
               <th className="px-4 py-3">Abstract</th>
               <th className="px-4 py-3">Payment</th>
+              <th className="px-4 py-3">Reviews</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Submitted</th>
             </tr>
@@ -151,7 +157,7 @@ export default async function AdminApplicationsPage({
           <tbody>
             {applications.length === 0 ? (
               <tr>
-                <td className="px-4 py-8 text-ink-soft" colSpan={7}>
+                <td className="px-4 py-8 text-ink-soft" colSpan={8}>
                   No applications yet.
                 </td>
               </tr>
@@ -203,6 +209,28 @@ export default async function AdminApplicationsPage({
                   </td>
                   <td className={`px-4 py-3 text-xs font-semibold ${paymentBadgeClass(a.paymentStatus)}`}>
                     {paymentStatusLabel(a.paymentStatus)}
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {a.reviews.length === 0 ? (
+                      <span className="text-mute">Unassigned</span>
+                    ) : (
+                      <>
+                        <p className="font-semibold text-teal-deep">
+                          {a.reviews.filter((r) => r.status === "COMPLETED").length}/
+                          {a.reviews.length} complete
+                        </p>
+                        {a.reviews.some((r) => r.score !== null) ? (
+                          <p className="text-mute">
+                            Avg{" "}
+                            {(
+                              a.reviews.reduce((sum, r) => sum + (r.score ?? 0), 0) /
+                              a.reviews.filter((r) => r.score !== null).length
+                            ).toFixed(1)}
+                            /10
+                          </p>
+                        ) : null}
+                      </>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <ApplicationReviewDialog

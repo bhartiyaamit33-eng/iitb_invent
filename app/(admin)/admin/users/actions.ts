@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { Role } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth/session";
-import { requireAdmin, canHoldAdminRole } from "@/lib/auth/roles";
+import { requireAdmin } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { deleteUserAccount } from "@/lib/users/delete";
@@ -16,7 +16,9 @@ const IMPORTABLE_ROLES = new Set<Role>([
   Role.ATTENDEE,
   Role.SPEAKER,
   Role.VOLUNTEER,
+  Role.REVIEWER,
   Role.ORGANISER,
+  Role.ADMIN,
 ]);
 
 function parseRole(raw: string): Role {
@@ -82,17 +84,7 @@ export async function importUsersCsvAction(
       continue;
     }
 
-    let role = roleIdx >= 0 ? parseRole(cells[roleIdx] ?? "") : Role.ATTENDEE;
-    if ((cells[roleIdx] ?? "").trim().toUpperCase() === "ADMIN") {
-      if (canHoldAdminRole(email)) {
-        role = Role.ADMIN;
-      } else {
-        role = Role.ATTENDEE;
-        errors.push(
-          `${email}: ADMIN role denied (not allowlisted); imported as ATTENDEE`,
-        );
-      }
-    }
+    const role = roleIdx >= 0 ? parseRole(cells[roleIdx] ?? "") : Role.ATTENDEE;
 
     const tempPassword = randomBytes(18).toString("base64url");
     const passwordHash = await bcrypt.hash(tempPassword, 12);
@@ -128,6 +120,52 @@ export async function importUsersCsvAction(
 
   revalidatePath("/admin/users");
   return { created, skipped, errors: errors.slice(0, 20) };
+}
+
+const MANAGEABLE_ROLES = new Set<Role>([
+  Role.ATTENDEE,
+  Role.SPEAKER,
+  Role.VOLUNTEER,
+  Role.REVIEWER,
+  Role.ORGANISER,
+  Role.ADMIN,
+]);
+
+export async function updateUserRoleAction(formData: FormData) {
+  const actor = requireAdmin(await getCurrentUser());
+  const userId = String(formData.get("userId") ?? "");
+  const role = String(formData.get("role") ?? "") as Role;
+  if (!userId || !MANAGEABLE_ROLES.has(role)) {
+    throw new Error("Choose a valid user and role.");
+  }
+  if (userId === actor.id && role !== Role.ADMIN) {
+    throw new Error("You cannot remove your own admin access.");
+  }
+
+  const before = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, role: true },
+  });
+  if (!before || before.id === actor.id && role !== Role.ADMIN) {
+    throw new Error("User not found.");
+  }
+
+  const after = await prisma.user.update({
+    where: { id: userId },
+    data: { role },
+    select: { id: true, email: true, role: true },
+  });
+  await writeAuditLog({
+    actorId: actor.id,
+    action: "user.role_update",
+    entityType: "User",
+    entityId: userId,
+    before,
+    after,
+  });
+  revalidatePath("/admin/users");
+  revalidatePath("/admin/applications");
+  revalidatePath("/dashboard");
 }
 
 export async function adminDeleteUserAction(formData: FormData) {

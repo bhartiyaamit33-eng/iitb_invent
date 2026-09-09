@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import type { AuthUser } from "@/lib/auth/roles";
-import { isAdminEmail } from "@/lib/auth/roles";
-import { Role } from "@prisma/client";
+import { prisma } from "@/lib/db";
 
 /**
  * Resolve the signed-in user from Auth.js (JWT session).
@@ -11,17 +10,18 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   const session = await auth();
   if (!session?.user?.id || !session.user.email) return null;
 
-  const email = session.user.email.trim().toLowerCase();
-  let role = session.user.role ?? Role.ATTENDEE;
-  // Defence in depth: strip ADMIN if email left the allowlist.
-  if (role === Role.ADMIN && !isAdminEmail(email)) {
-    role = Role.ATTENDEE;
-  }
+  // The database is authoritative so grants and revocations apply immediately,
+  // even when the user's JWT was issued before an administrator changed a role.
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { id: true, email: true, name: true, role: true, deletedAt: true },
+  });
+  if (!user || user.deletedAt) return null;
 
   return {
-    id: session.user.id,
-    email,
-    name: session.user.name ?? "",
-    role,
+    id: user.id,
+    email: user.email.trim().toLowerCase(),
+    name: user.name,
+    role: user.role,
   };
 }

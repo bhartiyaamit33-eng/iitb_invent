@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { canHoldAdminRole, isAdminEmail } from "@/lib/auth/roles";
+import { isAdminEmail } from "@/lib/auth/roles";
 import { Role } from "@prisma/client";
 import { sendRegistrationConfirmed } from "@/lib/email/transactions";
 import { randomBytes } from "node:crypto";
@@ -30,12 +30,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "edition not found" }, { status: 404 });
     }
 
-    // Never elevate non-allowlisted emails to ADMIN via this path.
     const existing = await prisma.user.findUnique({ where: { email } });
     let role: Role = existing?.role ?? Role.ATTENDEE;
-    if (role === Role.ADMIN && !canHoldAdminRole(email)) {
-      role = Role.ATTENDEE;
-    }
     if (!existing && isAdminEmail(email)) {
       role = Role.ADMIN;
     }
@@ -49,10 +45,6 @@ export async function POST(req: Request) {
       },
       update: {
         name: body.name?.trim() || undefined,
-        // Refuse privilege escalation for non-allowlisted emails
-        ...(existing?.role === Role.ADMIN && !canHoldAdminRole(email)
-          ? { role: Role.ATTENDEE }
-          : {}),
       },
     });
 

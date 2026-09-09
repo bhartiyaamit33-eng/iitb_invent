@@ -7,7 +7,6 @@ import bcrypt from "bcryptjs";
 import type { Provider } from "next-auth/providers";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/db";
-import { isAdminEmail } from "@/lib/auth/roles";
 import { ensureAttendeeReady } from "@/lib/auth/attendee";
 
 const providers: Provider[] = [
@@ -41,17 +40,12 @@ const providers: Provider[] = [
       const valid = await bcrypt.compare(password, user.passwordHash);
       if (!valid) return null;
 
-      let role = user.role;
-      if (role === Role.ADMIN && !isAdminEmail(user.email)) {
-        role = Role.ATTENDEE;
-      }
-
       return {
         id: user.id,
         email: user.email,
         name: user.name,
         image: user.image,
-        role,
+        role: user.role,
       };
     },
   }),
@@ -102,19 +96,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { id: user.id! },
           select: { role: true, email: true },
         });
-        let role = dbUser?.role ?? Role.ATTENDEE;
-        if (role === Role.ADMIN && !isAdminEmail(dbUser?.email)) {
-          role = Role.ATTENDEE;
-        }
-        // OAuth brand-new users: never elevate via login CTA
-        if (
-          role === Role.ADMIN &&
-          dbUser?.email &&
-          !isAdminEmail(dbUser.email)
-        ) {
-          role = Role.ATTENDEE;
-        }
-        token.role = role;
+        token.role = dbUser?.role ?? Role.ATTENDEE;
         token.email = dbUser?.email ?? user.email;
       }
       if (trigger === "update" && session) {
