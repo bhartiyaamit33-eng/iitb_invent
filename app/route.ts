@@ -14,9 +14,16 @@ import { formatIstRange } from "@/lib/editions";
 export async function GET() {
   const filePath = path.join(process.cwd(), "public", "index.html");
   let html = await readFile(filePath, "utf8");
-  const user = await getCurrentUser();
-
-  const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
+  const [user, edition] = await Promise.all([
+    getCurrentUser().catch((error) => {
+      console.error("[landing] auth unavailable; serving public page", error);
+      return null;
+    }),
+    prisma.edition.findFirst({ where: { isCurrent: true } }).catch((error) => {
+      console.error("[landing] database unavailable; serving public page", error);
+      return null;
+    }),
+  ]);
   if (edition && isLiveStatus(edition.status)) {
     const now = new Date();
     const [happening, upNext] = await Promise.all([
