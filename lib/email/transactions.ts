@@ -3,6 +3,7 @@ import {
   accountCreatedEmail,
   colloquiumApplicationCopyEmail,
   colloquiumOrganiserNotifyEmail,
+  colloquiumStatusUpdateEmail,
   connectionRequestEmail,
   magicLinkEmail,
   profileConfirmationEmail,
@@ -164,6 +165,31 @@ export async function sendColloquiumOrganiserNotify(opts: {
     html: tpl.html,
     text: tpl.text,
     action: "email.colloquium_application_notify",
+    entityType: "ColloquiumApplication",
+    entityId: opts.applicationId ?? null,
+  });
+}
+
+export async function sendColloquiumStatusUpdate(opts: {
+  to: string;
+  name: string;
+  statusLabel: string;
+  message: string;
+  includePayment: boolean;
+  amountLabel: string;
+  paymentUrl: string;
+  eventName: string;
+  userId?: string | null;
+  applicationId?: string;
+}) {
+  const tpl = colloquiumStatusUpdateEmail(opts);
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.colloquium_status_update",
+    actorId: opts.userId ?? null,
     entityType: "ColloquiumApplication",
     entityId: opts.applicationId ?? null,
   });

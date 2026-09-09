@@ -9,6 +9,7 @@ import {
   PROFESSIONAL_OPTIONS,
   needsAbstract,
   type ParticipationCategory,
+  type ProfessionalCategory,
 } from "@/lib/colloquium";
 
 const fieldClass =
@@ -30,10 +31,14 @@ export function ColloquiumForm({
   const [pending, setPending] = useState(false);
   const [participation, setParticipation] =
     useState<ParticipationCategory | "">("");
+  const [professional, setProfessional] = useState<
+    ProfessionalCategory | ""
+  >("");
   const abstractNeeded = useMemo(
     () => (participation ? needsAbstract(participation) : false),
     [participation],
   );
+  const showPhdYear = professional === "PHD_SCHOLAR";
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -165,6 +170,7 @@ export function ColloquiumForm({
                 value={opt.value}
                 required
                 className="mt-1"
+                onChange={() => setProfessional(opt.value)}
               />
               <span className="text-sm text-ink">
                 {opt.label}
@@ -181,20 +187,28 @@ export function ColloquiumForm({
         </div>
       </fieldset>
 
+      {showPhdYear ? (
       <fieldset data-testid="field-phd-year">
         <legend className="text-sm font-medium text-ink">
           Current PhD Year{" "}
-          <span className="font-normal text-mute">(if you are a PhD student)</span>
+          <span className="text-teal-deep">*</span>
         </legend>
         <div className="mt-2 space-y-1">
           {PHD_YEAR_OPTIONS.map((opt) => (
             <label key={opt.value} className={radioLabelClass}>
-              <input type="radio" name="phdYear" value={opt.value} className="mt-1" />
+              <input
+                type="radio"
+                name="phdYear"
+                value={opt.value}
+                required={showPhdYear}
+                className="mt-1"
+              />
               <span className="text-sm text-ink">{opt.label}</span>
             </label>
           ))}
         </div>
       </fieldset>
+      ) : null}
 
       <fieldset data-testid="field-postdoc">
         <legend className="text-sm font-medium text-ink">

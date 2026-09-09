@@ -8,6 +8,7 @@ import {
   isValidPhone,
   MAX_ABSTRACT_BYTES,
   needsAbstract,
+  needsPhdYear,
   parseParticipation,
   parsePhdYear,
   parsePostdoc,
@@ -17,6 +18,7 @@ import {
   postdocLabel,
   professionalLabel,
 } from "@/lib/colloquium";
+import { newColloquiumToken } from "@/lib/colloquium-server";
 import {
   sendColloquiumApplicationCopy,
   sendColloquiumOrganiserNotify,
@@ -73,7 +75,9 @@ export async function processColloquiumApplication(
   const institution = str(formData, "institution");
   const professional = parseProfessional(str(formData, "professionalCategory"));
   const professionalOther = str(formData, "professionalOther");
-  const phdYear = parsePhdYear(str(formData, "phdYear"));
+  const phdYear = needsPhdYear(professional ?? "OTHER")
+    ? parsePhdYear(str(formData, "phdYear"))
+    : null;
   const seekingPostdoc = parsePostdoc(str(formData, "seekingPostdoc"));
   const participation = parseParticipation(
     str(formData, "participationCategory"),
@@ -100,6 +104,9 @@ export async function processColloquiumApplication(
   }
   if (professional === "OTHER" && !professionalOther) {
     return { error: "Please describe your professional category." };
+  }
+  if (needsPhdYear(professional) && !phdYear) {
+    return { error: "Please choose your current PhD year." };
   }
   if (!participation) {
     return { error: "Please choose a participation category." };
@@ -167,6 +174,8 @@ export async function processColloquiumApplication(
       participationOther: participation === "OTHER" ? participationOther : null,
       paperTitle: paperTitle || null,
       sendCopy,
+      abstractViewToken: newColloquiumToken(),
+      paymentToken: newColloquiumToken(),
     },
     update: {
       userId: linkedUser?.id ?? null,

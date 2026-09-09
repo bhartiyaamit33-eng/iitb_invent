@@ -109,6 +109,14 @@ enum ApplicationStatus {
   WITHDRAWN
 }
 
+enum ApplicationPaymentStatus {
+  NOT_REQUIRED
+  UNPAID
+  REPORTED
+  PAID
+  WAIVED
+}
+
 // ─── Identity (edition-independent) ──────────────────────────────────────────
 
 model User {
@@ -492,11 +500,21 @@ model ColloquiumApplication {
   status    ApplicationStatus @default(RECEIVED)
   adminNotes String? @db.Text
 
+  /// Unguessable token so organisers can open/export the PDF without a session.
+  abstractViewToken String @unique
+
+  paymentStatus      ApplicationPaymentStatus @default(NOT_REQUIRED)
+  paymentAmountPaise Int                     @default(300000)
+  paymentToken       String                  @unique
+  paymentRef         String?
+  paidAt             DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([editionId, email])
   @@index([editionId, status])
+  @@index([paymentStatus])
   @@index([createdAt])
 }
 

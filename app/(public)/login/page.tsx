@@ -131,6 +131,7 @@ export default async function LoginPage({
             autoComplete="email"
             className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 text-ink outline-none focus:border-teal"
             placeholder="you@example.com"
+            data-testid="login-email"
           />
         </label>
         <label className="block">
@@ -141,11 +142,13 @@ export default async function LoginPage({
             required
             autoComplete="current-password"
             className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 text-ink outline-none focus:border-teal"
+            data-testid="login-password"
           />
         </label>
         <button
           type="submit"
           className="w-full rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-teal"
+          data-testid="login-submit"
         >
           Sign in
         </button>

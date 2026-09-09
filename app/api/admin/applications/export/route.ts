@@ -6,10 +6,12 @@ import { writeAuditLog } from "@/lib/admin/audit";
 import {
   applicationStatusLabel,
   participationLabel,
+  paymentStatusLabel,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
 } from "@/lib/colloquium";
+import { abstractPdfPublicUrl, colloquiumPaymentUrl } from "@/lib/colloquium-server";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +34,11 @@ export async function GET() {
   const header = [
     "submittedAt",
     "status",
+    "paymentStatus",
+    "paymentAmountInr",
+    "paymentRef",
+    "paidAt",
+    "paymentPageUrl",
     "name",
     "email",
     "phone",
@@ -42,6 +49,7 @@ export async function GET() {
     "participation",
     "paperTitle",
     "abstractFileName",
+    "abstractPdfUrl",
     "sendCopy",
     "adminNotes",
   ];
@@ -49,6 +57,11 @@ export async function GET() {
     [
       a.createdAt.toISOString(),
       applicationStatusLabel(a.status),
+      paymentStatusLabel(a.paymentStatus),
+      (a.paymentAmountPaise / 100).toFixed(0),
+      a.paymentRef ?? "",
+      a.paidAt ? a.paidAt.toISOString() : "",
+      colloquiumPaymentUrl(a.paymentToken),
       a.name,
       a.email,
       a.phone,
@@ -59,6 +72,7 @@ export async function GET() {
       participationLabel(a.participationCategory, a.participationOther),
       a.paperTitle ?? "",
       a.abstractFileName ?? "",
+      a.abstractStorageKey ? abstractPdfPublicUrl(a.abstractViewToken) : "",
       a.sendCopy ? "yes" : "no",
       a.adminNotes ?? "",
     ]

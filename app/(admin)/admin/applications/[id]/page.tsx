@@ -2,14 +2,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import {
-  APPLICATION_STATUS_OPTIONS,
+  DEFAULT_COLLOQUIUM_FEE_PAISE,
   applicationStatusLabel,
+  needsPhdYear,
   participationLabel,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
 } from "@/lib/colloquium";
-import { updateApplicationStatusAction } from "../actions";
+import { colloquiumPaymentUrl } from "@/lib/colloquium-server";
+import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
+import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +36,10 @@ export default async function AdminApplicationDetailPage({
   });
   if (!application) notFound();
 
+  const pdfUrl = application.abstractViewToken
+    ? `/api/colloquium/abstract/${application.abstractViewToken}`
+    : null;
+
   const rows: [string, string][] = [
     ["Edition", `${application.edition.name} (${application.edition.year})`],
     ["Name", application.name],
@@ -46,7 +53,9 @@ export default async function AdminApplicationDetailPage({
         application.professionalOther,
       ),
     ],
-    ["PhD year", phdYearLabel(application.phdYear)],
+    ...(needsPhdYear(application.professionalCategory)
+      ? ([["PhD year", phdYearLabel(application.phdYear)]] as [string, string][])
+      : []),
     ["Seeking post-doc", postdocLabel(application.seekingPostdoc)],
     [
       "Participation",
@@ -92,56 +101,66 @@ export default async function AdminApplicationDetailPage({
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-mute">
           Extended abstract
         </p>
-        {application.abstractStorageKey ? (
-          <a
-            href={`/api/admin/applications/${application.id}/abstract`}
-            className="mt-2 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-          >
-            Download {application.abstractFileName || "PDF"}
-          </a>
+        {pdfUrl ? (
+          <>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
+                data-testid="view-pdf"
+              >
+                View PDF
+              </a>
+              <a
+                href={`${pdfUrl}?download=1`}
+                className="rounded-md border border-line px-4 py-2 text-sm font-semibold text-teal-deep"
+              >
+                Download {application.abstractFileName || "PDF"}
+              </a>
+            </div>
+            <iframe
+              title="Extended abstract"
+              src={pdfUrl}
+              className="mt-4 h-[70vh] w-full rounded-md border border-line bg-paper"
+              data-testid="abstract-preview"
+            />
+          </>
         ) : (
           <p className="mt-2 text-sm text-ink-soft">No abstract uploaded.</p>
         )}
       </div>
 
-      <form
-        action={updateApplicationStatusAction}
-        className="mt-6 space-y-3 rounded-xl border border-line bg-white p-5"
-      >
-        <input type="hidden" name="id" value={application.id} />
+      <div className="mt-4">
+        <ApplicationPaymentPanel
+          id={application.id}
+          paymentStatus={application.paymentStatus}
+          paymentAmountPaise={
+            application.paymentAmountPaise || DEFAULT_COLLOQUIUM_FEE_PAISE
+          }
+          paymentUrl={colloquiumPaymentUrl(application.paymentToken)}
+          paymentRef={application.paymentRef}
+          paidAt={application.paidAt ? istDate(application.paidAt) : null}
+        />
+      </div>
+
+      <div className="mt-6 rounded-xl border border-line bg-white p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-mute">
           Review
         </h2>
-        <label className="block text-sm">
-          <span className="text-ink">Status</span>
-          <select
-            name="status"
-            defaultValue={application.status}
-            className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-          >
-            {APPLICATION_STATUS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-sm">
-          <span className="text-ink">Admin notes</span>
-          <textarea
-            name="adminNotes"
-            defaultValue={application.adminNotes ?? ""}
-            rows={4}
-            className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
+        <div className="mt-3">
+          <ApplicationReviewDialog
+            id={application.id}
+            name={application.name}
+            currentStatus={application.status}
+            adminNotes={application.adminNotes ?? ""}
+            feePaise={
+              application.paymentAmountPaise || DEFAULT_COLLOQUIUM_FEE_PAISE
+            }
           />
-        </label>
-        <button
-          type="submit"
-          className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
-        >
-          Save review
-        </button>
-      </form>
+        </div>
+      </div>
     </main>
   );
 }

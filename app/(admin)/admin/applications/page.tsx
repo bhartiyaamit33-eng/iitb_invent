@@ -3,11 +3,13 @@ import type { ApplicationStatus, ParticipationCategory } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   APPLICATION_STATUS_OPTIONS,
+  DEFAULT_COLLOQUIUM_FEE_PAISE,
   PARTICIPATION_OPTIONS,
   participationLabel,
+  paymentStatusLabel,
   professionalLabel,
 } from "@/lib/colloquium";
-import { updateApplicationStatusAction } from "./actions";
+import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,13 @@ function istDate(d: Date): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function paymentBadgeClass(status: string): string {
+  if (status === "PAID" || status === "WAIVED") return "text-teal-deep";
+  if (status === "REPORTED") return "text-amber-800";
+  if (status === "UNPAID") return "text-red-700";
+  return "text-mute";
 }
 
 export default async function AdminApplicationsPage({
@@ -133,7 +142,8 @@ export default async function AdminApplicationsPage({
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Institution</th>
               <th className="px-4 py-3">Participation</th>
-              <th className="px-4 py-3">Title</th>
+              <th className="px-4 py-3">Abstract</th>
+              <th className="px-4 py-3">Payment</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Submitted</th>
             </tr>
@@ -141,7 +151,7 @@ export default async function AdminApplicationsPage({
           <tbody>
             {applications.length === 0 ? (
               <tr>
-                <td className="px-4 py-8 text-ink-soft" colSpan={6}>
+                <td className="px-4 py-8 text-ink-soft" colSpan={7}>
                   No applications yet.
                 </td>
               </tr>
@@ -172,34 +182,36 @@ export default async function AdminApplicationsPage({
                       a.participationCategory,
                       a.participationOther,
                     )}
-                  </td>
-                  <td className="px-4 py-3 text-ink-soft">
-                    {a.paperTitle ?? "—"}
-                    {a.abstractFileName ? (
-                      <p className="text-xs text-mute">{a.abstractFileName}</p>
+                    {a.paperTitle ? (
+                      <p className="text-xs text-mute">{a.paperTitle}</p>
                     ) : null}
                   </td>
                   <td className="px-4 py-3">
-                    <form action={updateApplicationStatusAction} className="flex flex-col gap-1">
-                      <input type="hidden" name="id" value={a.id} />
-                      <select
-                        name="status"
-                        defaultValue={a.status}
-                        className="rounded border border-line px-2 py-1 text-xs"
+                    {a.abstractStorageKey ? (
+                      <a
+                        href={`/api/colloquium/abstract/${a.abstractViewToken}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+                        data-testid={`view-pdf-${a.id}`}
                       >
-                        {APPLICATION_STATUS_OPTIONS.map((o) => (
-                          <option key={o.value} value={o.value}>
-                            {o.label}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="submit"
-                        className="text-left text-xs font-semibold text-teal-deep hover:underline"
-                      >
-                        Save
-                      </button>
-                    </form>
+                        View PDF
+                      </a>
+                    ) : (
+                      <span className="text-xs text-mute">No PDF</span>
+                    )}
+                  </td>
+                  <td className={`px-4 py-3 text-xs font-semibold ${paymentBadgeClass(a.paymentStatus)}`}>
+                    {paymentStatusLabel(a.paymentStatus)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <ApplicationReviewDialog
+                      id={a.id}
+                      name={a.name}
+                      currentStatus={a.status}
+                      feePaise={a.paymentAmountPaise || DEFAULT_COLLOQUIUM_FEE_PAISE}
+                      compact
+                    />
                   </td>
                   <td className="px-4 py-3 text-xs text-mute">{istDate(a.createdAt)}</td>
                 </tr>

@@ -247,3 +247,41 @@ ${opts.adminUrl}
 `;
   return { subject, html, text };
 }
+
+export function colloquiumStatusUpdateEmail(opts: {
+  name: string;
+  statusLabel: string;
+  message: string;
+  includePayment: boolean;
+  amountLabel: string;
+  paymentUrl: string;
+  eventName: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `Application update — ${opts.eventName}`;
+  const paymentHtml = opts.includePayment
+    ? `<p>Registration fee: <strong>${escapeHtml(opts.amountLabel)}</strong>.</p>
+       <p>Pay using this personal link (UPI details are on the page):</p>
+       <p style="padding:16px 0;"><a href="${escapeHtml(opts.paymentUrl)}" style="background:#1a6b6b;color:#fff;padding:12px 18px;text-decoration:none;border-radius:3px;">Pay ${escapeHtml(opts.amountLabel)}</a></p>
+       <p style="font-size:13px;color:#8aaeb4;">${escapeHtml(opts.paymentUrl)}</p>`
+    : "";
+  const html = layout(
+    opts.statusLabel,
+    `<p>Hi ${escapeHtml(opts.name)},</p>
+     <p>${escapeHtml(opts.message).replace(/\n/g, "<br/>")}</p>
+     <p>Current status: <strong>${escapeHtml(opts.statusLabel)}</strong>.</p>
+     ${paymentHtml}
+     <p>Questions: support@iitbinvent.com</p>`,
+  );
+  const paymentText = opts.includePayment
+    ? `\nRegistration fee: ${opts.amountLabel}\nPay here: ${opts.paymentUrl}\n`
+    : "";
+  const text = `Hi ${opts.name},
+
+${opts.message}
+
+Current status: ${opts.statusLabel}
+${paymentText}
+Questions: support@iitbinvent.com
+— INVENT · DSSE, IIT Bombay`;
+  return { subject, html, text };
+}

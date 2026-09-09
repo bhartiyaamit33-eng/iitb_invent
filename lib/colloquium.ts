@@ -1,4 +1,5 @@
 import type {
+  ApplicationPaymentStatus,
   ApplicationStatus,
   ParticipationCategory,
   PhdYear,
@@ -7,6 +8,7 @@ import type {
 } from "@prisma/client";
 
 export type {
+  ApplicationPaymentStatus,
   ApplicationStatus,
   ParticipationCategory,
   PhdYear,
@@ -68,6 +70,19 @@ export const APPLICATION_STATUS_OPTIONS: {
   { value: "REJECTED", label: "Not selected" },
   { value: "WITHDRAWN", label: "Withdrawn" },
 ];
+
+export const PAYMENT_STATUS_OPTIONS: {
+  value: ApplicationPaymentStatus;
+  label: string;
+}[] = [
+  { value: "NOT_REQUIRED", label: "Not required" },
+  { value: "UNPAID", label: "Unpaid" },
+  { value: "REPORTED", label: "Reported — confirm" },
+  { value: "PAID", label: "Paid" },
+  { value: "WAIVED", label: "Waived" },
+];
+
+export const DEFAULT_COLLOQUIUM_FEE_PAISE = 300_000;
 
 export function professionalLabel(
   value: ProfessionalCategory,
@@ -155,6 +170,65 @@ export function parseApplicationStatus(
   return APP_STATUS.has(raw as ApplicationStatus)
     ? (raw as ApplicationStatus)
     : null;
+}
+
+const APP_PAYMENT = new Set<ApplicationPaymentStatus>(
+  PAYMENT_STATUS_OPTIONS.map((o) => o.value),
+);
+
+export function parsePaymentStatus(
+  raw: string,
+): ApplicationPaymentStatus | null {
+  return APP_PAYMENT.has(raw as ApplicationPaymentStatus)
+    ? (raw as ApplicationPaymentStatus)
+    : null;
+}
+
+export function paymentStatusLabel(
+  value: ApplicationPaymentStatus,
+): string {
+  return PAYMENT_STATUS_OPTIONS.find((o) => o.value === value)?.label ?? value;
+}
+
+/** PhD year only applies to current PhD scholars. */
+export function needsPhdYear(cat: ProfessionalCategory): boolean {
+  return cat === "PHD_SCHOLAR";
+}
+
+/** Selected to attend / present — they owe the registration fee. */
+export function statusRequiresPayment(status: ApplicationStatus): boolean {
+  return (
+    status === "SHORTLISTED_PAPER" ||
+    status === "SHORTLISTED_POSTER" ||
+    status === "ATTENDEE"
+  );
+}
+
+export function formatInrFromPaise(paise: number): string {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(paise / 100);
+}
+
+export function defaultStatusEmailMessage(status: ApplicationStatus): string {
+  switch (status) {
+    case "SHORTLISTED_PAPER":
+      return "Congratulations — you have been shortlisted to present a paper at the Entrepreneurship Research Colloquium during Inv.ent 2027 at IIT Bombay.";
+    case "SHORTLISTED_POSTER":
+      return "Congratulations — you have been shortlisted for a poster presentation at the Entrepreneurship Research Colloquium during Inv.ent 2027 at IIT Bombay.";
+    case "ATTENDEE":
+      return "You are confirmed as an attendee at the Entrepreneurship Research Colloquium during Inv.ent 2027 at IIT Bombay.";
+    case "WAITLISTED":
+      return "Thank you for applying. You are on the waitlist for the Entrepreneurship Research Colloquium. We will write again if a place opens.";
+    case "REJECTED":
+      return "Thank you for applying to the Entrepreneurship Research Colloquium. We are unable to offer a place this year, and we hope to see you at Inv.ent.";
+    case "WITHDRAWN":
+      return "Your colloquium application has been marked as withdrawn. Write to support@iitbinvent.com if this is unexpected.";
+    default:
+      return "We have updated the status of your application for the Entrepreneurship Research Colloquium at Inv.ent 2027.";
+  }
 }
 
 export function isValidEmail(email: string): boolean {
