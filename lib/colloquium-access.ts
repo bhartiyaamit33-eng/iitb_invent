@@ -57,14 +57,18 @@ export async function notifyUser(opts: {
   body: string;
   href?: string | null;
 }): Promise<void> {
-  await prisma.userNotification.create({
-    data: {
-      userId: opts.userId,
-      title: opts.title,
-      body: opts.body,
-      href: opts.href ?? null,
-    },
-  });
+  try {
+    await prisma.userNotification.create({
+      data: {
+        userId: opts.userId,
+        title: opts.title,
+        body: opts.body,
+        href: opts.href ?? null,
+      },
+    });
+  } catch (err) {
+    console.error("[colloquium] notify", err);
+  }
 }
 
 /** Link guest applications to this account and surface a pay notice if one is due. */
@@ -72,34 +76,38 @@ export async function attachColloquiumToUser(user: {
   id: string;
   email: string;
 }): Promise<void> {
-  const email = user.email.trim().toLowerCase();
-  await prisma.colloquiumApplication.updateMany({
-    where: { email },
-    data: { userId: user.id },
-  });
+  try {
+    const email = user.email.trim().toLowerCase();
+    await prisma.colloquiumApplication.updateMany({
+      where: { email },
+      data: { userId: user.id },
+    });
 
-  const due = await prisma.colloquiumApplication.findMany({
-    where: {
-      email,
-      paymentStatus: "UNPAID",
-      status: {
-        in: ["SHORTLISTED_PAPER", "SHORTLISTED_POSTER", "ATTENDEE"],
+    const due = await prisma.colloquiumApplication.findMany({
+      where: {
+        email,
+        paymentStatus: "UNPAID",
+        status: {
+          in: ["SHORTLISTED_PAPER", "SHORTLISTED_POSTER", "ATTENDEE"],
+        },
       },
-    },
-  });
+    });
 
-  for (const app of due) {
-    const href = colloquiumPayPath(app.paymentToken, true);
-    const existing = await prisma.userNotification.findFirst({
-      where: { userId: user.id, href },
-    });
-    if (existing) continue;
-    await notifyUser({
-      userId: user.id,
-      title: "Pay your colloquium registration fee",
-      body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open PayU from this notice — you do not need to apply again.`,
-      href,
-    });
+    for (const app of due) {
+      const href = colloquiumPayPath(app.paymentToken, true);
+      const existing = await prisma.userNotification.findFirst({
+        where: { userId: user.id, href },
+      });
+      if (existing) continue;
+      await notifyUser({
+        userId: user.id,
+        title: "Pay your colloquium registration fee",
+        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open PayU from this notice — you do not need to apply again.`,
+        href,
+      });
+    }
+  } catch (err) {
+    console.error("[colloquium] attach", err);
   }
 }
 

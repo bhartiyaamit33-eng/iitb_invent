@@ -35,7 +35,7 @@ export default async function DashboardPage({
   });
   const notices = await prisma.userNotification.findMany({
     where: { userId: user.id },
-    orderBy: [{ readAt: "asc" }, { createdAt: "desc" }],
+    orderBy: [{ createdAt: "desc" }],
     take: 8,
   });
 
