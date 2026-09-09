@@ -38,6 +38,9 @@ export default async function DashboardLayout({
             <Link href="/programme" className="text-ink-soft hover:text-teal-deep">
               Programme
             </Link>
+            <Link href="/colloquium" className="text-ink-soft hover:text-teal-deep">
+              Apply
+            </Link>
             {isAdminEmail(user.email) ? (
               <Link href="/admin" className="text-ink-soft hover:text-teal-deep">
                 Admin

@@ -7,6 +7,7 @@ export default async function AdminOverviewPage() {
   const [
     users,
     registrations,
+    applications,
     sessions,
     speakers,
     pages,
@@ -16,6 +17,7 @@ export default async function AdminOverviewPage() {
   ] = await Promise.all([
     prisma.user.count({ where: { deletedAt: null } }),
     prisma.registration.count(),
+    prisma.colloquiumApplication.count(),
     prisma.session_.count({ where: { deletedAt: null } }),
     prisma.speaker.count({ where: { deletedAt: null } }),
     prisma.page.count(),
@@ -27,6 +29,7 @@ export default async function AdminOverviewPage() {
   const cards = [
     { label: "Users", value: users, href: "/admin/users" },
     { label: "Registrations", value: registrations, href: "/admin/users" },
+    { label: "Applications", value: applications, href: "/admin/applications" },
     { label: "Sessions", value: sessions, href: "/admin/sessions" },
     { label: "Speakers", value: speakers, href: "/admin/speakers" },
     { label: "Pages", value: pages, href: "/admin/pages" },
@@ -45,8 +48,8 @@ export default async function AdminOverviewPage() {
       <p className="mt-3 max-w-2xl text-ink-soft">
         Current edition:{" "}
         <strong className="text-ink">{edition?.name ?? "—"}</strong>. Edit the
-        DSSE Day programme mock, speakers, site copy, and every registered user
-        from the nav above.
+        DSSE Day programme mock, speakers, site copy, colloquium applications,
+        and every registered user from the nav above.
       </p>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

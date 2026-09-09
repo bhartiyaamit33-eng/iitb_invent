@@ -70,6 +70,45 @@ enum VentureKind {
   IDEA
 }
 
+enum ProfessionalCategory {
+  PHD_SCHOLAR
+  POSTDOC
+  PROFESSOR
+  INDUSTRY
+  OTHER
+}
+
+enum PhdYear {
+  YEARS_1_3
+  YEARS_4_5
+  YEAR_6_PLUS
+  THESIS_SUBMITTED
+}
+
+enum PostdocSeeking {
+  YES
+  NO
+  MAYBE
+}
+
+enum ParticipationCategory {
+  PAPER_ONLY
+  PAPER_OR_POSTER
+  POSTER_ONLY
+  ATTENDEE
+  OTHER
+}
+
+enum ApplicationStatus {
+  RECEIVED
+  SHORTLISTED_PAPER
+  SHORTLISTED_POSTER
+  ATTENDEE
+  WAITLISTED
+  REJECTED
+  WITHDRAWN
+}
+
 // ─── Identity (edition-independent) ──────────────────────────────────────────
 
 model User {
@@ -92,6 +131,7 @@ model User {
   ventures      Venture[]
   connectionRequestsFrom ConnectionRequest[] @relation("ConnectionFrom")
   connectionRequestsTo   ConnectionRequest[] @relation("ConnectionTo")
+  colloquiumApplications ColloquiumApplication[]
 }
 
 model Profile {
@@ -170,6 +210,7 @@ model Edition {
   stats         EditionStat[]
   notifySignups NotifySignup[]
   ventures      Venture[]
+  colloquiumApplications ColloquiumApplication[]
 }
 
 /// IIT Bombay startups / projects / ideas — public directory listings.
@@ -421,6 +462,44 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+/// Call for applications — research colloquium paper/poster/attendee.
+model ColloquiumApplication {
+  id        String @id @default(cuid())
+  editionId String
+  edition   Edition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  email       String
+  name        String
+  phone       String
+  institution String
+
+  professionalCategory ProfessionalCategory
+  professionalOther    String?
+  phdYear              PhdYear?
+  seekingPostdoc       PostdocSeeking?
+
+  participationCategory ParticipationCategory
+  participationOther   String?
+  paperTitle           String?
+
+  abstractFileName    String?
+  abstractStorage     String?
+  abstractStorageKey  String?
+
+  sendCopy Boolean @default(false)
+  status    ApplicationStatus @default(RECEIVED)
+  adminNotes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([editionId, email])
+  @@index([editionId, status])
+  @@index([createdAt])
+}
+
 // ─── LATER (schema room only — do not build in v1) ────────────────────────────
 // model Ticket {
 //   id               String   @id @default(cuid())
@@ -430,19 +509,6 @@ model VerificationToken {
 //   currency         String   @default("INR")
 //   razorpayOrderId  String?
 //   deletedAt        DateTime?
-// }
-//
-// model Submission {
-//   id           String   @id @default(cuid())
-//   editionId    String
-//   userId       String
-//   track        String
-//   title        String
-//   abstract     String   @db.Text
-//   fileUrl      String?
-//   status       String
-//   createdAt    DateTime @default(now())
-//   deletedAt    DateTime?
 // }
 //
 // model Review {

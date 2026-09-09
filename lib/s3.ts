@@ -1,4 +1,5 @@
 import {
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -128,4 +129,45 @@ export async function uploadVentureLogo(opts: {
   );
 
   return { key, url: publicObjectUrl(key) };
+}
+
+export async function uploadAbstractPdf(opts: {
+  applicationId: string;
+  bytes: Buffer;
+  fileName: string;
+}): Promise<{ key: string }> {
+  if (!bucket) throw new Error("S3_BUCKET is not configured");
+  if (opts.bytes.length > 10 * 1024 * 1024) {
+    throw new Error("PDF must be under 10 MB");
+  }
+  const safeName = opts.fileName.replace(/["\r\n]/g, "");
+  const key = `${prefix}abstracts/${opts.applicationId}-${Date.now()}.pdf`;
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: opts.bytes,
+      ContentType: "application/pdf",
+      ContentDisposition: `attachment; filename="${safeName}"`,
+      CacheControl: "private, max-age=0, no-store",
+    }),
+  );
+  return { key };
+}
+
+export async function getAbstractPdfObject(
+  key: string,
+): Promise<{ bytes: Buffer; contentType: string }> {
+  if (!bucket) throw new Error("S3_BUCKET is not configured");
+  const out = await client.send(
+    new GetObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
+  const bytes = Buffer.from(await out.Body!.transformToByteArray());
+  return {
+    bytes,
+    contentType: out.ContentType || "application/pdf",
+  };
 }

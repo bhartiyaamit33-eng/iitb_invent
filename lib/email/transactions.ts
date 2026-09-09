@@ -1,6 +1,8 @@
 import { sendEmail } from "@/lib/email/ses";
 import {
   accountCreatedEmail,
+  colloquiumApplicationCopyEmail,
+  colloquiumOrganiserNotifyEmail,
   connectionRequestEmail,
   magicLinkEmail,
   profileConfirmationEmail,
@@ -112,5 +114,57 @@ export async function sendConnectionRequest(opts: {
     actorId: opts.actorId ?? null,
     entityType: "ConnectionRequest",
     entityId: opts.requestId ?? null,
+  });
+}
+
+export async function sendColloquiumApplicationCopy(opts: {
+  to: string;
+  name: string;
+  email: string;
+  phone: string;
+  institution: string;
+  professional: string;
+  phdYear: string;
+  seekingPostdoc: string;
+  participation: string;
+  paperTitle: string;
+  abstractFileName: string;
+  eventName: string;
+  userId?: string | null;
+  applicationId?: string;
+}) {
+  const tpl = colloquiumApplicationCopyEmail(opts);
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.colloquium_application_copy",
+    actorId: opts.userId ?? null,
+    entityType: "ColloquiumApplication",
+    entityId: opts.applicationId ?? null,
+  });
+}
+
+export async function sendColloquiumOrganiserNotify(opts: {
+  to: string;
+  name: string;
+  email: string;
+  institution: string;
+  participation: string;
+  paperTitle: string;
+  eventName: string;
+  adminUrl: string;
+  applicationId?: string;
+}) {
+  const tpl = colloquiumOrganiserNotifyEmail(opts);
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.colloquium_application_notify",
+    entityType: "ColloquiumApplication",
+    entityId: opts.applicationId ?? null,
   });
 }

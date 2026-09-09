@@ -75,6 +75,10 @@ export default async function ProgrammePage() {
           Dashboard
         </Link>
         {" · "}
+        <Link href="/colloquium" className="underline-offset-2 hover:underline">
+          Call for papers
+        </Link>
+        {" · "}
         <Link
           href={`/${edition.slug}/attendees`}
           className="underline-offset-2 hover:underline"

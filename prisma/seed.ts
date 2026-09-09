@@ -347,6 +347,7 @@ async function main() {
   console.log(`  • Admin: ${admin.email}`);
 
   await prisma.notifySignup.deleteMany();
+  await prisma.colloquiumApplication.deleteMany();
   await prisma.editionStat.deleteMany();
   await prisma.faq.deleteMany();
   await prisma.page.deleteMany();
@@ -477,6 +478,13 @@ async function main() {
         question: "How do I register?",
         answer: "Create an account via Login → Sign up. Completing your profile is optional but helps other attendees find you.",
         sortOrder: 2,
+        isPublished: true,
+      },
+      {
+        editionId: edition2027.id,
+        question: "How do I apply for the research colloquium?",
+        answer: "Use the on-site form at /colloquium. Paper and poster applicants upload an extended abstract (PDF, 10 MB). Organisers review submissions in the admin CMS. Selected domestic presenters may receive TA and twin-sharing accommodation. Attendee fee is ₹3,000.",
+        sortOrder: 3,
         isPublished: true,
       },
     ],

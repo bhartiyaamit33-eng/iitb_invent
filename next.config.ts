@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Smaller runtime footprint for t3.micro EC2 deploys.
   output: "standalone",
+  experimental: {
+    // Extended abstracts are PDFs up to 10 MB.
+    serverActions: {
+      bodySizeLimit: "12mb",
+    },
+  },
 };
 
 export default withReticle(nextConfig);

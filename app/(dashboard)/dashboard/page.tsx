@@ -6,6 +6,7 @@ import { TicketQr } from "@/components/TicketQr";
 import { formatIstRange } from "@/lib/editions";
 import { getNextForUser, isLiveStatus } from "@/lib/live";
 import { ticketBadgeUrl } from "@/lib/ticket";
+import { applicationStatusLabel, participationLabel } from "@/lib/colloquium";
 
 type SearchParams = Promise<{ welcome?: string }>;
 
@@ -22,6 +23,13 @@ export default async function DashboardPage({
   const registration = await prisma.registration.findFirst({
     where: { userId: user.id, edition: { isCurrent: true } },
     include: { edition: true },
+  });
+  const application = await prisma.colloquiumApplication.findFirst({
+    where: {
+      OR: [{ userId: user.id }, { email: user.email }],
+      edition: { isCurrent: true },
+    },
+    orderBy: { createdAt: "desc" },
   });
 
   const completeness = profile?.completeness ?? 0;
@@ -131,6 +139,44 @@ export default async function DashboardPage({
               Attendee directory →
             </Link>
           ) : null}
+        </div>
+        <div className="rounded-xl border border-line bg-white p-5 sm:col-span-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
+            Research colloquium
+          </p>
+          {application ? (
+            <>
+              <p className="mt-2 text-lg font-semibold text-ink">
+                {applicationStatusLabel(application.status)}
+              </p>
+              <p className="mt-1 text-sm text-ink-soft">
+                {participationLabel(
+                  application.participationCategory,
+                  application.participationOther,
+                )}
+                {application.paperTitle ? ` · ${application.paperTitle}` : ""}
+              </p>
+              <Link
+                href="/colloquium"
+                className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+              >
+                Update application →
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="mt-2 text-sm text-ink-soft">
+                Paper, poster, or attendee applications for the Entrepreneurship
+                Research Colloquium.
+              </p>
+              <Link
+                href="/colloquium"
+                className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+              >
+                Apply now →
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
