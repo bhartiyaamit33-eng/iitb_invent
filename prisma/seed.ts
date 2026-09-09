@@ -482,8 +482,8 @@ async function main() {
       },
       {
         editionId: edition2027.id,
-        question: "How do I apply for the research colloquium?",
-        answer: "Use the on-site form at /colloquium. Paper and poster applicants upload an extended abstract (PDF, 10 MB). Organisers review submissions in the admin CMS. Selected domestic presenters may receive TA and twin-sharing accommodation. Attendee fee is ₹3,000.",
+        question: "How do I apply for the conference?",
+        answer: "Use the on-site form at /colloquium. Paper and poster applicants upload an extended abstract (PDF, 10 MB). Organisers review submissions before offering presentation places. Limited shared accommodation may be available on a first-come, first-served basis. The registration fee is ₹3,000.",
         sortOrder: 3,
         isPublished: true,
       },

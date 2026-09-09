@@ -25,7 +25,7 @@ export default async function ColloquiumPayPage({
   return (
     <main className="mx-auto max-w-xl px-6 py-12">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        {application.edition.name} · Research Colloquium
+        {application.edition.name} · Conference
       </p>
       <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
         Registration payment
@@ -47,7 +47,7 @@ export default async function ColloquiumPayPage({
         <a href="mailto:support@iitbinvent.com">support@iitbinvent.com</a>
         {" · "}
         <Link href="/colloquium" className="underline-offset-2 hover:underline">
-          Call for applications
+          Conference applications
         </Link>
       </p>
     </main>

@@ -215,19 +215,19 @@ export function formatInrFromPaise(paise: number): string {
 export function defaultStatusEmailMessage(status: ApplicationStatus): string {
   switch (status) {
     case "SHORTLISTED_PAPER":
-      return "Congratulations — you have been shortlisted to present a paper at the Entrepreneurship Research Colloquium during Inv.ent 2027 at IIT Bombay.";
+      return "Congratulations — you have been shortlisted to present a paper at the Inv.ent 2027 Entrepreneurship Research & Practice Conference at IIT Bombay.";
     case "SHORTLISTED_POSTER":
-      return "Congratulations — you have been shortlisted for a poster presentation at the Entrepreneurship Research Colloquium during Inv.ent 2027 at IIT Bombay.";
+      return "Congratulations — you have been shortlisted for a poster presentation at the Inv.ent 2027 Entrepreneurship Research & Practice Conference at IIT Bombay.";
     case "ATTENDEE":
-      return "You are confirmed as an attendee at the Entrepreneurship Research Colloquium during Inv.ent 2027 at IIT Bombay.";
+      return "You are confirmed as an attendee at the Inv.ent 2027 Entrepreneurship Research & Practice Conference at IIT Bombay.";
     case "WAITLISTED":
-      return "Thank you for applying. You are on the waitlist for the Entrepreneurship Research Colloquium. We will write again if a place opens.";
+      return "Thank you for applying. You are on the waitlist for the Inv.ent 2027 conference. We will write again if a place opens.";
     case "REJECTED":
-      return "Thank you for applying to the Entrepreneurship Research Colloquium. We are unable to offer a place this year, and we hope to see you at Inv.ent.";
+      return "Thank you for applying to the Inv.ent 2027 conference. We are unable to offer a place this year, and we hope to see you at a future edition.";
     case "WITHDRAWN":
-      return "Your colloquium application has been marked as withdrawn. Write to support@iitbinvent.com if this is unexpected.";
+      return "Your conference application has been marked as withdrawn. Write to support@iitbinvent.com if this is unexpected.";
     default:
-      return "We have updated the status of your application for the Entrepreneurship Research Colloquium at Inv.ent 2027.";
+      return "We have updated the status of your application for the Inv.ent 2027 conference.";
   }
 }
 

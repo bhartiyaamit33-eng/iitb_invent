@@ -11,9 +11,10 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Inv.ent · DSSE Day · 31 Jan 2027 · IIT Bombay",
+  title:
+    "Inv.ent 2027 · Entrepreneurship Research & Practice Conference · IIT Bombay",
   description:
-    "Inv.ent is Innovation and Entrepreneurship at DSSE, IIT Bombay. Where entrepreneurship research meets venture practice. 31 January, annually.",
+    "Where rigorous entrepreneurship research meets venture practice. 30–31 January 2027 at IIT Bombay.",
 };
 
 export default function RootLayout({

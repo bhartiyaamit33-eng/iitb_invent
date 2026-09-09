@@ -79,7 +79,7 @@ export default async function AdminApplicationsPage({
   return (
     <main className="px-6 py-10">
       <h1 className="font-display text-4xl tracking-wide text-teal-deep">
-        Colloquium applications
+        Conference applications
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
         Call for papers / posters / attendees for{" "}

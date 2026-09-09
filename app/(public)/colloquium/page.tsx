@@ -6,9 +6,9 @@ import { ColloquiumForm } from "./ColloquiumForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Research Colloquium · Call for applications · Inv.ent 2027",
+  title: "Research submissions · Inv.ent 2027 Conference",
   description:
-    "Apply to present a paper or poster at the Entrepreneurship Research Colloquium during Inv.ent, DSSE Day at IIT Bombay. 30–31 January 2027.",
+    "Apply to present a paper or poster at the Inv.ent 2027 Entrepreneurship Research & Practice Conference at IIT Bombay.",
 };
 
 export default async function ColloquiumPage() {
@@ -20,10 +20,10 @@ export default async function ColloquiumPage() {
         Inv.ent · DSSE · IIT Bombay
       </p>
       <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-        Call for applications
+        Call for papers &amp; posters
       </h1>
       <p className="mt-2 text-lg text-ink-soft">
-        Entrepreneurship Research Colloquium 2027
+        Inv.ent 2027 · Entrepreneurship Research &amp; Practice Conference
       </p>
       <p className="mt-2 text-sm text-mute">
         <Link href="/" className="underline-offset-2 hover:underline">
@@ -44,7 +44,7 @@ export default async function ColloquiumPage() {
           Event
         </p>
         <h2 className="mt-2 font-display text-3xl tracking-wide text-teal-deep">
-          Innovation &amp; Entrepreneurship
+          Ideas studied. Ideas built.
         </h2>
         <p className="mt-1 text-sm font-medium text-ink">
           Where entrepreneurship research meets venture practice
@@ -67,24 +67,16 @@ export default async function ColloquiumPage() {
           <div className="sm:col-span-2">
             <dt className="text-xs uppercase tracking-[0.12em] text-mute">Host</dt>
             <dd className="mt-1 text-ink">
-              Desai Sethi School of Entrepreneurship — IIT Bombay. Part of the
-              DSSE Annual Day Symposium.
+              Desai Sethi School of Entrepreneurship, IIT Bombay
             </dd>
           </div>
         </dl>
         <p className="mt-5 text-sm leading-relaxed text-ink-soft">
-          Inv.ent is the annual foundation-day gathering of the Desai Sethi
-          School of Entrepreneurship at IIT Bombay. It exists so ideas do not
-          die in labs: students, faculty, founders, investors, and operators
-          share one campus day — then stay connected through the year.
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-          On 31 January 2014, IIT Bombay’s Board of Governors approved what
-          became DSSE. That anniversary is DSSE Day. Inv.ent is how the school
-          opens its doors publicly: speaker sessions, poster presentations,
-          venture pitches, and the conversations that turn prototypes into
-          companies. Editions stack year after year. The day is the spark; the
-          platform is the continuity.
+          Inv.ent brings entrepreneurship researchers, educators, founders,
+          investors and ecosystem builders together to connect rigorous inquiry
+          with venture practice. The programme includes research presentations,
+          workshops, startup pitches, networking and an IIT Bombay ecosystem
+          experience.
         </p>
       </section>
 
@@ -93,10 +85,9 @@ export default async function ColloquiumPage() {
           Ignite your research
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-          The Entrepreneurship Research Colloquium is the premier stage at IIT
-          Bombay for advanced PhD scholars and early-career researchers to gain
-          high-impact visibility. This is more than a presentation — it is a
-          launchpad.
+          PhD scholars, faculty, post-doctoral researchers and industry
+          researchers are invited to submit entrepreneurship research for
+          consideration as a paper or poster presentation.
         </p>
         <ul className="mt-4 space-y-3 text-sm text-ink-soft">
           <li>
@@ -105,21 +96,21 @@ export default async function ColloquiumPage() {
           </li>
           <li>
             <strong className="text-ink">Elevate your profile.</strong> Present
-            to a panel of eminent experts and senior researchers for feedback and
-            networking.
+            to experienced researchers and practitioners for feedback and
+            valuable new connections.
           </li>
           <li>
             <strong className="text-ink">Connect &amp; collaborate.</strong> Join a
-            select cohort of 10 research presenters and contribute to the future of
-            entrepreneurship research.
+            multidisciplinary community advancing entrepreneurship research,
+            education and practice.
           </li>
         </ul>
         <div className="mt-6 grid gap-3 text-sm sm:grid-cols-2">
           <div className="rounded-lg border border-line bg-white px-4 py-3">
             <p className="text-xs uppercase tracking-[0.12em] text-mute">Focus</p>
             <p className="mt-1 text-ink">
-              Advanced-stage PhD scholars (4th/5th year), post-docs, and
-              early-career professors.
+              PhD scholars, post-docs, faculty and industry researchers working
+              on entrepreneurship.
             </p>
           </div>
           <div className="rounded-lg border border-line bg-white px-4 py-3">
@@ -127,17 +118,15 @@ export default async function ColloquiumPage() {
               Support
             </p>
             <p className="mt-1 text-ink">
-              TA for domestic travel and twin-sharing accommodation for selected
-              paper and poster presenters, first-come, first-served.
+              Limited shared accommodation may be available on a first-come,
+              first-served basis. Final terms will be confirmed separately.
             </p>
           </div>
         </div>
         <p className="mt-4 text-sm leading-relaxed text-ink-soft">
-          Complimentary travel and accommodation for domestic participants is
-          limited to paper presenters and poster participants. There is a
-          nominal registration fee of ₹3,000 for those who wish to attend DSSE
-          Day and the Research Colloquium. Payment details are shared after
-          this application is received.
+          A ₹3,000 registration fee applies to confirmed paper presenters,
+          poster presenters and attendees. Payment details are shared after the
+          application decision.
         </p>
       </section>
 

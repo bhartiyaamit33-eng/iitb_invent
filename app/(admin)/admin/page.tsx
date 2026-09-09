@@ -48,7 +48,7 @@ export default async function AdminOverviewPage() {
       <p className="mt-3 max-w-2xl text-ink-soft">
         Current edition:{" "}
         <strong className="text-ink">{edition?.name ?? "—"}</strong>. Edit the
-        DSSE Day programme mock, speakers, site copy, colloquium applications,
+        conference programme, speakers, site copy, conference applications,
         and every registered user from the nav above.
       </p>
 

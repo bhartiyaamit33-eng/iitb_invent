@@ -226,7 +226,7 @@ export async function processColloquiumApplication(
     where: { id: application.id },
   });
 
-  const eventName = `${edition.name} · Research Colloquium`;
+  const eventName = `${edition.name} · Entrepreneurship Research & Practice Conference`;
   const payload = {
     name: saved.name,
     email: application.email,

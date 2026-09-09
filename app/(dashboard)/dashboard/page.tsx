@@ -142,7 +142,7 @@ export default async function DashboardPage({
         </div>
         <div className="rounded-xl border border-line bg-white p-5 sm:col-span-2">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
-            Research colloquium
+            Conference application
           </p>
           {application ? (
             <>
@@ -166,8 +166,8 @@ export default async function DashboardPage({
           ) : (
             <>
               <p className="mt-2 text-sm text-ink-soft">
-                Paper, poster, or attendee applications for the Entrepreneurship
-                Research Colloquium.
+                Paper, poster, or attendee applications for the Inv.ent 2027
+                conference.
               </p>
               <Link
                 href="/colloquium"

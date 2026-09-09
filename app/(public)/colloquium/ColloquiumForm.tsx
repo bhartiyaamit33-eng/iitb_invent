@@ -265,7 +265,7 @@ export function ColloquiumForm({
 
       <label className="block">
         <span className="text-sm font-medium text-ink">
-          Proposed Title of the Paper
+          Proposed title of the paper or poster
           {abstractNeeded ? <span className="text-teal-deep"> *</span> : null}
         </span>
         <input

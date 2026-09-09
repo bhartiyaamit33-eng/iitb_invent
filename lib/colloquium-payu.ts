@@ -14,7 +14,7 @@ import {
 } from "@/lib/payu";
 
 export const COLLOQUIUM_PAYU_PRODUCT =
-  "Inv.ent Research Colloquium registration";
+  "Inv.ent 2027 conference registration";
 
 export type PayUCheckout = {
   action: string;

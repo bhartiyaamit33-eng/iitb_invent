@@ -85,7 +85,7 @@ export async function reviewColloquiumApplication(opts: {
     includePayment: selected && nextPayment === "UNPAID",
     amountLabel: formatInrFromPaise(after.paymentAmountPaise),
     paymentUrl: paymentUrl ?? "",
-    eventName: "Inv.ent 2027 · Research Colloquium",
+    eventName: "Inv.ent 2027 · Entrepreneurship Research & Practice Conference",
     userId: after.userId,
     applicationId: after.id,
   });

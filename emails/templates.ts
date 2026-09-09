@@ -204,13 +204,13 @@ export function colloquiumApplicationCopyEmail(opts: {
   const html = layout(
     "Application received",
     `<p>Hi ${escapeHtml(opts.name)},</p>
-     <p>We received your application for the Entrepreneurship Research Colloquium at <strong>${escapeHtml(opts.eventName)}</strong>. Organisers will review submissions and write to this email.</p>
+     <p>We received your application for <strong>${escapeHtml(opts.eventName)}</strong>. Organisers will review submissions and write to this email.</p>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">${htmlRows}</table>
      <p>Questions: support@iitbinvent.com</p>`,
   );
   const text = `Hi ${opts.name},
 
-We received your application for the Entrepreneurship Research Colloquium at ${opts.eventName}.
+We received your application for ${opts.eventName}.
 
 ${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}
 
@@ -228,9 +228,9 @@ export function colloquiumOrganiserNotifyEmail(opts: {
   eventName: string;
   adminUrl: string;
 }): { subject: string; html: string; text: string } {
-  const subject = `New colloquium application — ${opts.name}`;
+  const subject = `New conference application — ${opts.name}`;
   const html = layout(
-    "New colloquium application",
+    "New conference application",
     `<p><strong>${escapeHtml(opts.name)}</strong> (${escapeHtml(opts.email)}) applied from ${escapeHtml(opts.institution)}.</p>
      <p>Participation: ${escapeHtml(opts.participation)}</p>
      <p>Title: ${escapeHtml(opts.paperTitle || "—")}</p>

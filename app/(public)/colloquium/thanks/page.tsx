@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Application received · Research Colloquium",
+  title: "Application received · Inv.ent 2027 Conference",
 };
 
 export default function ColloquiumThanksPage() {
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Research Colloquium
+        Inv.ent 2027 Conference
       </p>
       <h1
         className="mt-2 font-display text-4xl tracking-wide text-teal-deep"
