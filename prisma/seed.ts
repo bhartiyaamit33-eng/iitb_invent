@@ -313,6 +313,31 @@ async function seedProgrammeForEdition(
 }
 
 async function main() {
+  const databaseUrl = process.env.DATABASE_URL ?? "";
+  let hostname = "";
+  try {
+    hostname = new URL(databaseUrl).hostname;
+  } catch {
+    throw new Error("Refusing to seed: DATABASE_URL is missing or invalid.");
+  }
+
+  const localDatabase = ["localhost", "127.0.0.1", "::1"].includes(hostname);
+  if (
+    process.env.NODE_ENV === "production" ||
+    !localDatabase ||
+    process.env.ALLOW_DESTRUCTIVE_SEED !== "RESET_LOCAL_DATA"
+  ) {
+    throw new Error(
+      [
+        "REFUSING DESTRUCTIVE SEED.",
+        "This command deletes applications, registrations, and edition data.",
+        "It is permanently disabled in production.",
+        "For an intentional local reset only, use:",
+        "ALLOW_DESTRUCTIVE_SEED=RESET_LOCAL_DATA npm run db:seed",
+      ].join("\n"),
+    );
+  }
+
   console.log("Seeding INVENT platform…");
 
   const seedPlain = process.env.ADMIN_SEED_PASSWORD?.trim();

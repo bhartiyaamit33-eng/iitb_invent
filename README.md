@@ -72,8 +72,8 @@ Useful stubs: `/programme` · `/login` · `/dashboard` · `/admin` (admin requir
 | `npm run prepare:standalone` | Re-copy assets into `.next/standalone` (idempotent) |
 | `npm run start` | Serve production build |
 | `npm run db:migrate` | `prisma migrate dev` |
-| `npm run db:deploy` | `prisma migrate deploy` (EC2 / CI) |
-| `npm run db:seed` | Seed editions + admin (`passwordHash` bcrypt; optional `ADMIN_SEED_PASSWORD`) |
+| `npm run db:deploy` | Reject destructive pending SQL, then run `prisma migrate deploy` |
+| `ALLOW_DESTRUCTIVE_SEED=RESET_LOCAL_DATA npm run db:seed` | Reset local development data only; permanently refused in production |
 | `npm run db:studio` | Prisma Studio |
 | `npm run cf:dev` / `cf:deploy` | Legacy Cloudflare (optional) |
 
@@ -105,15 +105,15 @@ Secrets live in `/opt/invent/.env` on the server only (gitignored).
 ```bash
 ssh -i ~/.ssh/first_time.pem ec2-user@15.206.84.172
 cd /opt/invent
-sudo systemctl stop invent   # do not overwrite .next while next start is running
 git pull origin main
-npm ci
-npx prisma migrate deploy
-# Do not seed production — seed deletes editions/applications.
-rm -rf .next
-npm run build   # includes prepare-standalone (public/assets + .next/static)
-sudo systemctl start invent
+bash scripts/deploy-ec2-safe.sh
 ```
+
+The deployment script creates a timestamped PostgreSQL dump in
+`~/invent-backups` before stopping the app. It then runs the migration safety
+check, which refuses pending SQL containing `DELETE`, `TRUNCATE`, data
+`UPDATE`, or `DROP` statements. Never run `prisma db seed` in production; the
+seed also has a production and explicit-confirmation guard.
 
 Do **not** run `cp -r public .next/standalone/public` after build — that nests `public/public` and breaks `/assets/*`. Use `npm run prepare:standalone` (or the post-build step above).
 
