@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { processPayUCallback } from "@/lib/colloquium-payu";
 import { siteOrigin } from "@/lib/ticket";
 
@@ -35,6 +36,9 @@ export async function POST(req: Request) {
   }
   try {
     const result = await processPayUCallback(formToRecord(form));
+    if (result.outcome === "success" && result.paymentToken) {
+      revalidatePath("/admin/applications");
+    }
     return payRedirect(result.paymentToken, result.outcome);
   } catch (err) {
     console.error("[payu callback]", err);

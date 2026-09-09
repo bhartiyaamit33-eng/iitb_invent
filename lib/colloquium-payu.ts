@@ -1,4 +1,3 @@
-import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { siteOrigin } from "@/lib/ticket";
 import {
@@ -156,8 +155,6 @@ export async function processPayUCallback(
           paidAt: new Date(),
         },
       });
-      revalidatePath("/admin/applications");
-      revalidatePath(`/admin/applications/${application.id}`);
     }
     return { outcome: "success", paymentToken: token };
   }
