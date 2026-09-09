@@ -260,7 +260,7 @@ export function colloquiumStatusUpdateEmail(opts: {
   const subject = `Application update — ${opts.eventName}`;
   const paymentHtml = opts.includePayment
     ? `<p>Registration fee: <strong>${escapeHtml(opts.amountLabel)}</strong>.</p>
-       <p>Pay using this personal link (UPI details are on the page):</p>
+       <p>Pay through the IIT Bombay PayU gateway using this personal link:</p>
        <p style="padding:16px 0;"><a href="${escapeHtml(opts.paymentUrl)}" style="background:#1a6b6b;color:#fff;padding:12px 18px;text-decoration:none;border-radius:3px;">Pay ${escapeHtml(opts.amountLabel)}</a></p>
        <p style="font-size:13px;color:#8aaeb4;">${escapeHtml(opts.paymentUrl)}</p>`
     : "";
@@ -273,7 +273,7 @@ export function colloquiumStatusUpdateEmail(opts: {
      <p>Questions: support@iitbinvent.com</p>`,
   );
   const paymentText = opts.includePayment
-    ? `\nRegistration fee: ${opts.amountLabel}\nPay here: ${opts.paymentUrl}\n`
+    ? `\nRegistration fee: ${opts.amountLabel}\nPay via IIT Bombay PayU: ${opts.paymentUrl}\n`
     : "";
   const text = `Hi ${opts.name},
 

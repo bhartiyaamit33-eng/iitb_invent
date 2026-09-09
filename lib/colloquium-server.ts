@@ -23,10 +23,3 @@ export function colloquiumFeePaise(): number {
     : DEFAULT_COLLOQUIUM_FEE_PAISE;
 }
 
-export function colloquiumUpiId(): string {
-  return (process.env.COLLOQUIUM_UPI_ID || "").trim();
-}
-
-export function colloquiumUpiName(): string {
-  return (process.env.COLLOQUIUM_UPI_NAME || "DSSE IIT Bombay").trim();
-}

@@ -72,6 +72,10 @@ export function ApplicationPaymentPanel({
       {paidAt ? (
         <p className="mt-1 text-xs text-mute">Recorded {paidAt}</p>
       ) : null}
+      <p className="mt-2 text-xs text-ink-soft">
+        Applicants pay via the IIT Bombay PayU gateway. Mark paid only for an
+        offline receipt or while merchant approval is still pending.
+      </p>
       <p className="mt-2 break-all text-xs">
         <a
           href={paymentUrl}

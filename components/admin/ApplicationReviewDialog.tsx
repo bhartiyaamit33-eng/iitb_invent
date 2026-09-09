@@ -184,7 +184,7 @@ export function ApplicationReviewDialog({
             </p>
             {selected ? (
               <p className="mt-2 rounded-md bg-paper px-3 py-2 text-sm text-ink">
-                They will receive a payment link for {amount}.
+                They will receive a PayU (IIT Bombay) payment link for {amount}.
               </p>
             ) : null}
             <label className="mt-4 block text-sm">
