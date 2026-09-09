@@ -17,10 +17,10 @@
     :root {
       --midnight: #07111F;
       --navy: #0B1E36;
-      --blue: #2E8FFF;
-      --cyan: #35C8FF;
-      --lime: #C8FF3D;
-      --white: #F5F7FA;
+      --blue: #4D9CFF;
+      --cyan: #6EC6F0;
+      --lime: #9FE561;      /* spring lime: the spark, buttons, links. Softer than neon so it rests on the eye. */
+      --white: #EEF2F7;
       --soft: #A7B0C3;
       --mute: #6E7A8C;
       --line: rgba(245, 247, 250, 0.1);
@@ -50,13 +50,45 @@
       margin: -4.5px 0 0 -4.5px;
       border-radius: 50%;
       background: var(--lime);
-      box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.3), 0 0 18px rgba(200, 255, 61, 0.65);
+      box-shadow: 0 0 0 1px rgba(159, 229, 97, 0.3), 0 0 18px rgba(159, 229, 97, 0.65);
       pointer-events: none;
       z-index: 40;
       opacity: 0;
+      scale: var(--s, 1);
+      transition: scale 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
       will-change: transform, opacity;
     }
     .spark.is-live { opacity: 1; }
+    /* Breathing halo around the live dot. */
+    .spark::after {
+      content: "";
+      position: absolute;
+      inset: -7px;
+      border-radius: 50%;
+      border: 1px solid rgba(159, 229, 97, 0.45);
+      animation: halo 2.6s ease-out infinite;
+    }
+    /* Two lagging ghosts give the dot a short comet tail while it moves. */
+    .spark-ghost {
+      position: fixed;
+      top: 0; left: 0;
+      width: 6px; height: 6px;
+      margin: -3px 0 0 -3px;
+      border-radius: 50%;
+      background: rgba(159, 229, 97, 0.5);
+      pointer-events: none;
+      z-index: 39;
+      opacity: 0;
+      transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s ease;
+      will-change: transform;
+    }
+    .spark-ghost.g2 {
+      width: 4px; height: 4px;
+      margin: -2px 0 0 -2px;
+      background: rgba(159, 229, 97, 0.28);
+      transition-duration: 0.42s, 0.4s;
+    }
+    .spark-ghost.is-live { opacity: 1; }
     /* Its track: a faint dashed orbit line, with the travelled portion lit up to the dot's position. */
     .spark-svg {
       position: absolute;
@@ -68,18 +100,41 @@
     }
     .spark-svg .track {
       fill: none;
-      stroke: rgba(200, 255, 61, 0.1);
+      stroke: rgba(159, 229, 97, 0.1);
       stroke-width: 1;
       stroke-dasharray: 3 9;
       stroke-linecap: round;
     }
     .spark-svg .lit {
       fill: none;
-      stroke: rgba(200, 255, 61, 0.42);
+      stroke: rgba(159, 229, 97, 0.42);
       stroke-width: 1;
       stroke-dasharray: 3 9;
       stroke-linecap: round;
     }
+    /* Stations: one hollow node per section stop; it fills as the dot passes and rings out once. */
+    .spark-svg .station {
+      fill: var(--midnight);
+      stroke: rgba(159, 229, 97, 0.32);
+      stroke-width: 1;
+      transition: fill 0.45s ease, stroke 0.45s ease;
+    }
+    .spark-svg .station.lit {
+      fill: rgba(159, 229, 97, 0.85);
+      stroke: rgba(159, 229, 97, 0.55);
+    }
+    .spark-svg .ring {
+      fill: none;
+      stroke: rgba(159, 229, 97, 0.5);
+      stroke-width: 1;
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .spark-svg .ring.pop { animation: ringPop 1.2s ease-out both; }
+    /* The section label warms up once the dot has reached its heading. */
+    .section-kicker { transition: color 0.6s ease; }
+    .section-kicker.is-lit { color: var(--lime); }
 
     /* ---------- HERO ---------- */
     .hero {
@@ -143,7 +198,7 @@
     }
     .hero-orbits ellipse {
       fill: none;
-      stroke: rgba(200, 255, 61, 0.16);
+      stroke: rgba(159, 229, 97, 0.16);
       stroke-width: 0.7;
       stroke-dasharray: 6 10;
     }
@@ -224,7 +279,7 @@
       background: var(--lime);
       color: var(--midnight);
       font-weight: 700;
-      box-shadow: 0 8px 22px rgba(200, 255, 61, 0.18);
+      box-shadow: 0 8px 22px rgba(159, 229, 97, 0.18);
     }
     .hero-nav a.nav-login:hover {
       background: #d8ff6a;
@@ -299,9 +354,11 @@
       max-width: 100%;
     }
     .brand-word {
-      margin: 0;
+      --wm: clamp(64px, min(13vw, 20vh), 224px); /* wordmark size; everything in the lockup keys off it */
+      /* Pull left by the I/E side bearing (~0.057em) so the ink, not the box, sits on the column edge. */
+      margin: 0 0 0 calc(var(--wm) * -0.057);
       display: flex;
-      align-items: flex-end;
+      align-items: flex-start;
       gap: 0;
       font-family: var(--font-sans);
       font-weight: 800;
@@ -315,7 +372,7 @@
     }
     .brand-half .word {
       display: block;
-      font-size: clamp(64px, min(13vw, 20vh), 224px);
+      font-size: var(--wm);
       font-weight: 800;
       letter-spacing: -0.045em;
       line-height: 0.86;
@@ -325,31 +382,31 @@
     .ent-col { opacity: 0; animation: fadeIn 1s 1.4s ease both; }
     .ent-col .word {
       color: var(--blue);
-      background: linear-gradient(118deg, #5FD4FF 0%, var(--blue) 46%, #1F6EE6 100%);
+      background: linear-gradient(118deg, #8CCBFF 0%, var(--blue) 48%, #3A7EE0 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       padding-right: 0.04em; /* keeps the clipped T from being shaved by the tight tracking */
     }
-    .fullform {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin: 0.55em 0 0;
-      padding-right: 0.24em; /* offsets trailing letter-spacing so the last letter ends flush */
-      font-size: clamp(10px, 1.3vw, 15px);
+    /* Each word's meaning sits directly under it: INV = Innovation, ENT = Entrepreneurship. */
+    .brand-half .meaning {
+      display: block;
+      margin-top: 0.7em;
+      padding-left: calc(var(--wm) * 0.057 - 0.07em); /* start on the word's ink edge, not its box edge */
+      font-size: clamp(10px, 1.2vw, 14px);
       font-weight: 600;
-      letter-spacing: 0.24em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
+      white-space: nowrap;
       color: var(--soft);
       opacity: 0;
       animation: fadeIn 1s 1.7s ease both;
     }
-    .fullform .amp { color: var(--lime); font-weight: 500; }
+    .ent-col .meaning { color: #9CC4F2; }
     .brand-dot {
       position: relative;
       z-index: 2;
-      font-size: clamp(64px, min(13vw, 20vh), 224px);
+      font-size: var(--wm);
       height: 0.86em;
       display: flex;
       align-items: flex-end;
@@ -361,7 +418,7 @@
       height: 0.12em;
       border-radius: 50%;
       background: var(--lime);
-      box-shadow: 0 0 22px rgba(200, 255, 61, 0.55);
+      box-shadow: 0 0 20px rgba(159, 229, 97, 0.45);
       transform: scale(0);
       animation:
         sparkBirth 2.2s cubic-bezier(0.22, 1, 0.36, 1) both,
@@ -402,7 +459,7 @@
       margin: 0 12px;
       border-radius: 50%;
       background: var(--lime);
-      box-shadow: 0 0 8px rgba(200, 255, 61, 0.55);
+      box-shadow: 0 0 8px rgba(159, 229, 97, 0.55);
     }
 
     .hero-bottom {
@@ -469,7 +526,7 @@
       background:
         radial-gradient(ellipse 52% 48% at 22% 42%, rgba(46, 143, 255, 0.26) 0%, rgba(46, 143, 255, 0) 100%),
         radial-gradient(ellipse 40% 36% at 78% 78%, rgba(53, 200, 255, 0.12) 0%, rgba(53, 200, 255, 0) 100%),
-        radial-gradient(ellipse 22% 20% at 14% 46%, rgba(200, 255, 61, 0.09) 0%, rgba(200, 255, 61, 0) 100%),
+        radial-gradient(ellipse 22% 20% at 14% 46%, rgba(159, 229, 97, 0.09) 0%, rgba(159, 229, 97, 0) 100%),
         linear-gradient(180deg, #0B1E36 0%, #08162A 55%, var(--midnight) 100%);
     }
     .hero[data-hero="plain"] .hero-grid {
@@ -481,7 +538,7 @@
       mask-image: radial-gradient(ellipse at 40% 50%, #000 20%, transparent 80%);
       -webkit-mask-image: radial-gradient(ellipse at 40% 50%, #000 20%, transparent 80%);
     }
-    .hero[data-hero="plain"] .hero-orbits ellipse { stroke: rgba(200, 255, 61, 0.24); }
+    .hero[data-hero="plain"] .hero-orbits ellipse { stroke: rgba(159, 229, 97, 0.24); }
     .hero[data-hero="plain"] .hero-orbits .orbit-b { stroke: rgba(53, 200, 255, 0.2); }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -497,12 +554,20 @@
       100% { transform: scale(1); opacity: 1; }
     }
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 22px rgba(200, 255, 61, 0.55); }
-      50% { box-shadow: 0 0 34px rgba(200, 255, 61, 0.85); }
+      0%, 100% { box-shadow: 0 0 20px rgba(159, 229, 97, 0.42); }
+      50% { box-shadow: 0 0 30px rgba(159, 229, 97, 0.66); }
     }
     @keyframes bob {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(7px); }
+    }
+    @keyframes halo {
+      0% { transform: scale(0.55); opacity: 0.9; }
+      100% { transform: scale(2.1); opacity: 0; }
+    }
+    @keyframes ringPop {
+      0% { transform: scale(0.3); opacity: 0.8; }
+      100% { transform: scale(2.8); opacity: 0; }
     }
     @keyframes heroDrift {
       from { transform: scale(1.06) translate(0, 0); }
@@ -734,7 +799,7 @@
       background: #d8ff6a;
       border-color: #d8ff6a;
       transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(200, 255, 61, 0.22);
+      box-shadow: 0 12px 28px rgba(159, 229, 97, 0.22);
     }
     .btn.ghost {
       background: transparent;
@@ -799,8 +864,8 @@
       .hero-title-block { padding: 8px 0 20px; }
       .coming { font-size: clamp(26px, 7.4vw, 34px); }
       .owner { font-size: clamp(32px, 10vw, 46px); white-space: normal; }
-      .brand-half .word, .brand-dot { font-size: clamp(60px, 19vw, 84px); }
-      .fullform { font-size: 9px; letter-spacing: 0.16em; padding-right: 0.16em; }
+      .brand-word { --wm: clamp(60px, 19vw, 84px); }
+      .brand-half .meaning { font-size: 9px; letter-spacing: 0.16em; }
       .hero-tagline { margin-top: 18px; max-width: 30ch; }
       .journey { margin-top: 16px; gap: 6px 0; }
       .journey li { font-size: 10px; letter-spacing: 0.14em; }
@@ -825,26 +890,28 @@
       .btn { padding: 13px 18px; font-size: 12px; }
       .mail { font-size: clamp(20px, 6.6vw, 28px); word-break: break-all; }
       footer { flex-direction: column; gap: 8px; padding-bottom: 48px; }
-      .spark, .spark-svg { display: none !important; }
+      .spark, .spark-ghost, .spark-svg { display: none !important; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .band span, .scroll-hint, .hero-photo, .hero-grid, .hero-orbits, .hero-top,
-      .coming, .owner, .inv-col, .ent-col, .fullform, .hero-tagline, .journey, .hero-bottom,
+      .coming, .owner, .inv-col, .ent-col, .brand-half .meaning, .hero-tagline, .journey, .hero-bottom,
       .brand-dot i, .hero-orbits .orbit-a, .hero-orbits .orbit-b, #hero-canvas, .hero-noise { animation: none !important; }
       .hero-photo { opacity: 0.68; transform: none; }
-      .hero-grid, .hero-orbits, .hero-top, .coming, .owner, .inv-col, .ent-col, .fullform,
+      .hero-grid, .hero-orbits, .hero-top, .coming, .owner, .inv-col, .ent-col, .brand-half .meaning,
       .hero-tagline, .journey, .hero-bottom, #hero-canvas { opacity: 1; }
       .hero-noise { opacity: 0.045; }
       .brand-dot i { transform: scale(1); }
       .band span { padding-left: 0; }
       html { scroll-behavior: auto; }
-      .spark { display: none; }
+      .spark, .spark-ghost { display: none; }
     }
   </style>
 </head>
 <body>
   <div class="spark" id="spark" aria-hidden="true"></div>
+  <div class="spark-ghost g1" id="spark-g1" aria-hidden="true"></div>
+  <div class="spark-ghost g2" id="spark-g2" aria-hidden="true"></div>
   <svg class="spark-svg" id="spark-svg" aria-hidden="true"></svg>
 
   <header class="hero" id="top" data-testid="hero">
@@ -884,11 +951,10 @@
         <p class="owner">IIT Bombay</p>
         <div class="brand-lockup">
           <h1 class="brand-word" aria-label="INV.ENT: Innovation and Entrepreneurship" data-testid="brand-mark">
-            <span class="brand-half inv-col"><span class="word">INV</span></span>
+            <span class="brand-half inv-col"><span class="word">INV</span><span class="meaning">Innovation</span></span>
             <span class="brand-dot" data-spark-node aria-hidden="true"><i></i></span>
-            <span class="brand-half ent-col"><span class="word">ENT</span></span>
+            <span class="brand-half ent-col"><span class="word">ENT</span><span class="meaning">Entrepreneurship</span></span>
           </h1>
-          <p class="fullform" aria-hidden="true"><span>Innovation</span><span class="amp">&amp;</span><span>Entrepreneurship</span></p>
         </div>
         <p class="hero-tagline">Where entrepreneurship research meets venture practice</p>
         <ol class="journey" aria-label="The INV.ENT journey" data-testid="journey">
@@ -1097,11 +1163,14 @@
       var spark = document.getElementById("spark");
       var svg = document.getElementById("spark-svg");
       if (!spark || !svg) return;
+      var ghosts = [document.getElementById("spark-g1"), document.getElementById("spark-g2")].filter(Boolean);
 
       var pathEl = null;   /* invisible geometry path: measured for the dot position */
       var trackEl = null;  /* faint full-length dashed track */
       var litEl = null;    /* the travelled portion, revealed through a mask */
       var maskPath = null;
+      var stationsG = null;
+      var stations = [];   /* { len, circle, ring, kicker } per stop after the hero */
       var nodes = [];
       var NS = "http://www.w3.org/2000/svg";
       function pointOf(el) {
@@ -1156,6 +1225,9 @@
           litEl.setAttribute("class", "lit");
           litEl.setAttribute("mask", "url(#spark-mask)");
           svg.appendChild(litEl);
+
+          stationsG = document.createElementNS(NS, "g");
+          svg.appendChild(stationsG);
         }
         pathEl.setAttribute("d", d);
         trackEl.setAttribute("d", d);
@@ -1166,6 +1238,48 @@
         maskEl.setAttribute("y", "0");
         maskEl.setAttribute("width", String(window.innerWidth));
         maskEl.setAttribute("height", String(h));
+        buildStations(pts);
+      }
+
+      /* Path y is monotonic, so the length at which it reaches a stop can be bisected. */
+      function lengthAtY(y, total) {
+        var lo = 0, hi = total;
+        for (var i = 0; i < 24; i++) {
+          var mid = (lo + hi) / 2;
+          if (pathEl.getPointAtLength(mid).y < y) lo = mid; else hi = mid;
+        }
+        return (lo + hi) / 2;
+      }
+      function buildStations(pts) {
+        while (stationsG.firstChild) stationsG.removeChild(stationsG.firstChild);
+        stations = [];
+        var total = pathEl.getTotalLength();
+        for (var i = 1; i < pts.length; i++) {
+          var ring = document.createElementNS(NS, "circle");
+          ring.setAttribute("class", "ring");
+          ring.setAttribute("cx", pts[i].x); ring.setAttribute("cy", pts[i].y); ring.setAttribute("r", "9");
+          var c = document.createElementNS(NS, "circle");
+          c.setAttribute("class", "station");
+          c.setAttribute("cx", pts[i].x); c.setAttribute("cy", pts[i].y); c.setAttribute("r", "3.5");
+          stationsG.appendChild(ring); stationsG.appendChild(c);
+          var sec = nodes[i].closest("section");
+          stations.push({
+            len: lengthAtY(pts[i].y, total) - 3,
+            circle: c, ring: ring, lit: false,
+            kicker: sec ? sec.querySelector(".section-kicker") : null
+          });
+        }
+      }
+      function updateStations(along) {
+        for (var i = 0; i < stations.length; i++) {
+          var st = stations[i];
+          var reached = along >= st.len;
+          if (reached === st.lit) continue;
+          st.lit = reached;
+          st.circle.classList.toggle("lit", reached);
+          st.ring.classList.toggle("pop", reached);
+          if (st.kicker) st.kicker.classList.toggle("is-lit", reached);
+        }
       }
 
       var introMs = 2600;
@@ -1179,14 +1293,31 @@
         var intro = Math.min(1, (Date.now() - introAt) / introMs);
         if (t < 0.02 || intro < 1) {
           spark.classList.remove("is-live");
+          ghosts.forEach(function (g) { g.classList.remove("is-live"); });
           if (maskPath) maskPath.setAttribute("stroke-dasharray", "0 1000");
+          updateStations(0);
           return;
         }
         spark.classList.add("is-live");
         if (maskPath) maskPath.setAttribute("stroke-dasharray", (t * 1000).toFixed(1) + " 1000");
-        var p = pathEl.getPointAtLength(t * len);
-        spark.style.transform = "translate(" + (p.x - window.scrollX) + "px," + (p.y - window.scrollY) + "px)";
+        var along = t * len;
+        var p = pathEl.getPointAtLength(along);
+        var tr = "translate(" + (p.x - window.scrollX) + "px," + (p.y - window.scrollY) + "px)";
+        spark.style.transform = tr;
+        ghosts.forEach(function (g) { g.style.transform = tr; g.classList.add("is-live"); });
+        updateStations(along);
+
+        /* Grows with scroll speed, settles back when the page rests. */
+        var now = performance.now();
+        var dy = Math.abs(window.scrollY - lastY);
+        var dt = Math.max(8, now - lastT);
+        lastY = window.scrollY; lastT = now;
+        var s = 1 + Math.min(0.9, (dy / dt) * 0.28);
+        spark.style.setProperty("--s", s.toFixed(2));
+        clearTimeout(settle);
+        settle = setTimeout(function () { spark.style.setProperty("--s", "1"); }, 140);
       }
+      var lastY = window.scrollY, lastT = performance.now(), settle = 0;
 
       var built = false;
       window.addEventListener("scroll", function () {
@@ -1291,7 +1422,7 @@
         for (var k = 0; k < nodes.length; k++) {
           var p = nodes[k];
           ctx.beginPath();
-          ctx.fillStyle = p.lime ? "rgba(200, 255, 61, 0.85)" : "rgba(53, 200, 255, 0.55)";
+          ctx.fillStyle = p.lime ? "rgba(159, 229, 97, 0.85)" : "rgba(53, 200, 255, 0.55)";
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
           ctx.fill();
         }

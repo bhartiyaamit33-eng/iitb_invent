@@ -54,14 +54,14 @@ export async function GET() {
             .join("");
 
     const strip = `
-<div id="live-strip" style="position:relative;z-index:70;background:#07111F;color:#F5F7FA;padding:14px 18px;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(200,255,61,0.22)">
+<div id="live-strip" style="position:relative;z-index:70;background:#07111F;color:#EEF2F7;padding:14px 18px;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(159,229,97,0.22)">
   <div style="max-width:1220px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start">
     <div>
-      <p style="margin:0 0 6px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#C8FF3D">Happening now · ${escapeHtml(clock)} IST</p>
+      <p style="margin:0 0 6px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9FE561">Happening now · ${escapeHtml(clock)} IST</p>
       ${happeningHtml}
       ${upNextHtml}
     </div>
-    <p style="margin:0"><a href="/now" style="color:#C8FF3D;font-weight:600">Lobby screen</a> · <a href="/programme" style="color:#F5F7FA">Programme</a></p>
+    <p style="margin:0"><a href="/now" style="color:#9FE561;font-weight:600">Lobby screen</a> · <a href="/programme" style="color:#EEF2F7">Programme</a></p>
   </div>
 </div>`;
     html = html.replace("<body>", `<body>${strip}`);
