@@ -57,14 +57,28 @@
       will-change: transform, opacity;
     }
     .spark.is-live { opacity: 1; }
+    /* Its track: a faint dashed orbit line, with the travelled portion lit up to the dot's position. */
     .spark-svg {
       position: absolute;
       top: 0; left: 0;
       width: 100%;
       pointer-events: none;
-      z-index: -1;
+      z-index: 0;
       overflow: visible;
-      visibility: hidden;
+    }
+    .spark-svg .track {
+      fill: none;
+      stroke: rgba(200, 255, 61, 0.1);
+      stroke-width: 1;
+      stroke-dasharray: 3 9;
+      stroke-linecap: round;
+    }
+    .spark-svg .lit {
+      fill: none;
+      stroke: rgba(200, 255, 61, 0.42);
+      stroke-width: 1;
+      stroke-dasharray: 3 9;
+      stroke-linecap: round;
     }
 
     /* ---------- HERO ---------- */
@@ -160,7 +174,7 @@
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
       gap: 16px;
-      padding: 22px clamp(18px, 3vw, 36px);
+      padding: 22px clamp(18px, 3.4vw, 64px);
       opacity: 0;
       animation: fadeIn 1s 0.25s ease both;
     }
@@ -181,7 +195,7 @@
     }
     .logo-dsse:hover { transform: scale(1.04); }
     .logo-dsse img {
-      height: clamp(72px, 11vw, 112px);
+      height: clamp(72px, min(11vw, 12vh), 112px);
       width: auto;
       filter: brightness(0) invert(1) drop-shadow(0 8px 18px rgba(0, 8, 20, 0.45));
     }
@@ -240,39 +254,36 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: clamp(8px, 1.5vw, 20px) clamp(18px, 4vw, 48px) clamp(28px, 4vw, 44px);
+      padding: clamp(8px, 1.5vw, 20px) clamp(18px, 4.6vw, 88px) clamp(28px, 4vw, 44px);
       min-height: 0;
     }
+    /* The title block takes the free height and centres in it, so large screens do not bunch it under the nav. */
     .hero-title-block {
-      margin-top: clamp(12px, 4vh, 48px);
-      max-width: min(1040px, 100%);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: clamp(12px, 3vh, 40px) 0 clamp(24px, 4vh, 56px);
+      max-width: min(1240px, 100%);
     }
     .coming {
       margin: 0 0 6px;
       font-family: var(--font-serif);
       font-style: italic;
       font-weight: 400;
-      font-size: clamp(30px, 4.8vw, 60px);
+      font-size: clamp(30px, min(3.4vw, 5.4vh), 60px);
       line-height: 1;
       letter-spacing: 0;
       color: rgba(245, 247, 250, 0.92);
       opacity: 0;
       animation: riseIn 1s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
-    .coming i {
-      display: inline-block;
-      width: 0.16em; height: 0.16em;
-      margin-left: 0.14em;
-      border-radius: 50%;
-      background: var(--lime);
-      box-shadow: 0 0 14px rgba(200, 255, 61, 0.55);
-      vertical-align: 0.02em;
-    }
     .owner {
       margin: 0 0 8px;
       font-family: var(--font-serif);
       font-weight: 400;
-      font-size: clamp(40px, 7.4vw, 92px);
+      font-size: clamp(40px, min(6vw, 9.5vh), 108px);
       line-height: 1;
       letter-spacing: -0.005em;
       color: var(--white);
@@ -304,7 +315,7 @@
     }
     .brand-half .word {
       display: block;
-      font-size: clamp(68px, 15vw, 180px);
+      font-size: clamp(64px, min(13vw, 20vh), 224px);
       font-weight: 800;
       letter-spacing: -0.045em;
       line-height: 0.86;
@@ -338,7 +349,7 @@
     .brand-dot {
       position: relative;
       z-index: 2;
-      font-size: clamp(68px, 15vw, 180px);
+      font-size: clamp(64px, min(13vw, 20vh), 224px);
       height: 0.86em;
       display: flex;
       align-items: flex-end;
@@ -359,7 +370,7 @@
     .hero-tagline {
       margin: clamp(20px, 3vw, 30px) 0 0;
       max-width: 34ch;
-      font-size: clamp(15px, 1.8vw, 20px);
+      font-size: clamp(15px, min(1.4vw, 2.4vh), 22px);
       font-weight: 500;
       line-height: 1.45;
       color: rgba(245, 247, 250, 0.9);
@@ -439,14 +450,14 @@
     }
     .hero-meta .date {
       display: block;
-      font-size: clamp(48px, 8vw, 96px);
+      font-size: clamp(44px, min(6.4vw, 10vh), 120px);
       font-weight: 400;
       letter-spacing: -0.01em;
       color: var(--white);
     }
     .hero-meta .place {
       display: block;
-      font-size: clamp(28px, 4.5vw, 52px);
+      font-size: clamp(24px, min(3.4vw, 5.4vh), 60px);
       font-style: italic;
       color: var(--soft);
       margin-left: auto;
@@ -760,26 +771,60 @@
       .hero-top {
         grid-template-columns: 1fr 1fr;
         grid-template-areas: "dsse iitb" "nav nav";
+        gap: 12px 16px;
+        padding: 14px 16px 10px;
       }
       .logo-dsse { grid-area: dsse; }
-      .logo-iitb { grid-area: iitb; }
+      .logo-dsse img { height: 56px; }
+      .logo-iitb { grid-area: iitb; width: 52px; height: 52px; }
+      /* One scrollable row of pills instead of three stacked rows. */
       .hero-nav {
         grid-area: nav;
         justify-self: stretch;
-        justify-content: center;
-        flex-wrap: wrap;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        gap: 6px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        margin: 0 -16px;
+        padding: 2px 16px 6px;
+        mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+        -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
       }
+      .hero-nav::-webkit-scrollbar { display: none; }
+      .hero-nav a { flex: 0 0 auto; padding: 9px 13px; font-size: 10px; letter-spacing: 0.1em; }
+      .hero-nav a.nav-login { order: -1; margin-left: 0; }
+      .hero-stage { padding: 4px 18px 24px; }
+      .hero-title-block { padding: 8px 0 20px; }
+      .coming { font-size: clamp(26px, 7.4vw, 34px); }
+      .owner { font-size: clamp(32px, 10vw, 46px); white-space: normal; }
+      .brand-half .word, .brand-dot { font-size: clamp(60px, 19vw, 84px); }
       .fullform { font-size: 9px; letter-spacing: 0.16em; padding-right: 0.16em; }
-      .owner {
-        font-size: clamp(32px, 10vw, 56px);
-        white-space: normal;
-      }
-      .hero-bottom { grid-template-columns: 1fr; gap: 28px; }
+      .hero-tagline { margin-top: 18px; max-width: 30ch; }
+      .journey { margin-top: 16px; gap: 6px 0; }
+      .journey li { font-size: 10px; letter-spacing: 0.14em; }
+      .journey li + li::before { margin: 0 9px; }
+      .hero-bottom { grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
+      .hero-blurb { max-width: 18ch; }
       .scroll-hint { display: none; }
-      .hero-meta { justify-self: start; text-align: left; }
-      .hero-meta .place { margin-left: 0; }
+      .hero-meta { justify-self: end; text-align: right; }
+      .hero-meta .date { font-size: clamp(40px, 11vw, 52px); }
+      .hero-meta .place { font-size: clamp(20px, 5.6vw, 26px); }
+      .band { font-size: 11px; padding: 12px 0; }
       .facts, .split, .rfs, .stats, .agenda article { grid-template-columns: 1fr; }
-      .hero-nav a { padding: 8px 14px; font-size: 10px; }
+      .facts > div { padding: 18px 18px; }
+      .facts b { font-size: 20px; }
+      section { padding: 56px 18px; }
+      h2 { font-size: clamp(32px, 9.6vw, 44px); }
+      .lead { font-size: 15px; }
+      .agenda article { gap: 6px; padding: 18px 0; }
+      .rfs a { min-height: 0; padding-bottom: 8px; }
+      .stats { gap: 20px; grid-template-columns: 1fr 1fr; }
+      .cta-row { gap: 10px; }
+      .btn { padding: 13px 18px; font-size: 12px; }
+      .mail { font-size: clamp(20px, 6.6vw, 28px); word-break: break-all; }
+      footer { flex-direction: column; gap: 8px; padding-bottom: 48px; }
       .spark, .spark-svg { display: none !important; }
     }
 
@@ -835,7 +880,7 @@
 
     <div class="hero-stage">
       <div class="hero-title-block">
-        <p class="coming" data-testid="coming-soon">Coming soon<i aria-hidden="true"></i></p>
+        <p class="coming" data-testid="coming-soon">Coming soon</p>
         <p class="owner">IIT Bombay</p>
         <div class="brand-lockup">
           <h1 class="brand-word" aria-label="INV.ENT: Innovation and Entrepreneurship" data-testid="brand-mark">
@@ -1053,8 +1098,12 @@
       var svg = document.getElementById("spark-svg");
       if (!spark || !svg) return;
 
-      var pathEl = null;
+      var pathEl = null;   /* invisible geometry path: measured for the dot position */
+      var trackEl = null;  /* faint full-length dashed track */
+      var litEl = null;    /* the travelled portion, revealed through a mask */
+      var maskPath = null;
       var nodes = [];
+      var NS = "http://www.w3.org/2000/svg";
       function pointOf(el) {
         var r = el.getBoundingClientRect();
         if (el.classList.contains("brand-dot")) {
@@ -1080,12 +1129,43 @@
         svg.setAttribute("height", String(h));
         svg.style.height = h + "px";
         if (!pathEl) {
-          pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          var defs = document.createElementNS(NS, "defs");
+          var mask = document.createElementNS(NS, "mask");
+          mask.setAttribute("id", "spark-mask");
+          mask.setAttribute("maskUnits", "userSpaceOnUse");
+          maskPath = document.createElementNS(NS, "path");
+          maskPath.setAttribute("fill", "none");
+          maskPath.setAttribute("stroke", "#fff");
+          maskPath.setAttribute("stroke-width", "8");
+          maskPath.setAttribute("pathLength", "1000");
+          maskPath.setAttribute("stroke-dasharray", "0 1000");
+          mask.appendChild(maskPath);
+          defs.appendChild(mask);
+          svg.appendChild(defs);
+
+          pathEl = document.createElementNS(NS, "path");
           pathEl.setAttribute("fill", "none");
           pathEl.setAttribute("stroke", "none");
           svg.appendChild(pathEl);
+
+          trackEl = document.createElementNS(NS, "path");
+          trackEl.setAttribute("class", "track");
+          svg.appendChild(trackEl);
+
+          litEl = document.createElementNS(NS, "path");
+          litEl.setAttribute("class", "lit");
+          litEl.setAttribute("mask", "url(#spark-mask)");
+          svg.appendChild(litEl);
         }
         pathEl.setAttribute("d", d);
+        trackEl.setAttribute("d", d);
+        litEl.setAttribute("d", d);
+        maskPath.setAttribute("d", d);
+        var maskEl = maskPath.parentNode;
+        maskEl.setAttribute("x", "0");
+        maskEl.setAttribute("y", "0");
+        maskEl.setAttribute("width", String(window.innerWidth));
+        maskEl.setAttribute("height", String(h));
       }
 
       var introMs = 2600;
@@ -1099,9 +1179,11 @@
         var intro = Math.min(1, (Date.now() - introAt) / introMs);
         if (t < 0.02 || intro < 1) {
           spark.classList.remove("is-live");
+          if (maskPath) maskPath.setAttribute("stroke-dasharray", "0 1000");
           return;
         }
         spark.classList.add("is-live");
+        if (maskPath) maskPath.setAttribute("stroke-dasharray", (t * 1000).toFixed(1) + " 1000");
         var p = pathEl.getPointAtLength(t * len);
         spark.style.transform = "translate(" + (p.x - window.scrollX) + "px," + (p.y - window.scrollY) + "px)";
       }
