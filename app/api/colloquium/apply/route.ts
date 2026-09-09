@@ -5,6 +5,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
+/**
+ * Public apply endpoint. JSON rather than a Server Action so submit works
+ * behind the Cloudflare Worker (Host origin.iitbinvent.com vs public site).
+ */
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
