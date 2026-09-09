@@ -48,7 +48,7 @@ export function VentureCard({ venture }: { venture: VentureCardData }) {
           <img
             src={venture.logoUrl}
             alt=""
-            className="h-14 w-14 rounded-xl border border-line object-contain bg-paper"
+            className="h-14 w-14 shrink-0 rounded-xl border border-line object-contain bg-paper"
           />
         ) : (
           <div
@@ -62,7 +62,7 @@ export function VentureCard({ venture }: { venture: VentureCardData }) {
           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-mute">
             {VENTURE_KIND_LABEL[venture.kind]}
           </p>
-          <h2 className="font-semibold text-ink">{venture.name}</h2>
+          <h2 className="break-words font-semibold text-ink">{venture.name}</h2>
           {venture.tagline ? (
             <p className="mt-1 text-sm text-ink-soft">{venture.tagline}</p>
           ) : null}
@@ -78,7 +78,7 @@ export function VentureCard({ venture }: { venture: VentureCardData }) {
             setOpen(next);
             if (next) loadPreview();
           }}
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-paper"
+          className="rounded-md border border-line px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-paper sm:py-1.5"
           aria-expanded={open}
         >
           {open ? "Hide details" : "Read about it"}
@@ -88,7 +88,7 @@ export function VentureCard({ venture }: { venture: VentureCardData }) {
             href={venture.websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
+            className="rounded-md bg-teal-deep px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal sm:py-1.5"
           >
             Open website
           </a>

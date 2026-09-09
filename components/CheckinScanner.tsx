@@ -254,11 +254,11 @@ export function CheckinScanner({
           value={manual}
           onChange={(e) => setManual(e.target.value)}
           placeholder="Paste badge URL or qrToken"
-          className="min-w-[16rem] flex-1 rounded-md border border-line px-3 py-2 font-mono text-sm"
+          className="min-w-0 basis-full rounded-md border border-line px-3 py-2.5 font-mono text-sm sm:min-w-[16rem] sm:flex-1 sm:basis-auto sm:py-2"
         />
         <button
           type="submit"
-          className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold text-white sm:py-2"
         >
           Check in
         </button>

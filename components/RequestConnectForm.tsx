@@ -68,19 +68,19 @@ export function RequestConnectForm({
         maxLength={800}
         className="w-full rounded-md border border-line px-2 py-1.5 text-sm"
       />
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           disabled={pending || message.trim().length < 10}
           onClick={submit}
-          className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white disabled:opacity-50"
+          className="rounded-md bg-teal-deep px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-white disabled:opacity-50 sm:py-1.5"
         >
           {pending ? "Sending…" : "Send request"}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="text-xs text-mute underline-offset-2 hover:underline"
+          className="px-2 py-2 text-xs text-mute underline-offset-2 hover:underline sm:px-0 sm:py-0"
         >
           Cancel
         </button>

@@ -46,7 +46,7 @@ export function ConnectOnLinkedIn({
     <button
       type="button"
       onClick={handleClick}
-      className="inline-flex items-center gap-2 rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
+      className="inline-flex items-center gap-2 rounded-md bg-teal-deep px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal sm:py-1.5"
       title="Copies a short note, then opens LinkedIn"
     >
       <IconLinkedIn className="h-3.5 w-3.5" />

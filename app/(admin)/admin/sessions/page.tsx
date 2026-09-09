@@ -48,7 +48,7 @@ export default async function AdminSessionsPage() {
         <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-mute">
           Add session
         </h2>
-        <form action={createSessionAction} className="mt-4 grid gap-3 sm:grid-cols-2">
+        <form action={createSessionAction} className="mt-4 grid gap-3 *:min-w-0 sm:grid-cols-2">
           <input name="title" placeholder="Title" required className="rounded-md border border-line px-3 py-2" />
           <select name="format" className="rounded-md border border-line px-3 py-2" defaultValue="NETWORKING">
             {formats.map((f) => (
@@ -76,7 +76,7 @@ export default async function AdminSessionsPage() {
             className="rounded-xl border border-line bg-white p-5"
           >
             <input type="hidden" name="id" value={s.id} />
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 *:min-w-0 sm:grid-cols-2">
               <input name="title" defaultValue={s.title} className="rounded-md border border-line px-3 py-2 font-semibold" />
               <select name="format" defaultValue={s.format} className="rounded-md border border-line px-3 py-2">
                 {formats.map((f) => (

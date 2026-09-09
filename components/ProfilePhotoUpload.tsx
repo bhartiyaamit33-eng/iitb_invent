@@ -37,14 +37,14 @@ export function ProfilePhotoUpload({
         <img
           src={preview}
           alt=""
-          className="h-20 w-20 rounded-full object-cover"
+          className="h-20 w-20 shrink-0 rounded-full object-cover"
         />
       ) : (
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-paper text-xl font-semibold text-teal-deep">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-paper text-xl font-semibold text-teal-deep">
           {name.slice(0, 1).toUpperCase()}
         </div>
       )}
-      <div>
+      <div className="min-w-0">
         <input
           ref={inputRef}
           type="file"

@@ -51,11 +51,11 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-paper">
       <div className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <p className="text-sm text-mute">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <p className="min-w-0 truncate text-sm text-mute">
             CMS · <span className="font-medium text-ink">{user.email}</span>
           </p>
-          <form action={logoutAction}>
+          <form action={logoutAction} className="shrink-0">
             <button
               type="submit"
               className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"

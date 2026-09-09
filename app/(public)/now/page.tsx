@@ -15,7 +15,7 @@ export default async function NowScreenPage() {
           <p className="text-sm uppercase tracking-[0.2em] text-white/70">
             Lobby screen
           </p>
-          <h1 className="mt-4 font-display text-5xl tracking-wide">
+          <h1 className="mt-4 font-display text-4xl tracking-wide sm:text-5xl">
             Not live yet
           </h1>
           <p className="mt-4 text-white/80">
@@ -43,17 +43,17 @@ export default async function NowScreenPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#034a56] px-8 py-10 text-white">
-      <div className="mx-auto flex max-w-6xl items-end justify-between gap-6">
+    <main className="min-h-screen bg-[#034a56] px-5 py-8 text-white sm:px-8 sm:py-10">
+      <div className="mx-auto flex max-w-6xl flex-col items-start gap-4 md:flex-row md:items-end md:justify-between md:gap-6">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
             {edition.name} · DSSE Building
           </p>
-          <h1 className="mt-2 font-display text-6xl tracking-wide md:text-7xl">
+          <h1 className="mt-2 font-display text-4xl tracking-wide sm:text-6xl md:text-7xl">
             Happening now
           </h1>
         </div>
-        <p className="font-display text-5xl tracking-wide tabular-nums md:text-6xl">
+        <p className="font-display text-4xl tracking-wide tabular-nums sm:text-5xl md:text-6xl">
           {clock}
           <span className="ml-2 text-lg tracking-normal text-white/60">IST</span>
         </p>
@@ -66,16 +66,16 @@ export default async function NowScreenPage() {
           happening.map((s) => (
             <div
               key={s.id}
-              className="rounded-2xl border border-white/20 bg-white/10 px-8 py-6 backdrop-blur"
+              className="rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur sm:px-8 sm:py-6"
             >
               <p className="text-sm uppercase tracking-[0.16em] text-ent-bright">
                 {s.room}
                 {s.floor ? ` · Floor ${s.floor}` : ""}
               </p>
-              <h2 className="mt-2 font-display text-5xl tracking-wide md:text-6xl">
+              <h2 className="mt-2 font-display text-3xl tracking-wide sm:text-5xl md:text-6xl">
                 {s.title}
               </h2>
-              <p className="mt-2 text-xl text-white/80">
+              <p className="mt-2 text-lg text-white/80 sm:text-xl">
                 {formatIstRange(s.startsAt, s.endsAt)}
               </p>
             </div>
@@ -83,20 +83,20 @@ export default async function NowScreenPage() {
         )}
       </section>
 
-      <section className="mx-auto mt-14 max-w-6xl">
-        <h2 className="font-display text-4xl tracking-wide text-white/90">
+      <section className="mx-auto mt-10 max-w-6xl sm:mt-14">
+        <h2 className="font-display text-3xl tracking-wide text-white/90 sm:text-4xl">
           Up next
         </h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {upNext.map((s) => (
             <div
               key={s.id}
-              className="rounded-xl border border-white/15 bg-black/20 px-6 py-5"
+              className="rounded-xl border border-white/15 bg-black/20 px-5 py-4 sm:px-6 sm:py-5"
             >
               <p className="text-lg font-semibold text-inv-bright">
                 {formatIstRange(s.startsAt, s.endsAt)}
               </p>
-              <p className="mt-1 text-2xl font-semibold">{s.title}</p>
+              <p className="mt-1 text-xl font-semibold sm:text-2xl">{s.title}</p>
               <p className="mt-1 text-white/70">{s.room}</p>
             </div>
           ))}

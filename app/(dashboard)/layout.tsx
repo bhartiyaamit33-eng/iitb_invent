@@ -18,36 +18,36 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-paper">
       <header className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-3">
-          <nav className="flex flex-wrap items-center gap-4 text-sm font-semibold">
-            <Link href="/" className="text-teal-deep">
+        <div className="mx-auto flex max-w-3xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold">
+            <Link href="/" className="py-2 text-teal-deep sm:py-0">
               Inv.ent
             </Link>
-            <Link href="/dashboard" className="text-ink-soft hover:text-teal-deep">
+            <Link href="/dashboard" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
               Dashboard
             </Link>
-            <Link href="/dashboard/profile" className="text-ink-soft hover:text-teal-deep">
+            <Link href="/dashboard/profile" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
               Profile
             </Link>
-            <Link href="/dashboard/ventures" className="text-ink-soft hover:text-teal-deep">
+            <Link href="/dashboard/ventures" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
               Ventures
             </Link>
-            <Link href="/ventures" className="text-ink-soft hover:text-teal-deep">
+            <Link href="/ventures" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
               Directory
             </Link>
-            <Link href="/programme" className="text-ink-soft hover:text-teal-deep">
+            <Link href="/programme" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
               Programme
             </Link>
             {isAdminEmail(user.email) ? (
-              <Link href="/admin" className="text-ink-soft hover:text-teal-deep">
+              <Link href="/admin" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
                 Admin
               </Link>
             ) : null}
           </nav>
-          <form action={logoutAction}>
+          <form action={logoutAction} className="shrink-0">
             <button
               type="submit"
-              className="text-sm font-semibold text-mute underline-offset-2 hover:text-teal-deep hover:underline"
+              className="py-2 text-sm font-semibold text-mute underline-offset-2 hover:text-teal-deep hover:underline sm:py-0"
             >
               Sign out
             </button>

@@ -38,7 +38,7 @@ export default async function AdminEditionsPage() {
         {editions.map((e) => (
           <div key={e.id} className="rounded-xl border border-line bg-white p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
+              <div className="min-w-0">
                 <h2 className="text-xl font-semibold text-ink">
                   {e.name}{" "}
                   {e.isCurrent ? (
@@ -54,7 +54,7 @@ export default async function AdminEditionsPage() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <form action={setEditionStatusAction} className="flex gap-2">
+                <form action={setEditionStatusAction} className="flex flex-wrap gap-2">
                   <input type="hidden" name="id" value={e.id} />
                   <select
                     name="status"

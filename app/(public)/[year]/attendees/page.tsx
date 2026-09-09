@@ -164,17 +164,17 @@ export default async function AttendeesPage({
         them.
       </p>
 
-      <form className="mt-6 flex flex-wrap gap-2">
+      <form className="mt-6 grid gap-2 sm:flex sm:flex-wrap">
         <input
           name="q"
           defaultValue={q}
           placeholder="Search"
-          className="rounded-md border border-line px-3 py-2 text-sm"
+          className="min-w-0 rounded-md border border-line px-3 py-2.5 text-sm sm:py-2"
         />
         <select
           name="persona"
           defaultValue={persona ?? ""}
-          className="rounded-md border border-line px-3 py-2 text-sm"
+          className="min-w-0 rounded-md border border-line px-3 py-2.5 text-sm sm:py-2"
         >
           <option value="">All personas</option>
           {Object.values(PersonaType).map((p) => (
@@ -186,7 +186,7 @@ export default async function AttendeesPage({
         <select
           name="looking"
           defaultValue={looking}
-          className="rounded-md border border-line px-3 py-2 text-sm"
+          className="min-w-0 rounded-md border border-line px-3 py-2.5 text-sm sm:py-2"
         >
           <option value="">Looking for…</option>
           <option value="co-founder">co-founder</option>
@@ -194,7 +194,7 @@ export default async function AttendeesPage({
           <option value="raising">raising</option>
           <option value="research collaborators">research collaborators</option>
         </select>
-        <label className="flex items-center gap-2 rounded-md border border-line px-3 py-2 text-sm">
+        <label className="flex items-center gap-2 rounded-md border border-line px-3 py-2.5 text-sm sm:py-2">
           <input
             type="checkbox"
             name="session"
@@ -205,7 +205,7 @@ export default async function AttendeesPage({
         </label>
         <button
           type="submit"
-          className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold text-white sm:py-2"
         >
           Filter
         </button>
@@ -228,15 +228,15 @@ export default async function AttendeesPage({
                     <img
                       src={a.image}
                       alt=""
-                      className="h-12 w-12 rounded-full object-cover"
+                      className="h-12 w-12 shrink-0 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-paper text-sm font-semibold text-teal-deep">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-paper text-sm font-semibold text-teal-deep">
                       {a.name.slice(0, 1)}
                     </div>
                   )}
-                  <div>
-                    <h2 className="font-semibold text-ink">{a.name}</h2>
+                  <div className="min-w-0">
+                    <h2 className="break-words font-semibold text-ink">{a.name}</h2>
                     {p.personaType ? (
                       <p className="text-xs uppercase tracking-[0.1em] text-mute">
                         {p.personaType}

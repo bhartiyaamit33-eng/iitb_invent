@@ -79,7 +79,7 @@ export default async function SessionDetailPage({
         </Link>
         {session.track ? ` · ${session.track.name}` : ""}
       </p>
-      <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
+      <h1 className="mt-2 break-words font-display text-3xl tracking-wide text-teal-deep sm:text-4xl">
         {session.title}
       </h1>
       <p className="mt-3 text-sm font-semibold text-teal-deep">
@@ -104,13 +104,13 @@ export default async function SessionDetailPage({
           href={gcal}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-white"
+          className="rounded-md border border-line px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-white sm:py-1.5"
         >
           Google Calendar
         </a>
         <a
           href={`/api/calendar/${session.slug}.ics`}
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-white"
+          className="rounded-md border border-line px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-white sm:py-1.5"
         >
           Download .ics
         </a>
@@ -146,7 +146,7 @@ export default async function SessionDetailPage({
             <input type="hidden" name="sessionId" value={session.id} />
             <button
               type="submit"
-              className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
+              className="rounded-md bg-teal-deep px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal sm:py-1.5"
             >
               {full && session.waitlistOpen
                 ? "Join waitlist"
@@ -193,7 +193,7 @@ export default async function SessionDetailPage({
                     <img
                       src={speaker.photoUrl}
                       alt=""
-                      className="h-16 w-16 rounded-full object-cover"
+                      className="h-16 w-16 shrink-0 rounded-full object-cover"
                     />
                   ) : (
                     <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-paper text-lg font-semibold text-teal-deep">
@@ -201,7 +201,7 @@ export default async function SessionDetailPage({
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-ink">{speaker.name}</p>
+                    <p className="break-words font-semibold text-ink">{speaker.name}</p>
                     <p className="text-sm text-mute">
                       {[role, speaker.title, speaker.organisation]
                         .filter(Boolean)

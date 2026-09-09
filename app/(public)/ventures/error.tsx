@@ -29,13 +29,13 @@ export default function VenturesError({
         <button
           type="button"
           onClick={reset}
-          className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
+          className="rounded-md bg-teal-deep px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal sm:py-1.5"
         >
           Retry
         </button>
         <Link
           href="/"
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-white"
+          className="rounded-md border border-line px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:bg-white sm:py-1.5"
         >
           Home
         </Link>

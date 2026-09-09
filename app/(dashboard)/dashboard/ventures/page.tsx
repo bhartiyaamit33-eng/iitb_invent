@@ -117,18 +117,18 @@ export default async function MyVenturesPage() {
               className="rounded-xl border border-line bg-white p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+                <div className="min-w-0">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-mute">
                     {VENTURE_KIND_LABEL[v.kind]}
                     {v.isPublished ? " · Published" : " · Draft"}
                   </p>
-                  <h2 className="font-semibold text-ink">{v.name}</h2>
+                  <h2 className="break-words font-semibold text-ink">{v.name}</h2>
                 </div>
                 <form action={deleteVentureAction}>
                   <input type="hidden" name="id" value={v.id} />
                   <button
                     type="submit"
-                    className="text-xs font-semibold text-red-700 underline-offset-2 hover:underline"
+                    className="py-2 text-xs font-semibold text-red-700 underline-offset-2 hover:underline sm:py-0"
                   >
                     Delete
                   </button>
@@ -208,7 +208,7 @@ export default async function MyVenturesPage() {
                 </label>
                 <button
                   type="submit"
-                  className="justify-self-start rounded-md border border-line px-3 py-2 text-sm font-semibold text-teal-deep hover:bg-paper"
+                  className="justify-self-start rounded-md border border-line px-3 py-2.5 text-sm font-semibold text-teal-deep hover:bg-paper sm:py-2"
                 >
                   Save
                 </button>

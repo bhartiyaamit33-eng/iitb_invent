@@ -125,8 +125,8 @@ function FilterChip({
       href={href}
       className={
         active
-          ? "rounded-full bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white"
-          : "rounded-full border border-line bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:border-teal"
+          ? "rounded-full bg-teal-deep px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-white sm:py-1.5"
+          : "rounded-full border border-line bg-white px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-teal-deep hover:border-teal sm:py-1.5"
       }
     >
       {label}

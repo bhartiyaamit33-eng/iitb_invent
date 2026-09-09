@@ -44,7 +44,7 @@ export default async function TicketBadgePage({
       </h1>
 
       <article className="mt-8 overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
-        <div className="bg-gradient-to-br from-teal-deep to-teal px-6 py-5 text-white">
+        <div className="bg-gradient-to-br from-teal-deep to-teal px-5 py-5 text-white sm:px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/80">
             {registration.edition.name}
           </p>
@@ -61,22 +61,22 @@ export default async function TicketBadgePage({
           )}
         </div>
 
-        <div className="px-6 py-6">
+        <div className="px-5 py-6 sm:px-6">
           <div className="flex items-start gap-4">
             {user.image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.image}
                 alt=""
-                className="h-16 w-16 rounded-full object-cover"
+                className="h-16 w-16 shrink-0 rounded-full object-cover"
               />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-paper text-xl font-semibold text-teal-deep">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-paper text-xl font-semibold text-teal-deep">
                 {user.name.slice(0, 1).toUpperCase()}
               </div>
             )}
             <div className="min-w-0">
-              <h2 className="text-xl font-semibold text-ink">{user.name}</h2>
+              <h2 className="break-words text-xl font-semibold text-ink">{user.name}</h2>
               {profile?.personaType ? (
                 <p className="text-xs uppercase tracking-[0.1em] text-mute">
                   {profile.personaType.replaceAll("_", " ")}

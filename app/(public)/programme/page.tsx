@@ -198,7 +198,7 @@ export default async function ProgrammePage() {
                         <input type="hidden" name="sessionId" value={s.id} />
                         <button
                           type="submit"
-                          className="text-sm text-mute underline-offset-2 hover:underline"
+                          className="py-2 text-sm text-mute underline-offset-2 hover:underline sm:py-0"
                         >
                           Cancel
                         </button>
@@ -209,7 +209,7 @@ export default async function ProgrammePage() {
                       <input type="hidden" name="sessionId" value={s.id} />
                       <button
                         type="submit"
-                        className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
+                        className="rounded-md bg-teal-deep px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal sm:py-1.5"
                       >
                         {full && s.waitlistOpen
                           ? "Join waitlist"

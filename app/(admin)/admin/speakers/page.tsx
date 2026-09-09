@@ -29,7 +29,7 @@ export default async function AdminSpeakersPage() {
         ) : null}
       </p>
 
-      <form action={createSpeakerAction} className="mt-8 grid gap-3 rounded-xl border border-line bg-white p-5 sm:grid-cols-2">
+      <form action={createSpeakerAction} className="mt-8 grid gap-3 rounded-xl border border-line bg-white p-5 *:min-w-0 sm:grid-cols-2">
         <h2 className="sm:col-span-2 text-sm font-semibold uppercase tracking-[0.12em] text-mute">
           Add speaker
         </h2>
@@ -55,7 +55,7 @@ export default async function AdminSpeakersPage() {
             <div className="mb-4">
               <SpeakerPhotoUpload speakerId={s.id} photoUrl={s.photoUrl} />
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 *:min-w-0 sm:grid-cols-2">
               <input name="name" defaultValue={s.name} className="rounded-md border border-line px-3 py-2 font-semibold" />
               <input name="title" defaultValue={s.title ?? ""} className="rounded-md border border-line px-3 py-2" />
               <input name="organisation" defaultValue={s.organisation ?? ""} className="rounded-md border border-line px-3 py-2" />

@@ -24,8 +24,8 @@ export default async function AdminStatsPage() {
       </p>
 
       <form action={createStatAction} className="mt-8 flex flex-wrap gap-3 rounded-xl border border-line bg-white p-5">
-        <input name="label" placeholder="Label" required className="rounded-md border border-line px-3 py-2" />
-        <input name="value" placeholder="Value" required className="rounded-md border border-line px-3 py-2" />
+        <input name="label" placeholder="Label" required className="w-full min-w-0 rounded-md border border-line px-3 py-2 sm:w-auto" />
+        <input name="value" placeholder="Value" required className="w-full min-w-0 rounded-md border border-line px-3 py-2 sm:w-auto" />
         <button type="submit" className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white">
           Add
         </button>
@@ -35,8 +35,8 @@ export default async function AdminStatsPage() {
         {stats.map((s) => (
           <form key={s.id} action={updateStatAction} className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-white p-4">
             <input type="hidden" name="id" value={s.id} />
-            <input name="label" defaultValue={s.label} className="rounded-md border border-line px-3 py-2" />
-            <input name="value" defaultValue={s.value} className="rounded-md border border-line px-3 py-2 font-semibold text-teal-deep" />
+            <input name="label" defaultValue={s.label} className="w-full min-w-0 rounded-md border border-line px-3 py-2 sm:w-auto" />
+            <input name="value" defaultValue={s.value} className="w-full min-w-0 rounded-md border border-line px-3 py-2 font-semibold text-teal-deep sm:w-auto" />
             <input name="sortOrder" type="number" defaultValue={s.sortOrder} className="w-20 rounded-md border border-line px-3 py-2" />
             <button type="submit" className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white">
               Save

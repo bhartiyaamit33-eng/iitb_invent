@@ -42,10 +42,10 @@ export function SpeakerPhotoUpload({
         <img
           src={preview}
           alt=""
-          className="h-16 w-16 rounded-full object-cover"
+          className="h-16 w-16 shrink-0 rounded-full object-cover"
         />
       ) : (
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-paper text-sm text-mute">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-paper text-sm text-mute">
           Photo
         </div>
       )}

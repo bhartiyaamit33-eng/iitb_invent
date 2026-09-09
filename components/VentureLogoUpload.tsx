@@ -42,14 +42,14 @@ export function VentureLogoUpload({
         <img
           src={preview}
           alt=""
-          className="h-16 w-16 rounded-xl object-contain bg-paper border border-line"
+          className="h-16 w-16 shrink-0 rounded-xl object-contain bg-paper border border-line"
         />
       ) : (
-        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-teal-deep/10 text-lg font-semibold text-teal-deep">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-teal-deep/10 text-lg font-semibold text-teal-deep">
           {initials}
         </div>
       )}
-      <div>
+      <div className="min-w-0">
         <input
           ref={inputRef}
           type="file"
