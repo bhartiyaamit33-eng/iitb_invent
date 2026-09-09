@@ -13,6 +13,8 @@ export default async function AdminOverviewPage() {
     faqs,
     stats,
     edition,
+    submissions,
+    payments,
   ] = await Promise.all([
     prisma.user.count({ where: { deletedAt: null } }),
     prisma.registration.count(),
@@ -22,11 +24,15 @@ export default async function AdminOverviewPage() {
     prisma.faq.count(),
     prisma.editionStat.count(),
     prisma.edition.findFirst({ where: { isCurrent: true } }),
+    prisma.submission.count({ where: { deletedAt: null } }),
+    prisma.payment.count(),
   ]);
 
   const cards = [
     { label: "Users", value: users, href: "/admin/users" },
     { label: "Registrations", value: registrations, href: "/admin/users" },
+    { label: "Submissions", value: submissions, href: "/admin/submissions" },
+    { label: "Payments", value: payments, href: "/admin/payments" },
     { label: "Sessions", value: sessions, href: "/admin/sessions" },
     { label: "Speakers", value: speakers, href: "/admin/speakers" },
     { label: "Pages", value: pages, href: "/admin/pages" },

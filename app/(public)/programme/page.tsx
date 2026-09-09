@@ -75,6 +75,10 @@ export default async function ProgrammePage() {
           Dashboard
         </Link>
         {" · "}
+        <Link href="/submit" className="underline-offset-2 hover:underline">
+          Submit paper / poster / workshop
+        </Link>
+        {" · "}
         <Link
           href={`/${edition.slug}/attendees`}
           className="underline-offset-2 hover:underline"

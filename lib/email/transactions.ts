@@ -1,8 +1,11 @@
 import { sendEmail } from "@/lib/email/ses";
+import { formatInr } from "@/lib/payments/pricing";
 import {
   accountCreatedEmail,
   connectionRequestEmail,
   magicLinkEmail,
+  paymentLinkEmail,
+  paymentReceiptEmail,
   profileConfirmationEmail,
   registrationConfirmedEmail,
 } from "@/emails/templates";
@@ -112,5 +115,78 @@ export async function sendConnectionRequest(opts: {
     actorId: opts.actorId ?? null,
     entityType: "ConnectionRequest",
     entityId: opts.requestId ?? null,
+  });
+}
+
+export async function sendPaymentLinkEmail(opts: {
+  to: string;
+  name: string;
+  editionName: string;
+  kindLabel: string;
+  title: string;
+  categoryLabel: string;
+  amountInr: string;
+  purpose: string;
+  payUrl: string;
+  userId?: string;
+  paymentId?: string;
+}) {
+  const tpl = paymentLinkEmail({
+    ...opts,
+    amountFormatted: formatInr(opts.amountInr),
+  });
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.payment_link",
+    actorId: opts.userId ?? null,
+    entityType: "Payment",
+    entityId: opts.paymentId ?? null,
+  });
+}
+
+export async function sendPaymentReceiptEmail(opts: {
+  to: string;
+  name: string;
+  editionName: string;
+  invoiceNumber: string;
+  purpose: string;
+  amountInr: string;
+  transId?: string | null;
+  refNo?: string | null;
+  receiptUrl: string;
+  userId?: string;
+  paymentId?: string;
+  pdf: Buffer;
+  filename: string;
+}) {
+  const tpl = paymentReceiptEmail({
+    name: opts.name,
+    editionName: opts.editionName,
+    invoiceNumber: opts.invoiceNumber,
+    purpose: opts.purpose,
+    amountFormatted: formatInr(opts.amountInr),
+    transId: opts.transId,
+    refNo: opts.refNo,
+    receiptUrl: opts.receiptUrl,
+  });
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    attachments: [
+      {
+        filename: opts.filename,
+        contentType: "application/pdf",
+        bytes: opts.pdf,
+      },
+    ],
+    action: "email.payment_receipt",
+    actorId: opts.userId ?? null,
+    entityType: "Payment",
+    entityId: opts.paymentId ?? null,
   });
 }

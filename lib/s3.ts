@@ -129,3 +129,43 @@ export async function uploadVentureLogo(opts: {
 
   return { key, url: publicObjectUrl(key) };
 }
+
+export async function uploadSubmissionFile(opts: {
+  submissionId: string;
+  bytes: Buffer;
+  contentType: string;
+}): Promise<{ key: string; url: string }> {
+  if (!bucket) throw new Error("S3_BUCKET is not configured");
+
+  const allowed = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+  if (!allowed.includes(opts.contentType)) {
+    throw new Error("Only PDF or Word documents are allowed");
+  }
+  if (opts.bytes.length > 12 * 1024 * 1024) {
+    throw new Error("File must be under 12 MB");
+  }
+
+  const ext =
+    opts.contentType === "application/pdf"
+      ? "pdf"
+      : opts.contentType.includes("wordprocessingml")
+        ? "docx"
+        : "doc";
+  const key = `${prefix}submissions/${opts.submissionId}-${Date.now()}.${ext}`;
+
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: opts.bytes,
+      ContentType: opts.contentType,
+      CacheControl: "private, max-age=0, no-store",
+    }),
+  );
+
+  return { key, url: publicObjectUrl(key) };
+}

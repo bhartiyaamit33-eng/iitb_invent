@@ -47,6 +47,29 @@ export async function deleteUserAccount(
     }
   }
 
-  await prisma.user.delete({ where: { id: userId } });
+  const paidCount = await prisma.payment.count({
+    where: {
+      userId,
+      status: { in: ["SUCCESS", "SETTLED", "REFUNDED"] },
+    },
+  });
+  if (paidCount > 0) {
+    return {
+      ok: false,
+      error:
+        "Cannot delete a user with recorded payments. Export the payments CSV first.",
+    };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.payment.deleteMany({
+      where: {
+        userId,
+        status: { in: ["PENDING", "IN_FLIGHT", "FAILED"] },
+      },
+    });
+    await tx.submission.deleteMany({ where: { userId } });
+    await tx.user.delete({ where: { id: userId } });
+  });
   return { ok: true };
 }

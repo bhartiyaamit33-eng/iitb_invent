@@ -132,6 +132,22 @@ export default async function DashboardPage({
             </Link>
           ) : null}
         </div>
+        <div className="rounded-xl border border-line bg-white p-5 sm:col-span-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
+            Papers, posters &amp; workshops
+          </p>
+          <p className="mt-2 text-sm text-ink-soft">
+            Accepted contributions are charged ₹5,000 (students), ₹10,000
+            (faculty) or ₹15,000 (corporate), collected via IIT Bombay Online
+            Pay.
+          </p>
+          <Link
+            href="/dashboard/submissions"
+            className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+          >
+            Submit or pay →
+          </Link>
+        </div>
       </div>
 
       <section className="mt-10">

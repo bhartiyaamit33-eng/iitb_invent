@@ -70,6 +70,34 @@ enum VentureKind {
   IDEA
 }
 
+enum SubmissionKind {
+  PAPER
+  POSTER
+  WORKSHOP
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+enum PayerCategory {
+  STUDENT
+  FACULTY
+  CORPORATE
+}
+
+enum PaymentStatus {
+  PENDING
+  IN_FLIGHT
+  SUCCESS
+  FAILED
+  SETTLED
+  REFUNDED
+}
+
 // ─── Identity (edition-independent) ──────────────────────────────────────────
 
 model User {
@@ -90,6 +118,9 @@ model User {
   sessions      Session[]
   auditLogs     AuditLog[]
   ventures      Venture[]
+  submissions   Submission[]
+  reviewedSubmissions Submission[] @relation("SubmissionReviewer")
+  payments      Payment[]
   connectionRequestsFrom ConnectionRequest[] @relation("ConnectionFrom")
   connectionRequestsTo   ConnectionRequest[] @relation("ConnectionTo")
 }
@@ -170,6 +201,8 @@ model Edition {
   stats         EditionStat[]
   notifySignups NotifySignup[]
   ventures      Venture[]
+  submissions   Submission[]
+  payments      Payment[]
 }
 
 /// IIT Bombay startups / projects / ideas — public directory listings.
@@ -294,6 +327,81 @@ model Registration {
 
   @@unique([userId, editionId])
   @@index([editionId, status])
+}
+
+/// Paper / poster / workshop contribution. Payment is created only after admin approval.
+model Submission {
+  id            String           @id @default(cuid())
+  editionId     String
+  edition       Edition          @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  kind          SubmissionKind
+  title         String
+  abstract      String?          @db.Text
+  authors       String?
+  organisation  String?
+  fileUrl       String?
+  payerCategory PayerCategory
+  status        SubmissionStatus @default(SUBMITTED)
+  reviewNote    String?          @db.Text
+  reviewedAt    DateTime?
+  reviewedById  String?
+  reviewedBy    User?            @relation("SubmissionReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  deletedAt     DateTime?
+  payments      Payment[]
+
+  @@index([editionId, status])
+  @@index([userId])
+}
+
+/// One Online Pay request per approved submission attempt. Keep refunds on the same row.
+model Payment {
+  id                String         @id @default(cuid())
+  submissionId      String
+  submission        Submission     @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  userId            String
+  user              User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  editionId         String
+  edition           Edition        @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  /// Unique request id we send to IITB Online Pay as sReqId
+  reqId             String         @unique
+  payToken          String         @unique
+  invoiceNumber     String?        @unique
+  appId             String
+  /// sUserId sent to Online Pay (our user id)
+  opUserId          String
+  amount            Decimal        @db.Decimal(12, 2)
+  currency          String         @default("INR")
+  purpose           String
+  payerCategory     PayerCategory
+  status            PaymentStatus  @default(PENDING)
+  transId           String?
+  refNo             String?
+  provId            String?
+  pgStatus          String?
+  msg               String?
+  transDate         String?
+  transTime         String?
+  immediateRaw      Json?
+  immediateAt       DateTime?
+  reconDate         String?
+  reconTime         String?
+  reconRaw          Json?
+  settledAt         DateTime?
+  refundAmount      Decimal?       @db.Decimal(12, 2)
+  refundAt          DateTime?
+  refundRaw         Json?
+  paymentLinkSentAt DateTime?
+  invoiceSentAt     DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([editionId, status])
+  @@index([userId])
+  @@index([transId])
 }
 
 model Rsvp {
@@ -421,44 +529,5 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ─── LATER (schema room only — do not build in v1) ────────────────────────────
-// model Ticket {
-//   id               String   @id @default(cuid())
-//   editionId        String
-//   name             String
-//   priceCents       Int
-//   currency         String   @default("INR")
-//   razorpayOrderId  String?
-//   deletedAt        DateTime?
-// }
-//
-// model Submission {
-//   id           String   @id @default(cuid())
-//   editionId    String
-//   userId       String
-//   track        String
-//   title        String
-//   abstract     String   @db.Text
-//   fileUrl      String?
-//   status       String
-//   createdAt    DateTime @default(now())
-//   deletedAt    DateTime?
-// }
-//
-// model Review {
-//   id           String   @id @default(cuid())
-//   submissionId String
-//   reviewerId   String
-//   score        Int?
-//   comments     String?  @db.Text
-//   createdAt    DateTime @default(now())
-// }
-//
-// model Feedback {
-//   id        String   @id @default(cuid())
-//   sessionId String
-//   userId    String
-//   rating    Int
-//   comment   String?  @db.Text
-//   createdAt DateTime @default(now())
-// }
+// ─── LATER (schema room only) ─────────────────────────────────────────────────
+// model Review / Feedback — scoring UI not in this milestone.

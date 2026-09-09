@@ -26,6 +26,9 @@ export default async function DashboardLayout({
             <Link href="/dashboard" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
               Dashboard
             </Link>
+            <Link href="/dashboard/submissions" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
+              Submissions
+            </Link>
             <Link href="/dashboard/profile" className="py-2 text-ink-soft hover:text-teal-deep sm:py-0">
               Profile
             </Link>

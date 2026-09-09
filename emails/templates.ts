@@ -168,3 +168,82 @@ ${opts.fromPhone ? `Phone: ${opts.fromPhone}\n` : ""}${opts.fromLinkedIn ? `Link
 — INVENT · conference@iitbinvent.com`;
   return { subject, html, text };
 }
+
+export function paymentLinkEmail(opts: {
+  name: string;
+  editionName: string;
+  kindLabel: string;
+  title: string;
+  categoryLabel: string;
+  amountFormatted: string;
+  purpose: string;
+  payUrl: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `Payment for your accepted ${opts.kindLabel} — ${opts.editionName}`;
+  const html = layout(
+    "Complete your payment",
+    `<p>Hi ${escapeHtml(opts.name)},</p>
+     <p>Your <strong>${escapeHtml(opts.kindLabel)}</strong> has been accepted for <strong>${escapeHtml(opts.editionName)}</strong>.</p>
+     <p><em>${escapeHtml(opts.title)}</em></p>
+     <p>Category: ${escapeHtml(opts.categoryLabel)}<br/>
+        Amount: <strong>${escapeHtml(opts.amountFormatted)}</strong><br/>
+        Purpose: ${escapeHtml(opts.purpose)}</p>
+     <p>Pay through IIT Bombay Online Pay. The amount is credited to an IIT Bombay account.</p>
+     <p style="padding:16px 0;"><a href="${escapeHtml(opts.payUrl)}" style="background:#1a6b6b;color:#fff;padding:12px 18px;text-decoration:none;border-radius:3px;">Pay now</a></p>
+     <p style="font-size:13px;word-break:break-all;color:#8aaeb4;">${escapeHtml(opts.payUrl)}</p>
+     <p>If money leaves your account but this page still shows unpaid, wait for confirmation and do not pay twice. Write to conference@iitbinvent.com.</p>`,
+  );
+  const text = `Hi ${opts.name},
+
+Your ${opts.kindLabel} "${opts.title}" has been accepted for ${opts.editionName}.
+
+Category: ${opts.categoryLabel}
+Amount: ${opts.amountFormatted}
+Purpose: ${opts.purpose}
+
+Pay here: ${opts.payUrl}
+
+If money leaves your account but we have not confirmed yet, do not pay twice — email conference@iitbinvent.com.
+
+— INVENT · DSSE · IIT Bombay`;
+  return { subject, html, text };
+}
+
+export function paymentReceiptEmail(opts: {
+  name: string;
+  editionName: string;
+  invoiceNumber: string;
+  purpose: string;
+  amountFormatted: string;
+  transId?: string | null;
+  refNo?: string | null;
+  receiptUrl: string;
+}): { subject: string; html: string; text: string } {
+  const subject = `Payment received — invoice ${opts.invoiceNumber}`;
+  const html = layout(
+    "Payment confirmed",
+    `<p>Hi ${escapeHtml(opts.name)},</p>
+     <p>We have received your payment for <strong>${escapeHtml(opts.editionName)}</strong>.</p>
+     <p>Invoice: <strong>${escapeHtml(opts.invoiceNumber)}</strong><br/>
+        Amount: <strong>${escapeHtml(opts.amountFormatted)}</strong><br/>
+        Purpose: ${escapeHtml(opts.purpose)}<br/>
+        IITB transaction id: ${escapeHtml(opts.transId ?? "—")}<br/>
+        Bank reference: ${escapeHtml(opts.refNo ?? "—")}</p>
+     <p>A PDF invoice with IIT Bombay and DSSE details is attached to this email.</p>
+     <p style="padding:16px 0;"><a href="${escapeHtml(opts.receiptUrl)}" style="background:#1a6b6b;color:#fff;padding:12px 18px;text-decoration:none;border-radius:3px;">View receipt</a></p>`,
+  );
+  const text = `Hi ${opts.name},
+
+Payment received for ${opts.editionName}.
+
+Invoice: ${opts.invoiceNumber}
+Amount: ${opts.amountFormatted}
+Purpose: ${opts.purpose}
+IITB transaction id: ${opts.transId ?? "—"}
+Bank reference: ${opts.refNo ?? "—"}
+
+A PDF invoice is attached. Receipt: ${opts.receiptUrl}
+
+— INVENT · DSSE · IIT Bombay`;
+  return { subject, html, text };
+}
