@@ -142,16 +142,25 @@ export async function uploadAbstractPdf(opts: {
   }
   const safeName = opts.fileName.replace(/["\r\n]/g, "");
   const key = `${prefix}abstracts/${opts.applicationId}-${Date.now()}.pdf`;
-  await client.send(
-    new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: opts.bytes,
-      ContentType: "application/pdf",
-      ContentDisposition: `attachment; filename="${safeName}"`,
-      CacheControl: "private, max-age=0, no-store",
-    }),
-  );
+  try {
+    await client.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: opts.bytes,
+        ContentType: "application/pdf",
+        ContentDisposition: `attachment; filename="${safeName}"`,
+        CacheControl: "private, max-age=0, no-store",
+      }),
+      { abortSignal: AbortSignal.timeout(15_000) },
+    );
+  } catch (err) {
+    const name = err instanceof Error ? err.name : "";
+    if (name === "TimeoutError" || name === "AbortError") {
+      throw new Error("PDF upload timed out. Please try again.");
+    }
+    throw err;
+  }
   return { key };
 }
 

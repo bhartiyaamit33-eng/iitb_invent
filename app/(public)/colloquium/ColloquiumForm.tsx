@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import {
   PARTICIPATION_OPTIONS,
   PHD_YEAR_OPTIONS,
@@ -9,15 +9,13 @@ import {
   needsAbstract,
   type ParticipationCategory,
 } from "@/lib/colloquium";
-import {
-  submitColloquiumApplication,
-  type ColloquiumFormState,
-} from "./actions";
 
 const fieldClass =
   "mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 outline-none focus:border-teal";
 const radioLabelClass =
   "flex items-start gap-2.5 rounded-lg border border-transparent px-1 py-1.5 hover:bg-paper/80";
+
+const SUBMIT_TIMEOUT_MS = 45_000;
 
 export function ColloquiumForm({
   defaultName,
@@ -26,10 +24,8 @@ export function ColloquiumForm({
   defaultName: string;
   defaultEmail: string;
 }) {
-  const [state, action, pending] = useActionState<
-    ColloquiumFormState,
-    FormData
-  >(submitColloquiumApplication, null);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
   const [participation, setParticipation] =
     useState<ParticipationCategory | "">("");
   const abstractNeeded = useMemo(
@@ -37,19 +33,61 @@ export function ColloquiumForm({
     [participation],
   );
 
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (pending) return;
+    setError(null);
+    setPending(true);
+
+    const form = event.currentTarget;
+    const body = new FormData(form);
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS);
+
+    try {
+      const res = await fetch("/api/colloquium/apply", {
+        method: "POST",
+        body,
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      });
+      const data = (await res.json().catch(() => null)) as
+        | { ok?: boolean; error?: string }
+        | null;
+      if (!res.ok || !data?.ok) {
+        setError(
+          data?.error ||
+            "Could not submit the application. Please try again.",
+        );
+        return;
+      }
+      window.location.assign("/colloquium/thanks");
+    } catch {
+      setError(
+        controller.signal.aborted
+          ? "The submission timed out. Please try again, or email support@iitbinvent.com if this continues."
+          : "Could not reach the server. Please try again.",
+      );
+    } finally {
+      window.clearTimeout(timer);
+      setPending(false);
+    }
+  }
+
   return (
     <form
-      action={action}
+      onSubmit={onSubmit}
       className="mt-10 space-y-7 rounded-xl border border-line bg-white p-6 sm:p-8"
       data-testid="colloquium-form"
     >
-      {state?.error ? (
+      {error ? (
         <p
           className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
           role="alert"
           data-testid="colloquium-error"
         >
-          {state.error}
+          {error}
         </p>
       ) : null}
 
@@ -259,6 +297,7 @@ export function ColloquiumForm({
       <button
         type="submit"
         disabled={pending}
+        aria-busy={pending}
         className="w-full rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.12em] text-white hover:bg-teal disabled:opacity-60"
         data-testid="submit-application"
       >

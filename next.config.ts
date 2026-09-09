@@ -8,8 +8,16 @@ const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
     // Extended abstracts are PDFs up to 10 MB.
+    // allowedOrigins: the public site is served via Cloudflare Worker while
+    // Next.js sees Host: origin.iitbinvent.com. Without this, Server Actions
+    // fail CSRF and the browser can sit on "Submitting…" forever.
     serverActions: {
       bodySizeLimit: "12mb",
+      allowedOrigins: [
+        "iitbinvent.com",
+        "www.iitbinvent.com",
+        "origin.iitbinvent.com",
+      ],
     },
   },
 };

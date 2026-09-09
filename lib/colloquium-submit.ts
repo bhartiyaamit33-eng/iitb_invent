@@ -1,6 +1,3 @@
-"use server";
-
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -27,16 +24,49 @@ import {
 import { getEmailFromAddress } from "@/lib/email/ses";
 import { siteOrigin } from "@/lib/ticket";
 
-export type ColloquiumFormState = { error: string } | null;
+export type ColloquiumSubmitResult = { ok: true } | { error: string };
 
 function str(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "").trim();
 }
 
-export async function submitColloquiumApplication(
-  _prev: ColloquiumFormState,
+function isUploadedFile(value: FormDataEntryValue | null): value is File {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    "arrayBuffer" in value &&
+    typeof (value as File).arrayBuffer === "function" &&
+    typeof (value as File).size === "number" &&
+    typeof (value as File).name === "string"
+  );
+}
+
+async function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  message: string,
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(message)), ms);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+/**
+ * Validate and persist a colloquium application.
+ * Always resolves with a result — never redirects — so a reverse proxy
+ * cannot leave the browser waiting on a Server Action forever.
+ */
+export async function processColloquiumApplication(
   formData: FormData,
-): Promise<ColloquiumFormState> {
+): Promise<ColloquiumSubmitResult> {
   const name = str(formData, "name");
   const email = str(formData, "email").toLowerCase();
   const phone = str(formData, "phone");
@@ -45,7 +75,9 @@ export async function submitColloquiumApplication(
   const professionalOther = str(formData, "professionalOther");
   const phdYear = parsePhdYear(str(formData, "phdYear"));
   const seekingPostdoc = parsePostdoc(str(formData, "seekingPostdoc"));
-  const participation = parseParticipation(str(formData, "participationCategory"));
+  const participation = parseParticipation(
+    str(formData, "participationCategory"),
+  );
   const participationOther = str(formData, "participationOther");
   const paperTitle = str(formData, "paperTitle");
   const sendCopy = formData.get("sendCopy") === "on";
@@ -78,7 +110,9 @@ export async function submitColloquiumApplication(
 
   const abstractRequired = needsAbstract(participation);
   if (abstractRequired && !paperTitle) {
-    return { error: "Please enter the proposed title of the paper or poster." };
+    return {
+      error: "Please enter the proposed title of the paper or poster.",
+    };
   }
 
   const edition = await prisma.edition.findFirst({
@@ -90,7 +124,7 @@ export async function submitColloquiumApplication(
 
   let abstractBytes: Buffer | null = null;
   let abstractFileName: string | null = null;
-  if (file instanceof File && file.size > 0) {
+  if (isUploadedFile(file) && file.size > 0) {
     if (file.size > MAX_ABSTRACT_BYTES) {
       return { error: "The extended abstract must be a PDF under 10 MB." };
     }
@@ -102,7 +136,9 @@ export async function submitColloquiumApplication(
     abstractFileName =
       file.name.replace(/[/\\]/g, "").slice(0, 180) || "abstract.pdf";
   } else if (abstractRequired) {
-    return { error: "Please upload an extended abstract as a PDF (max 10 MB)." };
+    return {
+      error: "Please upload an extended abstract as a PDF (max 10 MB).",
+    };
   }
 
   const sessionUser = await getCurrentUser();
@@ -150,11 +186,15 @@ export async function submitColloquiumApplication(
 
   if (abstractBytes && abstractFileName) {
     try {
-      const stored = await saveAbstractFile({
-        applicationId: application.id,
-        bytes: abstractBytes,
-        fileName: abstractFileName,
-      });
+      const stored = await withTimeout(
+        saveAbstractFile({
+          applicationId: application.id,
+          bytes: abstractBytes,
+          fileName: abstractFileName,
+        }),
+        20_000,
+        "PDF upload timed out. Please try again.",
+      );
       await prisma.colloquiumApplication.update({
         where: { id: application.id },
         data: {
@@ -165,7 +205,11 @@ export async function submitColloquiumApplication(
       });
     } catch (err) {
       console.error("[colloquium] abstract upload", err);
-      return { error: "Could not store the PDF. Please try again." };
+      const message =
+        err instanceof Error && err.message.includes("timed out")
+          ? err.message
+          : "Could not store the PDF. Please try again.";
+      return { error: message };
     }
   }
 
@@ -217,5 +261,5 @@ export async function submitColloquiumApplication(
 
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
-  redirect("/colloquium/thanks");
+  return { ok: true };
 }
