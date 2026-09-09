@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Smaller runtime footprint for t3.micro EC2 deploys.
   output: "standalone",
+  // Keep AWS SDK / sharp as Node requires. Webpack-splitting them into
+  // `.next/server/chunks/*.js` is what produced "Cannot find module './chunks/6181.js'"
+  // on EC2 when a status-update email ran (status saved, SES send then failed).
+  serverExternalPackages: [
+    "@aws-sdk/client-sesv2",
+    "@aws-sdk/client-s3",
+    "@aws-sdk/s3-request-presigner",
+    "sharp",
+  ],
   experimental: {
     // Extended abstracts are PDFs up to 10 MB.
     // allowedOrigins: the public site is served via Cloudflare Worker while

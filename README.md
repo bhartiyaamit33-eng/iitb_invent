@@ -105,12 +105,14 @@ Secrets live in `/opt/invent/.env` on the server only (gitignored).
 ```bash
 ssh -i ~/.ssh/first_time.pem ec2-user@15.206.84.172
 cd /opt/invent
-git pull
+sudo systemctl stop invent   # do not overwrite .next while next start is running
+git pull origin main
 npm ci
 npx prisma migrate deploy
-npm run db:seed
+# Do not seed production — seed deletes editions/applications.
+rm -rf .next
 npm run build   # includes prepare-standalone (public/assets + .next/static)
-sudo systemctl restart invent
+sudo systemctl start invent
 ```
 
 Do **not** run `cp -r public .next/standalone/public` after build — that nests `public/public` and breaks `/assets/*`. Use `npm run prepare:standalone` (or the post-build step above).
