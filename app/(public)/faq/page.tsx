@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { PublicChrome } from "@/components/PublicChrome";
 import { CANONICAL_FAQS } from "@/lib/seo-content";
@@ -39,7 +40,8 @@ export default function FaqPage() {
         <p className="mt-4 text-[17px] leading-7 text-ink-soft">
           Direct answers for search and for people asking what INVENT, DSSE
           Day, or iitbinvent is. The same facts appear on{" "}
-          <a href="/about">About</a> and <a href="/dsse-day">DSSE Day</a>.
+          <Link href="/about">About</Link> and{" "}
+          <Link href="/dsse-day">DSSE Day</Link>.
         </p>
         <dl className="mt-10 divide-y divide-line border-y border-line">
           {CANONICAL_FAQS.map((item) => (

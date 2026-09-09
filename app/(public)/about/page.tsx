@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { PublicChrome } from "@/components/PublicChrome";
 import {
@@ -71,9 +72,9 @@ export default function AboutPage() {
         ))}
         <p className="mt-10 text-[17px] leading-7 text-ink-soft">
           Read{" "}
-          <a href="/dsse-day">what DSSE Day is</a>, the{" "}
-          <a href="/faq">FAQ</a>, or the{" "}
-          <a href="/programme">2027 programme</a>. School site:{" "}
+          <Link href="/dsse-day">what DSSE Day is</Link>, the{" "}
+          <Link href="/faq">FAQ</Link>, or the{" "}
+          <Link href="/programme">2027 programme</Link>. School site:{" "}
           <a
             href="https://www.dsse.iitb.ac.in/"
             target="_blank"

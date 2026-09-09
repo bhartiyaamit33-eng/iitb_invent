@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { PublicChrome } from "@/components/PublicChrome";
 import {
@@ -79,9 +80,9 @@ export default function DsseDayPage() {
         ))}
         <p className="mt-10 text-[17px] leading-7 text-ink-soft">
           See{" "}
-          <a href="/about">what INVENT is</a>,{" "}
-          <a href="/travel">how to reach the DSSE Building</a>, and the{" "}
-          <a href="/programme">programme</a>.
+          <Link href="/about">what INVENT is</Link>,{" "}
+          <Link href="/travel">how to reach the DSSE Building</Link>, and the{" "}
+          <Link href="/programme">programme</Link>.
         </p>
       </main>
     </PublicChrome>
