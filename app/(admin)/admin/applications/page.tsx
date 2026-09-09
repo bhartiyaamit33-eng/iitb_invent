@@ -3,12 +3,12 @@ import type { ApplicationStatus, ParticipationCategory } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   APPLICATION_STATUS_OPTIONS,
-  DEFAULT_COLLOQUIUM_FEE_PAISE,
+  DEFAULT_CONFERENCE_FEE_PAISE,
   PARTICIPATION_OPTIONS,
   participationLabel,
   paymentStatusLabel,
   professionalLabel,
-} from "@/lib/colloquium";
+} from "@/lib/conference";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 
 export const dynamic = "force-dynamic";
@@ -49,7 +49,7 @@ export default async function AdminApplicationsPage({
 
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
   const applications = edition
-    ? await prisma.colloquiumApplication.findMany({
+    ? await prisma.conferenceApplication.findMany({
         where: {
           editionId: edition.id,
           ...(statusFilter ? { status: statusFilter } : {}),
@@ -73,13 +73,13 @@ export default async function AdminApplicationsPage({
     : [];
 
   const total = edition
-    ? await prisma.colloquiumApplication.count({ where: { editionId: edition.id } })
+    ? await prisma.conferenceApplication.count({ where: { editionId: edition.id } })
     : 0;
 
   return (
     <main className="px-6 py-10">
       <h1 className="font-display text-4xl tracking-wide text-teal-deep">
-        Colloquium applications
+        Conference applications
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
         Call for papers / posters / attendees for{" "}
@@ -189,7 +189,7 @@ export default async function AdminApplicationsPage({
                   <td className="px-4 py-3">
                     {a.abstractStorageKey ? (
                       <a
-                        href={`/api/colloquium/abstract/${a.abstractViewToken}`}
+                        href={`/api/conference/abstract/${a.abstractViewToken}`}
                         target="_blank"
                         rel="noreferrer"
                         className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
@@ -209,7 +209,7 @@ export default async function AdminApplicationsPage({
                       id={a.id}
                       name={a.name}
                       currentStatus={a.status}
-                      feePaise={a.paymentAmountPaise || DEFAULT_COLLOQUIUM_FEE_PAISE}
+                      feePaise={a.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE}
                       compact
                     />
                   </td>

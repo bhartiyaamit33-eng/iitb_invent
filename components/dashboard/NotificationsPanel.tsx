@@ -79,7 +79,7 @@ export function NotificationsPanel({
                   }}
                   className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
                 >
-                  {n.href.startsWith("/colloquium/pay/")
+                  {n.href.startsWith("/conference/pay/")
                     ? "Pay with PayU →"
                     : "Open →"}
                 </Link>

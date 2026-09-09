@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { requireAdmin } from "@/lib/auth/roles";
-import { parsePaymentStatus } from "@/lib/colloquium";
-import { setApplicationPayment } from "@/lib/colloquium-review";
+import { parsePaymentStatus } from "@/lib/conference";
+import { setApplicationPayment } from "@/lib/conference-review";
 import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";

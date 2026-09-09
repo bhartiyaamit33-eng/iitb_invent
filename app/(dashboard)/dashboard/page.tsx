@@ -6,9 +6,9 @@ import { TicketQr } from "@/components/TicketQr";
 import { formatIstRange } from "@/lib/editions";
 import { getNextForUser, isLiveStatus } from "@/lib/live";
 import { ticketBadgeUrl } from "@/lib/ticket";
-import { ColloquiumStatusCard } from "@/components/colloquium/ColloquiumStatusCard";
+import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
 import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
-import { applicationFeeDue } from "@/lib/colloquium-access";
+import { applicationFeeDue } from "@/lib/conference-access";
 
 type SearchParams = Promise<{ welcome?: string }>;
 
@@ -26,7 +26,7 @@ export default async function DashboardPage({
     where: { userId: user.id, edition: { isCurrent: true } },
     include: { edition: true },
   });
-  const application = await prisma.colloquiumApplication.findFirst({
+  const application = await prisma.conferenceApplication.findFirst({
     where: {
       OR: [{ userId: user.id }, { email: user.email }],
       edition: { isCurrent: true },
@@ -164,13 +164,13 @@ export default async function DashboardPage({
               ? "border-ent"
               : "border-line"
           }`}
-          data-testid="colloquium-dashboard-card"
+          data-testid="conference-dashboard-card"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
-            Research colloquium
+            Research conference
           </p>
           {application ? (
-            <ColloquiumStatusCard
+            <ConferenceStatusCard
               status={application.status}
               participationCategory={application.participationCategory}
               participationOther={application.participationOther}
@@ -183,10 +183,10 @@ export default async function DashboardPage({
             <>
               <p className="mt-2 text-sm text-ink-soft">
                 Paper, poster, or attendee applications for the Entrepreneurship
-                Research Colloquium.
+                Research Conference.
               </p>
               <Link
-                href="/colloquium"
+                href="/conference"
                 className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
               >
                 Apply now →

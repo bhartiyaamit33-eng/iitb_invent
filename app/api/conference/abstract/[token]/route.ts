@@ -1,26 +1,21 @@
-import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth/session";
-import { requireAdmin } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
 import { readAbstractFile } from "@/lib/abstract-storage";
 import { pdfFileResponse } from "@/lib/pdf-response";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ token: string }> },
 ) {
-  const actor = await getCurrentUser();
-  try {
-    requireAdmin(actor);
-  } catch {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { token } = await params;
+  if (!token || token.length < 16) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const { id } = await params;
   const application = await prisma.conferenceApplication.findUnique({
-    where: { id },
+    where: { abstractViewToken: token },
   });
   if (!application?.abstractStorageKey || !application.abstractStorage) {
     return NextResponse.json({ error: "No abstract on file" }, { status: 404 });
@@ -39,7 +34,7 @@ export async function GET(
       download,
     );
   } catch (err) {
-    console.error("[abstract download]", err);
+    console.error("[abstract token]", err);
     return NextResponse.json({ error: "File missing" }, { status: 404 });
   }
 }

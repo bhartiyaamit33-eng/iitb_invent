@@ -7,11 +7,11 @@ import {
   type ApplicationPaymentStatus,
   type ApplicationStatus,
   type ParticipationCategory,
-} from "@/lib/colloquium";
-import { applicationFeeDue } from "@/lib/colloquium-access";
-import { colloquiumPayPath } from "@/lib/colloquium-server";
+} from "@/lib/conference";
+import { applicationFeeDue } from "@/lib/conference-access";
+import { conferencePayPath } from "@/lib/conference-server";
 
-export function ColloquiumPayCta({
+export function ConferencePayCta({
   token,
   amountPaise,
 }: {
@@ -22,12 +22,12 @@ export function ColloquiumPayCta({
   return (
     <form
       method="post"
-      action={`/api/colloquium/pay/${encodeURIComponent(token)}/checkout`}
+      action={`/api/conference/pay/${encodeURIComponent(token)}/checkout`}
     >
       <button
         type="submit"
         className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
-        data-testid="colloquium-pay-cta"
+        data-testid="conference-pay-cta"
       >
         Pay {amount} with PayU
       </button>
@@ -35,7 +35,7 @@ export function ColloquiumPayCta({
   );
 }
 
-export function ColloquiumStatusCard({
+export function ConferenceStatusCard({
   status,
   participationCategory,
   participationOther,
@@ -53,10 +53,10 @@ export function ColloquiumStatusCard({
   paymentToken: string;
 }) {
   const feeDue = applicationFeeDue({ status, paymentStatus });
-  const payPath = colloquiumPayPath(paymentToken, true);
+  const payPath = conferencePayPath(paymentToken, true);
 
   return (
-    <div data-testid="colloquium-status-card">
+    <div data-testid="conference-status-card">
       <p className="mt-2 text-lg font-semibold text-ink">
         {applicationStatusLabel(status)}
       </p>
@@ -74,7 +74,7 @@ export function ColloquiumStatusCard({
             You are selected. Pay the registration fee through the IIT Bombay
             PayU gateway — you do not fill the application form again.
           </p>
-          <ColloquiumPayCta
+          <ConferencePayCta
             token={paymentToken}
             amountPaise={paymentAmountPaise}
           />

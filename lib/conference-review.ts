@@ -7,19 +7,19 @@ import {
   applicationStatusLabel,
   formatInrFromPaise,
   statusRequiresPayment,
-} from "@/lib/colloquium";
+} from "@/lib/conference";
 import {
-  colloquiumFeePaise,
-  colloquiumPayPath,
-  colloquiumPaymentUrl,
-  newColloquiumToken,
-} from "@/lib/colloquium-server";
-import { notifyApplicationStatus } from "@/lib/colloquium-access";
-import { sendColloquiumStatusUpdate } from "@/lib/email/transactions";
+  conferenceFeePaise,
+  conferencePayPath,
+  conferencePaymentUrl,
+  newConferenceToken,
+} from "@/lib/conference-server";
+import { notifyApplicationStatus } from "@/lib/conference-access";
+import { sendConferenceStatusUpdate } from "@/lib/email/transactions";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { siteOrigin } from "@/lib/ticket";
 
-export async function reviewColloquiumApplication(opts: {
+export async function reviewConferenceApplication(opts: {
   actorId: string;
   id: string;
   status: ApplicationStatus;
@@ -31,7 +31,7 @@ export async function reviewColloquiumApplication(opts: {
   emailError?: string;
   paymentUrl?: string;
 }> {
-  const before = await prisma.colloquiumApplication.findUnique({
+  const before = await prisma.conferenceApplication.findUnique({
     where: { id: opts.id },
   });
   if (!before) {
@@ -50,23 +50,23 @@ export async function reviewColloquiumApplication(opts: {
     nextPayment = "NOT_REQUIRED";
   }
 
-  const after = await prisma.colloquiumApplication.update({
+  const after = await prisma.conferenceApplication.update({
     where: { id: opts.id },
     data: {
       status: opts.status,
       ...(opts.adminNotes !== undefined ? { adminNotes: opts.adminNotes } : {}),
       paymentStatus: nextPayment,
       paymentAmountPaise: selected
-        ? before.paymentAmountPaise || colloquiumFeePaise()
+        ? before.paymentAmountPaise || conferenceFeePaise()
         : before.paymentAmountPaise,
-      paymentToken: before.paymentToken || newColloquiumToken(),
+      paymentToken: before.paymentToken || newConferenceToken(),
     },
   });
 
   await writeAuditLog({
     actorId: opts.actorId,
-    action: "colloquium.status",
-    entityType: "ColloquiumApplication",
+    action: "conference.status",
+    entityType: "ConferenceApplication",
     entityId: opts.id,
     before,
     after,
@@ -74,7 +74,7 @@ export async function reviewColloquiumApplication(opts: {
 
   const paymentDue = selected && nextPayment === "UNPAID";
   const paymentUrl = paymentDue
-    ? colloquiumPaymentUrl(after.paymentToken)
+    ? conferencePaymentUrl(after.paymentToken)
     : undefined;
   const statusLabel = applicationStatusLabel(after.status);
   const amountLabel = formatInrFromPaise(after.paymentAmountPaise);
@@ -90,7 +90,7 @@ export async function reviewColloquiumApplication(opts: {
     paymentDue,
     amountLabel,
     paymentPath: paymentDue
-      ? colloquiumPayPath(after.paymentToken, true)
+      ? conferencePayPath(after.paymentToken, true)
       : "/dashboard",
   });
 
@@ -98,7 +98,7 @@ export async function reviewColloquiumApplication(opts: {
     return { emailSent: false, paymentUrl };
   }
 
-  const mail = await sendColloquiumStatusUpdate({
+  const mail = await sendConferenceStatusUpdate({
     to: after.email,
     name: after.name,
     statusLabel,
@@ -107,7 +107,7 @@ export async function reviewColloquiumApplication(opts: {
     amountLabel,
     paymentUrl: paymentUrl ?? "",
     dashboardUrl: `${siteOrigin()}/dashboard`,
-    eventName: "Inv.ent 2027 · Research Colloquium",
+    eventName: "Inv.ent 2027 · Research Conference",
     userId: after.userId,
     applicationId: after.id,
   });
@@ -128,14 +128,14 @@ export async function setApplicationPayment(opts: {
   paymentStatus: ApplicationPaymentStatus;
   paymentRef?: string | null;
 }): Promise<void> {
-  const before = await prisma.colloquiumApplication.findUnique({
+  const before = await prisma.conferenceApplication.findUnique({
     where: { id: opts.id },
   });
   if (!before) throw new Error("Application not found");
 
   const paidNow =
     opts.paymentStatus === "PAID" || opts.paymentStatus === "WAIVED";
-  const after = await prisma.colloquiumApplication.update({
+  const after = await prisma.conferenceApplication.update({
     where: { id: opts.id },
     data: {
       paymentStatus: opts.paymentStatus,
@@ -146,8 +146,8 @@ export async function setApplicationPayment(opts: {
 
   await writeAuditLog({
     actorId: opts.actorId,
-    action: "colloquium.payment",
-    entityType: "ColloquiumApplication",
+    action: "conference.payment",
+    entityType: "ConferenceApplication",
     entityId: opts.id,
     before,
     after,

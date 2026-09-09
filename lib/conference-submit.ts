@@ -17,16 +17,16 @@ import {
   phdYearLabel,
   postdocLabel,
   professionalLabel,
-} from "@/lib/colloquium";
-import { newColloquiumToken } from "@/lib/colloquium-server";
+} from "@/lib/conference";
+import { newConferenceToken } from "@/lib/conference-server";
 import {
-  sendColloquiumApplicationCopy,
-  sendColloquiumOrganiserNotify,
+  sendConferenceApplicationCopy,
+  sendConferenceOrganiserNotify,
 } from "@/lib/email/transactions";
 import { getEmailFromAddress } from "@/lib/email/ses";
 import { siteOrigin } from "@/lib/ticket";
 
-export type ColloquiumSubmitResult =
+export type ConferenceSubmitResult =
   | { ok: true; paymentToken: string }
   | { error: string };
 
@@ -64,13 +64,13 @@ async function withTimeout<T>(
 }
 
 /**
- * Validate and persist a colloquium application.
+ * Validate and persist a conference application.
  * Always resolves with a result — never redirects — so a reverse proxy
  * cannot leave the browser waiting on a Server Action forever.
  */
-export async function processColloquiumApplication(
+export async function processConferenceApplication(
   formData: FormData,
-): Promise<ColloquiumSubmitResult> {
+): Promise<ConferenceSubmitResult> {
   const name = str(formData, "name");
   const email = str(formData, "email").toLowerCase();
   const phone = str(formData, "phone");
@@ -159,7 +159,7 @@ export async function processColloquiumApplication(
           select: { id: true },
         });
 
-  const application = await prisma.colloquiumApplication.upsert({
+  const application = await prisma.conferenceApplication.upsert({
     where: { editionId_email: { editionId: edition.id, email } },
     create: {
       editionId: edition.id,
@@ -176,8 +176,8 @@ export async function processColloquiumApplication(
       participationOther: participation === "OTHER" ? participationOther : null,
       paperTitle: paperTitle || null,
       sendCopy,
-      abstractViewToken: newColloquiumToken(),
-      paymentToken: newColloquiumToken(),
+      abstractViewToken: newConferenceToken(),
+      paymentToken: newConferenceToken(),
     },
     update: {
       userId: linkedUser?.id ?? null,
@@ -206,7 +206,7 @@ export async function processColloquiumApplication(
         20_000,
         "PDF upload timed out. Please try again.",
       );
-      await prisma.colloquiumApplication.update({
+      await prisma.conferenceApplication.update({
         where: { id: application.id },
         data: {
           abstractFileName,
@@ -215,7 +215,7 @@ export async function processColloquiumApplication(
         },
       });
     } catch (err) {
-      console.error("[colloquium] abstract upload", err);
+      console.error("[conference] abstract upload", err);
       const message =
         err instanceof Error && err.message.includes("timed out")
           ? err.message
@@ -224,11 +224,11 @@ export async function processColloquiumApplication(
     }
   }
 
-  const saved = await prisma.colloquiumApplication.findUniqueOrThrow({
+  const saved = await prisma.conferenceApplication.findUniqueOrThrow({
     where: { id: application.id },
   });
 
-  const eventName = `${edition.name} · Research Colloquium`;
+  const eventName = `${edition.name} · Research Conference`;
   const payload = {
     name: saved.name,
     email: application.email,
@@ -250,7 +250,7 @@ export async function processColloquiumApplication(
   };
 
   if (sendCopy) {
-    void sendColloquiumApplicationCopy({
+    void sendConferenceApplicationCopy({
       ...payload,
       to: saved.email,
       userId: saved.userId,
@@ -258,7 +258,7 @@ export async function processColloquiumApplication(
     }).catch(() => undefined);
   }
 
-  void sendColloquiumOrganiserNotify({
+  void sendConferenceOrganiserNotify({
     to: getEmailFromAddress(),
     name: saved.name,
     email: saved.email,
@@ -273,6 +273,6 @@ export async function processColloquiumApplication(
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard");
-  revalidatePath("/colloquium");
+  revalidatePath("/conference");
   return { ok: true, paymentToken: saved.paymentToken };
 }

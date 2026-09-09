@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isAdminEmail } from "@/lib/auth/roles";
 import { logoutAction } from "@/app/(public)/login/actions";
-import { attachColloquiumToUser } from "@/lib/colloquium-access";
+import { attachConferenceToUser } from "@/lib/conference-access";
 
 export default async function DashboardLayout({
   children,
@@ -16,7 +16,7 @@ export default async function DashboardLayout({
     redirect(`/login?callbackUrl=${encodeURIComponent("/dashboard")}`);
   }
 
-  await attachColloquiumToUser({ id: user.id, email: user.email });
+  await attachConferenceToUser({ id: user.id, email: user.email });
 
   return (
     <div className="min-h-screen bg-paper">
@@ -41,8 +41,8 @@ export default async function DashboardLayout({
             <Link href="/programme" className="text-ink-soft hover:text-teal-deep">
               Programme
             </Link>
-            <Link href="/colloquium" className="text-ink-soft hover:text-teal-deep">
-              Colloquium
+            <Link href="/conference" className="text-ink-soft hover:text-teal-deep">
+              Conference
             </Link>
             {isAdminEmail(user.email) ? (
               <Link href="/admin" className="text-ink-soft hover:text-teal-deep">

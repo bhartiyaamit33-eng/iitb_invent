@@ -4,20 +4,20 @@ import { getCurrentUser } from "@/lib/auth/session";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Application received · Research Colloquium",
+  title: "Application received · Research Conference",
 };
 
-export default async function ColloquiumThanksPage() {
+export default async function ConferenceThanksPage() {
   const user = await getCurrentUser();
 
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Research Colloquium
+        Research Conference
       </p>
       <h1
         className="mt-2 font-display text-4xl tracking-wide text-teal-deep"
-        data-testid="colloquium-thanks"
+        data-testid="conference-thanks"
       >
         Application received
       </h1>

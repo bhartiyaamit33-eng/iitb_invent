@@ -139,7 +139,7 @@ model User {
   ventures      Venture[]
   connectionRequestsFrom ConnectionRequest[] @relation("ConnectionFrom")
   connectionRequestsTo   ConnectionRequest[] @relation("ConnectionTo")
-  colloquiumApplications ColloquiumApplication[]
+  conferenceApplications ConferenceApplication[]
   notifications          UserNotification[]
 }
 
@@ -219,7 +219,7 @@ model Edition {
   stats         EditionStat[]
   notifySignups NotifySignup[]
   ventures      Venture[]
-  colloquiumApplications ColloquiumApplication[]
+  conferenceApplications ConferenceApplication[]
 }
 
 /// IIT Bombay startups / projects / ideas — public directory listings.
@@ -471,8 +471,8 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-/// Call for applications — research colloquium paper/poster/attendee.
-model ColloquiumApplication {
+/// Call for applications — research conference paper/poster/attendee.
+model ConferenceApplication {
   id        String @id @default(cuid())
   editionId String
   edition   Edition @relation(fields: [editionId], references: [id], onDelete: Cascade)
@@ -517,6 +517,7 @@ model ColloquiumApplication {
   @@index([editionId, status])
   @@index([paymentStatus])
   @@index([createdAt])
+  @@map("ColloquiumApplication")
 }
 
 /// In-app inbox so applicants still see selection/payment when SES fails.

@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Smaller runtime footprint for t3.micro EC2 deploys.
   output: "standalone",
+  async redirects() {
+    return [
+      {
+        source: "/colloquium/:path*",
+        destination: "/conference/:path*",
+        permanent: true,
+      },
+    ];
+  },
   // Keep AWS SDK / sharp as Node requires. Webpack-splitting them into
   // `.next/server/chunks/*.js` is what produced "Cannot find module './chunks/6181.js'"
   // on EC2 when a status-update email ran (status saved, SES send then failed).

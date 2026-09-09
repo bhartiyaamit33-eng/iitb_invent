@@ -3,35 +3,35 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
-import { ColloquiumForm } from "./ColloquiumForm";
-import { ColloquiumStatusCard } from "@/components/colloquium/ColloquiumStatusCard";
+import { ConferenceForm } from "./ConferenceForm";
+import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
 import {
-  COLLOQUIUM_TOKEN_COOKIE,
+  CONFERENCE_TOKEN_COOKIE,
   applicationFeeDue,
-  findMyColloquiumApplication,
-} from "@/lib/colloquium-access";
-import { colloquiumPayPath } from "@/lib/colloquium-server";
+  findMyConferenceApplication,
+} from "@/lib/conference-access";
+import { conferencePayPath } from "@/lib/conference-server";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Research Colloquium · Call for applications · Inv.ent 2027",
+  title: "Research Conference · Call for applications · Inv.ent 2027",
   description:
-    "Apply to present a paper or poster at the Entrepreneurship Research Colloquium during Inv.ent, DSSE Day at IIT Bombay. 30–31 January 2027.",
+    "Apply to present a paper or poster at the Entrepreneurship Research Conference during Inv.ent, DSSE Day at IIT Bombay. 30–31 January 2027.",
 };
 
-export default async function ColloquiumPage() {
+export default async function ConferencePage() {
   const user = await getCurrentUser();
   const cookieToken =
-    (await cookies()).get(COLLOQUIUM_TOKEN_COOKIE)?.value ?? null;
-  const application = await findMyColloquiumApplication({
+    (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
+  const application = await findMyConferenceApplication({
     userId: user?.id,
     email: user?.email,
     cookieToken,
   });
 
   if (application && applicationFeeDue(application)) {
-    redirect(colloquiumPayPath(application.paymentToken, true));
+    redirect(conferencePayPath(application.paymentToken, true));
   }
 
   return (
@@ -43,7 +43,7 @@ export default async function ColloquiumPage() {
         Call for applications
       </h1>
       <p className="mt-2 text-lg text-ink-soft">
-        Entrepreneurship Research Colloquium 2027
+        Entrepreneurship Research Conference 2027
       </p>
       <p className="mt-2 text-sm text-mute">
         <Link href="/" className="underline-offset-2 hover:underline">
@@ -113,7 +113,7 @@ export default async function ColloquiumPage() {
           Ignite your research
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-          The Entrepreneurship Research Colloquium is the premier stage at IIT
+          The Entrepreneurship Research Conference is the premier stage at IIT
           Bombay for advanced PhD scholars and early-career researchers to gain
           high-impact visibility. This is more than a presentation — it is a
           launchpad.
@@ -156,7 +156,7 @@ export default async function ColloquiumPage() {
           Complimentary travel and accommodation for domestic participants is
           limited to paper presenters and poster participants. There is a
           nominal registration fee of ₹3,000 for those who wish to attend DSSE
-          Day and the Research Colloquium. After you are selected, pay from your
+          Day and the Research Conference. After you are selected, pay from your
           dashboard — you will not fill this form again.
         </p>
       </section>
@@ -166,7 +166,7 @@ export default async function ColloquiumPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
             Your application
           </p>
-          <ColloquiumStatusCard
+          <ConferenceStatusCard
             status={application.status}
             participationCategory={application.participationCategory}
             participationOther={application.participationOther}
@@ -197,7 +197,7 @@ export default async function ColloquiumPage() {
           )}
         </section>
       ) : (
-        <ColloquiumForm
+        <ConferenceForm
           defaultName={user?.name ?? ""}
           defaultEmail={user?.email ?? ""}
         />

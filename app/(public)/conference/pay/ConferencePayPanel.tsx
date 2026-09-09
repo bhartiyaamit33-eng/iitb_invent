@@ -5,7 +5,7 @@ import {
   formatInrFromPaise,
   paymentStatusLabel,
   type ApplicationPaymentStatus,
-} from "@/lib/colloquium";
+} from "@/lib/conference";
 
 const OUTCOME_COPY: Record<string, string> = {
   success: "PayU confirmed this payment.",
@@ -21,7 +21,7 @@ const OUTCOME_COPY: Record<string, string> = {
   already: "This application is already marked paid or waived.",
 };
 
-export function ColloquiumPayPanel({
+export function ConferencePayPanel({
   token,
   name,
   amountPaise,
@@ -47,7 +47,7 @@ export function ColloquiumPayPanel({
   const started = useRef(false);
 
   useEffect(() => {
-    void fetch("/api/colloquium/remember", {
+    void fetch("/api/conference/remember", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       credentials: "same-origin",
@@ -101,7 +101,7 @@ export function ColloquiumPayPanel({
             <form
               ref={formRef}
               method="post"
-              action={`/api/colloquium/pay/${encodeURIComponent(token)}/checkout`}
+              action={`/api/conference/pay/${encodeURIComponent(token)}/checkout`}
             >
               <button
                 type="submit"

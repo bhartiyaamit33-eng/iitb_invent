@@ -1,9 +1,9 @@
 import { sendEmail } from "@/lib/email/ses";
 import {
   accountCreatedEmail,
-  colloquiumApplicationCopyEmail,
-  colloquiumOrganiserNotifyEmail,
-  colloquiumStatusUpdateEmail,
+  conferenceApplicationCopyEmail,
+  conferenceOrganiserNotifyEmail,
+  conferenceStatusUpdateEmail,
   connectionRequestEmail,
   magicLinkEmail,
   profileConfirmationEmail,
@@ -118,7 +118,7 @@ export async function sendConnectionRequest(opts: {
   });
 }
 
-export async function sendColloquiumApplicationCopy(opts: {
+export async function sendConferenceApplicationCopy(opts: {
   to: string;
   name: string;
   email: string;
@@ -134,20 +134,20 @@ export async function sendColloquiumApplicationCopy(opts: {
   userId?: string | null;
   applicationId?: string;
 }) {
-  const tpl = colloquiumApplicationCopyEmail(opts);
+  const tpl = conferenceApplicationCopyEmail(opts);
   return sendEmail({
     to: opts.to,
     subject: tpl.subject,
     html: tpl.html,
     text: tpl.text,
-    action: "email.colloquium_application_copy",
+    action: "email.conference_application_copy",
     actorId: opts.userId ?? null,
-    entityType: "ColloquiumApplication",
+    entityType: "ConferenceApplication",
     entityId: opts.applicationId ?? null,
   });
 }
 
-export async function sendColloquiumOrganiserNotify(opts: {
+export async function sendConferenceOrganiserNotify(opts: {
   to: string;
   name: string;
   email: string;
@@ -158,19 +158,19 @@ export async function sendColloquiumOrganiserNotify(opts: {
   adminUrl: string;
   applicationId?: string;
 }) {
-  const tpl = colloquiumOrganiserNotifyEmail(opts);
+  const tpl = conferenceOrganiserNotifyEmail(opts);
   return sendEmail({
     to: opts.to,
     subject: tpl.subject,
     html: tpl.html,
     text: tpl.text,
-    action: "email.colloquium_application_notify",
-    entityType: "ColloquiumApplication",
+    action: "email.conference_application_notify",
+    entityType: "ConferenceApplication",
     entityId: opts.applicationId ?? null,
   });
 }
 
-export async function sendColloquiumStatusUpdate(opts: {
+export async function sendConferenceStatusUpdate(opts: {
   to: string;
   name: string;
   statusLabel: string;
@@ -183,15 +183,15 @@ export async function sendColloquiumStatusUpdate(opts: {
   userId?: string | null;
   applicationId?: string;
 }) {
-  const tpl = colloquiumStatusUpdateEmail(opts);
+  const tpl = conferenceStatusUpdateEmail(opts);
   return sendEmail({
     to: opts.to,
     subject: tpl.subject,
     html: tpl.html,
     text: tpl.text,
-    action: "email.colloquium_status_update",
+    action: "email.conference_status_update",
     actorId: opts.userId ?? null,
-    entityType: "ColloquiumApplication",
+    entityType: "ConferenceApplication",
     entityId: opts.applicationId ?? null,
   });
 }

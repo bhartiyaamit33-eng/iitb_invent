@@ -10,8 +10,8 @@ import {
   phdYearLabel,
   postdocLabel,
   professionalLabel,
-} from "@/lib/colloquium";
-import { abstractPdfPublicUrl, colloquiumPaymentUrl } from "@/lib/colloquium-server";
+} from "@/lib/conference";
+import { abstractPdfPublicUrl, conferencePaymentUrl } from "@/lib/conference-server";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +25,7 @@ export async function GET() {
 
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
   const rows = edition
-    ? await prisma.colloquiumApplication.findMany({
+    ? await prisma.conferenceApplication.findMany({
         where: { editionId: edition.id },
         orderBy: { createdAt: "desc" },
       })
@@ -61,7 +61,7 @@ export async function GET() {
       (a.paymentAmountPaise / 100).toFixed(0),
       a.paymentRef ?? "",
       a.paidAt ? a.paidAt.toISOString() : "",
-      colloquiumPaymentUrl(a.paymentToken),
+      conferencePaymentUrl(a.paymentToken),
       a.name,
       a.email,
       a.phone,
@@ -82,8 +82,8 @@ export async function GET() {
 
   await writeAuditLog({
     actorId: actor!.id,
-    action: "colloquium.export",
-    entityType: "ColloquiumApplication",
+    action: "conference.export",
+    entityType: "ConferenceApplication",
     after: { count: rows.length },
   });
 
@@ -91,7 +91,7 @@ export async function GET() {
   return new NextResponse(body, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="invent-colloquium-${new Date().toISOString().slice(0, 10)}.csv"`,
+      "Content-Disposition": `attachment; filename="invent-conference-${new Date().toISOString().slice(0, 10)}.csv"`,
       "Cache-Control": "no-store",
     },
   });

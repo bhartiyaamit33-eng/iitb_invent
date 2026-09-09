@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { requireAdmin } from "@/lib/auth/roles";
-import { parseApplicationStatus } from "@/lib/colloquium";
-import { reviewColloquiumApplication } from "@/lib/colloquium-review";
+import { parseApplicationStatus } from "@/lib/conference";
+import { reviewConferenceApplication } from "@/lib/conference-review";
 import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +32,7 @@ export async function POST(
   }
 
   try {
-    const result = await reviewColloquiumApplication({
+    const result = await reviewConferenceApplication({
       actorId: actor!.id,
       id,
       status,
@@ -47,7 +47,7 @@ export async function POST(
     revalidatePath("/admin/applications");
     revalidatePath(`/admin/applications/${id}`);
     revalidatePath("/dashboard");
-    revalidatePath("/colloquium");
+    revalidatePath("/conference");
     return NextResponse.json({ ok: true, ...result });
   } catch (err) {
     console.error("[application review]", err);

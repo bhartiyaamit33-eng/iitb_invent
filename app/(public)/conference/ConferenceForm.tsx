@@ -10,7 +10,7 @@ import {
   needsAbstract,
   type ParticipationCategory,
   type ProfessionalCategory,
-} from "@/lib/colloquium";
+} from "@/lib/conference";
 
 const fieldClass =
   "mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 outline-none focus:border-teal";
@@ -19,7 +19,7 @@ const radioLabelClass =
 
 const SUBMIT_TIMEOUT_MS = 45_000;
 
-export function ColloquiumForm({
+export function ConferenceForm({
   defaultName,
   defaultEmail,
 }: {
@@ -52,7 +52,7 @@ export function ColloquiumForm({
     const timer = window.setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS);
 
     try {
-      const res = await fetch("/api/colloquium/apply", {
+      const res = await fetch("/api/conference/apply", {
         method: "POST",
         body,
         credentials: "same-origin",
@@ -69,7 +69,7 @@ export function ColloquiumForm({
         );
         return;
       }
-      router.push("/colloquium/thanks");
+      router.push("/conference/thanks");
     } catch {
       setError(
         controller.signal.aborted
@@ -86,13 +86,13 @@ export function ColloquiumForm({
     <form
       onSubmit={onSubmit}
       className="mt-10 space-y-7 rounded-xl border border-line bg-white p-6 sm:p-8"
-      data-testid="colloquium-form"
+      data-testid="conference-form"
     >
       {error ? (
         <p
           className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
           role="alert"
-          data-testid="colloquium-error"
+          data-testid="conference-error"
         >
           {error}
         </p>

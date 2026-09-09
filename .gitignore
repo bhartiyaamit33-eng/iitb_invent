@@ -27,7 +27,7 @@ next-env.d.ts
 
 invent-next-tmp/
 
-# Colloquium extended abstracts (local fallback when S3 is unset)
+# Conference extended abstracts (local fallback when S3 is unset)
 /data/abstracts/
 
 # Reticle: generated landing SDK bundle (rebuild with esbuild)

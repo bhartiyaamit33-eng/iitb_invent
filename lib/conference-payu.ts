@@ -13,16 +13,16 @@ import {
   payuResponseHash,
 } from "@/lib/payu";
 
-export const COLLOQUIUM_PAYU_PRODUCT =
-  "Inv.ent Research Colloquium registration";
+export const CONFERENCE_PAYU_PRODUCT =
+  "Inv.ent Research Conference registration";
 
 export type PayUCheckout = {
   action: string;
   fields: Record<string, string>;
 };
 
-export function colloquiumPayUCallbackUrl(): string {
-  return `${siteOrigin()}/api/colloquium/payu/callback`;
+export function conferencePayUCallbackUrl(): string {
+  return `${siteOrigin()}/api/conference/payu/callback`;
 }
 
 export function buildPayUCheckout(application: {
@@ -40,12 +40,12 @@ export function buildPayUCheckout(application: {
   const txnid = newPayUTxnId();
   const firstname = payuFirstName(application.name);
   const email = application.email.trim();
-  const callback = colloquiumPayUCallbackUrl();
+  const callback = conferencePayUCallbackUrl();
   const request = {
     key: cfg.key,
     txnid,
     amount,
-    productinfo: COLLOQUIUM_PAYU_PRODUCT,
+    productinfo: CONFERENCE_PAYU_PRODUCT,
     firstname,
     email,
     udf1: application.id,
@@ -59,7 +59,7 @@ export function buildPayUCheckout(application: {
     key: cfg.key,
     txnid,
     amount,
-    productinfo: COLLOQUIUM_PAYU_PRODUCT,
+    productinfo: CONFERENCE_PAYU_PRODUCT,
     firstname,
     email,
     phone: payuPhone(application.phone),
@@ -124,11 +124,11 @@ export async function processPayUCallback(
   }
 
   const application = applicationId
-    ? await prisma.colloquiumApplication.findUnique({
+    ? await prisma.conferenceApplication.findUnique({
         where: { id: applicationId },
       })
     : paymentToken
-      ? await prisma.colloquiumApplication.findUnique({
+      ? await prisma.conferenceApplication.findUnique({
           where: { paymentToken },
         })
       : null;
@@ -147,7 +147,7 @@ export async function processPayUCallback(
       application.paymentStatus !== "PAID" &&
       application.paymentStatus !== "WAIVED"
     ) {
-      await prisma.colloquiumApplication.update({
+      await prisma.conferenceApplication.update({
         where: { id: application.id },
         data: {
           paymentStatus: "PAID",

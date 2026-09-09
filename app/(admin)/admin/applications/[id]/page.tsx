@@ -2,15 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import {
-  DEFAULT_COLLOQUIUM_FEE_PAISE,
+  DEFAULT_CONFERENCE_FEE_PAISE,
   applicationStatusLabel,
   needsPhdYear,
   participationLabel,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
-} from "@/lib/colloquium";
-import { colloquiumPaymentUrl } from "@/lib/colloquium-server";
+} from "@/lib/conference";
+import { conferencePaymentUrl } from "@/lib/conference-server";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPanel";
 
@@ -30,14 +30,14 @@ export default async function AdminApplicationDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const application = await prisma.colloquiumApplication.findUnique({
+  const application = await prisma.conferenceApplication.findUnique({
     where: { id },
     include: { edition: { select: { name: true, year: true } } },
   });
   if (!application) notFound();
 
   const pdfUrl = application.abstractViewToken
-    ? `/api/colloquium/abstract/${application.abstractViewToken}`
+    ? `/api/conference/abstract/${application.abstractViewToken}`
     : null;
 
   const rows: [string, string][] = [
@@ -137,9 +137,9 @@ export default async function AdminApplicationDetailPage({
           id={application.id}
           paymentStatus={application.paymentStatus}
           paymentAmountPaise={
-            application.paymentAmountPaise || DEFAULT_COLLOQUIUM_FEE_PAISE
+            application.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE
           }
-          paymentUrl={colloquiumPaymentUrl(application.paymentToken)}
+          paymentUrl={conferencePaymentUrl(application.paymentToken)}
           paymentRef={application.paymentRef}
           paidAt={application.paidAt ? istDate(application.paidAt) : null}
         />
@@ -156,7 +156,7 @@ export default async function AdminApplicationDetailPage({
             currentStatus={application.status}
             adminNotes={application.adminNotes ?? ""}
             feePaise={
-              application.paymentAmountPaise || DEFAULT_COLLOQUIUM_FEE_PAISE
+              application.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE
             }
           />
         </div>

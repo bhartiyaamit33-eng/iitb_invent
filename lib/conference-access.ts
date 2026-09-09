@@ -3,12 +3,12 @@ import {
   applicationStatusLabel,
   formatInrFromPaise,
   statusRequiresPayment,
-} from "@/lib/colloquium";
-import { colloquiumPayPath } from "@/lib/colloquium-server";
+} from "@/lib/conference";
+import { conferencePayPath } from "@/lib/conference-server";
 
-export const COLLOQUIUM_TOKEN_COOKIE = "invent_colloquium_token";
+export const CONFERENCE_TOKEN_COOKIE = "invent_conference_token";
 
-export function colloquiumCookieOptions() {
+export function conferenceCookieOptions() {
   return {
     httpOnly: true,
     sameSite: "lax" as const,
@@ -25,7 +25,7 @@ export function applicationFeeDue(app: {
   return statusRequiresPayment(app.status) && app.paymentStatus === "UNPAID";
 }
 
-export async function findMyColloquiumApplication(opts: {
+export async function findMyConferenceApplication(opts: {
   userId?: string | null;
   email?: string | null;
   cookieToken?: string | null;
@@ -45,7 +45,7 @@ export async function findMyColloquiumApplication(opts: {
   }
   if (or.length === 0) return null;
 
-  return prisma.colloquiumApplication.findFirst({
+  return prisma.conferenceApplication.findFirst({
     where: { OR: or, edition: { isCurrent: true } },
     orderBy: { createdAt: "desc" },
   });
@@ -67,23 +67,23 @@ export async function notifyUser(opts: {
       },
     });
   } catch (err) {
-    console.error("[colloquium] notify", err);
+    console.error("[conference] notify", err);
   }
 }
 
 /** Link guest applications to this account and surface a pay notice if one is due. */
-export async function attachColloquiumToUser(user: {
+export async function attachConferenceToUser(user: {
   id: string;
   email: string;
 }): Promise<void> {
   try {
     const email = user.email.trim().toLowerCase();
-    await prisma.colloquiumApplication.updateMany({
+    await prisma.conferenceApplication.updateMany({
       where: { email },
       data: { userId: user.id },
     });
 
-    const due = await prisma.colloquiumApplication.findMany({
+    const due = await prisma.conferenceApplication.findMany({
       where: {
         email,
         paymentStatus: "UNPAID",
@@ -94,20 +94,20 @@ export async function attachColloquiumToUser(user: {
     });
 
     for (const app of due) {
-      const href = colloquiumPayPath(app.paymentToken, true);
+      const href = conferencePayPath(app.paymentToken, true);
       const existing = await prisma.userNotification.findFirst({
         where: { userId: user.id, href },
       });
       if (existing) continue;
       await notifyUser({
         userId: user.id,
-        title: "Pay your colloquium registration fee",
+        title: "Pay your conference registration fee",
         body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open PayU from this notice — you do not need to apply again.`,
         href,
       });
     }
   } catch (err) {
-    console.error("[colloquium] attach", err);
+    console.error("[conference] attach", err);
   }
 }
 

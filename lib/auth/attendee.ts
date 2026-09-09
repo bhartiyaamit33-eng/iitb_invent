@@ -2,7 +2,7 @@ import { Role } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/auth/roles";
-import { attachColloquiumToUser } from "@/lib/colloquium-access";
+import { attachConferenceToUser } from "@/lib/conference-access";
 
 /** After OAuth/credentials sign-in: ensure Profile + current-edition Registration. */
 export async function ensureAttendeeReady(userId: string) {
@@ -47,7 +47,7 @@ export async function ensureAttendeeReady(userId: string) {
     }
   }
 
-  await attachColloquiumToUser({ id: user.id, email: user.email });
+  await attachConferenceToUser({ id: user.id, email: user.email });
 }
 
 /** Default post-login destination for attendees (never admin CMS). */

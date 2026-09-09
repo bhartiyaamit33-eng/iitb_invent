@@ -9,7 +9,7 @@ import {
   formatInrFromPaise,
   statusRequiresPayment,
   type ApplicationStatus,
-} from "@/lib/colloquium";
+} from "@/lib/conference";
 
 export function ApplicationReviewDialog({
   id,

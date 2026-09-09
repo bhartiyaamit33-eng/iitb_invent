@@ -6,7 +6,7 @@ import {
   formatInrFromPaise,
   paymentStatusLabel,
   type ApplicationPaymentStatus,
-} from "@/lib/colloquium";
+} from "@/lib/conference";
 
 export function ApplicationPaymentPanel({
   id,
