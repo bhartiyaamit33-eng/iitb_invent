@@ -11,6 +11,14 @@ import { attendeeHome } from "@/lib/auth/attendee";
 import { sendAccountCreated } from "@/lib/email/transactions";
 import { siteOrigin } from "@/lib/ticket";
 import { IconGoogle } from "@/components/icons";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata({
+  title: "Create an account",
+  description:
+    "Create a free INVENT account for DSSE Day at IIT Bombay — programme RSVPs, directory, and ventures.",
+  path: "/signup",
+});
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 

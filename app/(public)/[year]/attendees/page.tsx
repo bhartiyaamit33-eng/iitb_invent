@@ -8,8 +8,10 @@ import { ConnectOnLinkedIn } from "@/components/ConnectOnLinkedIn";
 import { RequestConnectForm } from "@/components/RequestConnectForm";
 import { ShowBio } from "@/components/ShowBio";
 import { IconGlobe, IconMail } from "@/components/icons";
+import { noIndex } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+export const metadata = noIndex;
 
 type SearchParams = Promise<{
   persona?: string;

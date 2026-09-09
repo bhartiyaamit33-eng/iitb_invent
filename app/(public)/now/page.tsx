@@ -2,9 +2,11 @@ import Link from "next/link";
 import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
 import { formatIstRange } from "@/lib/editions";
 import { prisma } from "@/lib/db";
+import { noIndex } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
+export const metadata = noIndex;
 
 export default async function NowScreenPage() {
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });

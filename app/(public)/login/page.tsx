@@ -4,6 +4,13 @@ import { AuthError } from "next-auth";
 import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { attendeeHome } from "@/lib/auth/attendee";
 import { IconGoogle } from "@/components/icons";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata({
+  title: "Log in",
+  description: "Log in to INVENT (iitbinvent.com) for DSSE Day at IIT Bombay.",
+  path: "/login",
+});
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 

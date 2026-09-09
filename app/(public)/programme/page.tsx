@@ -4,8 +4,16 @@ import { formatIstRange } from "@/lib/editions";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
 import { cancelRsvpAction, rsvpAction } from "./actions";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = pageMetadata({
+  title: "Programme",
+  description:
+    "INVENT 2027 programme — research papers, posters, pitches, and sessions on DSSE Day, 31 January 2027, at IIT Bombay.",
+  path: "/programme",
+});
 
 export default async function ProgrammePage() {
   const user = await getCurrentUser();

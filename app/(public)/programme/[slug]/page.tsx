@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { formatIstRange } from "@/lib/editions";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -7,8 +8,36 @@ import { googleCalendarUrl } from "@/lib/calendar";
 import { fillConnectNote, firstNameFromFullName } from "@/lib/connect";
 import { ConnectOnLinkedIn } from "@/components/ConnectOnLinkedIn";
 import { cancelRsvpAction, rsvpAction } from "../actions";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
+  if (!edition) return { title: "Session" };
+  const session = await prisma.session_.findFirst({
+    where: {
+      editionId: edition.id,
+      slug,
+      isPublished: true,
+      deletedAt: null,
+    },
+    select: { title: true, description: true },
+  });
+  if (!session) return { title: "Session" };
+  return pageMetadata({
+    title: session.title,
+    description:
+      session.description?.slice(0, 160) ||
+      `${session.title} at INVENT / DSSE Day, IIT Bombay.`,
+    path: `/programme/${slug}`,
+  });
+}
 
 export default async function SessionDetailPage({
   params,

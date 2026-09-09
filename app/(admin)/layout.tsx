@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -5,6 +6,9 @@ import { AuthError, requireRole } from "@/lib/auth/roles";
 import { Role } from "@prisma/client";
 import { logoutAction } from "@/app/(public)/login/actions";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = noIndex;
 
 /**
  * Server-side lock for all `/admin/*` routes.

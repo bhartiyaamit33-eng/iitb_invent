@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { logoutAction } from "@/app/(public)/login/actions";
 import { attachConferenceToUser } from "@/lib/conference-access";
 import { Role } from "@prisma/client";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = noIndex;
 
 export default async function DashboardLayout({
   children,
