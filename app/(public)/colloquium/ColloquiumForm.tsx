@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import {
   PARTICIPATION_OPTIONS,
   PHD_YEAR_OPTIONS,
@@ -24,6 +25,7 @@ export function ColloquiumForm({
   defaultName: string;
   defaultEmail: string;
 }) {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [participation, setParticipation] =
@@ -62,7 +64,7 @@ export function ColloquiumForm({
         );
         return;
       }
-      window.location.assign("/colloquium/thanks");
+      router.push("/colloquium/thanks");
     } catch {
       setError(
         controller.signal.aborted
