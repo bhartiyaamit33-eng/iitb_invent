@@ -76,11 +76,13 @@ export function ApplicationReviewDialog({
       }
       setOpen(false);
       if (sendEmail && data.emailError) {
-        setNotice(`Saved. Email did not send: ${data.emailError}`);
+        setNotice(
+          `Saved. Email did not send: ${data.emailError}. They can still pay from the dashboard.`,
+        );
       } else if (sendEmail && data.emailSent) {
-        setNotice("Saved and emailed the applicant.");
+        setNotice("Saved, emailed, and posted to their dashboard.");
       } else {
-        setNotice("Status saved.");
+        setNotice("Status saved. Dashboard notice posted if they have an account.");
       }
       router.refresh();
     } catch {
@@ -185,6 +187,8 @@ export function ApplicationReviewDialog({
             {selected ? (
               <p className="mt-2 rounded-md bg-paper px-3 py-2 text-sm text-ink">
                 They will receive a PayU (IIT Bombay) payment link for {amount}.
+                The same Pay action appears on their dashboard if they have an
+                Inv.ent account — even when email does not send.
               </p>
             ) : null}
             <label className="mt-4 block text-sm">

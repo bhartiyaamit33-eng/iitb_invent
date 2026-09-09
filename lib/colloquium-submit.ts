@@ -26,7 +26,9 @@ import {
 import { getEmailFromAddress } from "@/lib/email/ses";
 import { siteOrigin } from "@/lib/ticket";
 
-export type ColloquiumSubmitResult = { ok: true } | { error: string };
+export type ColloquiumSubmitResult =
+  | { ok: true; paymentToken: string }
+  | { error: string };
 
 function str(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "").trim();
@@ -270,5 +272,7 @@ export async function processColloquiumApplication(
 
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
-  return { ok: true };
+  revalidatePath("/dashboard");
+  revalidatePath("/colloquium");
+  return { ok: true, paymentToken: saved.paymentToken };
 }

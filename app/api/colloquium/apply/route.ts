@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { processColloquiumApplication } from "@/lib/colloquium-submit";
+import {
+  COLLOQUIUM_TOKEN_COOKIE,
+  colloquiumCookieOptions,
+} from "@/lib/colloquium-access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +23,16 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
-    return NextResponse.json({ ok: true });
+    const res = NextResponse.json({
+      ok: true,
+      paymentToken: result.paymentToken,
+    });
+    res.cookies.set(
+      COLLOQUIUM_TOKEN_COOKIE,
+      result.paymentToken,
+      colloquiumCookieOptions(),
+    );
+    return res;
   } catch (err) {
     console.error("[api/colloquium/apply]", err);
     return NextResponse.json(

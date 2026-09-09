@@ -140,6 +140,7 @@ model User {
   connectionRequestsFrom ConnectionRequest[] @relation("ConnectionFrom")
   connectionRequestsTo   ConnectionRequest[] @relation("ConnectionTo")
   colloquiumApplications ColloquiumApplication[]
+  notifications          UserNotification[]
 }
 
 model Profile {
@@ -516,6 +517,20 @@ model ColloquiumApplication {
   @@index([editionId, status])
   @@index([paymentStatus])
   @@index([createdAt])
+}
+
+/// In-app inbox so applicants still see selection/payment when SES fails.
+model UserNotification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String    @db.Text
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
 }
 
 // ─── LATER (schema room only — do not build in v1) ────────────────────────────

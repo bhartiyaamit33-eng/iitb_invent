@@ -2,6 +2,7 @@ import { Role } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/auth/roles";
+import { attachColloquiumToUser } from "@/lib/colloquium-access";
 
 /** After OAuth/credentials sign-in: ensure Profile + current-edition Registration. */
 export async function ensureAttendeeReady(userId: string) {
@@ -26,25 +27,27 @@ export async function ensureAttendeeReady(userId: string) {
   }
 
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
-  if (!edition) return;
+  if (edition) {
+    const existing = await prisma.registration.findUnique({
+      where: {
+        userId_editionId: { userId, editionId: edition.id },
+      },
+    });
+    if (!existing) {
+      await prisma.registration.create({
+        data: {
+          userId,
+          editionId: edition.id,
+          status: "CONFIRMED",
+          ticketCode: `INV${String(edition.year).slice(2)}-${randomBytes(3).toString("hex").toUpperCase()}`,
+          qrToken: randomBytes(24).toString("hex"),
+          source: "oauth",
+        },
+      });
+    }
+  }
 
-  const existing = await prisma.registration.findUnique({
-    where: {
-      userId_editionId: { userId, editionId: edition.id },
-    },
-  });
-  if (existing) return;
-
-  await prisma.registration.create({
-    data: {
-      userId,
-      editionId: edition.id,
-      status: "CONFIRMED",
-      ticketCode: `INV${String(edition.year).slice(2)}-${randomBytes(3).toString("hex").toUpperCase()}`,
-      qrToken: randomBytes(24).toString("hex"),
-      source: "oauth",
-    },
-  });
+  await attachColloquiumToUser({ id: user.id, email: user.email });
 }
 
 /** Default post-login destination for attendees (never admin CMS). */

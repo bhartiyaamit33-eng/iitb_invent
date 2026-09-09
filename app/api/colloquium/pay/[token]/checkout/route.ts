@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { isPayUReady, buildPayUCheckout } from "@/lib/colloquium-payu";
 import { colloquiumPaymentUrl } from "@/lib/colloquium-server";
+import {
+  COLLOQUIUM_TOKEN_COOKIE,
+  colloquiumCookieOptions,
+} from "@/lib/colloquium-access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,7 +24,13 @@ function redirectToPay(
 ) {
   const url = new URL(colloquiumPaymentUrl(token));
   url.searchParams.set("payu", outcome);
-  return NextResponse.redirect(url, 303);
+  const res = NextResponse.redirect(url, 303);
+  res.cookies.set(
+    COLLOQUIUM_TOKEN_COOKIE,
+    token,
+    colloquiumCookieOptions(),
+  );
+  return res;
 }
 
 /**
@@ -82,11 +92,17 @@ export async function POST(
 </body>
 </html>`;
 
-  return new NextResponse(html, {
+  const res = new NextResponse(html, {
     status: 200,
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
     },
   });
+  res.cookies.set(
+    COLLOQUIUM_TOKEN_COOKIE,
+    application.paymentToken,
+    colloquiumCookieOptions(),
+  );
+  return res;
 }

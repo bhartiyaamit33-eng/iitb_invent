@@ -178,6 +178,7 @@ export async function sendColloquiumStatusUpdate(opts: {
   includePayment: boolean;
   amountLabel: string;
   paymentUrl: string;
+  dashboardUrl: string;
   eventName: string;
   userId?: string | null;
   applicationId?: string;

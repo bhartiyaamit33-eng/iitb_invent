@@ -10,11 +10,14 @@ import {
 } from "@/lib/colloquium";
 import {
   colloquiumFeePaise,
+  colloquiumPayPath,
   colloquiumPaymentUrl,
   newColloquiumToken,
 } from "@/lib/colloquium-server";
+import { notifyApplicationStatus } from "@/lib/colloquium-access";
 import { sendColloquiumStatusUpdate } from "@/lib/email/transactions";
 import { writeAuditLog } from "@/lib/admin/audit";
+import { siteOrigin } from "@/lib/ticket";
 
 export async function reviewColloquiumApplication(opts: {
   actorId: string;
@@ -69,9 +72,27 @@ export async function reviewColloquiumApplication(opts: {
     after,
   });
 
-  const paymentUrl = selected
+  const paymentDue = selected && nextPayment === "UNPAID";
+  const paymentUrl = paymentDue
     ? colloquiumPaymentUrl(after.paymentToken)
     : undefined;
+  const statusLabel = applicationStatusLabel(after.status);
+  const amountLabel = formatInrFromPaise(after.paymentAmountPaise);
+  const message = opts.message.trim();
+
+  // Dashboard notice always — email is best-effort and may fail (SES, keys).
+  await notifyApplicationStatus({
+    userId: after.userId,
+    email: after.email,
+    name: after.name,
+    statusLabel,
+    message,
+    paymentDue,
+    amountLabel,
+    paymentPath: paymentDue
+      ? colloquiumPayPath(after.paymentToken, true)
+      : "/dashboard",
+  });
 
   if (!opts.sendEmail) {
     return { emailSent: false, paymentUrl };
@@ -80,11 +101,12 @@ export async function reviewColloquiumApplication(opts: {
   const mail = await sendColloquiumStatusUpdate({
     to: after.email,
     name: after.name,
-    statusLabel: applicationStatusLabel(after.status),
-    message: opts.message.trim(),
-    includePayment: selected && nextPayment === "UNPAID",
-    amountLabel: formatInrFromPaise(after.paymentAmountPaise),
+    statusLabel,
+    message,
+    includePayment: paymentDue,
+    amountLabel,
     paymentUrl: paymentUrl ?? "",
+    dashboardUrl: `${siteOrigin()}/dashboard`,
     eventName: "Inv.ent 2027 · Research Colloquium",
     userId: after.userId,
     applicationId: after.id,

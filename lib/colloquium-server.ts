@@ -10,8 +10,13 @@ export function abstractPdfPublicUrl(token: string): string {
   return `${siteOrigin()}/api/colloquium/abstract/${encodeURIComponent(token)}`;
 }
 
-export function colloquiumPaymentUrl(token: string): string {
-  return `${siteOrigin()}/colloquium/pay/${encodeURIComponent(token)}`;
+export function colloquiumPayPath(token: string, start = false): string {
+  const path = `/colloquium/pay/${encodeURIComponent(token)}`;
+  return start ? `${path}?start=1` : path;
+}
+
+export function colloquiumPaymentUrl(token: string, start = false): string {
+  return `${siteOrigin()}${colloquiumPayPath(token, start)}`;
 }
 
 export function colloquiumFeePaise(): number {

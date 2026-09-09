@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { ColloquiumForm } from "./ColloquiumForm";
+import { ColloquiumStatusCard } from "@/components/colloquium/ColloquiumStatusCard";
+import {
+  COLLOQUIUM_TOKEN_COOKIE,
+  applicationFeeDue,
+  findMyColloquiumApplication,
+} from "@/lib/colloquium-access";
+import { colloquiumPayPath } from "@/lib/colloquium-server";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +22,17 @@ export const metadata: Metadata = {
 
 export default async function ColloquiumPage() {
   const user = await getCurrentUser();
+  const cookieToken =
+    (await cookies()).get(COLLOQUIUM_TOKEN_COOKIE)?.value ?? null;
+  const application = await findMyColloquiumApplication({
+    userId: user?.id,
+    email: user?.email,
+    cookieToken,
+  });
+
+  if (application && applicationFeeDue(application)) {
+    redirect(colloquiumPayPath(application.paymentToken, true));
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -136,15 +156,52 @@ export default async function ColloquiumPage() {
           Complimentary travel and accommodation for domestic participants is
           limited to paper presenters and poster participants. There is a
           nominal registration fee of ₹3,000 for those who wish to attend DSSE
-          Day and the Research Colloquium. Payment details are shared after
-          this application is received.
+          Day and the Research Colloquium. After you are selected, pay from your
+          dashboard — you will not fill this form again.
         </p>
       </section>
 
-      <ColloquiumForm
-        defaultName={user?.name ?? ""}
-        defaultEmail={user?.email ?? ""}
-      />
+      {application ? (
+        <section className="mt-8 rounded-xl border border-line bg-white p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
+            Your application
+          </p>
+          <ColloquiumStatusCard
+            status={application.status}
+            participationCategory={application.participationCategory}
+            participationOther={application.participationOther}
+            paperTitle={application.paperTitle}
+            paymentStatus={application.paymentStatus}
+            paymentAmountPaise={application.paymentAmountPaise}
+            paymentToken={application.paymentToken}
+          />
+          {user ? (
+            <p className="mt-4 text-sm">
+              <Link
+                href="/dashboard"
+                className="font-semibold text-teal-deep underline-offset-2 hover:underline"
+              >
+                Open dashboard →
+              </Link>
+            </p>
+          ) : (
+            <p className="mt-4 text-sm text-ink-soft">
+              <Link
+                href="/signup"
+                className="font-semibold text-teal-deep underline-offset-2 hover:underline"
+              >
+                Create an account
+              </Link>{" "}
+              with this email so notices and PayU stay on your dashboard.
+            </p>
+          )}
+        </section>
+      ) : (
+        <ColloquiumForm
+          defaultName={user?.name ?? ""}
+          defaultEmail={user?.email ?? ""}
+        />
+      )}
     </main>
   );
 }

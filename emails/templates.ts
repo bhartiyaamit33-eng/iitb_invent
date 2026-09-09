@@ -255,14 +255,16 @@ export function colloquiumStatusUpdateEmail(opts: {
   includePayment: boolean;
   amountLabel: string;
   paymentUrl: string;
+  dashboardUrl: string;
   eventName: string;
 }): { subject: string; html: string; text: string } {
   const subject = `Application update — ${opts.eventName}`;
   const paymentHtml = opts.includePayment
     ? `<p>Registration fee: <strong>${escapeHtml(opts.amountLabel)}</strong>.</p>
-       <p>Pay through the IIT Bombay PayU gateway using this personal link:</p>
+       <p>Pay through the IIT Bombay PayU gateway using this personal link (it opens checkout — you do not fill the application form again):</p>
        <p style="padding:16px 0;"><a href="${escapeHtml(opts.paymentUrl)}" style="background:#1a6b6b;color:#fff;padding:12px 18px;text-decoration:none;border-radius:3px;">Pay ${escapeHtml(opts.amountLabel)}</a></p>
-       <p style="font-size:13px;color:#8aaeb4;">${escapeHtml(opts.paymentUrl)}</p>`
+       <p style="font-size:13px;color:#8aaeb4;">${escapeHtml(opts.paymentUrl)}</p>
+       <p>The same Pay action is on your <a href="${escapeHtml(opts.dashboardUrl)}">Inv.ent dashboard</a> if mail clients block the button.</p>`
     : "";
   const html = layout(
     opts.statusLabel,
@@ -273,7 +275,7 @@ export function colloquiumStatusUpdateEmail(opts: {
      <p>Questions: support@iitbinvent.com</p>`,
   );
   const paymentText = opts.includePayment
-    ? `\nRegistration fee: ${opts.amountLabel}\nPay via IIT Bombay PayU: ${opts.paymentUrl}\n`
+    ? `\nRegistration fee: ${opts.amountLabel}\nPay via IIT Bombay PayU: ${opts.paymentUrl}\nOr open your dashboard: ${opts.dashboardUrl}\n`
     : "";
   const text = `Hi ${opts.name},
 

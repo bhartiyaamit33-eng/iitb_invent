@@ -12,10 +12,10 @@ export default async function ColloquiumPayPage({
   searchParams,
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ payu?: string }>;
+  searchParams: Promise<{ payu?: string; start?: string }>;
 }) {
   const { token } = await params;
-  const { payu } = await searchParams;
+  const { payu, start } = await searchParams;
   const application = await prisma.colloquiumApplication.findUnique({
     where: { paymentToken: token },
     include: { edition: { select: { name: true } } },
@@ -27,7 +27,10 @@ export default async function ColloquiumPayPage({
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
         {application.edition.name} · Research Colloquium
       </p>
-      <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
+      <h1
+        className="mt-2 font-display text-4xl tracking-wide text-teal-deep"
+        data-testid="colloquium-pay"
+      >
         Registration payment
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
@@ -41,13 +44,14 @@ export default async function ColloquiumPayPage({
         paymentRef={application.paymentRef}
         gatewayReady={isPayUReady()}
         outcome={payu ?? null}
+        autoStart={start === "1" && !payu}
       />
       <p className="mt-6 text-sm text-mute">
         Questions:{" "}
         <a href="mailto:support@iitbinvent.com">support@iitbinvent.com</a>
         {" · "}
-        <Link href="/colloquium" className="underline-offset-2 hover:underline">
-          Call for applications
+        <Link href="/dashboard" className="underline-offset-2 hover:underline">
+          Dashboard
         </Link>
       </p>
     </main>

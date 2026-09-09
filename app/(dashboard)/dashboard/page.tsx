@@ -6,7 +6,9 @@ import { TicketQr } from "@/components/TicketQr";
 import { formatIstRange } from "@/lib/editions";
 import { getNextForUser, isLiveStatus } from "@/lib/live";
 import { ticketBadgeUrl } from "@/lib/ticket";
-import { applicationStatusLabel, participationLabel } from "@/lib/colloquium";
+import { ColloquiumStatusCard } from "@/components/colloquium/ColloquiumStatusCard";
+import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
+import { applicationFeeDue } from "@/lib/colloquium-access";
 
 type SearchParams = Promise<{ welcome?: string }>;
 
@@ -30,6 +32,11 @@ export default async function DashboardPage({
       edition: { isCurrent: true },
     },
     orderBy: { createdAt: "desc" },
+  });
+  const notices = await prisma.userNotification.findMany({
+    where: { userId: user.id },
+    orderBy: [{ readAt: "asc" }, { createdAt: "desc" }],
+    take: 8,
   });
 
   const completeness = profile?.completeness ?? 0;
@@ -77,6 +84,17 @@ export default async function DashboardPage({
       <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
         Hi, {user.name.split(" ")[0] || "there"}
       </h1>
+
+      <NotificationsPanel
+        notices={notices.map((n) => ({
+          id: n.id,
+          title: n.title,
+          body: n.body,
+          href: n.href,
+          readAt: n.readAt ? n.readAt.toISOString() : null,
+          createdAt: n.createdAt.toISOString(),
+        }))}
+      />
 
       {nextRsvp?.session ? (
         <p className="mt-4 rounded-lg border border-teal/30 bg-white px-4 py-3 text-sm text-ink-soft">
@@ -140,29 +158,27 @@ export default async function DashboardPage({
             </Link>
           ) : null}
         </div>
-        <div className="rounded-xl border border-line bg-white p-5 sm:col-span-2">
+        <div
+          className={`rounded-xl border bg-white p-5 sm:col-span-2 ${
+            application && applicationFeeDue(application)
+              ? "border-ent"
+              : "border-line"
+          }`}
+          data-testid="colloquium-dashboard-card"
+        >
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
             Research colloquium
           </p>
           {application ? (
-            <>
-              <p className="mt-2 text-lg font-semibold text-ink">
-                {applicationStatusLabel(application.status)}
-              </p>
-              <p className="mt-1 text-sm text-ink-soft">
-                {participationLabel(
-                  application.participationCategory,
-                  application.participationOther,
-                )}
-                {application.paperTitle ? ` · ${application.paperTitle}` : ""}
-              </p>
-              <Link
-                href="/colloquium"
-                className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-              >
-                Update application →
-              </Link>
-            </>
+            <ColloquiumStatusCard
+              status={application.status}
+              participationCategory={application.participationCategory}
+              participationOther={application.participationOther}
+              paperTitle={application.paperTitle}
+              paymentStatus={application.paymentStatus}
+              paymentAmountPaise={application.paymentAmountPaise}
+              paymentToken={application.paymentToken}
+            />
           ) : (
             <>
               <p className="mt-2 text-sm text-ink-soft">

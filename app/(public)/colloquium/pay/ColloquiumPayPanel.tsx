@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import {
   formatInrFromPaise,
   paymentStatusLabel,
@@ -28,6 +29,7 @@ export function ColloquiumPayPanel({
   paymentRef,
   gatewayReady,
   outcome,
+  autoStart,
 }: {
   token: string;
   name: string;
@@ -36,10 +38,28 @@ export function ColloquiumPayPanel({
   paymentRef?: string | null;
   gatewayReady: boolean;
   outcome?: string | null;
+  autoStart?: boolean;
 }) {
   const amount = formatInrFromPaise(amountPaise);
   const settled = paymentStatus === "PAID" || paymentStatus === "WAIVED";
   const notice = outcome ? OUTCOME_COPY[outcome] : null;
+  const formRef = useRef<HTMLFormElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    void fetch("/api/colloquium/remember", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ token }),
+    });
+  }, [token]);
+
+  useEffect(() => {
+    if (!autoStart || !gatewayReady || settled || started.current) return;
+    started.current = true;
+    formRef.current?.requestSubmit();
+  }, [autoStart, gatewayReady, settled]);
 
   return (
     <section className="mt-8 rounded-xl border border-line bg-white p-6">
@@ -74,10 +94,12 @@ export function ColloquiumPayPanel({
         <div className="mt-6 space-y-4">
           <p className="text-sm text-ink">
             The {amount} registration fee is collected through the{" "}
-            <strong>IIT Bombay PayU gateway</strong>.
+            <strong>IIT Bombay PayU gateway</strong>. You do not fill the
+            application form again.
           </p>
           {gatewayReady ? (
             <form
+              ref={formRef}
               method="post"
               action={`/api/colloquium/pay/${encodeURIComponent(token)}/checkout`}
             >
