@@ -128,14 +128,14 @@ Do **not** run `cp -r public .next/standalone/public` after build — that nests
 
 ---
 
-## Admin allowlist
+## Admin access
 
-Only **`admin@iitbinvent.com`** (override with `ADMIN_EMAILS=…` comma-separated) may hold role `ADMIN` or open `/admin`.
+`ADMIN_EMAILS` (default **`admin@iitbinvent.com`**) bootstraps the first administrator. Admin and reviewer access is then managed from `/admin/users` and stored in the database.
 
 - Seed upserts that user as `ADMIN` with a **bcrypt `passwordHash`** (plaintext password is never committed; rotate via `ADMIN_SEED_PASSWORD` when seeding).
-- Sign in at `/login` (email + password). Admins are redirected to `/admin`.
+- Sign in at `/login` (email + password), then open `/admin`.
 - `requireRole('ADMIN')` / admin layout reject everyone else with **401/403**.
-- Attendees, speakers, volunteers, and non-allowlisted users never reach admin UI or admin mutations.
+- Role grants and revocations take effect on the next request, including for existing sessions.
 
 ---
 

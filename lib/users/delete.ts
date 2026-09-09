@@ -1,6 +1,5 @@
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/db";
-import { getAdminEmails, isAdminEmail } from "@/lib/auth/roles";
 
 /**
  * Hard-delete a user and cascaded Auth.js / profile / registration rows.
@@ -19,8 +18,7 @@ export async function deleteUserAccount(
     return { ok: false, error: "User not found" };
   }
 
-  const targetIsAdmin =
-    target.role === Role.ADMIN || isAdminEmail(target.email);
+  const targetIsAdmin = target.role === Role.ADMIN;
 
   // Admins cannot wipe themselves — another admin must do it.
   if (targetIsAdmin && opts.actorId === userId) {
@@ -31,12 +29,11 @@ export async function deleteUserAccount(
   }
 
   if (targetIsAdmin) {
-    const adminEmails = getAdminEmails();
     const remainingAdmins = await prisma.user.count({
       where: {
         deletedAt: null,
         id: { not: userId },
-        OR: [{ role: Role.ADMIN }, { email: { in: adminEmails } }],
+        role: Role.ADMIN,
       },
     });
     if (remainingAdmins < 1) {

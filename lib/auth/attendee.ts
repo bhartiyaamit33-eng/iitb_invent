@@ -1,7 +1,5 @@
-import { Role } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
-import { isAdminEmail } from "@/lib/auth/roles";
 import { attachColloquiumToUser } from "@/lib/colloquium-access";
 
 /** After OAuth/credentials sign-in: ensure Profile + current-edition Registration. */
@@ -11,14 +9,6 @@ export async function ensureAttendeeReady(userId: string) {
     select: { id: true, email: true, role: true, image: true, profile: true },
   });
   if (!user) return;
-
-  // Defence: strip ADMIN if not allowlisted
-  if (user.role === Role.ADMIN && !isAdminEmail(user.email)) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: { role: Role.ATTENDEE },
-    });
-  }
 
   if (!user.profile) {
     await prisma.profile.create({

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { canHoldAdminRole, isAdminEmail } from "@/lib/auth/roles";
+import { isAdminEmail } from "@/lib/auth/roles";
 import { Role } from "@prisma/client";
 import { sendProfileConfirmation } from "@/lib/email/transactions";
 
@@ -28,7 +28,6 @@ export async function POST(req: Request) {
     });
 
     let role: Role = existing?.role ?? Role.ATTENDEE;
-    if (role === Role.ADMIN && !canHoldAdminRole(email)) role = Role.ATTENDEE;
     if (!existing && isAdminEmail(email)) role = Role.ADMIN;
 
     const user = await prisma.user.upsert({

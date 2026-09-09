@@ -2,9 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { getCurrentUser } from "@/lib/auth/session";
-import { isAdminEmail } from "@/lib/auth/roles";
 import { logoutAction } from "@/app/(public)/login/actions";
 import { attachColloquiumToUser } from "@/lib/colloquium-access";
+import { Role } from "@prisma/client";
 
 export default async function DashboardLayout({
   children,
@@ -44,7 +44,15 @@ export default async function DashboardLayout({
             <Link href="/colloquium" className="text-ink-soft hover:text-teal-deep">
               Colloquium
             </Link>
-            {isAdminEmail(user.email) ? (
+            {user.role === Role.REVIEWER || user.role === Role.ADMIN ? (
+              <Link
+                href="/dashboard/reviews"
+                className="text-ink-soft hover:text-teal-deep"
+              >
+                Reviews
+              </Link>
+            ) : null}
+            {user.role === Role.ADMIN ? (
               <Link href="/admin" className="text-ink-soft hover:text-teal-deep">
                 Admin
               </Link>

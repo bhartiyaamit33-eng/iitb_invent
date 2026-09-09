@@ -13,6 +13,8 @@ import {
 import { colloquiumPaymentUrl } from "@/lib/colloquium-server";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPanel";
+import { Role } from "@prisma/client";
+import { assignReviewerAction, removeReviewerAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -32,9 +34,23 @@ export default async function AdminApplicationDetailPage({
   const { id } = await params;
   const application = await prisma.colloquiumApplication.findUnique({
     where: { id },
-    include: { edition: { select: { name: true, year: true } } },
+    include: {
+      edition: { select: { name: true, year: true } },
+      reviews: {
+        include: { reviewer: { select: { id: true, name: true, email: true } } },
+        orderBy: { assignedAt: "asc" },
+      },
+    },
   });
   if (!application) notFound();
+  const reviewers = await prisma.user.findMany({
+    where: {
+      deletedAt: null,
+      role: { in: [Role.REVIEWER, Role.ADMIN] },
+    },
+    select: { id: true, name: true, email: true },
+    orderBy: [{ name: "asc" }, { email: "asc" }],
+  });
 
   const pdfUrl = application.abstractViewToken
     ? `/api/colloquium/abstract/${application.abstractViewToken}`
@@ -161,6 +177,121 @@ export default async function AdminApplicationDetailPage({
           />
         </div>
       </div>
+
+      <section className="mt-6 rounded-xl border border-line bg-white p-5">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-mute">
+          Programme committee reviews
+        </h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          Assign this submission independently to one or more reviewers.
+        </p>
+
+        <form
+          action={assignReviewerAction}
+          className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto_auto]"
+        >
+          <input type="hidden" name="applicationId" value={application.id} />
+          <label className="text-sm">
+            <span className="sr-only">Reviewer</span>
+            <select
+              name="reviewerId"
+              required
+              defaultValue=""
+              className="w-full rounded-md border border-line px-3 py-2.5"
+              data-testid="reviewer-select"
+            >
+              <option value="" disabled>
+                Choose reviewer
+              </option>
+              {reviewers.map((reviewer) => (
+                <option key={reviewer.id} value={reviewer.id}>
+                  {reviewer.name} · {reviewer.email}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="text-sm">
+            <span className="sr-only">Due date</span>
+            <input
+              type="date"
+              name="dueAt"
+              aria-label="Review due date"
+              className="rounded-md border border-line px-3 py-2.5"
+            />
+          </label>
+          <button
+            type="submit"
+            className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold text-white"
+            data-testid="assign-reviewer"
+          >
+            Assign
+          </button>
+        </form>
+        {reviewers.length === 0 ? (
+          <p className="mt-3 text-sm text-amber-800">
+            Grant a user the Reviewer role on the Users page before assigning.
+          </p>
+        ) : null}
+
+        <div className="mt-5 space-y-3">
+          {application.reviews.length === 0 ? (
+            <p className="text-sm text-mute">No reviewers assigned yet.</p>
+          ) : (
+            application.reviews.map((review) => (
+              <article
+                key={review.id}
+                className="rounded-lg border border-line bg-paper px-4 py-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold text-ink">
+                      {review.reviewer.name}
+                    </p>
+                    <p className="text-xs text-mute">{review.reviewer.email}</p>
+                    <p className="mt-1 text-xs font-semibold text-teal-deep">
+                      {review.status.replaceAll("_", " ")}
+                      {review.dueAt ? ` · due ${review.dueAt.toLocaleDateString("en-IN")}` : ""}
+                    </p>
+                  </div>
+                  <form action={removeReviewerAction}>
+                    <input type="hidden" name="reviewId" value={review.id} />
+                    <button
+                      type="submit"
+                      className="text-xs font-semibold text-red-700 hover:underline"
+                    >
+                      Unassign
+                    </button>
+                  </form>
+                </div>
+                {review.recommendation ? (
+                  <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+                    <div>
+                      <dt className="text-xs uppercase text-mute">Recommendation</dt>
+                      <dd>{review.recommendation.replaceAll("_", " ")}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs uppercase text-mute">Score</dt>
+                      <dd>{review.score ?? "—"} / 10</dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs uppercase text-mute">Expertise</dt>
+                      <dd>{review.expertise ?? "—"} / 5</dd>
+                    </div>
+                    <div className="sm:col-span-3">
+                      <dt className="text-xs uppercase text-mute">Author-facing comments</dt>
+                      <dd className="whitespace-pre-wrap">{review.publicComments || "—"}</dd>
+                    </div>
+                    <div className="sm:col-span-3">
+                      <dt className="text-xs uppercase text-mute">Confidential committee comments</dt>
+                      <dd className="whitespace-pre-wrap">{review.confidentialComments || "—"}</dd>
+                    </div>
+                  </dl>
+                ) : null}
+              </article>
+            ))
+          )}
+        </div>
+      </section>
     </main>
   );
 }

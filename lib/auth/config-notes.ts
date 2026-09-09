@@ -8,8 +8,8 @@
  *     await sendMagicLink({ to: identifier, url });
  *   }
  *
- * And in callbacks/events: refuse role=ADMIN unless canHoldAdminRole(email);
- * if email is in ADMIN_EMAILS on first sign-in, set role ADMIN.
+ * ADMIN_EMAILS bootstraps the first administrator. After that, administrators
+ * grant and revoke database-backed ADMIN and REVIEWER roles from `/admin/users`.
  */
 export const authConfigNotes = {
   emailFrom: "conference@iitbinvent.com",

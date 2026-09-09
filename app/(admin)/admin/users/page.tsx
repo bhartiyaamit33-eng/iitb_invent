@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { adminDeleteUserAction } from "./actions";
+import { Role } from "@prisma/client";
+import { adminDeleteUserAction, updateUserRoleAction } from "./actions";
 import { UserImportForm } from "@/components/admin/UserImportForm";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +39,7 @@ export default async function AdminUsersPage({
     <main className="px-6 py-10">
       <h1 className="font-display text-4xl tracking-wide text-teal-deep">Users</h1>
       <p className="mt-2 text-sm text-ink-soft">
-        Export, import, and delete platform accounts. Admin-only.
+        Grant reviewer or admin access by user ID, and manage platform accounts.
       </p>
 
       {deleted ? (
@@ -108,7 +109,30 @@ export default async function AdminUsersPage({
               <tr key={u.id} className="border-b border-line last:border-0">
                 <td className="px-4 py-3 font-medium">{u.name}</td>
                 <td className="px-4 py-3 text-ink-soft">{u.email}</td>
-                <td className="px-4 py-3">{u.role}</td>
+                <td className="px-4 py-3">
+                  <form action={updateUserRoleAction} className="flex min-w-40 gap-2">
+                    <input type="hidden" name="userId" value={u.id} />
+                    <select
+                      name="role"
+                      defaultValue={u.role}
+                      aria-label={`Role for ${u.email}`}
+                      className="rounded border border-line px-2 py-1 text-xs"
+                    >
+                      {Object.values(Role).map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="submit"
+                      className="text-xs font-semibold text-teal-deep hover:underline"
+                    >
+                      Save
+                    </button>
+                  </form>
+                  <code className="mt-1 block text-[10px] text-mute">{u.id}</code>
+                </td>
                 <td className="px-4 py-3">{u.profile?.personaType ?? "—"}</td>
                 <td className="px-4 py-3">{u.profile?.completeness ?? 0}</td>
                 <td className="px-4 py-3">

@@ -1,10 +1,6 @@
 import { Role } from "@prisma/client";
 
-/**
- * Hard allowlist for ADMIN (and elevation to ADMIN).
- * Override with comma-separated ADMIN_EMAILS in env.
- * Attendees/speakers must never pass requireRole("ADMIN").
- */
+/** Bootstrap allowlist used when provisioning the first administrator. */
 export function getAdminEmails(): string[] {
   const raw = process.env.ADMIN_EMAILS ?? "admin@iitbinvent.com";
   return raw
@@ -16,11 +12,6 @@ export function getAdminEmails(): string[] {
 export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
   return getAdminEmails().includes(email.trim().toLowerCase());
-}
-
-/** Only allowlisted emails may hold or be promoted to ADMIN. */
-export function canHoldAdminRole(email: string): boolean {
-  return isAdminEmail(email);
 }
 
 export type AuthUser = {
@@ -41,9 +32,7 @@ export class AuthError extends Error {
 
 /**
  * Server-side gate for privileged routes / mutations.
- * - If Role.ADMIN is among allowed roles, allowlisted ADMIN emails pass
- * - Other listed roles (e.g. ORGANISER) pass on exact role match
- * - ATTENDEE / SPEAKER / VOLUNTEER never satisfy ADMIN
+ * Roles are stored in the database and refreshed on every request.
  */
 export function requireRole(
   user: AuthUser | null | undefined,
@@ -53,18 +42,9 @@ export function requireRole(
     throw new AuthError("Authentication required", 401);
   }
 
-  // Defence in depth: never honour ADMIN without allowlist.
-  if (user.role === Role.ADMIN && !isAdminEmail(user.email)) {
-    throw new AuthError("Admin access denied", 403);
-  }
-
   const needed = Array.isArray(roles) ? roles : [roles];
 
-  if (user.role === Role.ADMIN && needed.includes(Role.ADMIN) && isAdminEmail(user.email)) {
-    return user;
-  }
-
-  if (user.role !== Role.ADMIN && needed.includes(user.role)) {
+  if (needed.includes(user.role)) {
     return user;
   }
 

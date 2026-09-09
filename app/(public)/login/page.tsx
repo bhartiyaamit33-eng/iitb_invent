@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { attendeeHome } from "@/lib/auth/attendee";
-import { isAdminEmail } from "@/lib/auth/roles";
 import { IconGoogle } from "@/components/icons";
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
@@ -24,11 +23,7 @@ export default async function LoginPage({
   const oauth = oauthProvidersEnabled();
 
   if (session?.user) {
-    // Login is for attendees. Admin CMS only via explicit /admin callback.
-    if (callbackUrl.startsWith("/admin") && isAdminEmail(session.user.email)) {
-      redirect(callbackUrl);
-    }
-    redirect(attendeeHome(callbackUrl));
+    redirect(callbackUrl);
   }
 
   async function loginAction(formData: FormData) {
@@ -38,11 +33,9 @@ export default async function LoginPage({
       .toLowerCase();
     const password = String(formData.get("password") ?? "");
     const requested = safeCallback(String(formData.get("callbackUrl") ?? "/dashboard"));
-    // Attendee home by default — admin console only if they asked for /admin
-    const next =
-      requested.startsWith("/admin") && isAdminEmail(email)
-        ? requested
-        : attendeeHome(requested);
+    const next = requested.startsWith("/admin")
+      ? requested
+      : attendeeHome(requested);
 
     try {
       await signIn("credentials", {
@@ -62,12 +55,12 @@ export default async function LoginPage({
 
   async function googleAction() {
     "use server";
-    await signIn("google", { redirectTo: attendeeHome(callbackUrl) });
+    await signIn("google", { redirectTo: callbackUrl });
   }
 
   async function linkedInAction() {
     "use server";
-    await signIn("linkedin", { redirectTo: attendeeHome(callbackUrl) });
+    await signIn("linkedin", { redirectTo: callbackUrl });
   }
 
   return (

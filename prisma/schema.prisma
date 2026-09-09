@@ -18,6 +18,7 @@ enum Role {
   ATTENDEE
   SPEAKER
   VOLUNTEER
+  REVIEWER
   ORGANISER
   ADMIN
 }
@@ -117,6 +118,21 @@ enum ApplicationPaymentStatus {
   WAIVED
 }
 
+enum ReviewAssignmentStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ReviewRecommendation {
+  STRONG_ACCEPT
+  ACCEPT
+  WEAK_ACCEPT
+  BORDERLINE
+  WEAK_REJECT
+  REJECT
+}
+
 // ─── Identity (edition-independent) ──────────────────────────────────────────
 
 model User {
@@ -141,6 +157,8 @@ model User {
   connectionRequestsTo   ConnectionRequest[] @relation("ConnectionTo")
   colloquiumApplications ColloquiumApplication[]
   notifications          UserNotification[]
+  assignedReviews        ApplicationReview[] @relation("ReviewReviewer")
+  reviewAssignmentsMade  ApplicationReview[] @relation("ReviewAssigner")
 }
 
 model Profile {
@@ -512,11 +530,39 @@ model ColloquiumApplication {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reviews   ApplicationReview[]
 
   @@unique([editionId, email])
   @@index([editionId, status])
   @@index([paymentStatus])
   @@index([createdAt])
+}
+
+/// One programme-committee review assignment for a colloquium submission.
+model ApplicationReview {
+  id            String                 @id @default(cuid())
+  applicationId String
+  application   ColloquiumApplication  @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  reviewerId    String
+  reviewer      User                   @relation("ReviewReviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
+  assignedById  String?
+  assignedBy    User?                  @relation("ReviewAssigner", fields: [assignedById], references: [id], onDelete: SetNull)
+
+  status               ReviewAssignmentStatus @default(ASSIGNED)
+  expertise            Int?
+  score                Int?
+  recommendation       ReviewRecommendation?
+  publicComments       String?                @db.Text
+  confidentialComments String?                @db.Text
+  dueAt                 DateTime?
+  assignedAt            DateTime               @default(now())
+  startedAt             DateTime?
+  submittedAt           DateTime?
+  updatedAt             DateTime               @updatedAt
+
+  @@unique([applicationId, reviewerId])
+  @@index([reviewerId, status])
+  @@index([applicationId, status])
 }
 
 /// In-app inbox so applicants still see selection/payment when SES fails.
