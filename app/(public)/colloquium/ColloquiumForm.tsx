@@ -170,6 +170,7 @@ export function ColloquiumForm({
                 value={opt.value}
                 required
                 className="mt-1"
+                data-testid={`professional-${opt.value}`}
                 onChange={() => setProfessional(opt.value)}
               />
               <span className="text-sm text-ink">
