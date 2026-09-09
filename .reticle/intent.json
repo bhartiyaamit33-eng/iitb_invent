@@ -1,478 +1,717 @@
 {
   "version": 1,
   "intents": {
-    "inline:clicking-a-programme-session-opens-its-detail-pa-333d19ba": {
-      "id": "inline:clicking-a-programme-session-opens-its-detail-pa-333d19ba",
-      "statement": "clicking a programme session opens its detail page with the session title",
-      "state": "bound",
-      "declaredAt": 1788615017417,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "element",
-            "query": {
-              "role": "heading",
-              "name": "Welcome Address & Program Launch"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      }
-    },
-    "inline:clicking-welcome-address-on-the-programme-list-n-0cc093af": {
-      "id": "inline:clicking-welcome-address-on-the-programme-list-n-0cc093af",
-      "statement": "clicking Welcome Address on the programme list navigates to the session detail route",
+    "inline:the-landing-hero-create-free-account-control-tak-39935338": {
+      "id": "inline:the-landing-hero-create-free-account-control-tak-39935338",
+      "statement": "The landing hero Create free account control takes a visitor to /signup.",
       "state": "proved",
-      "declaredAt": 1788615049518,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/programme/welcome-address-program-launch"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/programme/welcome-address-program-launch",
-        "files": [
-          "app/(public)/programme/page.tsx"
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_act_and_wait:1788615050074",
-        "grade": "presence",
-        "at": 1788615050074
-      }
-    },
-    "flow:programme-session": {
-      "id": "flow:programme-session",
-      "statement": "an attendee opens a session from the programme list and lands on that session's detail route",
-      "state": "declared",
-      "declaredAt": 1788615077249,
-      "surface": {
-        "flow": "programme-session"
-      }
-    },
-    "inline:the-inv-ent-landing-is-serving-at-with-programme-55692917": {
-      "id": "inline:the-inv-ent-landing-is-serving-at-with-programme-55692917",
-      "statement": "the Inv.ent landing is serving at / with Programme in the nav",
-      "state": "proved",
-      "declaredAt": 1788615489667,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "link",
-              "name": "Programme"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1788615489679",
-        "grade": "presence",
-        "at": 1788615489679
-      }
-    },
-    "inline:clicking-programme-in-the-landing-nav-opens-the-a04ab84f": {
-      "id": "inline:clicking-programme-in-the-landing-nav-opens-the-a04ab84f",
-      "statement": "clicking Programme in the landing nav opens the current-edition programme list",
-      "state": "proved",
-      "declaredAt": 1788615495089,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/programme"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "heading",
-              "name": "Programme"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/programme"
-      },
-      "provenBy": {
-        "verdictId": "reticle_act_and_wait:1788615497364",
-        "grade": "presence",
-        "at": 1788615497364
-      }
-    },
-    "inline:the-programme-list-includes-published-sessions-f-f614b105": {
-      "id": "inline:the-programme-list-includes-published-sessions-f-f614b105",
-      "statement": "the programme list includes published sessions for the current edition",
-      "state": "proved",
-      "declaredAt": 1788615505195,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "text",
-            "contains": "INVENT 2027"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "link",
-              "name": "Welcome Address & Program Launch"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/programme"
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1788615505202",
-        "grade": "presence",
-        "at": 1788615505202
-      }
-    },
-    "inline:opening-a-listed-session-navigates-to-its-detail-2e5371b9": {
-      "id": "inline:opening-a-listed-session-navigates-to-its-detail-2e5371b9",
-      "statement": "opening a listed session navigates to its detail page",
-      "state": "bound",
-      "declaredAt": 1788615509881,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/programme/welcome-address-program-launch"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "heading",
-              "name": "Welcome Address & Program Launch"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      }
-    },
-    "inline:an-unsigned-in-visitor-opening-dashboard-is-sent-5681847e": {
-      "id": "inline:an-unsigned-in-visitor-opening-dashboard-is-sent-5681847e",
-      "statement": "an unsigned-in visitor opening Dashboard is sent to the login form",
-      "state": "proved",
-      "declaredAt": 1788615689165,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "contains": "/login"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "textbox"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/login",
-        "files": [
-          "app/(public)/programme/page.tsx"
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_act_and_wait:1788615691257",
-        "grade": "presence",
-        "at": 1788615691257
-      }
-    },
-    "inline:the-login-page-shows-email-and-password-fields-a-d3cfc4aa": {
-      "id": "inline:the-login-page-shows-email-and-password-fields-a-d3cfc4aa",
-      "statement": "the login page shows email and password fields and a sign-in control",
-      "state": "proved",
-      "declaredAt": 1788615696896,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/login"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "textbox",
-              "name": "Email"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "button",
-              "name": "Sign in"
-            },
-            "state": "visible"
-          }
-        ]
-      },
-      "surface": {
-        "route": "/login",
-        "files": [
-          "app/(public)/programme/page.tsx"
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1788615696905",
-        "grade": "presence",
-        "at": 1788615696905
-      }
-    },
-    "inline:sign-up-from-login-opens-the-registration-form-cb247819": {
-      "id": "inline:sign-up-from-login-opens-the-registration-form-cb247819",
-      "statement": "Sign up from login opens the registration form",
-      "state": "proved",
-      "declaredAt": 1788615701731,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/signup"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "heading"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/signup",
-        "files": [
-          "app/(public)/login/page.tsx"
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_act_and_wait:1788615703233",
-        "grade": "presence",
-        "at": 1788615703233
-      }
-    },
-    "inline:the-lobby-screen-explains-the-edition-is-not-liv-f174bbb8": {
-      "id": "inline:the-lobby-screen-explains-the-edition-is-not-liv-f174bbb8",
-      "statement": "the lobby screen explains the edition is not live yet",
-      "state": "proved",
-      "declaredAt": 1788615717986,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/now"
-          },
-          {
-            "kind": "text",
-            "contains": "Not live yet"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/now"
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1788615717995",
-        "grade": "presence",
-        "at": 1788615717995
-      }
-    },
-    "inline:the-session-detail-page-shows-the-welcome-addres-6985af59": {
-      "id": "inline:the-session-detail-page-shows-the-welcome-addres-6985af59",
-      "statement": "the session detail page shows the Welcome Address title and speakers",
-      "state": "proved",
-      "declaredAt": 1788615727003,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "pathname": "/programme/welcome-address-program-launch"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "heading",
-              "name": "Welcome Address & Program Launch"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "text",
-            "contains": "Prof. Trupti Mishra"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/programme/welcome-address-program-launch"
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1788615727011",
-        "grade": "presence",
-        "at": 1788615727011
-      }
-    },
-    "inline:opening-admin-while-signed-out-lands-on-login-wi-18df30ba": {
-      "id": "inline:opening-admin-while-signed-out-lands-on-login-wi-18df30ba",
-      "statement": "opening /admin while signed out lands on login with an admin callback",
-      "state": "proved",
-      "declaredAt": 1788615743994,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "contains": "callbackUrl=%2Fadmin"
-          },
-          {
-            "kind": "element",
-            "query": {
-              "role": "heading",
-              "name": "Login"
-            },
-            "state": "visible"
-          },
-          {
-            "kind": "console",
-            "level": "error",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/login"
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1788615744002",
-        "grade": "presence",
-        "at": 1788615744002
-      }
-    },
-    "inline:clicking-a-session-title-on-the-programme-list-o-fecfef69": {
-      "id": "inline:clicking-a-session-title-on-the-programme-list-o-fecfef69",
-      "statement": "Clicking a session title on the programme list opens that session's detail page.",
-      "state": "proved",
-      "declaredAt": 1788617262533,
+      "declaredAt": 1788898106038,
       "binding": {
         "kind": "route",
-        "pathname": "/programme/welcome-address-program-launch"
+        "contains": "/signup"
       },
       "surface": {
-        "route": "/programme/welcome-address-program-launch",
-        "files": [
-          "app/(public)/programme/page.tsx"
-        ]
+        "route": "/signup"
       },
       "provenBy": {
-        "verdictId": "reticle_act_and_wait:1788617263257",
+        "verdictId": "reticle_act_and_wait:1788898108663",
         "grade": "presence",
-        "at": 1788617263257
+        "at": 1788898108663
       }
     },
-    "inline:the-startups-and-projects-directory-loads-withou-5e938fbb": {
-      "id": "inline:the-startups-and-projects-directory-loads-withou-5e938fbb",
-      "statement": "The startups and projects directory loads without a server error.",
+    "inline:primary-nav-about-keeps-the-visitor-on-the-landi-b20ed424": {
+      "id": "inline:primary-nav-about-keeps-the-visitor-on-the-landi-b20ed424",
+      "statement": "Primary nav About keeps the visitor on the landing and moves them to the about section.",
       "state": "proved",
-      "declaredAt": 1788617228991,
+      "declaredAt": 1788898142253,
+      "binding": {
+        "kind": "route",
+        "contains": "#about"
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788898144562",
+        "grade": "presence",
+        "at": 1788898144562
+      }
+    },
+    "inline:the-inv-ent-hero-renders-the-wordmark-inv-dot-en-512f21d9": {
+      "id": "inline:the-inv-ent-hero-renders-the-wordmark-inv-dot-en-512f21d9",
+      "statement": "The INV.ENT hero renders the wordmark (INV, dot, ENT), the Coming Soon teaser, the full form, the tagline and the sign-up CTA, without console errors.",
+      "state": "bound",
+      "declaredAt": 1788899635395,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "element",
+            "query": {
+              "testid": "brand-mark"
+            }
+          },
+          {
+            "kind": "text",
+            "contains": "INV",
+            "visible": true,
+            "scope": "[data-testid='brand-mark']"
+          },
+          {
+            "kind": "text",
+            "contains": "ENT",
+            "visible": true,
+            "scope": "[data-testid='brand-mark']"
+          },
+          {
+            "kind": "text",
+            "contains": "Where entrepreneurship research meets venture practice",
+            "visible": true
+          },
+          {
+            "kind": "text",
+            "contains": "Innovation & Entrepreneurship",
+            "visible": true
+          },
+          {
+            "kind": "text",
+            "contains": "Coming Soon",
+            "visible": true
+          },
+          {
+            "kind": "text",
+            "contains": "Create free account",
+            "visible": true
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      }
+    },
+    "inline:the-hero-scroll-indicator-takes-the-visitor-to-t-c5423f9f": {
+      "id": "inline:the-hero-scroll-indicator-takes-the-visitor-to-t-c5423f9f",
+      "statement": "The hero scroll indicator takes the visitor to the About section (#about) where the editorial heading 'Research meets venture practice.' is on screen.",
+      "state": "bound",
+      "declaredAt": 1788899766704,
       "binding": {
         "kind": "allOf",
         "predicates": [
           {
             "kind": "route",
-            "pathname": "/ventures"
+            "contains": "#about"
+          },
+          {
+            "kind": "text",
+            "contains": "Research meets venture practice.",
+            "visible": true
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      }
+    },
+    "inline:after-using-the-hero-scroll-indicator-the-about-6bde0da6": {
+      "id": "inline:after-using-the-hero-scroll-indicator-the-about-6bde0da6",
+      "statement": "After using the hero scroll indicator, the About section heading 'Research meets venture practice.' and its 'Who this is for' aside are on screen at #about.",
+      "state": "proved",
+      "declaredAt": 1788899796167,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "#about"
           },
           {
             "kind": "element",
             "query": {
               "role": "heading",
-              "name": "Startups & projects"
+              "name": "Research meets venture practice."
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "text",
+            "contains": "Who this is for",
+            "visible": true
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788899796179",
+        "grade": "presence",
+        "at": 1788899796179
+      }
+    },
+    "inline:the-landing-page-keeps-the-live-layout-both-inst-3b7026c6": {
+      "id": "inline:the-landing-page-keeps-the-live-layout-both-inst-3b7026c6",
+      "statement": "The landing page keeps the live layout (both institutional logos and the pill navigation) and its scroll indicator lands on the About section's editorial heading, with a clean console.",
+      "state": "proved",
+      "declaredAt": 1788900750636,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "#about"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Research meets venture practice."
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "link",
+              "name": "Indian Institute of Technology Bombay"
             }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "link",
+              "name": "Desai Sethi School of Entrepreneurship"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "nav"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "brand-mark"
+            }
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788900752598",
+        "grade": "presence",
+        "at": 1788900752599
+      }
+    },
+    "inline:with-hero-plain-the-hero-drops-the-campus-photog-ae0960f8": {
+      "id": "inline:with-hero-plain-the-hero-drops-the-campus-photog-ae0960f8",
+      "statement": "With ?hero=plain the hero drops the campus photograph (data-hero=plain) while the INV·ENT wordmark, its full-form sub-line and both institutional logos stay on screen, with a clean console.",
+      "state": "proved",
+      "declaredAt": 1788901262936,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "hero=plain"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "hero",
+              "attrs": [
+                "data-hero=plain"
+              ]
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "brand-mark"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "text",
+            "contains": "INV",
+            "scope": "[data-testid='brand-mark']"
+          },
+          {
+            "kind": "text",
+            "contains": "ENT",
+            "scope": "[data-testid='brand-mark']"
+          },
+          {
+            "kind": "text",
+            "contains": "Entrepreneurship",
+            "scope": ".brand-lockup .fullform"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "link",
+              "name": "Indian Institute of Technology Bombay"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "link",
+              "name": "Desai Sethi School of Entrepreneurship"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788901262969",
+        "grade": "presence",
+        "at": 1788901262969
+      }
+    },
+    "inline:on-desktop-the-hero-fills-the-viewport-with-the-1351ce1a": {
+      "id": "inline:on-desktop-the-hero-fills-the-viewport-with-the-1351ce1a",
+      "statement": "On desktop the hero fills the viewport with the enlarged INV·ENT lockup and the scroll indicator carries the visitor to the About heading at #about, with a clean console (the travelling dot's dashed track is drawn without console errors).",
+      "state": "proved",
+      "declaredAt": 1788927705492,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "#about"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Research meets venture practice."
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "brand-mark"
+            }
+          },
+          {
+            "kind": "text",
+            "contains": "Coming soon",
+            "scope": "[data-testid='coming-soon']"
+          },
+          {
+            "kind": "text",
+            "contains": "Entrepreneurship",
+            "scope": ".brand-lockup .fullform"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "link",
+              "name": "Log in to connect"
+            }
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788927705509",
+        "grade": "presence",
+        "at": 1788927705509
+      }
+    },
+    "inline:the-lockup-reads-inv-innovation-and-ent-entrepre-9862dba1": {
+      "id": "inline:the-lockup-reads-inv-innovation-and-ent-entrepre-9862dba1",
+      "statement": "The lockup reads INV = Innovation and ENT = Entrepreneurship with no ampersand; scrolling to About lands on its heading and throws no console errors while the dot's dashed track and stations are built.",
+      "state": "proved",
+      "declaredAt": 1788943589689,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "#about"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Research meets venture practice."
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "text",
+            "contains": "Innovation",
+            "scope": ".inv-col .meaning"
+          },
+          {
+            "kind": "text",
+            "contains": "Entrepreneurship",
+            "scope": ".ent-col .meaning"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788943590189",
+        "grade": "presence",
+        "at": 1788943590189
+      }
+    },
+    "inline:submission-review-gate-a807aefa": {
+      "id": "inline:submission-review-gate-a807aefa",
+      "statement": "submission-review-gate",
+      "state": "proved",
+      "declaredAt": 1788956101473,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "submitted=1"
+          },
+          {
+            "kind": "text",
+            "contains": "Submitted. We will email you a payment link"
           }
         ]
       },
       "surface": {
-        "route": "/ventures"
+        "route": "/dashboard/submissions",
+        "files": [
+          "app/(dashboard)/dashboard/submissions/page.tsx"
+        ]
       },
       "provenBy": {
-        "verdictId": "reticle_assert:1788617228999",
+        "verdictId": "reticle_act_and_wait:1788956103620",
         "grade": "presence",
-        "at": 1788617228999
+        "at": 1788956103620
+      }
+    },
+    "inline:invoice-after-pay-02198b21": {
+      "id": "inline:invoice-after-pay-02198b21",
+      "statement": "invoice-after-pay",
+      "state": "proved",
+      "declaredAt": 1788956179034,
+      "binding": {
+        "kind": "element",
+        "query": {
+          "testid": "download-invoice"
+        }
+      },
+      "surface": {
+        "route": "/pay/6a94fa865f94abd4bfda3aab73bf8f5264aef87b56bfb4c2/receipt",
+        "files": [
+          "app/(public)/pay/[token]/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788956179038",
+        "grade": "presence",
+        "at": 1788956179038
+      }
+    },
+    "inline:tiered-onlinepay-fee-34c9ca54": {
+      "id": "inline:tiered-onlinepay-fee-34c9ca54",
+      "statement": "tiered-onlinepay-fee",
+      "state": "proved",
+      "declaredAt": 1788956176470,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "text",
+            "contains": "₹5,000"
+          },
+          {
+            "kind": "text",
+            "contains": "Student"
+          },
+          {
+            "kind": "text",
+            "contains": "Paper presentation"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/pay/6a94fa865f94abd4bfda3aab73bf8f5264aef87b56bfb4c2/receipt",
+        "files": [
+          "app/(public)/pay/[token]/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788956176479",
+        "grade": "presence",
+        "at": 1788956176479
+      }
+    },
+    "inline:visitors-using-any-former-colloquium-url-are-per-fe47fce0": {
+      "id": "inline:visitors-using-any-former-colloquium-url-are-per-fe47fce0",
+      "statement": "Visitors using any former colloquium URL are permanently redirected to the equivalent conference page, where only conference naming is shown.",
+      "state": "proved",
+      "declaredAt": 1788983201008,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/conference"
+          },
+          {
+            "kind": "text",
+            "contains": "Entrepreneurship Research Conference 2027"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788983201016",
+        "grade": "presence",
+        "at": 1788983201016
+      }
+    },
+    "inline:nested-former-colloquium-urls-retain-their-suffi-6db5711b": {
+      "id": "inline:nested-former-colloquium-urls-retain-their-suffi-6db5711b",
+      "statement": "Nested former colloquium URLs retain their suffix when redirected to conference URLs.",
+      "state": "proved",
+      "declaredAt": 1788983214643,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/conference/thanks"
+          },
+          {
+            "kind": "text",
+            "contains": "Research Conference"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference/thanks"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788983214679",
+        "grade": "presence",
+        "at": 1788983214679
+      }
+    },
+    "seo-about-defines-invent": {
+      "id": "seo-about-defines-invent",
+      "statement": "The /about page states that INVENT is also written INV.ENT, iitbinvent, and iitb_invent, and is the DSSE gathering at IIT Bombay.",
+      "state": "proved",
+      "declaredAt": 1788991403457,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/about"
+          },
+          {
+            "kind": "text",
+            "contains": "also written INV.ENT",
+            "visible": true
+          },
+          {
+            "kind": "text",
+            "contains": "iitb_invent",
+            "visible": true
+          },
+          {
+            "kind": "text",
+            "contains": "Desai Sethi School of Entrepreneurship",
+            "visible": true
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/about"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788991422935",
+        "grade": "presence",
+        "at": 1788991422935
+      }
+    },
+    "seo-faq-answers-dsse-day": {
+      "id": "seo-faq-answers-dsse-day",
+      "statement": "The /faq page answers what DSSE Day is as the 31 January foundation day of DSSE at IIT Bombay.",
+      "state": "proved",
+      "declaredAt": 1788991403457,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/faq"
+          },
+          {
+            "kind": "text",
+            "contains": "31 January foundation day",
+            "visible": true
+          },
+          {
+            "kind": "text",
+            "contains": "What is INVENT",
+            "visible": true
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/faq"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1788991475032",
+        "grade": "presence",
+        "at": 1788991475032
+      }
+    },
+    "inline:the-hero-scroll-indicator-takes-the-visitor-to-t-6a8a7b6b": {
+      "id": "inline:the-hero-scroll-indicator-takes-the-visitor-to-t-6a8a7b6b",
+      "statement": "The hero scroll indicator takes the visitor to the About section where the editorial heading Research meets venture practice. is on screen.",
+      "state": "proved",
+      "declaredAt": 1788991558639,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "#about"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Research meets venture practice."
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "files": [
+          "components/landing/LandingHero.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788991562350",
+        "grade": "presence",
+        "at": 1788991562350
+      }
+    },
+    "inline:primary-nav-submissions-keeps-the-visitor-on-the-3b338e4f": {
+      "id": "inline:primary-nav-submissions-keeps-the-visitor-on-the-3b338e4f",
+      "statement": "Primary nav Submissions keeps the visitor on the landing and moves them to the call-for-contributions section.",
+      "state": "proved",
+      "declaredAt": 1788991593654,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "#contribute"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "role": "heading",
+              "name": "Submissions"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "text",
+            "contains": "Submit your abstract",
+            "visible": true
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "files": [
+          "components/landing/LandingHero.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1788991596461",
+        "grade": "presence",
+        "at": 1788991596461
+      }
+    },
+    "inline:the-call-for-submissions-cta-submit-your-abstrac-ef2949c7": {
+      "id": "inline:the-call-for-submissions-cta-submit-your-abstrac-ef2949c7",
+      "statement": "The Call for Submissions CTA Submit your abstract takes a signed-in visitor to the submissions desk.",
+      "state": "bound",
+      "declaredAt": 1788991606007,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "/dashboard/submissions"
+          },
+          {
+            "kind": "console",
+            "level": "error",
+            "absent": true
+          }
+        ]
       }
     }
   }

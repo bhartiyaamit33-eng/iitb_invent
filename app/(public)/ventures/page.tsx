@@ -4,8 +4,16 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth/session";
 import { VentureCard } from "@/components/VentureCard";
 import { VENTURE_KIND_LABEL } from "@/lib/ventures";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = pageMetadata({
+  title: "Startups, projects and ideas",
+  description:
+    "Browse startups, projects, and ideas from the IIT Bombay INVENT / DSSE Day community.",
+  path: "/ventures",
+});
 
 type SearchParams = Promise<{ kind?: string }>;
 

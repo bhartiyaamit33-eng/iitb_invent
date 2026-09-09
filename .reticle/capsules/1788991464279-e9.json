@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "id": "1788991464279-e9",
+  "createdAt": 1788991464292,
+  "origin": "failed-assert",
+  "expected": "declared consequence",
+  "observed": "no element matched {\"text\":\"31 January foundation day\"} in state 'visible'",
+  "steps": [
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "testid",
+        "value": "e9",
+        "source": {
+          "file": "components/PublicChrome.tsx",
+          "line": 26,
+          "column": 10
+        }
+      },
+      "action": "click"
+    }
+  ]
+}

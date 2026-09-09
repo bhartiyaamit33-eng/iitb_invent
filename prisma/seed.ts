@@ -479,6 +479,30 @@ async function main() {
         sortOrder: 2,
         isPublished: true,
       },
+      {
+        editionId: edition2027.id,
+        question: "What is INVENT (iitbinvent / iitb_invent)?",
+        answer:
+          "INVENT — also written INV.ENT, iitbinvent, and iitb_invent — is Innovation and Entrepreneurship at DSSE, IIT Bombay. Official site: https://iitbinvent.com.",
+        sortOrder: 3,
+        isPublished: true,
+      },
+      {
+        editionId: edition2027.id,
+        question: "What is DSSE Day?",
+        answer:
+          "DSSE Day is the 31 January foundation day of the Desai Sethi School of Entrepreneurship at IIT Bombay. INVENT is the public programme held that day.",
+        sortOrder: 4,
+        isPublished: true,
+      },
+      {
+        editionId: edition2027.id,
+        question: "What does DSSE stand for?",
+        answer:
+          "Desai Sethi School of Entrepreneurship, IIT Bombay. https://www.dsse.iitb.ac.in/",
+        sortOrder: 5,
+        isPublished: true,
+      },
     ],
   });
 

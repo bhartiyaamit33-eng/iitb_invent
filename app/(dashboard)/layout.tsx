@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isAdminEmail } from "@/lib/auth/roles";
 import { logoutAction } from "@/app/(public)/login/actions";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = noIndex;
 
 export default async function DashboardLayout({
   children,
