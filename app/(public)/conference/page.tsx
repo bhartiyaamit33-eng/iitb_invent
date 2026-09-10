@@ -33,14 +33,19 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function ConferencePage() {
-  const user = await getCurrentUser();
-  const cookieToken =
-    (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
-  const application = await findMyConferenceApplication({
-    userId: user?.id,
-    email: user?.email,
-    cookieToken,
-  });
+  const user = await getCurrentUser().catch(() => null);
+  let application = null;
+  try {
+    const cookieToken =
+      (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
+    application = await findMyConferenceApplication({
+      userId: user?.id,
+      email: user?.email,
+      cookieToken,
+    });
+  } catch {
+    // Call for papers must still render if the database is down.
+  }
 
   if (application && applicationFeeDue(application)) {
     redirect(conferencePayPath(application.paymentToken, true));
