@@ -30,6 +30,7 @@ export function ConferencePayPanel({
   gatewayReady,
   outcome,
   autoStart,
+  campusOnly,
 }: {
   token: string;
   name: string;
@@ -39,6 +40,7 @@ export function ConferencePayPanel({
   gatewayReady: boolean;
   outcome?: string | null;
   autoStart?: boolean;
+  campusOnly?: boolean;
 }) {
   const amount = formatInrFromPaise(amountPaise);
   const settled = paymentStatus === "PAID" || paymentStatus === "WAIVED";
@@ -97,12 +99,35 @@ export function ConferencePayPanel({
             <strong>IIT Bombay Online Pay</strong>. You do not fill the
             application form again.
           </p>
+          {campusOnly ? (
+            <p
+              className="rounded-md bg-paper px-3 py-2 text-sm text-ink"
+              data-testid="onlinepay-campus-only"
+            >
+              TEST checkout must be finished on the IITB network or VPN.
+              Clicking Pay will keep you on INVENT and give you a gateway
+              link — do not wait for a new tab that never loads.
+            </p>
+          ) : null}
           {gatewayReady ? (
             <form
               ref={formRef}
               method="post"
               action={`/api/conference/pay/${encodeURIComponent(token)}/checkout`}
             >
+              {campusOnly ? (
+                <label className="mb-3 block text-sm text-ink">
+                  IITB LDAP / IDP user id (TEST)
+                  <input
+                    name="ldap"
+                    type="text"
+                    autoComplete="username"
+                    placeholder="LDAP id OP enabled for Canara Auto Debit"
+                    className="mt-1 w-full rounded-md border border-line px-3 py-2 text-sm"
+                    data-testid="onlinepay-ldap"
+                  />
+                </label>
+              ) : null}
               <button
                 type="submit"
                 className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"

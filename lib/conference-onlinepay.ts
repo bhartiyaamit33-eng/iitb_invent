@@ -37,28 +37,33 @@ export function newOpReqId(): string {
   );
 }
 
-export function opPayerUserId(application: {
-  id: string;
-  email: string;
-}): string {
+export function opPayerUserId(
+  application: { id: string; email: string },
+  override?: string | null,
+): string {
+  const fromForm = (override || "").trim();
+  if (fromForm) return fromForm;
   const forced = (process.env.ONLINEPAY_PAYER_USER_ID || "").trim();
   if (forced) return forced;
   return application.id;
 }
 
-export async function startConferenceOnlinePay(application: {
-  id: string;
-  name: string;
-  email: string;
-  paymentToken: string;
-  paymentAmountPaise: number;
-  opReqId?: string | null;
-  opUserId?: string | null;
-}): Promise<string> {
+export async function startConferenceOnlinePay(
+  application: {
+    id: string;
+    name: string;
+    email: string;
+    paymentToken: string;
+    paymentAmountPaise: number;
+    opReqId?: string | null;
+    opUserId?: string | null;
+  },
+  opts?: { payerUserId?: string | null },
+): Promise<{ url: string; test: boolean; userId: string }> {
   const cfg = onlinePayConfig();
   if (!cfg) throw new Error("ONLINEPAY_APP_ID is not set");
 
-  const userId = opPayerUserId(application);
+  const userId = opPayerUserId(application, opts?.payerUserId);
   const reqId = application.opReqId || newOpReqId();
   if (application.opReqId !== reqId || application.opUserId !== userId) {
     await prisma.conferenceApplication.update({
@@ -67,14 +72,18 @@ export async function startConferenceOnlinePay(application: {
     });
   }
 
-  return paymentRequestUrl({
-    appId: cfg.appId,
+  return {
+    url: paymentRequestUrl({
+      appId: cfg.appId,
+      userId,
+      userName: application.name.slice(0, 80),
+      amountDue: rupeesFromPaise(application.paymentAmountPaise),
+      purpose: cfg.purpose,
+      reqId,
+    }),
+    test: cfg.env === "test",
     userId,
-    userName: application.name.slice(0, 80),
-    amountDue: rupeesFromPaise(application.paymentAmountPaise),
-    purpose: cfg.purpose,
-    reqId,
-  });
+  };
 }
 
 export async function validateOnlinePayRequest(
