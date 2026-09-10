@@ -90,9 +90,7 @@ export function ConferenceCall({
                 </div>
               </dl>
               <div className="cta-row">
-                <a className="btn" href="#apply">
-                  Submit your extended abstract
-                </a>
+                <ApplyLink className="btn">Submit your extended abstract</ApplyLink>
               </div>
             </ImageSplit>
           </Reveal>
@@ -197,9 +195,7 @@ export function ConferenceCall({
                 {CFP_AI_POLICY}
               </p>
               <div className="cta-row">
-                <a className="btn" href="#apply">
-                  Submit your abstract
-                </a>
+                <ApplyLink className="btn">Submit your abstract</ApplyLink>
               </div>
             </ImageSplit>
           </Reveal>
@@ -249,7 +245,7 @@ export function ConferenceCall({
         </div>
       </section>
 
-      <section id="apply" className="relative scroll-mt-8">
+      <section id="apply" className="relative scroll-mt-8" data-testid="cfp-apply">
         <OrbitBackdrop variant="section" />
         <div className="landing-shell relative">
           <Reveal>
@@ -266,6 +262,36 @@ export function ConferenceCall({
 
       <LandingFooter />
     </div>
+  );
+}
+
+function ApplyLink({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <a
+      className={className}
+      href="#apply"
+      onClick={(event) => {
+        const target = document.getElementById("apply");
+        if (!target) return;
+        event.preventDefault();
+        const reduce = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        target.scrollIntoView({
+          behavior: reduce ? "auto" : "smooth",
+          block: "start",
+        });
+        history.replaceState(null, "", "#apply");
+      }}
+    >
+      {children}
+    </a>
   );
 }
 
@@ -335,9 +361,7 @@ function ConferenceHero({ signedInName }: { signedInName: string | null }) {
               data-testid="cfp-hero-cta"
               style={{ animationDelay: "0.8s" }}
             >
-              <a className="btn" href="#apply">
-                Submit your extended abstract
-              </a>
+              <ApplyLink className="btn">Submit your extended abstract</ApplyLink>
               <Link className="btn ghost" href="#dates">
                 Key dates
               </Link>

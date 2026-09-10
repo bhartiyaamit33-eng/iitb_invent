@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "intents": {
+    "cfp-hero-to-form": {
+      "id": "cfp-hero-to-form",
+      "statement": "Clicking Submit your extended abstract on the conference hero takes the researcher to the embedded abstract form at #apply.",
+      "state": "declared",
+      "declaredAt": 1789023700729
+    },
+    "cfp-copy": {
+      "id": "cfp-copy",
+      "statement": "The conference page states the 15 October 2026 abstract deadline, 31 January 2027 presentations, 30 papers / 30 posters, Best Paper ₹25,000, Best Poster ₹10,000, and the AI-use rejection policy.",
+      "state": "declared",
+      "declaredAt": 1789023700729
+    },
+    "flow:conference-cfp": {
+      "id": "flow:conference-cfp",
+      "statement": "Researchers can read the INV.ENT call for papers in the designed landing visual language, then reach the embedded extended-abstract form from the hero CTA.",
+      "state": "declared",
+      "declaredAt": 1789023701034,
+      "surface": {
+        "flow": "conference-cfp"
+      }
+    }
+  }
+}

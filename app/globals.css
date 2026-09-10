@@ -125,7 +125,10 @@ html[data-landing] body {
   color: var(--frost);
   font-family: var(--font-body);
   min-height: 100svh;
+  /* clip avoids the overflow-x:hidden → overflow-y:auto trap that
+     hijacks document hash scrolling on mobile. */
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .landing a {
@@ -722,11 +725,13 @@ section > .orbit-field {
   display: block;
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--cyan-glow);
   margin-bottom: 18px;
   min-height: 2.4em;
+  padding: 0 8px;
+  line-height: 1.35;
 }
 
 .timeline-item .node {
@@ -857,7 +862,22 @@ section > .orbit-field {
   color: #d8ff6a;
 }
 
+@media (max-width: 1280px) and (min-width: 861px) {
+  .timeline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 36px;
+  }
+  .timeline::before {
+    display: none;
+  }
+}
+
 @media (max-width: 860px) {
+  .hero-tagline {
+    white-space: normal;
+    font-size: clamp(16px, 5.2vw, 22px);
+    line-height: 1.15;
+  }
   .hero-chrome {
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "dsse iitb" "nav nav";

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "name": "conference-cfp",
+  "projectId": "iitbinvent-7d4eb21c",
+  "createdAt": 1789023701032,
+  "steps": [
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "role",
+        "role": "link",
+        "name": "Submit your extended abstract"
+      },
+      "args": {},
+      "action": "click"
+    }
+  ],
+  "startPath": "/conference",
+  "intent": "Researchers can read the INV.ENT call for papers in the designed landing visual language, then reach the embedded extended-abstract form from the hero CTA.",
+  "intentId": "flow:conference-cfp"
+}
