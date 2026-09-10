@@ -48,6 +48,11 @@ export function isOnlinePayConfigured(): boolean {
   return onlinePayConfig() !== null;
 }
 
+/** TEST access point is on IITB DNS only (campus / VPN). */
+export function isOnlinePayTest(): boolean {
+  return onlinePayConfig()?.env === "test";
+}
+
 function sanitizeSMsgValue(value: string): string {
   return value.replace(/[&]/g, " ").replace(/\s+/g, " ").trim();
 }

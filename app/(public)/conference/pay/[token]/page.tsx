@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { applicationStatusLabel } from "@/lib/conference";
 import { isConferenceGatewayReady } from "@/lib/conference-onlinepay";
+import { isOnlinePayTest } from "@/lib/onlinepay";
 import { ConferencePayPanel } from "../ConferencePayPanel";
 
 export const dynamic = "force-dynamic";
@@ -44,7 +45,8 @@ export default async function ConferencePayPage({
         paymentRef={application.paymentRef}
         gatewayReady={isConferenceGatewayReady()}
         outcome={payu ?? null}
-        autoStart={start === "1" && !payu}
+        campusOnly={isOnlinePayTest()}
+        autoStart={start === "1" && !payu && !isOnlinePayTest()}
       />
       <p className="mt-6 text-sm text-mute">
         Questions:{" "}

@@ -20,18 +20,13 @@ export function ConferencePayCta({
 }) {
   const amount = formatInrFromPaise(amountPaise);
   return (
-    <form
-      method="post"
-      action={`/api/conference/pay/${encodeURIComponent(token)}/checkout`}
+    <Link
+      href={conferencePayPath(token)}
+      className="inline-block rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
+      data-testid="conference-pay-cta"
     >
-      <button
-        type="submit"
-        className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
-        data-testid="conference-pay-cta"
-      >
-        Pay {amount} with IIT Bombay Online Pay
-      </button>
-    </form>
+      Pay {amount} with IIT Bombay Online Pay
+    </Link>
   );
 }
 
@@ -53,7 +48,7 @@ export function ConferenceStatusCard({
   paymentToken: string;
 }) {
   const feeDue = applicationFeeDue({ status, paymentStatus });
-  const payPath = conferencePayPath(paymentToken, true);
+  const payPath = conferencePayPath(paymentToken);
 
   return (
     <div data-testid="conference-status-card">
