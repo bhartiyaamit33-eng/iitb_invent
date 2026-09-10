@@ -48,26 +48,20 @@ function onlinePayHandoffHtml(opts: {
   const opUrl = escapeAttr(opts.opUrl);
   const backUrl = escapeAttr(opts.backUrl);
   const userId = escapeHtml(opts.userId);
-  const auto = opts.test
-    ? ""
-    : `<script>window.location.replace(${JSON.stringify(opts.opUrl)});</script>`;
   const testCopy = opts.test
-    ? `<p>IIT Bombay <strong>TEST</strong> Online Pay only loads on the IITB network or VPN
-        (<code>newtestasc.iitb.ac.in</code>). Off campus the browser sits on a spinning tab
-        because that host does not resolve.</p>
-       <p>Stay on this page until you are on campus or VPN, then open the gateway.
-       Paying as Online Pay user id <code>${userId}</code> — this must be an LDAP id
-       OP already enabled for Canara Auto Debit.</p>`
+    ? `<p>IIT Bombay TEST Online Pay only loads on the IITB network. Do not paste the
+        gateway URL into the address bar — OP rejects that with
+        <strong>Requesting page referer not received</strong>.</p>
+       <p>This page will open the gateway so the Referer is INVENT.
+       Paying as user id <code>${userId}</code>.</p>`
     : `<p>Opening IIT Bombay Online Pay…</p>`;
-  const buttonLabel = opts.test
-    ? "Open IIT Bombay Online Pay (campus / VPN)"
-    : "Continue to IIT Bombay Online Pay";
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="origin" />
   <title>IIT Bombay Online Pay</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 36rem; margin: 3rem auto; padding: 0 1.25rem; color: #17333a; line-height: 1.5; }
@@ -80,23 +74,21 @@ function onlinePayHandoffHtml(opts: {
   <p>INVENT · Research Conference</p>
   <h1>IIT Bombay Online Pay</h1>
   ${testCopy}
-  <p><a class="btn" href="${opUrl}" data-testid="onlinepay-handoff">${buttonLabel}</a></p>
+  <p><a class="btn" href="${opUrl}" referrerpolicy="origin" data-testid="onlinepay-handoff">Continue to IIT Bombay Online Pay</a></p>
   <p><a class="back" href="${backUrl}">← Back to the INVENT payment page</a></p>
-  ${auto}
+  <script>
+    window.setTimeout(function () {
+      window.location.assign(${JSON.stringify(opts.opUrl)});
+    }, 400);
+  </script>
 </body>
 </html>`;
 }
 
-/**
- * Starts IIT Bombay Online Pay (preferred) or PayU hosted checkout.
- * TEST must not 303 to newtestasc: that host does not resolve off campus,
- * so the browser looks frozen after Pay.
- */
-export async function POST(
+async function startCheckout(
   req: Request,
-  { params }: { params: Promise<{ token: string }> },
-) {
-  const { token } = await params;
+  token: string,
+): Promise<NextResponse> {
   const application = await prisma.conferenceApplication.findUnique({
     where: { paymentToken: token },
   });
@@ -132,6 +124,7 @@ export async function POST(
         headers: {
           "Content-Type": "text/html; charset=utf-8",
           "Cache-Control": "no-store",
+          "Referrer-Policy": "origin",
         },
       });
       res.cookies.set(
@@ -167,6 +160,7 @@ export async function POST(
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="origin" />
   <title>Redirecting to IIT Bombay Online Pay</title>
 </head>
 <body>
@@ -184,6 +178,7 @@ export async function POST(
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
+      "Referrer-Policy": "origin",
     },
   });
   res.cookies.set(
@@ -192,4 +187,20 @@ export async function POST(
     conferenceCookieOptions(),
   );
   return res;
+}
+
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ token: string }> },
+) {
+  const { token } = await params;
+  return startCheckout(req, token);
+}
+
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ token: string }> },
+) {
+  const { token } = await params;
+  return startCheckout(req, token);
 }
