@@ -12,16 +12,20 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 
   // The database is authoritative so grants and revocations apply immediately,
   // even when the user's JWT was issued before an administrator changed a role.
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, email: true, name: true, role: true, deletedAt: true },
-  });
-  if (!user || user.deletedAt) return null;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, email: true, name: true, role: true, deletedAt: true },
+    });
+    if (!user || user.deletedAt) return null;
 
-  return {
-    id: user.id,
-    email: user.email.trim().toLowerCase(),
-    name: user.name,
-    role: user.role,
-  };
+    return {
+      id: user.id,
+      email: user.email.trim().toLowerCase(),
+      name: user.name,
+      role: user.role,
+    };
+  } catch {
+    return null;
+  }
 }
