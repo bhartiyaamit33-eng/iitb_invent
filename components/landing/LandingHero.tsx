@@ -9,16 +9,22 @@ import {
   TAGLINE_REST,
   IMAGES,
   type HeroVariant,
+  type LandingThemeName,
 } from "@/lib/landing";
 import { OrbitBackdrop } from "./OrbitBackdrop";
+import { ThemeToggle } from "./ThemeToggle";
 import { Wordmark } from "./Wordmark";
 
 export function LandingHero({
   variant,
   signedInName,
+  theme,
+  onThemeChange,
 }: {
   variant: HeroVariant;
   signedInName: string | null;
+  theme: LandingThemeName;
+  onThemeChange: (theme: LandingThemeName) => void;
 }) {
   const accountHref = signedInName ? "/dashboard" : "/login";
   const accountLabel = signedInName ?? "Login";
@@ -160,10 +166,13 @@ export function LandingHero({
             className="hero-rise grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-6 max-[860px]:grid-cols-[1fr_auto]"
             style={{ animationDelay: "0.95s" }}
           >
-            <p className="text-[11px] font-semibold leading-relaxed tracking-[0.12em] text-mist uppercase">
-              Desai Sethi School of Entrepreneurship{" "}
-              <span className="whitespace-nowrap">· IIT Bombay</span>
-            </p>
+            <div className="flex flex-col items-start gap-3">
+              <p className="text-[11px] font-semibold leading-relaxed tracking-[0.12em] text-mist uppercase">
+                Desai Sethi School of Entrepreneurship{" "}
+                <span className="whitespace-nowrap">· IIT Bombay</span>
+              </p>
+              <ThemeToggle theme={theme} onThemeChange={onThemeChange} testid />
+            </div>
             <Link
               className="mb-1 grid size-[42px] place-items-center justify-self-center rounded-full border border-white/40 bg-midnight/35 text-frost backdrop-blur-sm max-[860px]:hidden"
               href="#about"

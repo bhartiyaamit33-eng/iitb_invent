@@ -394,28 +394,25 @@ html[data-landing] body {
 .theme-toggle {
   display: inline-flex;
   flex: none;
-  border: 1px solid var(--rule-strong);
-  border-radius: 999px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--midnight) 70%, transparent);
-}
-
-.theme-toggle button {
+  align-items: center;
+  justify-content: center;
   margin: 0;
-  padding: 8px 11px;
-  border: 0;
-  background: transparent;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--frost) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--midnight) 55%, transparent);
   color: var(--frost);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
+  backdrop-filter: blur(8px);
 }
 
-.theme-toggle button[aria-pressed="true"] {
-  background: var(--spark);
-  color: #111;
+.theme-toggle:hover {
+  border-color: var(--spark);
+  color: var(--spark);
 }
 
 .hero-photo-veil {
@@ -1156,12 +1153,14 @@ html[data-landing="light"] body {
 }
 
 .landing[data-theme="light"] .theme-toggle {
-  border-color: var(--cyan-glow);
+  border-color: color-mix(in srgb, var(--cyan-glow) 55%, #c9c2b6);
   background: #fff;
+  color: #0c3a6b;
 }
 
-.landing[data-theme="light"] .theme-toggle button[aria-pressed="true"] {
-  color: #fff;
+.landing[data-theme="light"] .theme-toggle:hover {
+  border-color: #0c3a6b;
+  color: #0c3a6b;
 }
 
 .landing[data-theme="light"] .image-panel .veil {
