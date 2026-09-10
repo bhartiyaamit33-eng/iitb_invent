@@ -30,6 +30,7 @@ export function ConferencePayPanel({
   gatewayReady,
   outcome,
   autoStart,
+  campusOnly,
 }: {
   token: string;
   name: string;
@@ -39,6 +40,7 @@ export function ConferencePayPanel({
   gatewayReady: boolean;
   outcome?: string | null;
   autoStart?: boolean;
+  campusOnly?: boolean;
 }) {
   const amount = formatInrFromPaise(amountPaise);
   const settled = paymentStatus === "PAID" || paymentStatus === "WAIVED";
@@ -97,6 +99,17 @@ export function ConferencePayPanel({
             <strong>IIT Bombay Online Pay</strong>. You do not fill the
             application form again.
           </p>
+          {campusOnly ? (
+            <p
+              className="rounded-md bg-paper px-3 py-2 text-sm text-ink"
+              data-testid="onlinepay-campus-only"
+            >
+              TEST checkout opens IIT Bombay&apos;s Online Pay page
+              (newtestasc.iitb.ac.in), which only loads on the IITB network or
+              VPN. Stay on this page until you are on campus, then click Pay.
+              Your IITB LDAP / IDP login is not a payment URL — this page is.
+            </p>
+          ) : null}
           {gatewayReady ? (
             <form
               ref={formRef}

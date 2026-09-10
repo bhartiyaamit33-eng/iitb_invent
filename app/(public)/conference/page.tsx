@@ -31,7 +31,7 @@ export default async function ConferencePage() {
   });
 
   if (application && applicationFeeDue(application)) {
-    redirect(conferencePayPath(application.paymentToken, true));
+    redirect(conferencePayPath(application.paymentToken));
   }
 
   return (

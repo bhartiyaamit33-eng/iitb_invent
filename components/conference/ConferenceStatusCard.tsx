@@ -53,7 +53,7 @@ export function ConferenceStatusCard({
   paymentToken: string;
 }) {
   const feeDue = applicationFeeDue({ status, paymentStatus });
-  const payPath = conferencePayPath(paymentToken, true);
+  const payPath = conferencePayPath(paymentToken);
 
   return (
     <div data-testid="conference-status-card">
