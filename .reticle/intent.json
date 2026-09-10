@@ -5,7 +5,7 @@
       "id": "inline:a-researcher-on-the-call-for-papers-page-can-jum-da09e5cc",
       "statement": "A researcher on the Call for Papers page can jump from Submit your Abstract to the application form without leaving the page.",
       "state": "proved",
-      "declaredAt": 1789059150761,
+      "declaredAt": 1789073857135,
       "binding": {
         "kind": "route",
         "contains": "#submit"
@@ -17,9 +17,41 @@
         ]
       },
       "provenBy": {
-        "verdictId": "reticle_act_and_wait:1789059151230",
+        "verdictId": "reticle_act_and_wait:1789073857187",
         "grade": "presence",
-        "at": 1789059151230
+        "at": 1789073857187
+      }
+    },
+    "inline:an-attendee-can-submit-the-call-for-papers-form-1b4760cb": {
+      "id": "inline:an-attendee-can-submit-the-call-for-papers-form-1b4760cb",
+      "statement": "An attendee can submit the Call for Papers form with the original field names and reach the thanks page.",
+      "state": "proved",
+      "declaredAt": 1789074345262,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "net",
+            "method": "POST",
+            "urlContains": "/api/conference/apply",
+            "status": 200
+          },
+          {
+            "kind": "route",
+            "contains": "/conference/thanks"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference/thanks",
+        "files": [
+          "app/(public)/conference/ConferenceForm.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789074346054",
+        "grade": "net",
+        "at": 1789074346054
       }
     }
   }

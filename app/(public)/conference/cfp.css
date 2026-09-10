@@ -186,7 +186,8 @@ html[data-cfp] body {
 
 .cfp-hero-chrome {
   display: grid;
-  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "dsse iitb" "nav nav";
   align-items: center;
   column-gap: 16px;
   row-gap: 12px;
@@ -195,11 +196,11 @@ html[data-cfp] body {
 
 .cfp-logo-dsse,
 .cfp-logo-iitb {
-  flex: none;
   min-width: 0;
 }
 
 .cfp-logo-dsse {
+  grid-area: dsse;
   justify-self: start;
 }
 
@@ -211,6 +212,7 @@ html[data-cfp] body {
 }
 
 .cfp-logo-iitb {
+  grid-area: iitb;
   justify-self: end;
 }
 
@@ -226,6 +228,7 @@ html[data-cfp] body {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  grid-area: nav;
   justify-self: center;
   min-width: 0;
   gap: 6px;
@@ -863,16 +866,8 @@ html[data-cfp] body {
   }
 
   .cfp-hero-chrome {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "dsse iitb" "nav nav";
-  }
-
-  .cfp-logo-dsse {
-    grid-area: dsse;
-  }
-
-  .cfp-logo-iitb {
-    grid-area: iitb;
+    column-gap: 12px;
+    row-gap: 10px;
   }
 
   .cfp-nav {
