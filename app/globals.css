@@ -1,10 +1,9 @@
 @import "tailwindcss";
 
 /*
-  Live-site design tokens extracted from public/index.html.
-  Do NOT use PRD Section 16 (Archivo / IBM Plex / #0B4F9E).
-  These tokens are for future app chrome (dashboard/admin); the landing
-  page continues to use its own embedded CSS unchanged.
+  App chrome (dashboard/admin) keeps the teal paper tokens.
+  The public landing uses the INV.ENT poster system: midnight, serif
+  headlines, cyan rules, and lime only as the spark.
 */
 
 :root {
@@ -31,6 +30,17 @@
     var(--hero-mid) 58%,
     var(--hero-edge) 100%
   );
+
+  --midnight: #07111f;
+  --navy: #0b1e36;
+  --electric: #4d9cff;
+  --cyan-glow: #6ec6f0;
+  --spark: #c8ff3d;
+  --frost: #eef2f7;
+  --mist: #a7b0c3;
+  --haze: #6e7a8c;
+  --rule: rgba(110, 198, 240, 0.22);
+  --rule-strong: rgba(238, 242, 247, 0.16);
 }
 
 @theme inline {
@@ -49,6 +59,14 @@
   --color-hero-deep: var(--hero-deep);
   --color-hero-mid: var(--hero-mid);
   --color-hero-edge: var(--hero-edge);
+  --color-midnight: var(--midnight);
+  --color-navy: var(--navy);
+  --color-electric: var(--electric);
+  --color-cyan-glow: var(--cyan-glow);
+  --color-spark: var(--spark);
+  --color-frost: var(--frost);
+  --color-mist: var(--mist);
+  --color-haze: var(--haze);
   --font-sans: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
 }
@@ -86,4 +104,771 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+/* ── INV.ENT poster system (public landing only) ── */
+
+html[data-landing] {
+  background: var(--midnight);
+}
+
+html[data-landing] body {
+  background: var(--midnight);
+  color: var(--frost);
+}
+
+.landing {
+  --font-serif: var(--font-playfair), "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --lockup-cyan: #42beec;
+  background: var(--midnight);
+  color: var(--frost);
+  font-family: var(--font-body);
+  min-height: 100svh;
+  overflow-x: hidden;
+}
+
+.landing a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.landing a.btn {
+  color: #000;
+}
+
+.landing a.btn.outline,
+.landing a.btn.ghost {
+  color: var(--frost);
+}
+
+.landing a.btn.outline:hover,
+.landing a.btn.nav-login {
+  color: #000;
+}
+
+.landing :focus-visible {
+  outline: 2px solid var(--spark);
+  outline-offset: 3px;
+}
+
+.landing-serif {
+  font-family: var(--font-serif);
+}
+
+.landing-kicker {
+  margin: 0 0 10px;
+  color: var(--cyan-glow);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.landing-kicker.is-lit {
+  color: var(--spark);
+}
+
+.landing h2 {
+  margin: 0 0 18px;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(36px, 5.4vw, 64px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--frost);
+}
+
+.landing .lead {
+  max-width: 58ch;
+  color: color-mix(in srgb, var(--frost) 88%, var(--mist));
+  line-height: 1.7;
+  font-size: 17px;
+  margin: 0 0 16px;
+}
+
+.landing-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: clamp(64px, 8vw, 104px) clamp(18px, 4vw, 40px);
+}
+
+.landing-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rule), transparent);
+  border: 0;
+}
+
+.brand-inline {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.brand-inline .inv { color: var(--frost); }
+.brand-inline .dot { color: var(--spark); }
+.brand-inline .ent { color: var(--lockup-cyan); }
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--spark);
+  background: var(--spark);
+  color: #000;
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.08), 0 10px 28px rgba(200, 255, 61, 0.12);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover {
+  background: #d8ff6a;
+  border-color: #d8ff6a;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(200, 255, 61, 0.22);
+}
+
+.btn.outline {
+  background: transparent;
+  color: var(--frost);
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.18), 0 0 24px rgba(200, 255, 61, 0.08);
+}
+
+.btn.outline:hover {
+  background: var(--spark);
+  color: #000;
+  border-color: var(--spark);
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: var(--rule-strong);
+  color: var(--frost);
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: rgba(238, 242, 247, 0.05);
+  border-color: var(--spark);
+  color: var(--frost);
+  box-shadow: none;
+}
+
+.btn.nav-login {
+  border-color: var(--spark);
+  background: var(--spark);
+  color: #000;
+}
+
+.btn.nav-login:hover {
+  background: #d8ff6a;
+  border-color: #d8ff6a;
+  color: #000;
+}
+
+/* Wordmark — poster serif lockup */
+.brand-lockup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 100%;
+}
+
+.brand-word {
+  --wm: clamp(56px, min(11vw, 16vh), 168px);
+  margin: 0 0 0 calc(var(--wm) * -0.04);
+  display: flex;
+  align-items: flex-start;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brand-half {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.brand-half .word {
+  display: block;
+  font-size: var(--wm);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.88;
+  color: var(--frost);
+}
+
+.ent-col .word {
+  color: var(--lockup-cyan);
+  padding-right: 0.04em;
+}
+
+.brand-half .meaning {
+  display: block;
+  margin-top: calc(var(--wm) * 0.14);
+  padding-left: 0.02em;
+  font-family: var(--font-body);
+  font-size: clamp(10px, 1.05vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--lockup-cyan);
+}
+
+.brand-dot {
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+  font-size: var(--wm);
+  height: 0.88em; /* same line box as .word — INV / ENT face only */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.05em;
+}
+
+.brand-dot i {
+  display: block;
+  width: 0.13em;
+  height: 0.13em;
+  border-radius: 50%;
+  background: var(--spark);
+  box-shadow: 0 0 22px rgba(200, 255, 61, 0.55);
+  transform: scale(1);
+  animation:
+    sparkBirth 2.2s cubic-bezier(0.22, 1, 0.36, 1) both,
+    pulse 2.8s 2.2s ease-in-out infinite;
+}
+
+@keyframes sparkBirth {
+  0% { transform: scale(0); opacity: 0; }
+  22% { transform: scale(1); opacity: 1; }
+  60% { transform: scale(1); }
+  74% { transform: scale(1.7); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(200, 255, 61, 0.42); }
+  50% { box-shadow: 0 0 32px rgba(200, 255, 61, 0.72); }
+}
+
+.hero-tagline {
+  white-space: nowrap;
+  /* Scale to one line in the hero gutter; cap so it stays under INV.ENT. */
+  font-size: clamp(15px, calc((100vw - 5rem) / 26), 30px);
+}
+
+/* Blueprint grid + orbits */
+.orbit-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Keep section networks off the copy column so body type stays readable. */
+section > .orbit-field {
+  opacity: 0.4;
+  mask-image: radial-gradient(ellipse 55% 80% at 88% 42%, #000 10%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 55% 80% at 88% 42%, #000 10%, transparent 72%);
+}
+
+.orbit-field .grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(rgba(238, 242, 247, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(238, 242, 247, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(238, 242, 247, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(238, 242, 247, 0.025) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
+  mask-image: radial-gradient(ellipse at 28% 42%, #000 18%, transparent 72%);
+  animation: gridDrift 64s linear infinite;
+}
+
+.orbit-field svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.orbit-field path {
+  fill: none;
+  stroke: rgba(238, 242, 247, 0.14);
+  stroke-width: 0.7;
+  stroke-dasharray: 6 12;
+  animation: dashMove 36s linear infinite;
+}
+
+.orbit-field path.alt {
+  stroke: rgba(238, 242, 247, 0.08);
+  animation-duration: 48s;
+  animation-direction: reverse;
+}
+
+.orbit-field .net-link {
+  fill: none;
+  stroke: rgba(238, 242, 247, 0.12);
+  stroke-width: 0.55;
+}
+
+.orbit-field .node {
+  fill: rgba(238, 242, 247, 0.42);
+  animation: nodePulse 5.5s ease-in-out infinite;
+}
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes gridDrift {
+  to { background-position: 80px 80px, 80px 80px, 16px 16px, 16px 16px; }
+}
+
+@keyframes dashMove {
+  to { stroke-dashoffset: -420; }
+}
+
+/* Cinematic image grade */
+.image-panel {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--navy);
+  min-height: 280px;
+}
+
+.image-panel img {
+  object-fit: cover;
+  filter: saturate(0.42) contrast(1.18) brightness(0.62);
+  transform: scale(1.04);
+}
+
+.image-panel .veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 17, 31, 0.12) 0%, rgba(7, 17, 31, 0.45) 58%, rgba(7, 17, 31, 0.88) 100%),
+    linear-gradient(90deg, rgba(7, 17, 31, 0.55) 0%, rgba(11, 30, 54, 0.18) 42%, transparent 70%),
+    linear-gradient(20deg, rgba(46, 143, 255, 0.2), transparent 48%);
+  pointer-events: none;
+}
+
+.image-panel-photo img {
+  filter: saturate(0.78) contrast(1.06) brightness(0.82);
+  transform: none;
+}
+
+.image-panel-photo .veil {
+  background:
+    linear-gradient(180deg, rgba(7, 17, 31, 0.08) 0%, rgba(7, 17, 31, 0.22) 100%),
+    linear-gradient(20deg, rgba(46, 143, 255, 0.14), transparent 55%);
+}
+
+/* Dual event lanes — opposite marquees just below the hero */
+.event-lanes {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 12px;
+  overflow: hidden;
+  background: var(--midnight);
+  border-block: 1px solid var(--rule);
+  mask-image: linear-gradient(90deg, transparent, #000 3.5%, #000 96.5%, transparent);
+}
+
+.event-lane {
+  overflow: hidden;
+}
+
+.event-lane-track {
+  display: flex;
+  width: max-content;
+  animation: event-lane 42s linear infinite;
+  will-change: transform;
+}
+
+.event-lane.is-reverse .event-lane-track {
+  animation-direction: reverse;
+  animation-duration: 54s;
+}
+
+.event-lane-set {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  padding-right: 6px;
+}
+
+.event-lane-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(210px, 24vw, 340px);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--navy);
+}
+
+.event-lane-card img {
+  object-fit: cover;
+  filter: saturate(0.82) contrast(1.08) brightness(0.78);
+}
+
+.event-lane-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(20deg, rgba(46, 143, 255, 0.1), transparent 50%);
+  pointer-events: none;
+}
+
+.event-lanes:hover .event-lane-track {
+  animation-play-state: paused;
+}
+
+@keyframes event-lane {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee {
+  to { transform: translateX(-100%); }
+}
+
+.image-panel .caption {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+
+/* Spark trail */
+.spark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--spark);
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.35), 0 0 18px rgba(200, 255, 61, 0.7);
+  pointer-events: none;
+  z-index: 40;
+  opacity: 0;
+  scale: var(--s, 1);
+  transition: scale 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.spark.is-live { opacity: 1; }
+
+.spark::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 255, 61, 0.45);
+  animation: halo 2.6s ease-out infinite;
+}
+
+.spark-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: rgba(200, 255, 61, 0.5);
+  pointer-events: none;
+  z-index: 39;
+  opacity: 0;
+  transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s ease;
+  will-change: transform;
+}
+
+.spark-ghost.g2 {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  background: rgba(200, 255, 61, 0.28);
+  transition-duration: 0.42s, 0.4s;
+}
+
+.spark-ghost.is-live { opacity: 1; }
+
+.spark-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+.spark-svg .track {
+  fill: none;
+  stroke: rgba(200, 255, 61, 0.1);
+  stroke-width: 1;
+  stroke-dasharray: 3 9;
+  stroke-linecap: round;
+}
+
+.spark-svg .lit {
+  fill: none;
+  stroke: rgba(200, 255, 61, 0.42);
+  stroke-width: 1;
+  stroke-dasharray: 3 9;
+  stroke-linecap: round;
+}
+
+.spark-svg .station {
+  fill: var(--midnight);
+  stroke: rgba(200, 255, 61, 0.32);
+  stroke-width: 1;
+  transition: fill 0.45s ease, stroke 0.45s ease;
+}
+
+.spark-svg .station.lit {
+  fill: rgba(200, 255, 61, 0.85);
+  stroke: rgba(200, 255, 61, 0.55);
+}
+
+.spark-svg .ring {
+  fill: none;
+  stroke: rgba(200, 255, 61, 0.5);
+  stroke-width: 1;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.spark-svg .ring.pop { animation: ringPop 1.2s ease-out both; }
+
+@keyframes halo {
+  0% { transform: scale(0.55); opacity: 0.9; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+@keyframes ringPop {
+  0% { transform: scale(0.3); opacity: 0.8; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* Timeline */
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  position: relative;
+  margin-top: 40px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 38px;
+  height: 1px;
+  background: var(--rule);
+}
+
+.timeline-item {
+  text-align: center;
+  position: relative;
+  padding-top: 0;
+}
+
+.timeline-item .kicker {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan-glow);
+  margin-bottom: 18px;
+  min-height: 2.4em;
+}
+
+.timeline-item .node {
+  width: 12px;
+  height: 12px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--midnight);
+  border: 1.5px solid var(--spark);
+  box-shadow: 0 0 0 4px var(--midnight), 0 0 10px rgba(200, 255, 61, 0.35);
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-item.is-now .node,
+.timeline-item.is-past .node {
+  background: var(--spark);
+  box-shadow: 0 0 0 4px var(--midnight), 0 0 16px rgba(200, 255, 61, 0.7);
+}
+
+.timeline-item .date {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 1.6vw, 22px);
+  color: var(--frost);
+}
+
+/* FAQ */
+.landing-faq details {
+  border-bottom: 1px solid var(--rule);
+  padding: 18px 0;
+}
+
+.landing-faq summary {
+  font-family: var(--font-serif);
+  font-size: clamp(20px, 2vw, 26px);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-faq summary::-webkit-details-marker { display: none; }
+
+.landing-faq summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--spark);
+  box-shadow: 0 0 10px rgba(200, 255, 61, 0.6);
+  flex: none;
+}
+
+.landing-faq details p {
+  margin: 10px 0 0 19px;
+  color: var(--mist);
+  line-height: 1.65;
+  max-width: 62ch;
+}
+
+.mail {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 5vw, 42px);
+  color: var(--frost);
+  word-break: break-all;
+}
+
+.mail:hover { color: var(--spark); }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-rise {
+  animation: riseIn 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing .lead a {
+  color: var(--spark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.landing .lead a:hover {
+  color: #d8ff6a;
+}
+
+@media (max-width: 860px) {
+  .hero-chrome {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "dsse iitb" "nav nav";
+    gap: 12px 16px;
+    padding: 14px 16px 10px;
+  }
+  .logo-dsse { grid-area: dsse; }
+  .logo-iitb { grid-area: iitb; width: 52px; height: 52px; }
+  .hero-nav {
+    grid-area: nav;
+    justify-self: stretch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 -16px;
+    padding: 2px 16px 6px;
+  }
+  .hero-nav::-webkit-scrollbar { display: none; }
+  .hero-nav a.nav-login { order: -1; }
+  .brand-word { --wm: clamp(52px, 16vw, 84px); }
+  .brand-half .meaning { font-size: 9px; letter-spacing: 0.16em; }
+  .timeline {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .timeline::before {
+    left: 10px;
+    right: auto;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    height: auto;
+  }
+  .timeline-item { text-align: left; padding-left: 36px; }
+  .timeline-item .kicker { min-height: 0; margin-bottom: 8px; }
+  .timeline-item .node {
+    position: absolute;
+    left: 5px;
+    top: 8px;
+    margin: 0;
+  }
+  .spark,
+  .spark-ghost,
+  .spark-svg { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-field .grid,
+  .orbit-field path,
+  .orbit-field .node,
+  .brand-dot i,
+  .hero-rise,
+  .event-lane-track { animation: none !important; }
+  .brand-dot i { transform: scale(1); }
+  .hero-rise { opacity: 1; transform: none; }
+  .event-lane { overflow-x: auto; }
+  .event-lanes { mask-image: none; }
 }
