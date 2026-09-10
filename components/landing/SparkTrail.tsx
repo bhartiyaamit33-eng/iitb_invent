@@ -16,8 +16,9 @@ export function SparkTrail() {
     const spark = sparkRef.current;
     const svg = svgRef.current;
     if (!spark || !svg) return;
-    const landing = spark.closest(".landing");
-    if (!(landing instanceof HTMLElement)) return;
+    const landingEl = spark.closest(".landing");
+    if (!(landingEl instanceof HTMLElement)) return;
+    const landing: HTMLElement = landingEl;
     const ghosts = [g1Ref.current, g2Ref.current].filter(Boolean) as HTMLElement[];
 
     const NS = "http://www.w3.org/2000/svg";
