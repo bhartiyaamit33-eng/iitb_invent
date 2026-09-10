@@ -3,7 +3,6 @@ import type { HeroVariant } from "@/lib/landing";
 import {
   DEFAULT_DESCRIPTION,
   SITE_NAME_LONG,
-  noIndex,
   pageMetadata,
 } from "@/lib/seo";
 
@@ -13,15 +12,14 @@ export const metadata = {
   ...pageMetadata({
     title: SITE_NAME_LONG,
     description: DEFAULT_DESCRIPTION,
-    path: "/test123",
+    path: "/",
     absoluteTitle: true,
   }),
-  ...noIndex,
 };
 
 type SearchParams = Promise<{ hero?: string }>;
 
-export default async function TestLandingPage({
+export default async function HomePage({
   searchParams,
 }: {
   searchParams: SearchParams;

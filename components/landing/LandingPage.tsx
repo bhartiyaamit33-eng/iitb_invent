@@ -17,10 +17,12 @@ export function LandingPage({
   faqs,
   stats,
   timeline,
+  theme = "dark",
 }: LandingProps) {
+
   return (
-    <div className="landing">
-      <LandingTheme />
+    <div className="landing" data-theme={theme} data-testid={`landing-theme-${theme}`}>
+      <LandingTheme variant={theme} />
       <SparkTrail />
       {live ? <LiveStrip live={live} /> : null}
       <LandingHero variant={heroVariant} signedInName={signedInName} />

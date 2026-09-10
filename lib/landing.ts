@@ -19,6 +19,8 @@ export type TimelineItem = {
   state: TimelineState;
 };
 
+export type LandingThemeName = "dark" | "light";
+
 export type LandingProps = {
   heroVariant: HeroVariant;
   signedInName: string | null;
@@ -26,10 +28,12 @@ export type LandingProps = {
   faqs: LandingFaq[];
   stats: LandingStat[];
   timeline: TimelineItem[];
+  theme?: LandingThemeName;
 };
 
-export const TAGLINE =
-  "Where entrepreneurship research meets venture practice";
+export const TAGLINE = "Entrepreneurship Research & Practice Conference";
+export const TAGLINE_LEAD = "Entrepreneurship Research & Practice";
+export const TAGLINE_REST = "Conference";
 
 export const SUBMIT_HREF = "/submit";
 export const REGISTER_HREF = "/signup";

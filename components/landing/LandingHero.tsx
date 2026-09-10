@@ -5,22 +5,13 @@ import Link from "next/link";
 import {
   REGISTER_HREF,
   SUBMIT_HREF,
-  TAGLINE,
+  TAGLINE_LEAD,
+  TAGLINE_REST,
   IMAGES,
   type HeroVariant,
 } from "@/lib/landing";
 import { OrbitBackdrop } from "./OrbitBackdrop";
 import { Wordmark } from "./Wordmark";
-
-const NAV = [
-  { href: "#about", label: "About" },
-  { href: "#day", label: "The Day" },
-  { href: "/ventures", label: "Startups" },
-  { href: "/programme", label: "Programme" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#connect", label: "People" },
-  { href: "#query", label: "Queries" },
-];
 
 export function LandingHero({
   variant,
@@ -53,22 +44,10 @@ export function LandingHero({
             data-testid="hero-building"
             className="object-cover object-[58%_40%] saturate-[0.55] contrast-[1.12] brightness-[0.42]"
           />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(90deg, rgba(7,17,31,0.88) 0%, rgba(7,17,31,0.72) 34%, rgba(7,17,31,0.38) 62%, rgba(11,30,54,0.28) 100%), linear-gradient(180deg, rgba(7,17,31,0.58) 0%, rgba(7,17,31,0.18) 30%, rgba(7,17,31,0.28) 70%, rgba(7,17,31,0.82) 100%), linear-gradient(20deg, rgba(46,143,255,0.14), transparent 42%)",
-            }}
-          />
+          <div className="hero-photo-veil absolute inset-0" />
         </div>
       ) : (
-        <div
-          className="pointer-events-none absolute inset-0 z-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 52% 48% at 22% 42%, rgba(46,143,255,0.22), transparent), radial-gradient(ellipse 22% 20% at 14% 46%, rgba(200,255,61,0.08), transparent), linear-gradient(180deg, #0B1E36 0%, #08162A 55%, #07111F 100%)",
-          }}
-        />
+        <div className="hero-plain-veil pointer-events-none absolute inset-0 z-0" />
       )}
 
       <OrbitBackdrop variant="hero" className="z-[1]" />
@@ -95,15 +74,13 @@ export function LandingHero({
           aria-label="Primary"
           data-testid="nav"
         >
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="shrink-0 rounded-full border border-white/30 bg-midnight/40 px-3 py-2 text-[10px] font-semibold tracking-[0.14em] text-frost uppercase backdrop-blur-md transition hover:border-white/70 hover:bg-white/10"
-            >
-              {item.label}
-            </Link>
-          ))}
+          <Link
+            className="btn shrink-0 !px-4 !py-2 !text-[10px]"
+            href={submitHref}
+            data-testid="nav-submit"
+          >
+            Submit your Abstract
+          </Link>
           <Link
             className="nav-login btn shrink-0 !px-4 !py-2 !text-[10px]"
             href={accountHref}
@@ -142,11 +119,12 @@ export function LandingHero({
               <Wordmark />
             </div>
             <p
-              className="hero-tagline hero-rise landing-serif mt-6 font-medium leading-none tracking-[-0.015em] text-frost"
+              className="hero-tagline hero-rise landing-serif mt-6 font-medium tracking-[-0.015em]"
               data-testid="hero-tagline"
               style={{ animationDelay: "0.55s" }}
             >
-              {TAGLINE}
+              <span className="hero-tagline-lead">{TAGLINE_LEAD}</span>{" "}
+              <span className="hero-tagline-rest">{TAGLINE_REST}</span>
             </p>
             <ol
               className="hero-rise mt-4 flex flex-wrap gap-y-2 p-0"
@@ -161,7 +139,7 @@ export function LandingHero({
                     className="flex items-center text-[11px] font-semibold tracking-[0.18em] text-mist uppercase"
                   >
                     {i > 0 ? (
-                      <span className="mx-3 size-1.5 rounded-full bg-spark shadow-[0_0_8px_rgba(200,255,61,0.6)]" />
+                      <span className="mx-3 size-1.5 rounded-full bg-spark shadow-[0_0_8px_rgba(0,126,67,0.6)]" />
                     ) : null}
                     {step}
                   </li>
@@ -170,7 +148,7 @@ export function LandingHero({
             </ol>
             <div className="hero-rise cta-row" data-testid="cta-hero" style={{ animationDelay: "0.8s" }}>
               <Link className="btn outline" href={submitHref}>
-                Submit your abstract
+                Submit your Abstract
               </Link>
               <Link className="btn ghost" href={registerHref}>
                 {registerLabel}
@@ -197,7 +175,7 @@ export function LandingHero({
             </Link>
             <div className="landing-serif justify-self-end text-right leading-none">
               <span className="block whitespace-nowrap text-[clamp(22px,3.4vw,44px)] text-frost">
-                Jan 30–Jan 31
+                30–31 January
               </span>
               <span className="block text-[clamp(16px,2vw,26px)] text-mist">2027</span>
             </div>

@@ -391,7 +391,7 @@ export function LandingSections({
               imgClassName="object-[center_68%]"
             >
               <p className="landing-kicker">Contact</p>
-              <h2>Queries</h2>
+              <h2 data-spark-node>Queries</h2>
               <p className="lead" data-testid="query-lead">
                 Press, partners, speakers, volunteers, campus access, or “I have a company and a problem.” One inbox. Humans read it.
               </p>

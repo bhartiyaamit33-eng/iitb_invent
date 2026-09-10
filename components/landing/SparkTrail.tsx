@@ -16,9 +16,12 @@ export function SparkTrail() {
     const spark = sparkRef.current;
     const svg = svgRef.current;
     if (!spark || !svg) return;
+    const landing = spark.closest(".landing");
+    if (!(landing instanceof HTMLElement)) return;
     const ghosts = [g1Ref.current, g2Ref.current].filter(Boolean) as HTMLElement[];
 
     const NS = "http://www.w3.org/2000/svg";
+    const READ = 0.38;
     let pathEl: SVGPathElement | null = null;
     let trackEl: SVGPathElement | null = null;
     let litEl: SVGPathElement | null = null;
@@ -31,20 +34,52 @@ export function SparkTrail() {
       lit: boolean;
       kicker: Element | null;
     }[] = [];
-    let nodes: Element[] = [];
+    let nodes: HTMLElement[] = [];
+    let pts: { x: number; y: number }[] = [];
+    let nodeLens: number[] = [];
 
-    function pointOf(el: Element) {
+    function pointOf(el: HTMLElement) {
+      const root = landing.getBoundingClientRect();
       const r = el.getBoundingClientRect();
+      const minX = 12;
+      const maxX = Math.max(minX + 8, landing.clientWidth - 12);
+      let x: number;
+      let y: number;
       if (el.classList.contains("brand-dot")) {
-        return {
-          x: r.left + r.width / 2 + window.scrollX,
-          y: r.top + r.height / 2 + window.scrollY,
-        };
+        x = r.left - root.left + r.width / 2;
+        y = r.top - root.top + r.height / 2;
+      } else {
+        x = r.left - root.left - 26;
+        y = r.top - root.top + Math.min(r.height / 2, 34);
       }
       return {
-        x: r.left - 26 + window.scrollX,
-        y: r.top + Math.min(r.height / 2, 34) + window.scrollY,
+        x: Math.min(maxX, Math.max(minX, x)),
+        y,
       };
+    }
+
+    function collectNodes() {
+      const found = Array.from(landing.querySelectorAll("[data-spark-node]")).filter(
+        (el): el is HTMLElement => el instanceof HTMLElement,
+      );
+      const measured = found
+        .map((el) => ({ el, pt: pointOf(el), r: el.getBoundingClientRect() }))
+        .filter(({ r, pt }) => r.width > 2 && r.height > 2 && Number.isFinite(pt.x) && Number.isFinite(pt.y));
+      measured.sort((a, b) => a.pt.y - b.pt.y || a.pt.x - b.pt.x);
+      nodes = measured.map((m) => m.el);
+      pts = measured.map((m) => m.pt);
+    }
+
+    function nodesShifted() {
+      if (!nodes.length || nodes.length !== pts.length) return true;
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        const prev = pts[i];
+        if (!node || !prev) return true;
+        const next = pointOf(node);
+        if (Math.abs(next.y - prev.y) > 6 || Math.abs(next.x - prev.x) > 6) return true;
+      }
+      return false;
     }
 
     function lengthAtY(y: number, total: number) {
@@ -59,11 +94,36 @@ export function SparkTrail() {
       return (lo + hi) / 2;
     }
 
-    function buildStations(pts: { x: number; y: number }[]) {
+    function alongForPageY(y: number, total: number) {
+      const first = pts[0];
+      const last = pts[pts.length - 1];
+      if (!first || !last) return 0;
+      if (y <= first.y) return 0;
+      if (y >= last.y) return total;
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1];
+        const b = pts[i];
+        if (!a || !b) continue;
+        if (y <= b.y) {
+          const span = Math.max(1, b.y - a.y);
+          const u = (y - a.y) / span;
+          const la = nodeLens[i - 1] ?? 0;
+          const lb = nodeLens[i] ?? total;
+          return la + u * (lb - la);
+        }
+      }
+      return total;
+    }
+
+    function pageYAtReadLine() {
+      const root = landing.getBoundingClientRect();
+      return window.innerHeight * READ - root.top + landing.scrollTop;
+    }
+
+    function buildStations() {
       if (!stationsG || !pathEl) return;
       while (stationsG.firstChild) stationsG.removeChild(stationsG.firstChild);
       stations = [];
-      const total = pathEl.getTotalLength();
       for (let i = 1; i < pts.length; i++) {
         const pt = pts[i];
         const node = nodes[i];
@@ -82,7 +142,7 @@ export function SparkTrail() {
         stationsG.appendChild(c);
         const sec = node.closest("section");
         stations.push({
-          len: lengthAtY(pt.y, total) - 3,
+          len: (nodeLens[i] ?? 0) - 3,
           circle: c,
           ring,
           lit: false,
@@ -93,22 +153,23 @@ export function SparkTrail() {
 
     function buildPath() {
       if (!svg) return;
-      nodes = Array.from(document.querySelectorAll("[data-spark-node]"));
-      if (nodes.length < 2) return;
-      const pts = nodes.map(pointOf);
+      collectNodes();
       const origin = pts[0];
-      if (!origin) return;
+      if (!origin || pts.length < 2) return;
       let d = `M ${origin.x} ${origin.y}`;
       for (let i = 1; i < pts.length; i++) {
         const prev = pts[i - 1];
         const curr = pts[i];
         if (!prev || !curr) continue;
-        const midY = (prev.y + curr.y) / 2;
-        d += ` C ${prev.x} ${midY}, ${curr.x} ${midY}, ${curr.x} ${curr.y}`;
+        const dy = curr.y - prev.y;
+        const c1y = prev.y + dy * 0.55;
+        const c2y = curr.y - dy * 0.25;
+        d += ` C ${prev.x} ${c1y}, ${curr.x} ${c2y}, ${curr.x} ${curr.y}`;
       }
-      const h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
-      svg.setAttribute("viewBox", `0 0 ${window.innerWidth} ${h}`);
-      svg.setAttribute("width", String(window.innerWidth));
+      const w = landing.clientWidth;
+      const h = Math.max(landing.scrollHeight, landing.offsetHeight);
+      svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      svg.setAttribute("width", String(w));
       svg.setAttribute("height", String(h));
       svg.style.height = `${h}px`;
       if (!pathEl) {
@@ -150,9 +211,11 @@ export function SparkTrail() {
       const maskEl = maskPath?.parentNode as SVGMaskElement | null;
       maskEl?.setAttribute("x", "0");
       maskEl?.setAttribute("y", "0");
-      maskEl?.setAttribute("width", String(window.innerWidth));
+      maskEl?.setAttribute("width", String(w));
       maskEl?.setAttribute("height", String(h));
-      buildStations(pts);
+      const total = pathEl.getTotalLength();
+      nodeLens = pts.map((p) => lengthAtY(p.y, total));
+      buildStations();
     }
 
     function updateStations(along: number) {
@@ -166,63 +229,90 @@ export function SparkTrail() {
       }
     }
 
+    function put(el: HTMLElement, x: number, y: number) {
+      el.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    let lastAt = "";
+    function announce(at: string, along: number, y: number) {
+      spark.dataset.sparkAt = at;
+      if (at === lastAt) return;
+      lastAt = at;
+      if (process.env.NODE_ENV !== "development") return;
+      void import("@reticlehq/react").then(({ reticle }) => {
+        reticle.signal("spark:at", { heading: at, along: Math.round(along), y: Math.round(y) });
+      });
+    }
+
     const introMs = 2600;
     const introAt = Date.now();
-    let lastY = window.scrollY;
-    let lastT = performance.now();
-    let settle = 0;
 
     function placeSpark() {
       if (!pathEl || !spark) return;
       const len = pathEl.getTotalLength();
-      if (!len) return;
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const t = Math.max(0, Math.min(1, window.scrollY / maxScroll));
-      const intro = Math.min(1, (Date.now() - introAt) / introMs);
-      if (t < 0.02 || intro < 1) {
+      if (!len || pts.length < 2) return;
+      const introDone = Date.now() - introAt >= introMs;
+      const y = pageYAtReadLine();
+      const along = alongForPageY(y, len);
+      const firstY = pts[0]?.y ?? 0;
+      if (!introDone && y < firstY - 24) {
         spark.classList.remove("is-live");
+        spark.removeAttribute("data-spark-y");
+        spark.removeAttribute("data-spark-at");
         ghosts.forEach((g) => g.classList.remove("is-live"));
         maskPath?.setAttribute("stroke-dasharray", "0 1000");
         updateStations(0);
         return;
       }
       spark.classList.add("is-live");
-      maskPath?.setAttribute("stroke-dasharray", `${(t * 1000).toFixed(1)} 1000`);
-      const along = t * len;
+      spark.dataset.sparkY = String(Math.round(y));
+      spark.dataset.sparkAlong = String(Math.round(along));
+      let atIdx = 0;
+      for (let i = 0; i < pts.length; i++) {
+        if ((pts[i]?.y ?? 0) <= y + 12) atIdx = i;
+      }
+      const at = (nodes[atIdx]?.innerText || "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 80);
+      announce(at, along, y);
+      maskPath?.setAttribute("stroke-dasharray", `${((along / len) * 1000).toFixed(1)} 1000`);
       const p = pathEl.getPointAtLength(along);
-      const tr = `translate(${p.x - window.scrollX}px,${p.y - window.scrollY}px)`;
-      spark.style.transform = tr;
-      ghosts.forEach((g) => {
-        g.style.transform = tr;
+      put(spark, p.x, p.y);
+      const trail = [24, 48];
+      ghosts.forEach((g, i) => {
+        const gap = trail[i] ?? 24;
+        const gp = pathEl.getPointAtLength(Math.max(0, along - gap));
+        put(g, gp.x, gp.y);
         g.classList.add("is-live");
       });
       updateStations(along);
-
-      const now = performance.now();
-      const dy = Math.abs(window.scrollY - lastY);
-      const dt = Math.max(8, now - lastT);
-      lastY = window.scrollY;
-      lastT = now;
-      const s = 1 + Math.min(0.9, (dy / dt) * 0.28);
-      spark.style.setProperty("--s", s.toFixed(2));
-      clearTimeout(settle);
-      settle = window.setTimeout(() => spark.style.setProperty("--s", "1"), 140);
     }
 
     let built = false;
-    const onScroll = () => {
-      if (!built) {
+    let raf = 0;
+    function tick() {
+      raf = 0;
+      if (!built || nodesShifted()) {
         buildPath();
         built = true;
       }
       placeSpark();
-    };
+    }
+    function onScroll() {
+      if (raf) return;
+      raf = requestAnimationFrame(tick);
+    }
     const onResize = () => {
       buildPath();
+      built = true;
       placeSpark();
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    landing.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+    const ro = new ResizeObserver(onResize);
+    ro.observe(landing);
     const boot = window.setTimeout(() => {
       buildPath();
       built = true;
@@ -231,15 +321,17 @@ export function SparkTrail() {
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      landing.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
+      ro.disconnect();
+      if (raf) cancelAnimationFrame(raf);
       clearTimeout(boot);
-      clearTimeout(settle);
     };
   }, []);
 
   return (
     <>
-      <div className="spark" ref={sparkRef} aria-hidden="true" />
+      <div className="spark" ref={sparkRef} aria-hidden="true" data-testid="spark-trail" />
       <div className="spark-ghost g1" ref={g1Ref} aria-hidden="true" />
       <div className="spark-ghost g2" ref={g2Ref} aria-hidden="true" />
       <svg className="spark-svg" ref={svgRef} aria-hidden="true" />
