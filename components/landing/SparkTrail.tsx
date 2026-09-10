@@ -13,9 +13,11 @@ export function SparkTrail() {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     if (reduce || !fine) return;
 
-    const spark = sparkRef.current;
-    const svg = svgRef.current;
-    if (!spark || !svg) return;
+    const sparkNode = sparkRef.current;
+    const svgNode = svgRef.current;
+    if (!sparkNode || !svgNode) return;
+    const spark: HTMLDivElement = sparkNode;
+    const svg: SVGSVGElement = svgNode;
     const landingEl = spark.closest(".landing");
     if (!(landingEl instanceof HTMLElement)) return;
     const landing: HTMLElement = landingEl;
@@ -249,8 +251,9 @@ export function SparkTrail() {
     const introAt = Date.now();
 
     function placeSpark() {
-      if (!pathEl || !spark) return;
-      const len = pathEl.getTotalLength();
+      if (!pathEl) return;
+      const path = pathEl;
+      const len = path.getTotalLength();
       if (!len || pts.length < 2) return;
       const introDone = Date.now() - introAt >= introMs;
       const y = pageYAtReadLine();
@@ -278,12 +281,12 @@ export function SparkTrail() {
         .slice(0, 80);
       announce(at, along, y);
       maskPath?.setAttribute("stroke-dasharray", `${((along / len) * 1000).toFixed(1)} 1000`);
-      const p = pathEl.getPointAtLength(along);
+      const p = path.getPointAtLength(along);
       put(spark, p.x, p.y);
       const trail = [24, 48];
       ghosts.forEach((g, i) => {
         const gap = trail[i] ?? 24;
-        const gp = pathEl.getPointAtLength(Math.max(0, along - gap));
+        const gp = path.getPointAtLength(Math.max(0, along - gap));
         put(g, gp.x, gp.y);
         g.classList.add("is-live");
       });
