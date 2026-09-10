@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "intents": {
+    "inline:a-researcher-on-the-call-for-papers-page-can-jum-da09e5cc": {
+      "id": "inline:a-researcher-on-the-call-for-papers-page-can-jum-da09e5cc",
+      "statement": "A researcher on the Call for Papers page can jump from Submit your Abstract to the application form without leaving the page.",
+      "state": "proved",
+      "declaredAt": 1789059150761,
+      "binding": {
+        "kind": "route",
+        "contains": "#submit"
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "app/(public)/conference/ConferenceCall.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789059151230",
+        "grade": "presence",
+        "at": 1789059151230
+      }
+    }
+  }
+}

@@ -31,11 +31,18 @@ export default async function ConferencePage() {
   const user = await getCurrentUser();
   const cookieToken =
     (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
-  const application = await findMyConferenceApplication({
-    userId: user?.id,
-    email: user?.email,
-    cookieToken,
-  });
+  let application: Awaited<
+    ReturnType<typeof findMyConferenceApplication>
+  > = null;
+  try {
+    application = await findMyConferenceApplication({
+      userId: user?.id,
+      email: user?.email,
+      cookieToken,
+    });
+  } catch (err) {
+    console.error("[conference] lookup", err);
+  }
 
   if (application && applicationFeeDue(application)) {
     redirect(conferencePayPath(application.paymentToken));

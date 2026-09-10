@@ -202,10 +202,11 @@ html[data-cfp] body {
 
 .cfp-conference-title {
   margin: clamp(18px, 3vw, 28px) 0 0;
+  max-width: 22em;
   font-family: var(--font-serif);
   font-weight: 500;
   font-size: clamp(20px, 3.1vw, 34px);
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.015em;
 }
 
@@ -310,8 +311,10 @@ html[data-cfp] body {
 }
 
 .cfp-note {
-  display: inline-block;
-  margin: 8px 0 28px;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 8px 0 20px;
   padding: 10px 14px;
   background: #eef2f6;
   border-radius: 8px;
@@ -749,9 +752,20 @@ html[data-cfp] body {
     max-width: none;
   }
 
+  .cfp-hero-mark .brand-word {
+    --wm: clamp(40px, 14vw, 72px);
+  }
+
   .cfp-hero-mark .brand-half .meaning {
-    font-size: 9px;
-    letter-spacing: 0.14em;
+    font-size: clamp(7px, 2.1vw, 9px);
+    letter-spacing: 0.08em;
+    margin-top: calc(var(--wm) * 0.16);
+  }
+
+  .cfp-conference-title {
+    max-width: 16em;
+    padding-inline: 8px;
+    font-size: clamp(16px, 5vw, 22px);
   }
 }
 
