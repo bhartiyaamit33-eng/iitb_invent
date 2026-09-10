@@ -12,11 +12,12 @@ html[data-cfp] body {
   --cfp-blue: #1d4ed8;
   --cfp-link: #2563eb;
   --cfp-green: #7cb342;
-  --cfp-green-text: #3d6b1a;
+  --cfp-green-text: #3a6b16;
+  --cfp-green-display: #3f7318;
   --cfp-dot: #6ecf08;
   --cfp-particle: #007e43;
-  --cfp-orbit: rgba(46, 143, 255, 0.28);
-  --cfp-grid: rgba(142, 180, 229, 0.42);
+  --cfp-orbit: rgba(46, 143, 255, 0.26);
+  --cfp-grid: rgba(142, 180, 229, 0.5);
   --cfp-border: #d8e0ea;
   --cfp-paper: #ffffff;
   --cfp-tint: #f3f7ee;
@@ -50,17 +51,28 @@ html[data-cfp] body {
   position: absolute;
   left: 12px;
   top: 12px;
-  z-index: 30;
+  z-index: 40;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  color: var(--cfp-navy);
+  text-decoration: none;
+}
+
+.cfp-skip:focus-visible {
+  width: auto;
+  height: auto;
+  margin: 0;
+  clip: auto;
+  overflow: visible;
   padding: 8px 12px;
   border-radius: 8px;
   background: #fff;
-  color: var(--cfp-navy);
-  text-decoration: none;
-  transform: translateY(-160%);
-}
-
-.cfp-skip:focus {
-  transform: none;
 }
 
 .cfp .sr-only {
@@ -97,11 +109,12 @@ html[data-cfp] body {
     linear-gradient(var(--cfp-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--cfp-grid) 1px, transparent 1px);
   background-size: 32px 32px;
+  opacity: 0.62;
   mask-image: linear-gradient(
     180deg,
-    rgb(0 0 0 / 0.55) 0%,
-    rgb(0 0 0 / 0.28) 42%,
-    rgb(0 0 0 / 0.14) 100%
+    rgb(0 0 0 / 0.9) 0%,
+    rgb(0 0 0 / 0.7) 28%,
+    rgb(0 0 0 / 0.45) 100%
   );
 }
 
@@ -112,39 +125,52 @@ html[data-cfp] body {
 }
 
 .cfp-orbits .o1 {
-  width: min(92vw, 980px);
-  height: min(92vw, 980px);
-  top: -28%;
-  left: 38%;
+  width: min(210vw, 2030px);
+  height: min(210vw, 2080px);
+  top: -38%;
+  left: 8%;
 }
 
 .cfp-orbits .o2 {
-  width: min(80vw, 820px);
-  height: min(80vw, 820px);
-  top: 8%;
-  left: -32%;
+  width: min(170vw, 1790px);
+  height: min(170vw, 1830px);
+  top: 18%;
+  left: -48%;
 }
 
 .cfp-orbits .o3 {
-  width: min(88vw, 900px);
-  height: min(88vw, 900px);
-  top: 48%;
-  right: -30%;
-  left: auto;
+  width: min(220vw, 2270px);
+  height: min(220vw, 2320px);
+  top: -12%;
+  left: 22%;
 }
 
 .cfp-orbits .o4 {
-  width: min(70vw, 720px);
-  height: min(70vw, 720px);
-  bottom: -8%;
-  left: -18%;
+  width: min(180vw, 2150px);
+  height: min(180vw, 2200px);
+  top: 8%;
+  left: -28%;
+}
+
+.cfp-orbits .o5 {
+  width: min(175vw, 1910px);
+  height: min(175vw, 1960px);
+  top: 48%;
+  right: -36%;
+  left: auto;
+}
+
+.cfp-orbits .o6 {
+  width: min(165vw, 2030px);
+  height: min(165vw, 2080px);
+  bottom: -18%;
+  left: -8%;
 }
 
 .cfp-particles i {
   position: absolute;
   border-radius: 50%;
   background: var(--cfp-particle);
-  opacity: 0.72;
 }
 
 .cfp > :not(.cfp-decor) {
@@ -156,10 +182,26 @@ html[data-cfp] body {
 
 .cfp-chrome {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  flex-wrap: wrap;
   width: min(1165px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 10px 0 4px;
+  padding: 12px 0 6px;
+}
+
+.cfp-home {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--cfp-navy);
+  text-decoration: none;
+}
+
+.cfp-home:hover {
+  color: var(--cfp-blue);
 }
 
 .cfp-chrome nav {
@@ -186,7 +228,7 @@ html[data-cfp] body {
 /* --- Hero --- */
 
 .cfp-hero {
-  padding: clamp(12px, 3vw, 36px) 0 clamp(36px, 6vw, 64px);
+  padding: clamp(8px, 2.4vw, 28px) 0 clamp(28px, 5vw, 56px);
 }
 
 .cfp-logos {
@@ -194,18 +236,18 @@ html[data-cfp] body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: clamp(20px, 4vw, 40px);
+  margin-bottom: clamp(16px, 3.6vw, 36px);
 }
 
 .cfp-logo-dsse img {
   display: block;
-  width: min(420px, 62vw);
+  width: min(503px, 68vw);
   height: auto;
 }
 
 .cfp-logo-iitb img {
   display: block;
-  width: clamp(56px, 9vw, 96px);
+  width: clamp(72px, 11vw, 152px);
   height: auto;
 }
 
@@ -213,11 +255,16 @@ html[data-cfp] body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+}
+
+.cfp-lockup-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .cfp-iitb {
-  margin: 0 0 2px;
+  margin: 0 0 0 0.06em;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(22px, 3.4vw, 46px);
@@ -229,7 +276,7 @@ html[data-cfp] body {
 .cfp-lockup {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0;
 }
 
@@ -242,8 +289,8 @@ html[data-cfp] body {
 .cfp-lockup .word {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(56px, 11vw, 148px);
-  line-height: 0.92;
+  font-size: clamp(56px, 12vw, 160px);
+  line-height: 0.96;
   letter-spacing: -0.02em;
 }
 
@@ -258,28 +305,29 @@ html[data-cfp] body {
 .cfp-lockup .dot {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(56px, 11vw, 148px);
-  line-height: 0.92;
+  font-size: clamp(56px, 12vw, 160px);
+  line-height: 0.96;
   color: var(--cfp-dot);
-  margin-inline: -0.06em;
+  margin-inline: -0.04em;
 }
 
 .cfp-lockup .mean {
-  margin-top: -0.4em;
-  font-size: clamp(10px, 1.35vw, 18px);
+  margin-top: -0.42em;
+  font-size: clamp(11px, 1.55vw, 22px);
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--cfp-blue);
 }
 
 .cfp-conference-title {
-  margin: clamp(10px, 1.8vw, 18px) 0 0;
-  max-width: 18em;
+  margin: clamp(8px, 1.4vw, 14px) 0 0;
+  max-width: 16.5em;
+  text-align: center;
   font-family: var(--font-tagline);
   font-weight: 400;
-  font-size: clamp(22px, 3.2vw, 44px);
-  line-height: 0.98;
+  font-size: clamp(22px, 3.4vw, 47px);
+  line-height: 0.94;
   letter-spacing: 0.02em;
 }
 
@@ -295,7 +343,7 @@ html[data-cfp] body {
 /* --- Sections --- */
 
 .cfp-section {
-  padding: clamp(36px, 5vw, 64px) 0;
+  padding: clamp(36px, 5vw, 72px) 0;
 }
 
 .cfp-section + .cfp-section {
@@ -312,8 +360,9 @@ html[data-cfp] body {
 }
 
 .cfp-kicker.is-display {
-  font-size: clamp(18px, 2.2vw, 26px);
-  letter-spacing: 0.14em;
+  color: var(--cfp-green-display);
+  font-size: clamp(18px, 2.4vw, 28px);
+  letter-spacing: 0.16em;
 }
 
 .cfp-h2 {
@@ -344,14 +393,14 @@ html[data-cfp] body {
   max-width: 68ch;
   margin: 18px 0 0;
   color: var(--cfp-slate);
-  font-size: clamp(16px, 1.35vw, 20px);
+  font-size: clamp(16px, 1.5vw, 22px);
   line-height: 1.7;
   text-wrap: pretty;
 }
 
 .cfp-lead-tight {
   max-width: none;
-  font-size: clamp(17px, 1.6vw, 24px);
+  font-size: clamp(17px, 1.8vw, 24px);
 }
 
 .cfp-lead strong {
@@ -377,7 +426,7 @@ html[data-cfp] body {
 }
 
 .cfp-meta dt {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -388,7 +437,7 @@ html[data-cfp] body {
   margin: 6px 0 0;
   font-family: var(--font-date);
   font-weight: 500;
-  font-size: clamp(20px, 2.2vw, 34px);
+  font-size: clamp(22px, 2.4vw, 34px);
   line-height: 1.2;
   color: var(--cfp-link);
 }
@@ -396,8 +445,14 @@ html[data-cfp] body {
 .cfp-split {
   display: grid;
   grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.2fr);
-  gap: 28px 40px;
+  gap: 28px 48px;
   align-items: start;
+}
+
+@media (min-width: 861px) {
+  .cfp-who-col {
+    padding-top: calc(clamp(18px, 2.4vw, 28px) * 1.3 + 8px);
+  }
 }
 
 .cfp-tracks {
@@ -429,6 +484,7 @@ html[data-cfp] body {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: contain;
 }
 
 .cfp-person .cfp-icon {
@@ -444,23 +500,23 @@ html[data-cfp] body {
   border-radius: 8px;
   color: var(--cfp-slate);
   font-size: 16px;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .cfp-people {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
   margin-top: 22px;
 }
 
 .cfp-person {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex: 1 1 140px;
-  min-width: 140px;
-  padding: 18px 16px;
+  gap: 12px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 22px 20px;
   background: var(--cfp-paper);
   border: 1px solid var(--cfp-border);
   border-radius: 14px;
@@ -478,21 +534,11 @@ html[data-cfp] body {
 .cfp-timeline {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
+  gap: 8px;
   position: relative;
-  margin: 36px 0 0;
+  margin: 40px 0 0;
   padding: 0;
   list-style: none;
-}
-
-.cfp-timeline::before {
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  top: calc(100% - 7px);
-  height: 2px;
-  background: color-mix(in srgb, var(--cfp-link) 40%, transparent);
 }
 
 .cfp-timeline li {
@@ -501,23 +547,22 @@ html[data-cfp] body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 10px 4px;
+  padding: 0 8px;
+  gap: 8px;
 }
 
 .cfp-timeline .kicker {
   display: block;
   min-height: 2.6em;
-  margin-bottom: 8px;
-  font-size: 13px;
+  font-size: clamp(13px, 1.2vw, 16px);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--cfp-slate);
 }
 
 .cfp-timeline .date {
   display: block;
-  margin-bottom: 16px;
   font-family: var(--font-date);
   font-weight: 500;
   font-size: clamp(20px, 2vw, 28px);
@@ -530,14 +575,12 @@ html[data-cfp] body {
   height: 12px;
   border-radius: 50%;
   background: var(--cfp-green);
-  box-shadow: 0 0 0 4px var(--cfp-ivory);
-  position: relative;
-  z-index: 1;
+  flex: none;
 }
 
 .cfp-guide-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 420px);
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 459px);
   gap: 20px 40px;
   align-items: start;
   margin-top: 18px;
@@ -553,10 +596,10 @@ html[data-cfp] body {
 
 .cfp-guidelines li {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   color: var(--cfp-slate);
-  font-size: clamp(16px, 1.5vw, 22px);
+  font-size: clamp(16px, 1.6vw, 22px);
 }
 
 .cfp-guidelines li::before {
@@ -566,7 +609,6 @@ html[data-cfp] body {
   flex: none;
   border-radius: 50%;
   background: var(--cfp-green);
-  transform: translateY(-1px);
 }
 
 .cfp-callout {
@@ -578,14 +620,15 @@ html[data-cfp] body {
   color: var(--cfp-navy);
   font-family: var(--font-warn);
   font-weight: 600;
-  font-size: clamp(15px, 1.4vw, 20px);
+  font-size: clamp(16px, 1.5vw, 20px);
   line-height: 1.25;
+  text-align: center;
 }
 
 .cfp-chips {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
   margin-top: 24px;
 }
@@ -598,7 +641,7 @@ html[data-cfp] body {
   border-radius: 999px;
   background: var(--cfp-paper);
   color: var(--cfp-navy);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.3;
 }
 
@@ -658,7 +701,9 @@ html[data-cfp] body {
 
 .cfp-submit-panel form {
   margin-top: 0;
+  padding: 32px;
   border-color: var(--cfp-border) !important;
+  border-radius: 14px;
   background: var(--cfp-paper);
 }
 
@@ -737,13 +782,13 @@ html[data-cfp] body {
 }
 
 .cfp-close p {
-  margin: 14px 0 0;
+  margin: 16px 0 0;
 }
 
 .cfp-close a {
   color: var(--cfp-slate);
   font-weight: 700;
-  font-size: clamp(16px, 1.6vw, 24px);
+  font-size: clamp(16px, 1.8vw, 24px);
   text-decoration: none;
 }
 
@@ -752,10 +797,10 @@ html[data-cfp] body {
 }
 
 .cfp-footer {
-  padding: 28px 0 48px;
+  padding: 32px 0 48px;
   border-top: 1px solid var(--cfp-border);
   color: var(--cfp-slate);
-  font-size: clamp(14px, 1.3vw, 18px);
+  font-size: clamp(14px, 1.2vw, 18px);
 }
 
 .cfp-footer .queries {
@@ -779,7 +824,7 @@ html[data-cfp] body {
   color: var(--cfp-blue);
 }
 
-/* --- Mobile --- */
+/* --- Tablet / mobile --- */
 
 @media (max-width: 860px) {
   .cfp-meta {
@@ -789,6 +834,7 @@ html[data-cfp] body {
 
   .cfp-split {
     grid-template-columns: 1fr;
+    gap: 36px;
   }
 
   .cfp-guide-grid {
@@ -800,43 +846,99 @@ html[data-cfp] body {
     gap: 28px 12px;
   }
 
-  .cfp-timeline::before {
-    display: none;
-  }
-
   .cfp-lockup .mean {
     letter-spacing: 0.1em;
   }
 
-  .cfp-orbits .o3,
-  .cfp-orbits .o4,
-  .cfp-particles i:nth-child(n + 9) {
+  .cfp-orbits .o5,
+  .cfp-orbits .o6,
+  .cfp-particles i:nth-child(n + 11) {
     display: none;
   }
 
   .cfp-logo-dsse img {
-    width: min(260px, 70vw);
+    width: min(280px, 72vw);
+  }
+
+  .cfp-chips {
+    justify-content: center;
+  }
+
+  .cfp-callout {
+    text-align: left;
+  }
+
+  .cfp-submit-panel form {
+    padding: 20px;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 640px) {
+  .cfp-chrome {
+    align-items: flex-start;
+  }
+
   .cfp-chrome nav {
     gap: 2px 12px;
     font-size: 12px;
     justify-content: flex-start;
   }
 
-  .cfp-chrome {
-    justify-content: flex-start;
+  .cfp-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 28px;
+    padding-left: 2px;
   }
 
-  .cfp-timeline {
-    grid-template-columns: 1fr;
+  .cfp-timeline li {
+    display: grid;
+    grid-template-columns: 12px 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 14px;
+    row-gap: 4px;
+    align-items: start;
+    text-align: left;
+    padding: 0 0 22px;
+    position: relative;
+  }
+
+  .cfp-timeline li:last-child {
+    padding-bottom: 0;
+  }
+
+  .cfp-timeline li:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 16px;
+    bottom: 0;
+    width: 2px;
+    background: color-mix(in srgb, var(--cfp-link) 28%, transparent);
+  }
+
+  .cfp-timeline .node {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    margin-top: 4px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 0 4px var(--cfp-ivory);
+  }
+
+  .cfp-timeline .kicker {
+    grid-column: 2;
+    min-height: 0;
+  }
+
+  .cfp-timeline .date {
+    grid-column: 2;
   }
 
   .cfp-lockup .word,
   .cfp-lockup .dot {
-    font-size: clamp(52px, 18vw, 72px);
+    font-size: clamp(48px, 17vw, 72px);
   }
 
   .cfp-iitb {
@@ -845,9 +947,40 @@ html[data-cfp] body {
 
   .cfp-conference-title {
     font-size: 22px;
+    max-width: 12.5em;
+  }
+
+  .cfp-tracks {
+    gap: 14px 20px;
   }
 
   .cfp-person {
     flex: 1 1 100%;
+  }
+
+  .cfp-logo-dsse img {
+    width: min(220px, 68vw);
+  }
+
+  .cfp-logo-iitb img {
+    width: 64px;
+  }
+
+  .cfp-lockup .mean {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .cfp-orbits .o3,
+  .cfp-orbits .o4 {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .cfp-lockup .mean {
+    max-width: 7.2em;
+    text-align: center;
+    line-height: 1.2;
   }
 }

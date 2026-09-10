@@ -34,7 +34,7 @@ import "./cfp.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
@@ -69,7 +69,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["500", "700"],
+  weight: ["500", "600", "700"],
   variable: "--font-roboto",
   display: "swap",
 });
@@ -113,6 +113,9 @@ export function ConferenceCall({
       </a>
 
       <div className="cfp-chrome">
+        <Link href="/" className="cfp-home">
+          INV.ENT
+        </Link>
         <nav aria-label="Site">
           {CHROME_NAV.map((item) => (
             <Link key={item.href} href={item.href}>
@@ -141,8 +144,9 @@ export function ConferenceCall({
               <Image
                 src="/assets/cfp/dsse-wordmark.png"
                 alt="Desai Sethi School of Entrepreneurship"
-                width={1633}
-                height={328}
+                width={1477}
+                height={254}
+                sizes="(max-width: 860px) 72vw, 503px"
                 priority
               />
             </Link>
@@ -156,30 +160,33 @@ export function ConferenceCall({
               <Image
                 src="/assets/cfp/iitb-seal.png"
                 alt="IIT Bombay"
-                width={1798}
-                height={1865}
+                width={1296}
+                height={1265}
+                sizes="(max-width: 640px) 64px, 152px"
                 priority
               />
             </Link>
           </div>
 
           <div className="cfp-hero-mark">
-            <p className="cfp-iitb">IIT BOMBAY</p>
-            <div
-              className="cfp-lockup"
-              data-testid="brand-mark"
-              aria-label="INV.ENT: Innovation and Entrepreneurship"
-            >
-              <div className="half">
-                <span className="word inv">INV</span>
-                <span className="mean">Innovation</span>
-              </div>
-              <span className="dot" aria-hidden="true">
-                .
-              </span>
-              <div className="half">
-                <span className="word ent">ENT</span>
-                <span className="mean">Entrepreneurship</span>
+            <div className="cfp-lockup-block">
+              <p className="cfp-iitb">IIT BOMBAY</p>
+              <div
+                className="cfp-lockup"
+                data-testid="brand-mark"
+                aria-label="INV.ENT: Innovation and Entrepreneurship"
+              >
+                <div className="half">
+                  <span className="word inv">INV</span>
+                  <span className="mean">Innovation</span>
+                </div>
+                <span className="dot" aria-hidden="true">
+                  .
+                </span>
+                <div className="half">
+                  <span className="word ent">ENT</span>
+                  <span className="mean">Entrepreneurship</span>
+                </div>
               </div>
             </div>
             <p className="cfp-conference-title">
