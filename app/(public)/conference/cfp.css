@@ -178,77 +178,87 @@ html[data-cfp] body {
   z-index: 1;
 }
 
-/* --- Chrome --- */
-
-.cfp-chrome {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 20px;
-  flex-wrap: wrap;
-  width: min(1165px, calc(100% - 2rem));
-  margin: 0 auto;
-  padding: 12px 0 6px;
-}
-
-.cfp-home {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  color: var(--cfp-navy);
-  text-decoration: none;
-}
-
-.cfp-home:hover {
-  color: var(--cfp-blue);
-}
-
-.cfp-chrome nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 4px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.cfp-chrome a {
-  color: var(--cfp-slate);
-  text-decoration: none;
-  padding: 6px 0;
-}
-
-.cfp-chrome a:hover,
-.cfp-chrome a[aria-current="page"] {
-  color: var(--cfp-blue);
-}
-
 /* --- Hero --- */
 
 .cfp-hero {
   padding: clamp(8px, 2.4vw, 28px) 0 clamp(28px, 5vw, 56px);
 }
 
-.cfp-logos {
-  display: flex;
+.cfp-hero-chrome {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  column-gap: 16px;
+  row-gap: 12px;
   margin-bottom: clamp(16px, 3.6vw, 36px);
+}
+
+.cfp-logo-dsse,
+.cfp-logo-iitb {
+  flex: none;
+  min-width: 0;
+}
+
+.cfp-logo-dsse {
+  justify-self: start;
 }
 
 .cfp-logo-dsse img {
   display: block;
   width: min(503px, 68vw);
+  max-width: none;
   height: auto;
+}
+
+.cfp-logo-iitb {
+  justify-self: end;
 }
 
 .cfp-logo-iitb img {
   display: block;
   width: clamp(72px, 11vw, 152px);
+  max-width: none;
   height: auto;
+}
+
+.cfp-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+  min-width: 0;
+  gap: 6px;
+}
+
+.cfp-nav a {
+  flex: none;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--cfp-navy) 16%, transparent);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.72);
+  color: var(--cfp-navy);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.cfp-nav a:hover {
+  border-color: var(--cfp-navy);
+  background: #fff;
+}
+
+.cfp-nav .cfp-nav-login {
+  border-color: var(--cfp-dot);
+  background: var(--cfp-dot);
+  color: #111;
+}
+
+.cfp-nav .cfp-nav-login:hover {
+  border-color: #5bb800;
+  background: #7adf12;
 }
 
 .cfp-hero-mark {
@@ -260,17 +270,21 @@ html[data-cfp] body {
 .cfp-lockup-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
+  width: max-content;
+  max-width: 100%;
 }
 
 .cfp-iitb {
-  margin: 0 0 0 0.06em;
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(22px, 3.4vw, 46px);
   line-height: 0.94;
   letter-spacing: 0.02em;
   color: #111;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .cfp-lockup {
@@ -283,7 +297,8 @@ html[data-cfp] body {
 .cfp-lockup .half {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  min-width: 0;
 }
 
 .cfp-lockup .word {
@@ -313,16 +328,17 @@ html[data-cfp] body {
 
 .cfp-lockup .mean {
   margin-top: -0.42em;
+  padding-left: 0.02em;
   font-size: clamp(11px, 1.55vw, 22px);
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--cfp-blue);
+  white-space: nowrap;
 }
 
 .cfp-conference-title {
   margin: clamp(8px, 1.4vw, 14px) 0 0;
-  max-width: 16.5em;
   text-align: center;
   font-family: var(--font-tagline);
   font-weight: 400;
@@ -846,6 +862,39 @@ html[data-cfp] body {
     gap: 28px 12px;
   }
 
+  .cfp-hero-chrome {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "dsse iitb" "nav nav";
+  }
+
+  .cfp-logo-dsse {
+    grid-area: dsse;
+  }
+
+  .cfp-logo-iitb {
+    grid-area: iitb;
+  }
+
+  .cfp-nav {
+    grid-area: nav;
+    justify-self: stretch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-inline: -1rem;
+    padding: 2px 1rem 6px;
+  }
+
+  .cfp-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cfp-nav .cfp-nav-login {
+    order: -1;
+  }
+
   .cfp-lockup .mean {
     letter-spacing: 0.1em;
   }
@@ -857,7 +906,8 @@ html[data-cfp] body {
   }
 
   .cfp-logo-dsse img {
-    width: min(280px, 72vw);
+    width: min(280px, 100%);
+    max-width: 100%;
   }
 
   .cfp-chips {
@@ -874,16 +924,6 @@ html[data-cfp] body {
 }
 
 @media (max-width: 640px) {
-  .cfp-chrome {
-    align-items: flex-start;
-  }
-
-  .cfp-chrome nav {
-    gap: 2px 12px;
-    font-size: 12px;
-    justify-content: flex-start;
-  }
-
   .cfp-timeline {
     display: flex;
     flex-direction: column;
@@ -959,11 +999,13 @@ html[data-cfp] body {
   }
 
   .cfp-logo-dsse img {
-    width: min(220px, 68vw);
+    width: min(220px, 100%);
+    max-width: 100%;
   }
 
   .cfp-logo-iitb img {
     width: 64px;
+    max-width: 100%;
   }
 
   .cfp-lockup .mean {

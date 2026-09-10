@@ -30,6 +30,7 @@ import type {
   ParticipationCategory,
 } from "@/lib/conference";
 import { CfpTheme } from "./CfpTheme";
+import { LANDING_NAV, landingNavHref } from "@/lib/landing";
 import "./cfp.css";
 
 const inter = Inter({
@@ -74,13 +75,6 @@ const roboto = Roboto({
   display: "swap",
 });
 
-const CHROME_NAV = [
-  { href: "/about", label: "About" },
-  { href: "/dsse-day", label: "DSSE Day" },
-  { href: "/programme", label: "Programme" },
-  { href: "/faq", label: "FAQ" },
-] as const;
-
 export type ConferenceCallApplication = {
   status: ApplicationStatus;
   participationCategory: ParticipationCategory;
@@ -112,28 +106,9 @@ export function ConferenceCall({
         Skip to content
       </a>
 
-      <div className="cfp-chrome">
-        <Link href="/" className="cfp-home">
-          INV.ENT
-        </Link>
-        <nav aria-label="Site">
-          {CHROME_NAV.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
-          <Link href="/conference" aria-current="page">
-            Papers
-          </Link>
-          <Link href={signedIn ? "/dashboard" : "/login"}>
-            {signedIn ? "Dashboard" : "Login"}
-          </Link>
-        </nav>
-      </div>
-
       <header className="cfp-hero" data-testid="conference-hero">
         <div className="cfp-shell cfp-hero-inner">
-          <div className="cfp-logos">
+          <div className="cfp-hero-chrome">
             <Link
               className="cfp-logo-dsse"
               href="https://www.dsse.iitb.ac.in/"
@@ -150,6 +125,23 @@ export function ConferenceCall({
                 priority
               />
             </Link>
+            <nav
+              className="cfp-nav"
+              aria-label="Primary"
+              data-testid="nav"
+            >
+              {LANDING_NAV.map((item) => (
+                <Link key={item.href} href={landingNavHref(item.href, true)}>
+                  {item.label}
+                </Link>
+              ))}
+              <Link
+                className="cfp-nav-login"
+                href={signedIn ? "/dashboard" : "/login"}
+              >
+                {signedIn ? "Dashboard" : "Login"}
+              </Link>
+            </nav>
             <Link
               className="cfp-logo-iitb"
               href="https://www.iitb.ac.in/"
@@ -170,7 +162,9 @@ export function ConferenceCall({
 
           <div className="cfp-hero-mark">
             <div className="cfp-lockup-block">
-              <p className="cfp-iitb">IIT BOMBAY</p>
+              <p className="cfp-iitb" data-testid="cfp-iitb">
+                IIT BOMBAY
+              </p>
               <div
                 className="cfp-lockup"
                 data-testid="brand-mark"
@@ -188,15 +182,15 @@ export function ConferenceCall({
                   <span className="mean">Entrepreneurship</span>
                 </div>
               </div>
+              <p className="cfp-conference-title">
+                <span className="practice">
+                  Entrepreneurship Research
+                  <br />
+                  &amp; Practice
+                </span>{" "}
+                <span className="conf">Conference</span>
+              </p>
             </div>
-            <p className="cfp-conference-title">
-              <span className="practice">
-                Entrepreneurship Research
-                <br />
-                &amp; Practice
-              </span>{" "}
-              <span className="conf">Conference</span>
-            </p>
           </div>
         </div>
       </header>
@@ -369,17 +363,6 @@ export function ConferenceCall({
               abstract as a PDF (max 10 MB).
             </p>
             <div className="cfp-submit-panel">
-              {/*
-                FORM IFRAME SLOT
-                When the question set is finalized, embed it here and replace
-                or hide ConferenceForm:
-
-                <iframe
-                  title="INV.ENT conference abstract submission"
-                  src="FORM_EMBED_URL"
-                  className="cfp-form-frame"
-                />
-              */}
               {application ? (
                 <div className="cfp-status">
                   <p className="cfp-kicker">Your application</p>

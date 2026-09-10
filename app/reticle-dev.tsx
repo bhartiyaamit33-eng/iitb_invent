@@ -36,6 +36,8 @@ export function ReticleDev() {
             "conference-form",
             "submit-application",
             "brand-mark",
+            "cfp-iitb",
+            "nav",
           ],
           signals: [],
           stores: [],

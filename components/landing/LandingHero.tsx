@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
+  LANDING_NAV,
   REGISTER_HREF,
   SUBMIT_HREF,
   TAGLINE,
@@ -11,16 +12,6 @@ import {
 } from "@/lib/landing";
 import { OrbitBackdrop } from "./OrbitBackdrop";
 import { Wordmark } from "./Wordmark";
-
-const NAV = [
-  { href: "#about", label: "About" },
-  { href: "#day", label: "The Day" },
-  { href: "/ventures", label: "Startups" },
-  { href: "/programme", label: "Programme" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#connect", label: "People" },
-  { href: "#query", label: "Queries" },
-];
 
 export function LandingHero({
   variant,
@@ -95,7 +86,7 @@ export function LandingHero({
           aria-label="Primary"
           data-testid="nav"
         >
-          {NAV.map((item) => (
+          {LANDING_NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}

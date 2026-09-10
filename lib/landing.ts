@@ -34,6 +34,22 @@ export const TAGLINE =
 export const SUBMIT_HREF = "/conference#submit";
 export const REGISTER_HREF = "/signup";
 
+/** Primary site nav — same labels/order on the landing hero and /conference. */
+export const LANDING_NAV = [
+  { href: "#about", label: "About" },
+  { href: "#day", label: "The Day" },
+  { href: "/ventures", label: "Startups" },
+  { href: "/programme", label: "Programme" },
+  { href: "#faq", label: "FAQ" },
+  { href: "#connect", label: "People" },
+  { href: "#query", label: "Queries" },
+] as const;
+
+export function landingNavHref(href: string, fromRoot: boolean): string {
+  if (fromRoot && href.startsWith("#")) return `/${href}`;
+  return href;
+}
+
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
     id: "open",
