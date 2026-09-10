@@ -1,6 +1,7 @@
 /**
  * IIT Bombay Online Pay — TEST/LIVE access points.
- * PayU is a mode on OP, not a separate merchant checkout.
+ * PayU is a mode on OP (Lisa app 10172 DSSE INV.ENT Test), not a separate
+ * merchant checkout. Money settles to IITB_MAIN.
  */
 
 export type OnlinePayEnv = "test" | "live";
@@ -122,6 +123,117 @@ export function parseSMsg(raw: string | null | undefined): Record<string, string
   return out;
 }
 
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+export function firstField(
+  params: Record<string, string>,
+  keys: string[],
+): string {
+  for (const key of keys) {
+    const value = (params[key] || "").trim();
+    if (value) return value;
+  }
+  return "";
+}
+
+/** Flatten Lisa JSON (`Records: { … }`) or a flat object into string fields. */
+export function flattenOnlinePayObject(body: unknown): Record<string, string> {
+  if (typeof body === "string") {
+    const trimmed = body.trim();
+    if (trimmed.startsWith("{")) {
+      try {
+        return flattenOnlinePayObject(JSON.parse(trimmed));
+      } catch {
+        return parseSMsg(trimmed);
+      }
+    }
+    return parseSMsg(trimmed);
+  }
+  if (!isPlainRecord(body)) return {};
+  const records = body.Records ?? body.records;
+  const inner = isPlainRecord(records) ? { ...body, ...records } : body;
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(inner)) {
+    if (key === "Records" || key === "records") continue;
+    if (value == null || typeof value === "object") continue;
+    const text = String(value).trim();
+    if (text) out[key] = text;
+  }
+  return out;
+}
+
+/**
+ * Read an OP validate/callback HTTP call. Lisa may send sMsg, JSON Records,
+ * or the flat payment/settlement fields listed on the application (reqId,
+ * transId, status, reconDate, …).
+ */
+export async function readOnlinePayRequest(
+  req: Request,
+): Promise<Record<string, string>> {
+  const url = new URL(req.url);
+  const fromQuery = Object.fromEntries(url.searchParams.entries());
+  const sMsgQuery = fromQuery.sMsg;
+  const fromSMsg = sMsgQuery ? parseSMsg(sMsgQuery) : {};
+  const base = { ...fromQuery, ...fromSMsg };
+
+  if (req.method === "GET" || req.method === "HEAD") {
+    return base;
+  }
+
+  const text = await req.text();
+  if (!text) return base;
+
+  const contentType = req.headers.get("content-type") ?? "";
+  if (
+    contentType.includes("json") ||
+    text.trim().startsWith("{") ||
+    text.trim().startsWith("[")
+  ) {
+    try {
+      return { ...base, ...flattenOnlinePayObject(JSON.parse(text)) };
+    } catch {
+      /* fall through */
+    }
+  }
+  if (text.includes("=")) {
+    const form = Object.fromEntries(new URLSearchParams(text));
+    const nested = form.sMsg ? parseSMsg(form.sMsg) : {};
+    return { ...base, ...form, ...nested };
+  }
+  return { ...base, ...parseSMsg(text) };
+}
+
+/**
+ * Lisa lists payment vs settlement fields, not always `requestType`.
+ * I = payment notification (status S/F). R = settlement (reconDate). D = refund.
+ */
+export function inferOnlinePayRequestType(
+  params: Record<string, string>,
+): "I" | "R" | "D" | null {
+  const explicit = firstField(params, [
+    "requestType",
+    "RequestType",
+    "requesttype",
+    "request_type",
+  ])
+    .charAt(0)
+    .toUpperCase();
+  if (explicit === "I" || explicit === "R" || explicit === "D") return explicit;
+  if (
+    firstField(params, ["reconDate", "reconTime", "netReconAmt", "grossAmt"])
+  ) {
+    return "R";
+  }
+  if (
+    firstField(params, ["status", "sStatus", "transDate", "transTime"])
+  ) {
+    return "I";
+  }
+  return null;
+}
+
 export type ValidationInput = {
   appId: string;
   requestId: string;
@@ -130,25 +242,30 @@ export type ValidationInput = {
 };
 
 export function parseValidationPayload(body: unknown): ValidationInput | null {
-  if (!body || typeof body !== "object") return null;
-  const root = body as Record<string, unknown>;
-  const records = root.Records ?? root.records;
-  const inner =
-    records && typeof records === "object"
-      ? (records as Record<string, unknown>)
-      : root;
-  const appId = String(
-    inner.input_APPID ?? inner.appId ?? inner.sAppId ?? "",
-  ).trim();
-  const requestId = String(
-    inner.input_RequestID ?? inner.requestId ?? inner.sReqId ?? "",
-  ).trim();
-  const userId = String(
-    inner.input_UserID ?? inner.userId ?? inner.sUserId ?? "",
-  ).trim();
-  const amount = String(
-    inner.input_Amount ?? inner.amount ?? inner.sAmountDue ?? "",
-  ).trim();
+  const inner = flattenOnlinePayObject(body);
+  const appId = firstField(inner, [
+    "input_APPID",
+    "appId",
+    "sAppId",
+    "APPID",
+  ]);
+  const requestId = firstField(inner, [
+    "input_RequestID",
+    "requestId",
+    "sReqId",
+    "reqId",
+  ]);
+  const userId = firstField(inner, [
+    "input_UserID",
+    "userId",
+    "sUserId",
+  ]);
+  const amount = firstField(inner, [
+    "input_Amount",
+    "amount",
+    "sAmountDue",
+    "totalAmt",
+  ]);
   if (!appId || !requestId || !userId || !amount) return null;
   return { appId, requestId, userId, amount };
 }

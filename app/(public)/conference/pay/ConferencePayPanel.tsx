@@ -104,9 +104,10 @@ export function ConferencePayPanel({
               className="rounded-md bg-paper px-3 py-2 text-sm text-ink"
               data-testid="onlinepay-campus-only"
             >
-              TEST checkout must be finished on the IITB network or VPN.
-              Clicking Pay will keep you on INVENT and give you a gateway
-              link — do not wait for a new tab that never loads.
+              TEST Online Pay only opens on the IITB network or VPN. On the
+              IITB page you can pay with Canara Auto Debit, Canara Net
+              Banking, PayU, SBIEPAY, or SBI Internet Banking. Do not paste
+              the gateway URL into the address bar.
             </p>
           ) : null}
           {gatewayReady ? (
@@ -117,12 +118,12 @@ export function ConferencePayPanel({
             >
               {campusOnly ? (
                 <label className="mb-3 block text-sm text-ink">
-                  IITB LDAP / IDP user id (TEST)
+                  IITB LDAP (optional — Canara Auto Debit only)
                   <input
                     name="ldap"
                     type="text"
                     autoComplete="username"
-                    placeholder="LDAP id OP enabled for Canara Auto Debit"
+                    placeholder="Leave blank for PayU / net banking"
                     className="mt-1 w-full rounded-md border border-line px-3 py-2 text-sm"
                     data-testid="onlinepay-ldap"
                   />
