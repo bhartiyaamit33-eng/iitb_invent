@@ -104,10 +104,9 @@ export function ConferencePayPanel({
               className="rounded-md bg-paper px-3 py-2 text-sm text-ink"
               data-testid="onlinepay-campus-only"
             >
-              TEST checkout opens IIT Bombay&apos;s Online Pay page
-              (newtestasc.iitb.ac.in), which only loads on the IITB network or
-              VPN. Stay on this page until you are on campus, then click Pay.
-              Your IITB LDAP / IDP login is not a payment URL — this page is.
+              TEST checkout must be finished on the IITB network or VPN.
+              Clicking Pay will keep you on INVENT and give you a gateway
+              link — do not wait for a new tab that never loads.
             </p>
           ) : null}
           {gatewayReady ? (
@@ -116,6 +115,19 @@ export function ConferencePayPanel({
               method="post"
               action={`/api/conference/pay/${encodeURIComponent(token)}/checkout`}
             >
+              {campusOnly ? (
+                <label className="mb-3 block text-sm text-ink">
+                  IITB LDAP / IDP user id (TEST)
+                  <input
+                    name="ldap"
+                    type="text"
+                    autoComplete="username"
+                    placeholder="LDAP id OP enabled for Canara Auto Debit"
+                    className="mt-1 w-full rounded-md border border-line px-3 py-2 text-sm"
+                    data-testid="onlinepay-ldap"
+                  />
+                </label>
+              ) : null}
               <button
                 type="submit"
                 className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
