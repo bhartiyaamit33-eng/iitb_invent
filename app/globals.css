@@ -708,8 +708,8 @@ section > .orbit-field {
 .timeline::before {
   content: "";
   position: absolute;
-  left: 12%;
-  right: 12%;
+  left: 10%;
+  right: 10%;
   top: 38px;
   height: 1px;
   background: var(--rule);
