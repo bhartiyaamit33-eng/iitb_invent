@@ -13,9 +13,9 @@ import {
 } from "@/lib/conference";
 
 const fieldClass =
-  "mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 outline-none focus:border-teal";
+  "landing-field mt-1.5 w-full rounded-md border px-3 py-2.5 outline-none";
 const radioLabelClass =
-  "flex items-start gap-2.5 rounded-lg border border-transparent px-1 py-1.5 hover:bg-paper/80";
+  "flex items-start gap-2.5 rounded-lg border border-transparent px-1 py-1.5 hover:bg-white/5";
 
 const SUBMIT_TIMEOUT_MS = 45_000;
 
@@ -85,12 +85,21 @@ export function ConferenceForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mt-10 space-y-7 rounded-xl border border-line bg-white p-6 sm:p-8"
+      className="landing-form mt-10 space-y-7"
       data-testid="conference-form"
+      id="conference-form"
     >
+      <p className="landing-kicker">Extended abstract</p>
+      <h3 className="landing-serif mt-2 text-[28px] font-normal text-frost">
+        Submit your extended abstract
+      </h3>
+      <p className="mt-3 text-sm leading-relaxed text-mist">
+        Up to 1,500 words covering research objectives, methodology, and initial
+        or preliminary findings. PDF only, max 10 MB.
+      </p>
       {error ? (
         <p
-          className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          className="rounded-md border border-red-400/40 bg-red-950/40 px-4 py-3 text-sm text-red-100"
           role="alert"
           data-testid="conference-error"
         >
@@ -99,8 +108,8 @@ export function ConferenceForm({
       ) : null}
 
       <label className="block">
-        <span className="text-sm font-medium text-ink">
-          Your Name <span className="text-teal-deep">*</span>
+        <span className="text-sm font-medium text-frost">
+          Your Name <span className="text-spark">*</span>
         </span>
         <input
           name="name"
@@ -113,8 +122,8 @@ export function ConferenceForm({
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-ink">
-          Email <span className="text-teal-deep">*</span>
+        <span className="text-sm font-medium text-frost">
+          Email <span className="text-spark">*</span>
         </span>
         <input
           type="email"
@@ -128,8 +137,8 @@ export function ConferenceForm({
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-ink">
-          Phone number <span className="text-teal-deep">*</span>
+        <span className="text-sm font-medium text-frost">
+          Phone number <span className="text-spark">*</span>
         </span>
         <input
           type="tel"
@@ -144,8 +153,8 @@ export function ConferenceForm({
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-ink">
-          Institution name <span className="text-teal-deep">*</span>
+        <span className="text-sm font-medium text-frost">
+          Institution name <span className="text-spark">*</span>
         </span>
         <input
           name="institution"
@@ -157,9 +166,9 @@ export function ConferenceForm({
       </label>
 
       <fieldset data-testid="field-professional">
-        <legend className="text-sm font-medium text-ink">
+        <legend className="text-sm font-medium text-frost">
           Professional Category / Current Position{" "}
-          <span className="text-teal-deep">*</span>
+          <span className="text-spark">*</span>
         </legend>
         <div className="mt-2 space-y-1">
           {PROFESSIONAL_OPTIONS.map((opt) => (
@@ -169,17 +178,17 @@ export function ConferenceForm({
                 name="professionalCategory"
                 value={opt.value}
                 required
-                className="mt-1"
+                className="mt-1 accent-spark"
                 data-testid={`professional-${opt.value}`}
                 onChange={() => setProfessional(opt.value)}
               />
-              <span className="text-sm text-ink">
+              <span className="text-sm text-frost">
                 {opt.label}
                 {opt.value === "OTHER" ? (
                   <input
                     name="professionalOther"
                     placeholder="Please specify"
-                    className="ml-2 mt-1 w-full rounded-md border border-line px-2 py-1.5 sm:ml-3 sm:mt-0 sm:inline-block sm:w-64"
+                    className={`${fieldClass} ml-2 mt-1 sm:ml-3 sm:mt-0 sm:inline-block sm:w-64`}
                   />
                 ) : null}
               </span>
@@ -190,9 +199,9 @@ export function ConferenceForm({
 
       {showPhdYear ? (
       <fieldset data-testid="field-phd-year">
-        <legend className="text-sm font-medium text-ink">
+        <legend className="text-sm font-medium text-frost">
           Current PhD Year{" "}
-          <span className="text-teal-deep">*</span>
+          <span className="text-spark">*</span>
         </legend>
         <div className="mt-2 space-y-1">
           {PHD_YEAR_OPTIONS.map((opt) => (
@@ -202,9 +211,9 @@ export function ConferenceForm({
                 name="phdYear"
                 value={opt.value}
                 required={showPhdYear}
-                className="mt-1"
+                className="mt-1 accent-spark"
               />
-              <span className="text-sm text-ink">{opt.label}</span>
+              <span className="text-sm text-frost">{opt.label}</span>
             </label>
           ))}
         </div>
@@ -212,7 +221,7 @@ export function ConferenceForm({
       ) : null}
 
       <fieldset data-testid="field-postdoc">
-        <legend className="text-sm font-medium text-ink">
+        <legend className="text-sm font-medium text-frost">
           Are you currently seeking post-doctoral opportunities?
         </legend>
         <div className="mt-2 space-y-1">
@@ -222,17 +231,17 @@ export function ConferenceForm({
                 type="radio"
                 name="seekingPostdoc"
                 value={opt.value}
-                className="mt-1"
+                className="mt-1 accent-spark"
               />
-              <span className="text-sm text-ink">{opt.label}</span>
+              <span className="text-sm text-frost">{opt.label}</span>
             </label>
           ))}
         </div>
       </fieldset>
 
       <fieldset data-testid="field-participation">
-        <legend className="text-sm font-medium text-ink">
-          Participation Category <span className="text-teal-deep">*</span>
+        <legend className="text-sm font-medium text-frost">
+          Participation Category <span className="text-spark">*</span>
         </legend>
         <div className="mt-2 space-y-1">
           {PARTICIPATION_OPTIONS.map((opt) => (
@@ -242,19 +251,19 @@ export function ConferenceForm({
                 name="participationCategory"
                 value={opt.value}
                 required
-                className="mt-1"
+                className="mt-1 accent-spark"
                 onChange={() => setParticipation(opt.value)}
               />
-              <span className="text-sm text-ink">
+              <span className="text-sm text-frost">
                 {opt.label}
                 {opt.hint ? (
-                  <span className="mt-0.5 block text-xs text-mute">{opt.hint}</span>
+                  <span className="mt-0.5 block text-xs text-mist">{opt.hint}</span>
                 ) : null}
                 {opt.value === "OTHER" ? (
                   <input
                     name="participationOther"
                     placeholder="Please specify"
-                    className="mt-1 w-full rounded-md border border-line px-2 py-1.5"
+                    className={`${fieldClass} mt-1`}
                   />
                 ) : null}
               </span>
@@ -264,9 +273,9 @@ export function ConferenceForm({
       </fieldset>
 
       <label className="block">
-        <span className="text-sm font-medium text-ink">
+        <span className="text-sm font-medium text-frost">
           Proposed Title of the Paper
-          {abstractNeeded ? <span className="text-teal-deep"> *</span> : null}
+          {abstractNeeded ? <span className="text-spark"> *</span> : null}
         </span>
         <input
           name="paperTitle"
@@ -277,48 +286,62 @@ export function ConferenceForm({
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-ink">
+        <span className="text-sm font-medium text-frost">
           Upload the extended abstract
-          {abstractNeeded ? <span className="text-teal-deep"> *</span> : null}
+          {abstractNeeded ? <span className="text-spark"> *</span> : null}
         </span>
         <input
           type="file"
           name="abstract"
           accept="application/pdf,.pdf"
           required={abstractNeeded}
-          className="mt-1.5 block w-full text-sm text-ink-soft file:mr-3 file:rounded-md file:border-0 file:bg-teal-deep file:px-3 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.1em] file:text-white"
+          className="mt-1.5 block w-full text-sm text-mist file:mr-3 file:rounded-full file:border-0 file:bg-spark file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.1em] file:text-black"
           data-testid="field-abstract"
         />
-        <p className="mt-1.5 text-xs text-mute">
+        <p className="mt-1.5 text-xs text-haze">
           PDF only. Max 10 MB. Required for paper and poster applications.
         </p>
       </label>
 
-      <label className="flex items-start gap-3 rounded-lg border border-line bg-paper/60 px-4 py-3">
+      <label className="flex items-start gap-3 rounded-lg border border-white/15 bg-navy/50 px-4 py-3">
+        <input
+          type="checkbox"
+          name="noAi"
+          required
+          className="mt-1 accent-spark"
+          data-testid="field-no-ai"
+        />
+        <span className="text-sm text-frost">
+          I confirm that AI was not used to prepare this research abstract. Use
+          of AI will attract automatic rejection.
+        </span>
+      </label>
+
+      <label className="flex items-start gap-3 rounded-lg border border-white/15 bg-navy/50 px-4 py-3">
         <input
           type="checkbox"
           name="sendCopy"
-          className="mt-1"
+          className="mt-1 accent-spark"
           data-testid="field-send-copy"
         />
-        <span className="text-sm text-ink-soft">
+        <span className="text-sm text-mist">
           Send me a copy of my responses at the email above.
         </span>
       </label>
 
-      <p className="text-xs text-mute">
+      <p className="text-xs text-haze">
         Submitting this form records your name, email, phone, institution, and
-        uploaded files so DSSE organisers can review the call for applications.
+        uploaded files so DSSE organisers can review the call for research papers.
       </p>
 
       <button
         type="submit"
         disabled={pending}
         aria-busy={pending}
-        className="w-full rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.12em] text-white hover:bg-teal disabled:opacity-60"
+        className="btn w-full disabled:opacity-60"
         data-testid="submit-application"
       >
-        {pending ? "Submitting…" : "Submit application"}
+        {pending ? "Submitting…" : "Submit your extended abstract"}
       </button>
     </form>
   );

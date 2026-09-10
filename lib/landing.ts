@@ -31,31 +31,48 @@ export type LandingProps = {
 export const TAGLINE =
   "Where entrepreneurship research meets venture practice";
 
-export const SUBMIT_HREF = "/submit";
+export const SUBMIT_HREF = "/conference#apply";
 export const REGISTER_HREF = "/signup";
+
+export const LANDING_PAGE_NAV = [
+  { href: "#about", label: "About" },
+  { href: "#day", label: "The Day" },
+  { href: "/conference", label: "Papers" },
+  { href: "/ventures", label: "Startups" },
+  { href: "/programme", label: "Programme" },
+  { href: "#faq", label: "FAQ" },
+  { href: "#connect", label: "People" },
+  { href: "#query", label: "Queries" },
+] as const;
 
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
-    id: "open",
-    kicker: "Submissions open",
-    date: "10 Sep 2026",
-    at: "2026-09-10",
-  },
-  {
-    id: "deadline",
-    kicker: "Submission deadline",
+    id: "abstract",
+    kicker: "Extended abstract deadline",
     date: "15 Oct 2026",
     at: "2026-10-15",
   },
   {
-    id: "accept",
-    kicker: "Acceptance",
-    date: "31 Dec 2026",
-    at: "2026-12-31",
+    id: "result",
+    kicker: "Result announcement",
+    date: "15 Nov 2026",
+    at: "2026-11-15",
+  },
+  {
+    id: "final",
+    kicker: "Final paper submission",
+    date: "1 Jan 2027",
+    at: "2027-01-01",
+  },
+  {
+    id: "workshop",
+    kicker: "Pre-conference workshop",
+    date: "30 Jan 2027",
+    at: "2027-01-30",
   },
   {
     id: "conference",
-    kicker: "Conference",
+    kicker: "Conference & presentations",
     date: "31 Jan 2027",
     at: "2027-01-31",
   },
@@ -99,7 +116,7 @@ export const FALLBACK_FAQS: LandingFaq[] = [
   {
     question: "How do I submit an abstract?",
     answer:
-      "Create a free account, then open Papers, posters & workshops in the dashboard. Organisers review submissions and email a payment link if accepted.",
+      "PhD scholars, postdoctoral scholars, and early-career faculty submit an extended abstract of up to 1,500 words at https://iitbinvent.com/conference by 15 October 2026. Use of AI to prepare the abstract leads to automatic rejection.",
   },
   {
     question: "How do I register to attend?",

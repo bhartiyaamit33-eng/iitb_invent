@@ -137,13 +137,19 @@ html[data-landing] body {
   color: #000;
 }
 
+.landing button.btn {
+  cursor: pointer;
+  font-family: inherit;
+}
+
 .landing a.btn.outline,
 .landing a.btn.ghost {
   color: var(--frost);
 }
 
 .landing a.btn.outline:hover,
-.landing a.btn.nav-login {
+.landing a.btn.nav-login,
+.landing button.btn {
   color: #000;
 }
 
@@ -690,7 +696,7 @@ section > .orbit-field {
 /* Timeline */
 .timeline {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0;
   position: relative;
   margin-top: 40px;
@@ -791,6 +797,46 @@ section > .orbit-field {
 }
 
 .mail:hover { color: var(--spark); }
+
+.landing-form {
+  border: 1px solid var(--rule);
+  background: rgba(11, 30, 54, 0.72);
+  padding: clamp(24px, 4vw, 40px);
+}
+
+.landing-field {
+  background: rgba(7, 17, 31, 0.85);
+  border-color: var(--rule-strong);
+  color: var(--frost);
+}
+
+.landing-field:focus {
+  border-color: var(--spark);
+}
+
+.landing-field::placeholder {
+  color: var(--haze);
+}
+
+.landing-chip {
+  display: inline-flex;
+  border: 1px solid var(--rule);
+  background: rgba(11, 30, 54, 0.55);
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--frost);
+}
+
+.landing-warn {
+  margin: 0 0 8px;
+  padding: 14px 16px;
+  border: 1px solid rgba(200, 255, 61, 0.35);
+  background: rgba(200, 255, 61, 0.08);
+  color: var(--frost);
+  font-size: 15px;
+  line-height: 1.55;
+}
 
 @keyframes riseIn {
   from { opacity: 0; transform: translateY(22px); }

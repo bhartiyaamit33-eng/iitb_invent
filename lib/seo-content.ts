@@ -48,6 +48,11 @@ export const CANONICAL_FAQS: FaqItem[] = [
       "DSSE Day is the anniversary (31 January). INVENT is the Innovation and Entrepreneurship programme the school runs on that day, plus the multi-year platform at iitbinvent.com for profiles, the programme, and ventures.",
   },
   {
+    question: "How do I submit a research paper to INV.ENT?",
+    answer:
+      "IITB INV.ENT invites PhD scholars, postdoctoral scholars, and early-career faculty to submit an extended abstract of up to 1,500 words at https://iitbinvent.com/conference by 15 October 2026. A panel selects 30 papers for oral presentation (10 minutes plus 5 minutes Q&A) and 30 for posters. Presentations are on 31 January 2027 at IIT Bombay, with a pre-conference workshop on 30 January 2027. Use of AI to prepare the abstract leads to automatic rejection. Best Paper Award ₹25,000; Best Poster Award ₹10,000.",
+  },
+  {
     question: "How do I register for INVENT?",
     answer:
       "Create a free account at https://iitbinvent.com/signup, then complete your profile if you want to appear in the attendee directory. Session RSVPs and the programme live at https://iitbinvent.com/programme.",
@@ -79,7 +84,7 @@ export const ABOUT_SECTIONS: { heading: string; body: string }[] = [
   },
   {
     heading: "INVENT 2027",
-    body: "The current edition is INVENT 2027, on Sunday 31 January 2027, 9:00–19:30 IST, at the DSSE Building, IIT Bombay, Powai, Mumbai. Create an account to join the directory, browse the programme, and add a startup, project, or idea.",
+    body: "INV.ENT 2027 is a two-day gathering, 30–31 January 2027. Research presentations are on 31 January at IIT Bombay; a pre-conference workshop is on 30 January. Create an account to join the directory, browse the programme, and add a startup, project, or idea.",
   },
 ];
 

@@ -1,5 +1,5 @@
-import { Inter, Playfair_Display } from "next/font/google";
 import { JsonLd } from "@/components/JsonLd";
+import { landingFontClassName } from "@/components/landing/fonts";
 import { LandingPage } from "@/components/landing/LandingPage";
 import { getCurrentUser } from "@/lib/auth/session";
 import { formatIstRange } from "@/lib/editions";
@@ -39,20 +39,6 @@ export const metadata = {
   }),
   ...noIndex,
 };
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-playfair",
-  display: "swap",
-});
 
 type SearchParams = Promise<{ hero?: string }>;
 
@@ -125,7 +111,7 @@ export default async function TestLandingPage({
   }
 
   return (
-    <div className={`${inter.variable} ${playfair.variable}`}>
+    <div className={landingFontClassName()}>
       <JsonLd
         data={graphJsonLd(
           websiteJsonLd(),

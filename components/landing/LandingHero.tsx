@@ -9,18 +9,9 @@ import {
   IMAGES,
   type HeroVariant,
 } from "@/lib/landing";
+import { LandingHeader } from "./LandingHeader";
 import { OrbitBackdrop } from "./OrbitBackdrop";
 import { Wordmark } from "./Wordmark";
-
-const NAV = [
-  { href: "#about", label: "About" },
-  { href: "#day", label: "The Day" },
-  { href: "/ventures", label: "Startups" },
-  { href: "/programme", label: "Programme" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#connect", label: "People" },
-  { href: "#query", label: "Queries" },
-];
 
 export function LandingHero({
   variant,
@@ -29,8 +20,6 @@ export function LandingHero({
   variant: HeroVariant;
   signedInName: string | null;
 }) {
-  const accountHref = signedInName ? "/dashboard" : "/login";
-  const accountLabel = signedInName ?? "Login";
   const submitHref = SUBMIT_HREF;
   const registerHref = signedInName ? "/dashboard" : REGISTER_HREF;
   const registerLabel = signedInName ? "Go to dashboard" : "Register to attend";
@@ -73,61 +62,7 @@ export function LandingHero({
 
       <OrbitBackdrop variant="hero" className="z-[1]" />
 
-      <div className="hero-chrome relative z-10 grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-[clamp(18px,3.4vw,64px)] py-[18px]">
-        <Link
-          className="logo-dsse justify-self-start"
-          href="https://www.dsse.iitb.ac.in/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Desai Sethi School of Entrepreneurship"
-        >
-          <Image
-            src="/assets/dsse-logo.png"
-            alt="DSSE"
-            width={200}
-            height={200}
-            className="h-[clamp(56px,min(9vw,10vh),96px)] w-auto brightness-0 invert drop-shadow-[0_8px_18px_rgba(0,8,20,0.45)]"
-            priority
-          />
-        </Link>
-        <nav
-          className="hero-nav flex flex-wrap justify-self-center gap-2"
-          aria-label="Primary"
-          data-testid="nav"
-        >
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="shrink-0 rounded-full border border-white/30 bg-midnight/40 px-3 py-2 text-[10px] font-semibold tracking-[0.14em] text-frost uppercase backdrop-blur-md transition hover:border-white/70 hover:bg-white/10"
-            >
-              {item.label}
-            </Link>
-          ))}
-          <Link
-            className="nav-login btn shrink-0 !px-4 !py-2 !text-[10px]"
-            href={accountHref}
-          >
-            {accountLabel}
-          </Link>
-        </nav>
-        <Link
-          className="logo-iitb flex size-[clamp(52px,8vw,80px)] items-center justify-center justify-self-end rounded-full bg-white shadow-[0_10px_28px_rgba(0,8,20,0.35)]"
-          href="https://iitb.ac.in/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Indian Institute of Technology Bombay"
-        >
-          <Image
-            src="/assets/iitb-logo.png"
-            alt="IIT Bombay"
-            width={1024}
-            height={998}
-            className="h-[82%] w-[82%] object-contain"
-            priority
-          />
-        </Link>
-      </div>
+      <LandingHeader signedInName={signedInName} />
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col">
         <div className="flex min-h-0 flex-1 flex-col justify-between px-[clamp(18px,4.6vw,72px)] pt-2 pb-[clamp(20px,3vw,36px)]">
@@ -170,7 +105,7 @@ export function LandingHero({
             </ol>
             <div className="hero-rise cta-row" data-testid="cta-hero" style={{ animationDelay: "0.8s" }}>
               <Link className="btn outline" href={submitHref}>
-                Submit your abstract
+                Submit your extended abstract
               </Link>
               <Link className="btn ghost" href={registerHref}>
                 {registerLabel}

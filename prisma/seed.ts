@@ -509,7 +509,7 @@ async function main() {
         editionId: edition2027.id,
         question: "How do I apply for the research conference?",
         answer:
-          "Use the on-site form at /conference. Paper and poster applicants upload an extended abstract (PDF, 10 MB). Organisers review submissions in the admin CMS. Selected domestic presenters may receive TA and twin-sharing accommodation. Attendee fee is ₹3,000.",
+          "Submit an extended abstract of up to 1,500 words at /conference by 15 October 2026. PhD scholars, postdoctoral scholars, and early-career faculty are invited. 30 papers are selected for oral presentation and 30 for posters. Use of AI to prepare the abstract leads to automatic rejection. Shared guest-house rooms may be available first-come, first-served at the participant’s cost.",
         sortOrder: 3,
         isPublished: true,
       },

@@ -196,33 +196,42 @@ export function LandingSections({
               image={IMAGES.research}
               caption="Poster session · DSSE"
             >
-              <p className="mb-2 text-[13px] font-bold tracking-[0.2em] text-spark uppercase">
-                Call for
-              </p>
-              <h2 data-spark-node>Submissions</h2>
+              <p className="landing-kicker">Research conference · 30–31 Jan 2027</p>
+              <h2 data-spark-node>Call for research papers</h2>
               <p className="lead">
-                INV.ENT invites research papers, poster presentations, and workshops from students, faculty, and practitioners. After organisers accept a contribution, you receive an email with a payment link — fees collect through IIT Bombay Online Pay into an IITB account.
+                IITB INV.ENT invites PhD scholars, postdoctoral scholars, and
+                early-career faculty to submit an extended abstract of up to 1,500
+                words by 15 October 2026. A panel of eminent entrepreneurship
+                scholars will select 30 papers for oral presentation (10 minutes
+                + 5 minutes Q&amp;A) and 30 for posters.
               </p>
               <p className="lead">
-                Startup showcases and innovation demos live in the venture directory. Case studies may be submitted as papers.
+                Presentations are on 31 January 2027 at IIT Bombay, with a
+                pre-conference workshop on 30 January. Best Paper Award ₹25,000;
+                Best Poster Award ₹10,000. Use of AI to prepare the submitted
+                abstract attracts automatic rejection.
+              </p>
+              <p className="lead">
+                Shared limited accommodation at the IIT Bombay Guest House is
+                first-come, first-served; costs are borne by participants.
               </p>
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <div className="border-t border-cyan-glow/40 pt-3">
                   <TypeIcon name="paper" />
                   <p className="mt-2 text-[12px] font-semibold tracking-[0.16em] text-cyan-glow uppercase">
-                    Research paper
+                    30 research papers
                   </p>
                 </div>
                 <div className="border-t border-cyan-glow/40 pt-3">
                   <TypeIcon name="poster" />
                   <p className="mt-2 text-[12px] font-semibold tracking-[0.16em] text-cyan-glow uppercase">
-                    Poster presentation
+                    30 poster presentations
                   </p>
                 </div>
               </div>
               <div className="cta-row">
                 <Link className="btn" href={submitHref} data-testid="cta-submit">
-                  Submit your abstract
+                  Submit your extended abstract
                 </Link>
                 <Link className="btn ghost" href={registerHref}>
                   Register to attend
@@ -439,7 +448,7 @@ export function LandingSections({
               </p>
               <div className="cta-row">
                 <Link className="btn" href={submitHref}>
-                  Submit your abstract
+                  Submit your extended abstract
                 </Link>
                 <Link className="btn outline" href={registerHref}>
                   Register to attend

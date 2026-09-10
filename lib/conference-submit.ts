@@ -116,6 +116,12 @@ export async function processConferenceApplication(
   if (participation === "OTHER" && !participationOther) {
     return { error: "Please describe your participation category." };
   }
+  if (formData.get("noAi") !== "on") {
+    return {
+      error:
+        "Please confirm that AI was not used to prepare this research abstract.",
+    };
+  }
 
   const abstractRequired = needsAbstract(participation);
   if (abstractRequired && !paperTitle) {
