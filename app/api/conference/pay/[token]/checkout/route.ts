@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { isPayUReady, buildPayUCheckout } from "@/lib/conference-payu";
+import {
+  isConferenceOnlinePayReady,
+  startConferenceOnlinePay,
+} from "@/lib/conference-onlinepay";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import {
   CONFERENCE_TOKEN_COOKIE,
@@ -34,9 +38,7 @@ function redirectToPay(
 }
 
 /**
- * Starts IIT Bombay PayU hosted checkout. Returns an auto-POST HTML form
- * so the browser leaves our origin with a server-signed hash (salt never
- * reaches the client as a reusable API).
+ * Starts IIT Bombay Online Pay (preferred) or PayU hosted checkout.
  */
 export async function POST(
   _req: Request,
@@ -59,6 +61,23 @@ export async function POST(
   if (application.paymentStatus === "NOT_REQUIRED") {
     return redirectToPay(token, "not-due");
   }
+
+  if (isConferenceOnlinePayReady()) {
+    try {
+      const opUrl = await startConferenceOnlinePay(application);
+      const res = NextResponse.redirect(opUrl, 303);
+      res.cookies.set(
+        CONFERENCE_TOKEN_COOKIE,
+        application.paymentToken,
+        conferenceCookieOptions(),
+      );
+      return res;
+    } catch (err) {
+      console.error("[onlinepay] checkout", err);
+      return redirectToPay(token, "unavailable");
+    }
+  }
+
   if (!isPayUReady()) {
     return redirectToPay(token, "unavailable");
   }
@@ -80,13 +99,13 @@ export async function POST(
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Redirecting to PayU</title>
+  <title>Redirecting to IIT Bombay Online Pay</title>
 </head>
 <body>
-  <p>Redirecting to the IIT Bombay PayU gateway…</p>
+  <p>Redirecting to the IIT Bombay payment gateway…</p>
   <form id="payu" action="${escapeAttr(checkout.action)}" method="post">
     ${inputs}
-    <noscript><button type="submit">Continue to PayU</button></noscript>
+    <noscript><button type="submit">Continue to payment</button></noscript>
   </form>
   <script>document.getElementById("payu").submit();</script>
 </body>

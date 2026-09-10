@@ -28,8 +28,8 @@ export default async function ConferenceThanksPage() {
       </p>
       <p className="mt-3 text-ink-soft">
         When you are selected, you will get a notice on your dashboard (and
-        email when SES can send). Pay the ₹3,000 fee through IIT Bombay PayU
-        from there — you will not fill the application form again.
+        email when SES can send). Pay the ₹3,000 fee through IIT Bombay Online
+        Pay from there — you will not fill the application form again.
       </p>
       <p className="mt-3 text-sm text-mute">
         Questions:{" "}

@@ -15,6 +15,8 @@ export function ApplicationPaymentPanel({
   paymentUrl,
   paymentRef,
   paidAt,
+  opReqId,
+  opTransId,
 }: {
   id: string;
   paymentStatus: ApplicationPaymentStatus;
@@ -22,6 +24,8 @@ export function ApplicationPaymentPanel({
   paymentUrl: string;
   paymentRef?: string | null;
   paidAt?: string | null;
+  opReqId?: string | null;
+  opTransId?: string | null;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -69,12 +73,18 @@ export function ApplicationPaymentPanel({
       {paymentRef ? (
         <p className="mt-1 text-xs text-mute">Reference: {paymentRef}</p>
       ) : null}
+      {opReqId ? (
+        <p className="mt-1 text-xs text-mute">Online Pay request id: {opReqId}</p>
+      ) : null}
+      {opTransId ? (
+        <p className="mt-1 text-xs text-mute">Online Pay transId: {opTransId}</p>
+      ) : null}
       {paidAt ? (
         <p className="mt-1 text-xs text-mute">Recorded {paidAt}</p>
       ) : null}
       <p className="mt-2 text-xs text-ink-soft">
-        Applicants pay via the IIT Bombay PayU gateway. Mark paid only for an
-        offline receipt or while merchant approval is still pending.
+        Applicants pay via IIT Bombay Online Pay. Mark paid only for an
+        offline receipt or while TEST/LIVE checkout is still pending.
       </p>
       <p className="mt-2 break-all text-xs">
         <a

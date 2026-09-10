@@ -102,7 +102,7 @@ export async function attachConferenceToUser(user: {
       await notifyUser({
         userId: user.id,
         title: "Pay your conference registration fee",
-        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open PayU from this notice — you do not need to apply again.`,
+        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open IIT Bombay Online Pay from this notice — you do not need to apply again.`,
         href,
       });
     }
@@ -136,7 +136,7 @@ export async function notifyApplicationStatus(opts: {
     ? "You're selected — pay the registration fee"
     : `Application update: ${opts.statusLabel}`;
   const body = opts.paymentDue
-    ? `${opts.message}\n\nFee ${opts.amountLabel}. Pay through the IIT Bombay PayU gateway from your dashboard. You do not fill the application form again.`
+    ? `${opts.message}\n\nFee ${opts.amountLabel}. Pay through IIT Bombay Online Pay from your dashboard. You do not fill the application form again.`
     : opts.message;
 
   await notifyUser({ userId, title, body, href });

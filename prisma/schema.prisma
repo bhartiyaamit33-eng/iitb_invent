@@ -528,6 +528,13 @@ model ConferenceApplication {
   paymentRef         String?
   paidAt             DateTime?
 
+  /// IIT Bombay Online Pay (sReqId / sUserId / transId from OP).
+  opReqId    String? @unique
+  opUserId   String?
+  opTransId  String?
+  opRefNo    String?
+  opProvId   String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reviews   ApplicationReview[]
@@ -536,6 +543,7 @@ model ConferenceApplication {
   @@index([editionId, status])
   @@index([paymentStatus])
   @@index([createdAt])
+  @@index([opTransId])
   @@map("ColloquiumApplication")
 }
 
