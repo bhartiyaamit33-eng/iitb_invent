@@ -29,7 +29,7 @@ export function ConferencePayCta({
         className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
         data-testid="conference-pay-cta"
       >
-        Pay {amount} with PayU
+        Pay {amount} with IIT Bombay Online Pay
       </button>
     </form>
   );
@@ -71,8 +71,8 @@ export function ConferenceStatusCard({
       {feeDue ? (
         <div className="mt-4 space-y-2">
           <p className="text-sm text-ink">
-            You are selected. Pay the registration fee through the IIT Bombay
-            PayU gateway — you do not fill the application form again.
+            You are selected. Pay the registration fee through IIT Bombay
+            Online Pay — you do not fill the application form again.
           </p>
           <ConferencePayCta
             token={paymentToken}

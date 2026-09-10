@@ -158,6 +158,8 @@ export default async function AdminApplicationDetailPage({
           paymentUrl={conferencePaymentUrl(application.paymentToken)}
           paymentRef={application.paymentRef}
           paidAt={application.paidAt ? istDate(application.paidAt) : null}
+          opReqId={application.opReqId}
+          opTransId={application.opTransId}
         />
       </div>
 

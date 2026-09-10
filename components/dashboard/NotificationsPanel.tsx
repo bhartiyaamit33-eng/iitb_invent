@@ -80,7 +80,7 @@ export function NotificationsPanel({
                   className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
                 >
                   {n.href.startsWith("/conference/pay/")
-                    ? "Pay with PayU →"
+                    ? "Pay with IIT Bombay Online Pay →"
                     : "Open →"}
                 </Link>
               ) : null}

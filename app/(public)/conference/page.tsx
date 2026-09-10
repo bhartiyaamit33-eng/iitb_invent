@@ -192,7 +192,7 @@ export default async function ConferencePage() {
               >
                 Create an account
               </Link>{" "}
-              with this email so notices and PayU stay on your dashboard.
+              with this email so notices and Online Pay stay on your dashboard.
             </p>
           )}
         </section>

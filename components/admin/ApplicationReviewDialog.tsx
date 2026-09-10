@@ -186,7 +186,7 @@ export function ApplicationReviewDialog({
             </p>
             {selected ? (
               <p className="mt-2 rounded-md bg-paper px-3 py-2 text-sm text-ink">
-                They will receive a PayU (IIT Bombay) payment link for {amount}.
+                They will receive an IIT Bombay Online Pay link for {amount}.
                 The same Pay action appears on their dashboard if they have an
                 Inv.ent account — even when email does not send.
               </p>

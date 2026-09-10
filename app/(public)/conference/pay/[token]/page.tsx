@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { applicationStatusLabel } from "@/lib/conference";
-import { isPayUReady } from "@/lib/conference-payu";
+import { isConferenceGatewayReady } from "@/lib/conference-onlinepay";
 import { ConferencePayPanel } from "../ConferencePayPanel";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,7 @@ export default async function ConferencePayPage({
         amountPaise={application.paymentAmountPaise}
         paymentStatus={application.paymentStatus}
         paymentRef={application.paymentRef}
-        gatewayReady={isPayUReady()}
+        gatewayReady={isConferenceGatewayReady()}
         outcome={payu ?? null}
         autoStart={start === "1" && !payu}
       />

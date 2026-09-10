@@ -8,15 +8,15 @@ import {
 } from "@/lib/conference";
 
 const OUTCOME_COPY: Record<string, string> = {
-  success: "PayU confirmed this payment.",
+  success: "IIT Bombay Online Pay confirmed this payment.",
   failed:
-    "PayU did not complete this payment. You can try again from this page.",
+    "IIT Bombay Online Pay did not complete this payment. You can try again from this page.",
   pending:
-    "PayU is still confirming this payment. Refresh this page in a few minutes.",
+    "IIT Bombay Online Pay is still confirming this payment. Refresh this page in a few minutes.",
   invalid:
-    "PayU returned a response we could not verify. If you were charged, write to support@iitbinvent.com with the PayU reference.",
+    "The payment response could not be verified. If you were charged, write to support@iitbinvent.com with the Online Pay transaction id.",
   unavailable:
-    "The IIT Bombay PayU merchant is not live on this site yet. Approval is pending.",
+    "IIT Bombay Online Pay is not configured on this site yet (application id missing).",
   "not-due": "No registration fee is due on this application.",
   already: "This application is already marked paid or waived.",
 };
@@ -70,7 +70,7 @@ export function ConferencePayPanel({
       <p className="mt-2 text-sm text-ink-soft">
         Hi {name}. Status:{" "}
         <strong className="text-ink">{paymentStatusLabel(paymentStatus)}</strong>
-        {paymentRef ? ` · PayU ref ${paymentRef}` : null}
+        {paymentRef ? ` · Online Pay ref ${paymentRef}` : null}
       </p>
 
       {notice ? (
@@ -86,15 +86,15 @@ export function ConferencePayPanel({
         <p className="mt-4 rounded-md bg-paper px-3 py-2 text-sm text-ink">
           {paymentStatus === "WAIVED"
             ? "The fee has been waived. You do not need to pay."
-            : "Payment received via the IIT Bombay PayU gateway."}
+            : "Payment received via IIT Bombay Online Pay."}
         </p>
       ) : null}
 
       {!settled ? (
         <div className="mt-6 space-y-4">
           <p className="text-sm text-ink">
-            The {amount} registration fee is collected through the{" "}
-            <strong>IIT Bombay PayU gateway</strong>. You do not fill the
+            The {amount} registration fee is collected through{" "}
+            <strong>IIT Bombay Online Pay</strong>. You do not fill the
             application form again.
           </p>
           {gatewayReady ? (
@@ -108,7 +108,7 @@ export function ConferencePayPanel({
                 className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
                 data-testid="payu-checkout"
               >
-                Pay {amount} with PayU
+                Pay {amount} with IIT Bombay Online Pay
               </button>
             </form>
           ) : (
@@ -116,10 +116,10 @@ export function ConferencePayPanel({
               className="rounded-md bg-paper px-3 py-2 text-sm text-ink"
               data-testid="payu-pending-approval"
             >
-              Institute merchant approval is in progress. This same personal
-              link will open PayU checkout once the gateway is live. You do
-              not need to pay by UPI separately. Organisers can confirm an
-              offline receipt from the admin desk if needed.
+              IIT Bombay Online Pay is not live on this site yet. This same
+              personal link will open checkout once the application id is
+              configured. Organisers can confirm an offline receipt from the
+              admin desk if needed.
             </p>
           )}
         </div>
