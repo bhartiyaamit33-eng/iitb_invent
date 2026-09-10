@@ -106,40 +106,6 @@ export function LandingSections({
             <p className="lead">
               Faculty and labs bring evidence. Founders and operators bring the ask. INV.ENT holds both in the same visual — and the same room.
             </p>
-            <div className="mt-10 grid gap-5 md:grid-cols-2">
-              <article className="relative min-h-[320px] overflow-hidden bg-navy">
-                <ImagePanel
-                  src={IMAGES.research.src}
-                  alt={IMAGES.research.alt}
-                  className="absolute inset-0 min-h-full"
-                />
-                <div className="relative z-10 flex h-full min-h-[320px] flex-col justify-end p-7">
-                  <p className="landing-kicker">Research</p>
-                  <h3 className="landing-serif mb-2 text-[28px] font-normal text-frost">
-                    Work that can leave the lab
-                  </h3>
-                  <p className="m-0 max-w-[36ch] text-[15px] leading-relaxed text-mist">
-                    Papers, posters, and lightning talks. Methods on the page; a next step in the corridor.
-                  </p>
-                </div>
-              </article>
-              <article className="relative min-h-[320px] overflow-hidden bg-navy">
-                <ImagePanel
-                  src={IMAGES.workshop.src}
-                  alt={IMAGES.workshop.alt}
-                  className="absolute inset-0 min-h-full"
-                />
-                <div className="relative z-10 flex h-full min-h-[320px] flex-col justify-end p-7">
-                  <p className="landing-kicker">Practice</p>
-                  <h3 className="landing-serif mb-2 text-[28px] font-normal text-frost">
-                    Ventures, demos, and asks
-                  </h3>
-                  <p className="m-0 max-w-[36ch] text-[15px] leading-relaxed text-mist">
-                    Pitches that name a customer. Demos you can stand around. Mentors who open a door the same afternoon.
-                  </p>
-                </div>
-              </article>
-            </div>
           </Reveal>
         </div>
       </section>
