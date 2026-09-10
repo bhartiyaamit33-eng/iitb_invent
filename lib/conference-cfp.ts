@@ -1,7 +1,10 @@
-/** Final Call for Papers copy for /conference. Poster wins where drafts disagree. */
+/** Final Call for Papers copy for /conference. Poster / Figma desktop wins where drafts disagree. */
 
-export const CFP_OVERVIEW =
-  "IITB INV.ENT invites emerging scholars and researchers to submit their work for presentation at a conference bringing together rigorous entrepreneurship research and venture practice. The conference gives researchers a platform to present new ideas, receive scholarly feedback, build collaborations, and contribute to the growing body of knowledge in entrepreneurship and innovation. It is part of a two-day INV.ENT event by DSSE, IIT Bombay, where entrepreneurship researchers, startup founders, VCs, and other ecosystem stakeholders come together.";
+export const CFP_OVERVIEW_BEFORE =
+  " invites emerging scholars and researchers to submit their work for presentation at a conference bringing together rigorous ";
+
+export const CFP_OVERVIEW_AFTER =
+  ". The conference gives researchers a platform to present new ideas, receive scholarly feedback, build collaborations, and contribute to the growing body of knowledge in entrepreneurship and innovation. It is part of a two-day INV.ENT event by DS School of Entrepreneurship, IIT Bombay, where entrepreneurship researchers, startup founders, VCs, and other ecosystem stakeholders come together.";
 
 export const CFP_META = [
   { label: "Presentation date", value: "31 January 2027" },
@@ -10,14 +13,26 @@ export const CFP_META = [
 ] as const;
 
 export const CFP_TRACKS = [
-  { id: "paper", label: "Research Paper" },
-  { id: "poster", label: "Poster Presentation" },
+  { id: "paper", label: "Research Paper", icon: "/assets/cfp/icon-paper.svg" },
+  { id: "poster", label: "Poster Presentation", icon: "/assets/cfp/icon-poster.svg" },
 ] as const;
 
 export const CFP_APPLICANTS = [
-  { id: "phd", label: "PhD Scholars" },
-  { id: "postdoc", label: "Postdoctoral Scholars" },
-  { id: "faculty", label: "Early-Career Faculty / Professors" },
+  {
+    id: "phd",
+    label: "PhD Scholars",
+    icon: "/assets/cfp/icon-scholar.svg",
+  },
+  {
+    id: "postdoc",
+    label: "Postdoctoral Scholars",
+    icon: "/assets/cfp/icon-postdoc.svg",
+  },
+  {
+    id: "faculty",
+    label: "Early-Career Faculty / Professors",
+    icon: "/assets/cfp/icon-faculty.svg",
+  },
 ] as const;
 
 export const CFP_TIMELINE = [
@@ -25,30 +40,21 @@ export const CFP_TIMELINE = [
     id: "abstract",
     kicker: "Abstract submission deadline",
     date: "15 Oct 2026",
-    highlight: "Best Paper & Best Poster Award",
-    detail: "Best Paper ₹25,000 · Best Poster ₹10,000",
-    icon: "award" as const,
   },
   {
     id: "accept",
     kicker: "Acceptance announcement",
     date: "15 Nov 2026",
-    highlight: "Chance to get published with leading journals",
-    icon: "publish" as const,
   },
   {
     id: "final",
     kicker: "Final paper submissions",
     date: "1 Jan 2027",
-    highlight: "Network with top researchers & entrepreneurs",
-    icon: "network" as const,
   },
   {
     id: "conference",
     kicker: "Conference & workshops",
     date: "30–31 Jan 2027",
-    highlight: "Pre-conference workshops",
-    icon: "workshop" as const,
   },
 ] as const;
 
@@ -59,7 +65,7 @@ export const CFP_GUIDELINE_POINTS = [
 ] as const;
 
 export const CFP_AI_CALLOUT =
-  "Written by you, not by AI. Use of AI to prepare the submitted research abstract will attract automatic rejection.";
+  "Disclaimer: Use of AI to prepare the submitted research abstract will attract automatic rejection.";
 
 export const CFP_RESEARCH_AREAS = [
   "Elements of the entrepreneurship ecosystem",

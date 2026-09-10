@@ -34,7 +34,6 @@ export function ReticleDev() {
             "cfp-submit-cta",
             "conference-submit",
             "conference-form",
-            "cfp-submit-cta-close",
             "submit-application",
             "brand-mark",
           ],

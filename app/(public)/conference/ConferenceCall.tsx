@@ -1,20 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Inter, Playfair_Display } from "next/font/google";
+import {
+  Fraunces,
+  Inter,
+  Playfair_Display,
+  Plus_Jakarta_Sans,
+  Pridi,
+  Roboto,
+} from "next/font/google";
 import { ConferenceForm } from "./ConferenceForm";
 import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
-import { BrandInline, Wordmark } from "@/components/landing/Wordmark";
-import {
-  APPLICANT_ICONS,
-  TIMELINE_ICONS,
-  TRACK_ICONS,
-} from "@/components/conference/CfpIcons";
+import { CfpDecor } from "@/components/conference/CfpDecor";
 import {
   CFP_AI_CALLOUT,
   CFP_APPLICANTS,
   CFP_GUIDELINE_POINTS,
   CFP_META,
-  CFP_OVERVIEW,
+  CFP_OVERVIEW_AFTER,
+  CFP_OVERVIEW_BEFORE,
   CFP_RESEARCH_AREAS,
   CFP_SELECTION,
   CFP_STAY,
@@ -31,15 +34,43 @@ import "./cfp.css";
 
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700"],
   variable: "--font-playfair",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
+const pridi = Pridi({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-pridi",
+  display: "swap",
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  variable: "--font-roboto",
   display: "swap",
 });
 
@@ -72,16 +103,16 @@ export function ConferenceCall({
   signedIn: boolean;
 }) {
   return (
-    <div className={`cfp ${inter.variable} ${playfair.variable}`}>
+    <div
+      className={`cfp ${inter.variable} ${playfair.variable} ${fraunces.variable} ${pridi.variable} ${jakarta.variable} ${roboto.variable}`}
+    >
       <CfpTheme />
+      <CfpDecor />
       <a href="#main" className="cfp-skip">
         Skip to content
       </a>
 
       <div className="cfp-chrome">
-        <Link href="/" aria-label="INV.ENT home">
-          <BrandInline />
-        </Link>
         <nav aria-label="Site">
           {CHROME_NAV.map((item) => (
             <Link key={item.href} href={item.href}>
@@ -101,21 +132,6 @@ export function ConferenceCall({
         <div className="cfp-shell cfp-hero-inner">
           <div className="cfp-logos">
             <Link
-              className="cfp-logo-iitb"
-              href="https://www.iitb.ac.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Indian Institute of Technology Bombay"
-            >
-              <Image
-                src="/assets/iitb-logo.png"
-                alt="IIT Bombay"
-                width={1024}
-                height={998}
-                priority
-              />
-            </Link>
-            <Link
               className="cfp-logo-dsse"
               href="https://www.dsse.iitb.ac.in/"
               target="_blank"
@@ -123,20 +139,55 @@ export function ConferenceCall({
               aria-label="Desai Sethi School of Entrepreneurship"
             >
               <Image
-                src="/assets/dsse-logo.png"
+                src="/assets/cfp/dsse-wordmark.png"
                 alt="Desai Sethi School of Entrepreneurship"
-                width={200}
-                height={200}
+                width={1633}
+                height={328}
+                priority
+              />
+            </Link>
+            <Link
+              className="cfp-logo-iitb"
+              href="https://www.iitb.ac.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Indian Institute of Technology Bombay"
+            >
+              <Image
+                src="/assets/cfp/iitb-seal.png"
+                alt="IIT Bombay"
+                width={1798}
+                height={1865}
                 priority
               />
             </Link>
           </div>
 
           <div className="cfp-hero-mark">
-            <p className="cfp-iitb">IIT Bombay</p>
-            <Wordmark />
+            <p className="cfp-iitb">IIT BOMBAY</p>
+            <div
+              className="cfp-lockup"
+              data-testid="brand-mark"
+              aria-label="INV.ENT: Innovation and Entrepreneurship"
+            >
+              <div className="half">
+                <span className="word inv">INV</span>
+                <span className="mean">Innovation</span>
+              </div>
+              <span className="dot" aria-hidden="true">
+                .
+              </span>
+              <div className="half">
+                <span className="word ent">ENT</span>
+                <span className="mean">Entrepreneurship</span>
+              </div>
+            </div>
             <p className="cfp-conference-title">
-              <span className="practice">Entrepreneurship Research &amp; Practice</span>{" "}
+              <span className="practice">
+                Entrepreneurship Research
+                <br />
+                &amp; Practice
+              </span>{" "}
               <span className="conf">Conference</span>
             </p>
           </div>
@@ -161,58 +212,53 @@ export function ConferenceCall({
                 </div>
               ))}
             </dl>
-            <p className="cfp-lead" style={{ marginTop: 0 }}>
-              {CFP_OVERVIEW}
+            <p className="cfp-lead">
+              <strong>IITB INV.ENT</strong>
+              {CFP_OVERVIEW_BEFORE}
+              <strong>entrepreneurship research and venture practice</strong>
+              {CFP_OVERVIEW_AFTER}
             </p>
           </div>
         </section>
 
-        <section className="cfp-section" aria-labelledby="cfp-heading">
-          <div className="cfp-shell">
-            <p className="cfp-kicker">Call for</p>
-            <h2 id="cfp-heading" className="cfp-h2 is-poster">
-              Papers
-            </h2>
-            <div className="cfp-tracks">
-              {CFP_TRACKS.map((track) => {
-                const Icon = TRACK_ICONS[track.id];
-                return (
+        <section className="cfp-section cfp-split-section" aria-label="Call for papers and who can apply">
+          <div className="cfp-shell cfp-split">
+            <section className="cfp-cfp-col" aria-labelledby="cfp-heading">
+              <p className="cfp-kicker is-display">Call for</p>
+              <h2 id="cfp-heading" className="cfp-display">
+                Papers
+              </h2>
+              <div className="cfp-tracks">
+                {CFP_TRACKS.map((track) => (
                   <div className="cfp-track" key={track.id}>
-                    <Icon />
+                    <span className="cfp-icon">
+                      <img src={track.icon} alt="" width={44} height={44} />
+                    </span>
                     <span>{track.label}</span>
                   </div>
-                );
-              })}
-            </div>
-            <p className="cfp-note">
-              On a broad range of Innovation &amp; Entrepreneurship Research themes
-            </p>
-            <a
-              className="cfp-btn"
-              href="#submit"
-              data-testid="cfp-submit-cta"
-            >
-              Submit your Abstract
-            </a>
-          </div>
-        </section>
+                ))}
+              </div>
+              <p className="cfp-note">
+                On a broad range of Innovation &amp; Entrepreneurship Research
+                themes
+              </p>
+            </section>
 
-        <section className="cfp-section" aria-labelledby="who-heading">
-          <div className="cfp-shell">
-            <h2 id="who-heading" className="cfp-h2">
-              Who can apply
-            </h2>
-            <div className="cfp-people">
-              {CFP_APPLICANTS.map((person) => {
-                const Icon = APPLICANT_ICONS[person.id];
-                return (
+            <section className="cfp-who-col" aria-labelledby="who-heading">
+              <h2 id="who-heading" className="cfp-h2">
+                Who can apply
+              </h2>
+              <div className="cfp-people">
+                {CFP_APPLICANTS.map((person) => (
                   <article className="cfp-person" key={person.id}>
-                    <Icon />
+                    <span className="cfp-icon">
+                      <img src={person.icon} alt="" width={40} height={40} />
+                    </span>
                     <p>{person.label}</p>
                   </article>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            </section>
           </div>
         </section>
 
@@ -222,23 +268,13 @@ export function ConferenceCall({
               Key dates and highlights
             </h2>
             <ol className="cfp-timeline" aria-label="Key dates">
-              {CFP_TIMELINE.map((item) => {
-                const Icon = TIMELINE_ICONS[item.icon];
-                return (
-                  <li key={item.id}>
-                    <span className="kicker">{item.kicker}</span>
-                    <span className="date">{item.date}</span>
-                    <span className="node" aria-hidden="true" />
-                    <span className="icon">
-                      <Icon />
-                    </span>
-                    <p className="highlight">{item.highlight}</p>
-                    {"detail" in item && item.detail ? (
-                      <p className="detail">{item.detail}</p>
-                    ) : null}
-                  </li>
-                );
-              })}
+              {CFP_TIMELINE.map((item) => (
+                <li key={item.id}>
+                  <span className="kicker">{item.kicker}</span>
+                  <span className="date">{item.date}</span>
+                  <span className="node" aria-hidden="true" />
+                </li>
+              ))}
             </ol>
           </div>
         </section>
@@ -248,23 +284,25 @@ export function ConferenceCall({
             <h2 id="guidelines-heading" className="cfp-h2">
               Submission guidelines
             </h2>
-            <p className="cfp-lead">
+            <p className="cfp-lead cfp-lead-tight">
               Extended abstract, up to 1,500 words, covering:
             </p>
-            <ul className="cfp-guidelines">
-              {CFP_GUIDELINE_POINTS.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-            <aside className="cfp-callout" role="note">
-              {CFP_AI_CALLOUT}
-            </aside>
+            <div className="cfp-guide-grid">
+              <ul className="cfp-guidelines">
+                {CFP_GUIDELINE_POINTS.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+              <aside className="cfp-callout" role="note">
+                {CFP_AI_CALLOUT}
+              </aside>
+            </div>
           </div>
         </section>
 
         <section className="cfp-section" aria-labelledby="areas-heading">
           <div className="cfp-shell">
-            <h2 id="areas-heading" className="cfp-h2">
+            <h2 id="areas-heading" className="cfp-h2 is-center">
               Suggested research areas
             </h2>
             <div className="cfp-chips" role="list">
@@ -375,10 +413,11 @@ export function ConferenceCall({
         <section className="cfp-section cfp-close" aria-labelledby="close-heading">
           <div className="cfp-shell">
             <h2 id="close-heading">Connect. Collaborate. Contribute.</h2>
-            <p>Submit your Abstract by 15 October 2026.</p>
-            <a className="cfp-btn" href="#submit" data-testid="cfp-submit-cta-close">
-              Submit your Abstract
-            </a>
+            <p>
+              <a href="#submit" data-testid="cfp-submit-cta">
+                Submit your Abstract by 15 October 2026.
+              </a>
+            </p>
           </div>
         </section>
       </main>
