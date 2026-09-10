@@ -28,9 +28,18 @@ export function ReticleDev() {
         // read-only.
         // No state library detected. If you add one, register it here — see node_modules/@reticlehq/server/docs/usage.md.
         registerCapabilities({
-          testids: [], // none found; add data-testid to your key elements
-          signals: [], // names you pass to reticle.signal()
-          stores: [], // the keys you registered above
+          testids: [
+            "conference-hero",
+            "conference-overview",
+            "cfp-submit-cta",
+            "conference-submit",
+            "conference-form",
+            "cfp-submit-cta-close",
+            "submit-application",
+            "brand-mark",
+          ],
+          signals: [],
+          stores: [],
         });
       },
     );

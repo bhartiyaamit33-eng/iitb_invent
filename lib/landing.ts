@@ -31,7 +31,7 @@ export type LandingProps = {
 export const TAGLINE =
   "Where entrepreneurship research meets venture practice";
 
-export const SUBMIT_HREF = "/submit";
+export const SUBMIT_HREF = "/conference#submit";
 export const REGISTER_HREF = "/signup";
 
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
