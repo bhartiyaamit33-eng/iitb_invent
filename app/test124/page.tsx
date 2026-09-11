@@ -13,7 +13,7 @@ export const metadata = {
   ...pageMetadata({
     title: SITE_NAME_LONG,
     description: DEFAULT_DESCRIPTION,
-    path: "/test123",
+    path: "/test124",
     absoluteTitle: true,
   }),
   ...noIndex,
@@ -21,12 +21,12 @@ export const metadata = {
 
 type SearchParams = Promise<{ hero?: string }>;
 
-export default async function TestLandingPage({
+export default async function TestLandingLightPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
   const params = await searchParams;
   const heroVariant: HeroVariant = params.hero === "plain" ? "plain" : "photo";
-  return <LandingScreen heroVariant={heroVariant} />;
+  return <LandingScreen theme="light" heroVariant={heroVariant} />;
 }

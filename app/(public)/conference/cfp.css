@@ -253,6 +253,17 @@ html[data-cfp] body {
   background: #fff;
 }
 
+.cfp-nav .cfp-nav-submit {
+  border-color: var(--cfp-blue);
+  background: var(--cfp-blue);
+  color: #fff;
+}
+
+.cfp-nav .cfp-nav-submit:hover {
+  border-color: #1e40af;
+  background: #1e40af;
+}
+
 .cfp-nav .cfp-nav-login {
   border-color: var(--cfp-dot);
   background: var(--cfp-dot);

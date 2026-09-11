@@ -30,7 +30,7 @@ import type {
   ParticipationCategory,
 } from "@/lib/conference";
 import { CfpTheme } from "./CfpTheme";
-import { LANDING_NAV, landingNavHref } from "@/lib/landing";
+import { SUBMIT_HREF } from "@/lib/landing";
 import "./cfp.css";
 
 const inter = Inter({
@@ -130,11 +130,13 @@ export function ConferenceCall({
               aria-label="Primary"
               data-testid="nav"
             >
-              {LANDING_NAV.map((item) => (
-                <Link key={item.href} href={landingNavHref(item.href, true)}>
-                  {item.label}
-                </Link>
-              ))}
+              <Link
+                className="cfp-nav-submit"
+                href={SUBMIT_HREF}
+                data-testid="nav-submit"
+              >
+                Submit your Abstract
+              </Link>
               <Link
                 className="cfp-nav-login"
                 href={signedIn ? "/dashboard" : "/login"}

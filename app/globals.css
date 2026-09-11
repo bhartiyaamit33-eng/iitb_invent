@@ -3,7 +3,7 @@
 /*
   App chrome (dashboard/admin) keeps the teal paper tokens.
   The public landing uses the INV.ENT poster system: midnight, serif
-  headlines, cyan rules, and lime only as the spark.
+  headlines, cyan rules, neon spark on dark, DSSE green (#007E43) on light.
 */
 
 :root {
@@ -121,11 +121,18 @@ html[data-landing] body {
   --font-serif: var(--font-playfair), "Palatino Linotype", Palatino, Georgia, serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --lockup-cyan: #42beec;
+  --haze: #9aa4b4;
+  --spark: #c8ff3d;
+  --spark-hover: #d8ff6a;
+  --spark-ink: #c8ff3d;
+  --spark-on-dark: #c8ff3d;
+  --spark-glow: 200, 255, 61;
+  position: relative;
   background: var(--midnight);
   color: var(--frost);
   font-family: var(--font-body);
   min-height: 100svh;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .landing a {
@@ -134,7 +141,7 @@ html[data-landing] body {
 }
 
 .landing a.btn {
-  color: #000;
+  color: #111;
 }
 
 .landing a.btn.outline,
@@ -144,7 +151,7 @@ html[data-landing] body {
 
 .landing a.btn.outline:hover,
 .landing a.btn.nav-login {
-  color: #000;
+  color: #111;
 }
 
 .landing :focus-visible {
@@ -166,7 +173,7 @@ html[data-landing] body {
 }
 
 .landing-kicker.is-lit {
-  color: var(--spark);
+  color: var(--spark-on-dark);
 }
 
 .landing h2 {
@@ -229,27 +236,28 @@ html[data-landing] body {
   border-radius: 999px;
   border: 1px solid var(--spark);
   background: var(--spark);
-  color: #000;
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.08), 0 10px 28px rgba(200, 255, 61, 0.12);
+  color: #111;
+  box-shadow: 0 0 0 1px rgba(var(--spark-glow), 0.08), 0 10px 28px rgba(var(--spark-glow), 0.16);
   transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .btn:hover {
-  background: #d8ff6a;
-  border-color: #d8ff6a;
+  background: var(--spark-hover);
+  border-color: var(--spark-hover);
+  color: #111;
   transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(200, 255, 61, 0.22);
+  box-shadow: 0 14px 32px rgba(var(--spark-glow), 0.28);
 }
 
 .btn.outline {
   background: transparent;
   color: var(--frost);
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.18), 0 0 24px rgba(200, 255, 61, 0.08);
+  box-shadow: 0 0 0 1px rgba(var(--spark-glow), 0.18), 0 0 24px rgba(var(--spark-glow), 0.08);
 }
 
 .btn.outline:hover {
   background: var(--spark);
-  color: #000;
+  color: #111;
   border-color: var(--spark);
 }
 
@@ -270,13 +278,13 @@ html[data-landing] body {
 .btn.nav-login {
   border-color: var(--spark);
   background: var(--spark);
-  color: #000;
+  color: #111;
 }
 
 .btn.nav-login:hover {
-  background: #d8ff6a;
-  border-color: #d8ff6a;
-  color: #000;
+  background: var(--spark-hover);
+  border-color: var(--spark-hover);
+  color: #111;
 }
 
 /* Wordmark — poster serif lockup */
@@ -349,7 +357,7 @@ html[data-landing] body {
   height: 0.13em;
   border-radius: 50%;
   background: var(--spark);
-  box-shadow: 0 0 22px rgba(200, 255, 61, 0.55);
+  box-shadow: 0 0 22px rgba(var(--spark-glow), 0.45);
   transform: scale(1);
   animation:
     sparkBirth 2.2s cubic-bezier(0.22, 1, 0.36, 1) both,
@@ -365,14 +373,60 @@ html[data-landing] body {
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 18px rgba(200, 255, 61, 0.42); }
-  50% { box-shadow: 0 0 32px rgba(200, 255, 61, 0.72); }
+  0%, 100% { box-shadow: 0 0 18px rgba(var(--spark-glow), 0.42); }
+  50% { box-shadow: 0 0 32px rgba(var(--spark-glow), 0.72); }
 }
 
 .hero-tagline {
-  white-space: nowrap;
-  /* Scale to one line in the hero gutter; cap so it stays under INV.ENT. */
-  font-size: clamp(15px, calc((100vw - 5rem) / 26), 30px);
+  max-width: 16em;
+  font-size: clamp(18px, 2.2vw, 28px);
+  line-height: 1.2;
+}
+
+.hero-tagline-lead {
+  color: var(--cyan-glow);
+}
+
+.hero-tagline-rest {
+  color: var(--frost);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--frost) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--midnight) 55%, transparent);
+  color: var(--frost);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.theme-toggle:hover {
+  border-color: var(--spark);
+  color: var(--spark);
+}
+
+.hero-photo-veil {
+  background:
+    linear-gradient(90deg, rgba(7, 17, 31, 0.88) 0%, rgba(7, 17, 31, 0.72) 34%, rgba(7, 17, 31, 0.38) 62%, rgba(11, 30, 54, 0.28) 100%),
+    linear-gradient(180deg, rgba(7, 17, 31, 0.58) 0%, rgba(7, 17, 31, 0.18) 30%, rgba(7, 17, 31, 0.28) 70%, rgba(7, 17, 31, 0.82) 100%),
+    linear-gradient(20deg, rgba(46, 143, 255, 0.14), transparent 42%);
+}
+
+.hero-plain-veil {
+  background:
+    radial-gradient(ellipse 52% 48% at 22% 42%, rgba(46, 143, 255, 0.22), transparent),
+    radial-gradient(ellipse 22% 20% at 14% 46%, rgba(var(--spark-glow), 0.1), transparent),
+    linear-gradient(180deg, #0b1e36 0%, #08162a 55%, #07111f 100%);
 }
 
 /* Blueprint grid + orbits */
@@ -574,7 +628,7 @@ section > .orbit-field {
 
 /* Spark trail */
 .spark {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 9px;
@@ -582,12 +636,11 @@ section > .orbit-field {
   margin: -4.5px 0 0 -4.5px;
   border-radius: 50%;
   background: var(--spark);
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.35), 0 0 18px rgba(200, 255, 61, 0.7);
+  box-shadow: 0 0 0 1px rgba(var(--spark-glow), 0.35), 0 0 18px rgba(var(--spark-glow), 0.7);
   pointer-events: none;
   z-index: 40;
   opacity: 0;
-  scale: var(--s, 1);
-  transition: scale 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  transition: opacity 0.4s ease;
   will-change: transform, opacity;
 }
 
@@ -598,23 +651,23 @@ section > .orbit-field {
   position: absolute;
   inset: -7px;
   border-radius: 50%;
-  border: 1px solid rgba(200, 255, 61, 0.45);
+  border: 1px solid rgba(var(--spark-glow), 0.45);
   animation: halo 2.6s ease-out infinite;
 }
 
 .spark-ghost {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 6px;
   height: 6px;
   margin: -3px 0 0 -3px;
   border-radius: 50%;
-  background: rgba(200, 255, 61, 0.5);
+  background: rgba(var(--spark-glow), 0.5);
   pointer-events: none;
   z-index: 39;
   opacity: 0;
-  transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s ease;
+  transition: opacity 0.4s ease;
   will-change: transform;
 }
 
@@ -622,8 +675,7 @@ section > .orbit-field {
   width: 4px;
   height: 4px;
   margin: -2px 0 0 -2px;
-  background: rgba(200, 255, 61, 0.28);
-  transition-duration: 0.42s, 0.4s;
+  background: rgba(var(--spark-glow), 0.28);
 }
 
 .spark-ghost.is-live { opacity: 1; }
@@ -640,7 +692,7 @@ section > .orbit-field {
 
 .spark-svg .track {
   fill: none;
-  stroke: rgba(200, 255, 61, 0.1);
+  stroke: rgba(var(--spark-glow), 0.1);
   stroke-width: 1;
   stroke-dasharray: 3 9;
   stroke-linecap: round;
@@ -648,7 +700,7 @@ section > .orbit-field {
 
 .spark-svg .lit {
   fill: none;
-  stroke: rgba(200, 255, 61, 0.42);
+  stroke: rgba(var(--spark-glow), 0.42);
   stroke-width: 1;
   stroke-dasharray: 3 9;
   stroke-linecap: round;
@@ -656,19 +708,19 @@ section > .orbit-field {
 
 .spark-svg .station {
   fill: var(--midnight);
-  stroke: rgba(200, 255, 61, 0.32);
+  stroke: rgba(var(--spark-glow), 0.32);
   stroke-width: 1;
   transition: fill 0.45s ease, stroke 0.45s ease;
 }
 
 .spark-svg .station.lit {
-  fill: rgba(200, 255, 61, 0.85);
-  stroke: rgba(200, 255, 61, 0.55);
+  fill: rgba(var(--spark-glow), 0.85);
+  stroke: rgba(var(--spark-glow), 0.55);
 }
 
 .spark-svg .ring {
   fill: none;
-  stroke: rgba(200, 255, 61, 0.5);
+  stroke: rgba(var(--spark-glow), 0.5);
   stroke-width: 1;
   opacity: 0;
   transform-box: fill-box;
@@ -730,7 +782,7 @@ section > .orbit-field {
   border-radius: 50%;
   background: var(--midnight);
   border: 1.5px solid var(--spark);
-  box-shadow: 0 0 0 4px var(--midnight), 0 0 10px rgba(200, 255, 61, 0.35);
+  box-shadow: 0 0 0 4px var(--midnight), 0 0 10px rgba(var(--spark-glow), 0.35);
   position: relative;
   z-index: 1;
 }
@@ -738,7 +790,7 @@ section > .orbit-field {
 .timeline-item.is-now .node,
 .timeline-item.is-past .node {
   background: var(--spark);
-  box-shadow: 0 0 0 4px var(--midnight), 0 0 16px rgba(200, 255, 61, 0.7);
+  box-shadow: 0 0 0 4px var(--midnight), 0 0 16px rgba(var(--spark-glow), 0.7);
 }
 
 .timeline-item .date {
@@ -772,7 +824,7 @@ section > .orbit-field {
   height: 7px;
   border-radius: 50%;
   background: var(--spark);
-  box-shadow: 0 0 10px rgba(200, 255, 61, 0.6);
+  box-shadow: 0 0 10px rgba(var(--spark-glow), 0.6);
   flex: none;
 }
 
@@ -790,7 +842,7 @@ section > .orbit-field {
   word-break: break-all;
 }
 
-.mail:hover { color: var(--spark); }
+.mail:hover { color: var(--spark-on-dark); }
 
 @keyframes riseIn {
   from { opacity: 0; transform: translateY(22px); }
@@ -802,13 +854,13 @@ section > .orbit-field {
 }
 
 .landing .lead a {
-  color: var(--spark);
+  color: var(--spark-on-dark);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .landing .lead a:hover {
-  color: #d8ff6a;
+  color: #66b28e;
 }
 
 @media (max-width: 860px) {
@@ -832,7 +884,6 @@ section > .orbit-field {
     padding: 2px 16px 6px;
   }
   .hero-nav::-webkit-scrollbar { display: none; }
-  .hero-nav a.nav-login { order: -1; }
   .brand-word { --wm: clamp(52px, 16vw, 84px); }
   .brand-half .meaning { font-size: 9px; letter-spacing: 0.16em; }
   .timeline {
@@ -871,4 +922,247 @@ section > .orbit-field {
   .hero-rise { opacity: 1; transform: none; }
   .event-lane { overflow-x: auto; }
   .event-lanes { mask-image: none; }
+}
+
+/* Light editorial comparison — /test124 only. Same layout; tokens + polish. */
+html[data-landing="light"],
+html[data-landing="light"] body {
+  background: #f6f3ec;
+  color: #1b1a17;
+}
+
+.landing[data-theme="light"] {
+  --midnight: #f6f3ec;
+  --navy: #f3efe6;
+  --frost: #1b1a17;
+  --mist: #3e4a56;
+  --haze: #44505c;
+  --cyan-glow: #0c3a6b;
+  --lockup-cyan: #0c3a6b;
+  --spark: #007e43;
+  --spark-hover: #006636;
+  --spark-ink: #007e43;
+  --spark-on-dark: #4da57b;
+  --spark-glow: 0, 126, 67;
+  --rule: rgba(12, 58, 107, 0.22);
+  --rule-strong: #0c3a6b;
+  --font-serif: var(--font-source-serif), "Source Serif 4", Georgia, "Times New Roman", serif;
+  background: var(--midnight);
+  color: var(--frost);
+}
+
+.landing[data-theme="light"] :focus-visible {
+  outline-color: var(--cyan-glow);
+}
+
+.landing[data-theme="light"] .lead a {
+  color: var(--cyan-glow);
+}
+
+.landing[data-theme="light"] .lead a:hover {
+  color: #1e4f82;
+}
+
+.landing[data-theme="light"] .btn {
+  color: #fff;
+  border-color: var(--spark);
+  box-shadow: 0 6px 16px rgba(var(--spark-glow), 0.18);
+}
+
+.landing[data-theme="light"] .btn:hover,
+.landing[data-theme="light"] .btn.nav-login:hover {
+  color: #fff;
+  background: var(--spark-hover);
+  border-color: var(--spark-hover);
+}
+
+.landing[data-theme="light"] .btn.outline,
+.landing[data-theme="light"] .btn.ghost {
+  background: transparent;
+  color: var(--frost);
+  border-color: var(--cyan-glow);
+  box-shadow: none;
+}
+
+.landing[data-theme="light"] .btn.outline:hover {
+  background: var(--spark);
+  color: #fff;
+  border-color: var(--spark);
+}
+
+.landing[data-theme="light"] .btn.ghost:hover {
+  background: rgba(12, 58, 107, 0.06);
+  border-color: var(--cyan-glow);
+  color: var(--frost);
+}
+
+.landing[data-theme="light"] .brand-inline .dot {
+  color: var(--spark-ink);
+}
+
+.landing[data-theme="light"] .brand-half .word {
+  font-weight: 600;
+}
+
+.landing[data-theme="light"] .brand-dot i {
+  box-shadow: none;
+  animation: sparkBirth 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing[data-theme="light"] .logo-dsse img {
+  filter: none;
+}
+
+.landing[data-theme="light"] .logo-iitb {
+  box-shadow: 0 8px 20px rgba(12, 58, 107, 0.1);
+}
+
+.landing[data-theme="light"] .hero-nav a:not(.btn) {
+  border-color: var(--cyan-glow);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--frost);
+}
+
+.landing[data-theme="light"] .hero-nav a:not(.btn):hover {
+  border-color: var(--cyan-glow);
+  background: #fff;
+}
+
+.landing[data-theme="light"] [data-testid="hero-building"] {
+  filter: saturate(0.92) contrast(1.04) brightness(0.92);
+}
+
+.landing[data-theme="light"] .hero-photo-veil {
+  background:
+    linear-gradient(90deg, rgba(246, 243, 236, 0.9) 0%, rgba(246, 243, 236, 0.68) 34%, rgba(246, 243, 236, 0.28) 62%, rgba(246, 243, 236, 0.1) 100%),
+    linear-gradient(180deg, rgba(246, 243, 236, 0.4) 0%, rgba(246, 243, 236, 0.08) 30%, rgba(246, 243, 236, 0.22) 70%, rgba(246, 243, 236, 0.72) 100%);
+}
+
+.landing[data-theme="light"] .hero-plain-veil {
+  background:
+    radial-gradient(ellipse 52% 48% at 22% 42%, rgba(12, 58, 107, 0.08), transparent),
+    linear-gradient(180deg, #f6f3ec 0%, #efebe2 55%, #f6f3ec 100%);
+}
+
+.landing[data-theme="light"] header a[aria-label="Scroll to about"] {
+  border-color: var(--cyan-glow);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--frost);
+}
+
+.landing[data-theme="light"] [class*="border-white/"] {
+  border-color: var(--rule);
+}
+
+.landing[data-theme="light"] .orbit-field .grid {
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(12, 58, 107, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(12, 58, 107, 0.08) 1px, transparent 1px);
+}
+
+.landing[data-theme="light"] .orbit-field path {
+  stroke: rgba(12, 58, 107, 0.16);
+}
+
+.landing[data-theme="light"] .orbit-field path.alt {
+  stroke: rgba(12, 58, 107, 0.08);
+}
+
+.landing[data-theme="light"] .orbit-field .net-link {
+  stroke: rgba(12, 58, 107, 0.12);
+}
+
+.landing[data-theme="light"] .orbit-field .node {
+  fill: rgba(12, 58, 107, 0.35);
+}
+
+.landing[data-theme="light"] .image-panel img {
+  filter: saturate(0.94) contrast(1.03) brightness(0.98);
+  transform: none;
+}
+
+.landing[data-theme="light"] .image-panel .caption {
+  color: #fff;
+}
+
+.landing[data-theme="light"] .event-lane-card img {
+  filter: saturate(0.95) contrast(1.02) brightness(1);
+}
+
+.landing[data-theme="light"] .event-lane-card::after {
+  background: none;
+}
+
+.landing[data-theme="light"] .spark {
+  box-shadow: 0 0 0 1px rgba(12, 58, 107, 0.12);
+}
+
+.landing[data-theme="light"] .spark::after {
+  border-color: rgba(var(--spark-glow), 0.35);
+}
+
+.landing[data-theme="light"] .spark-svg .track {
+  stroke: rgba(12, 58, 107, 0.14);
+}
+
+.landing[data-theme="light"] .spark-svg .lit {
+  stroke: rgba(var(--spark-glow), 0.55);
+}
+
+.landing[data-theme="light"] .spark-svg .station {
+  stroke: var(--cyan-glow);
+}
+
+.landing[data-theme="light"] .timeline-item .node,
+.landing[data-theme="light"] .timeline-item.is-now .node,
+.landing[data-theme="light"] .timeline-item.is-past .node {
+  box-shadow: 0 0 0 4px var(--midnight);
+}
+
+.landing[data-theme="light"] .landing-faq summary::before {
+  box-shadow: none;
+}
+
+.landing[data-theme="light"] footer {
+  border-color: var(--rule);
+}
+
+.landing .text-spark {
+  color: var(--spark-on-dark);
+}
+
+.landing[data-theme="light"] .text-spark,
+.landing[data-theme="light"] .landing-kicker.is-lit,
+.landing[data-theme="light"] .mail:hover {
+  color: var(--spark-ink);
+}
+
+.landing[data-theme="light"] #live-strip {
+  background: #0a2342;
+  color: #eef2f7;
+  border-color: rgba(var(--spark-glow), 0.22);
+}
+
+.landing[data-theme="light"] #live-strip .text-spark {
+  color: var(--spark-on-dark);
+}
+
+.landing[data-theme="light"] #live-strip a {
+  color: #eef2f7;
+}
+
+.landing[data-theme="light"] .theme-toggle {
+  border-color: color-mix(in srgb, var(--cyan-glow) 55%, #c9c2b6);
+  background: #fff;
+  color: #0c3a6b;
+}
+
+.landing[data-theme="light"] .theme-toggle:hover {
+  border-color: #0c3a6b;
+  color: #0c3a6b;
+}
+
+.landing[data-theme="light"] .image-panel .veil {
+  background: linear-gradient(180deg, transparent 36%, rgba(12, 22, 38, 0.84) 100%);
 }

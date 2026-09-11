@@ -19,6 +19,8 @@ export type TimelineItem = {
   state: TimelineState;
 };
 
+export type LandingThemeName = "dark" | "light";
+
 export type LandingProps = {
   heroVariant: HeroVariant;
   signedInName: string | null;
@@ -26,29 +28,15 @@ export type LandingProps = {
   faqs: LandingFaq[];
   stats: LandingStat[];
   timeline: TimelineItem[];
+  theme?: LandingThemeName;
 };
 
-export const TAGLINE =
-  "Where entrepreneurship research meets venture practice";
+export const TAGLINE = "Entrepreneurship Research & Practice Conference";
+export const TAGLINE_LEAD = "Entrepreneurship Research & Practice";
+export const TAGLINE_REST = "Conference";
 
 export const SUBMIT_HREF = "/conference#submit";
 export const REGISTER_HREF = "/signup";
-
-/** Primary site nav — same labels/order on the landing hero and /conference. */
-export const LANDING_NAV = [
-  { href: "#about", label: "About" },
-  { href: "#day", label: "The Day" },
-  { href: "/ventures", label: "Startups" },
-  { href: "/programme", label: "Programme" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#connect", label: "People" },
-  { href: "#query", label: "Queries" },
-] as const;
-
-export function landingNavHref(href: string, fromRoot: boolean): string {
-  if (fromRoot && href.startsWith("#")) return `/${href}`;
-  return href;
-}
 
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
