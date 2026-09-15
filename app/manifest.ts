@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "INVENT · DSSE Day · IIT Bombay",
-    short_name: "INVENT",
+    name: "INV.ENT · IIT Bombay",
+    short_name: "INV.ENT",
     description:
-      "Innovation and Entrepreneurship at DSSE, IIT Bombay. 31 January, annually.",
+      "Entrepreneurship Research and Venture Practice Conference at DSSE, IIT Bombay. 30-31 January 2027. 30 January is Day Zero.",
     start_url: "/",
     display: "browser",
     background_color: "#07111F",

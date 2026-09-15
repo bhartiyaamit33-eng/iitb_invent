@@ -18,7 +18,7 @@ Campus partners: [E-Cell](https://ecell.in) · [SINE](https://sineiitb.org)
 | Runtime | **Node.js 22** (see `.nvmrc` / `.node-version`) |
 | App | Next.js 15 App Router + TypeScript (strict) + Tailwind v4 (`output: "standalone"`) |
 | Data | Prisma + PostgreSQL (Docker on EC2 / local) |
-| **AWS runtime (now)** | **EC2 `t3.micro`** `i-011126e849f5cbeb6` · `15.206.84.172` · `ap-south-1` |
+| **AWS runtime (now)** | **EC2 `t3.micro`** `i-011126e849f5cbeb6` · `43.205.7.101` · `ap-south-1` |
 | Email | **AWS SES** FROM `conference@iitbinvent.com` (`ap-south-1`) |
 | Optional later | Amplify Hosting · RDS; S3 `invent-m1-uploads-221237747582` (5 GB cap) |
 | Legacy | Cloudflare Worker in `legacy-cloudflare/` until DNS cutover |
@@ -81,12 +81,12 @@ Useful stubs: `/programme` · `/login` · `/dashboard` · `/admin` (admin requir
 
 ## EC2 deploy (primary AWS runtime)
 
-**Instance:** `i-011126e849f5cbeb6` · **t3.micro** · **ap-south-1** · public IP **15.206.84.172**  
+**Instance:** `i-011126e849f5cbeb6` · **t3.micro** · **ap-south-1** · public IP **43.205.7.101**  
 **SG:** `iitb-invent-sg` (SSH/HTTP/HTTPS open — **SHOULD** restrict SSH to your IP later)  
 **Key:** `~/.ssh/first_time.pem` (never commit `.pem` files)
 
 ```bash
-ssh -i ~/.ssh/first_time.pem ec2-user@15.206.84.172
+ssh -i ~/.ssh/first_time.pem ec2-user@43.205.7.101
 ```
 
 ### Layout on the box
@@ -103,7 +103,7 @@ Secrets live in `/opt/invent/.env` on the server only (gitignored).
 ### Redeploy (after push)
 
 ```bash
-ssh -i ~/.ssh/first_time.pem ec2-user@15.206.84.172
+ssh -i ~/.ssh/first_time.pem ec2-user@43.205.7.101
 cd /opt/invent
 git pull origin main
 bash scripts/deploy-ec2-safe.sh

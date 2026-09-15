@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "INVENT · DSSE Day · IIT Bombay · 31 January 2027";
+export const alt = "INV.ENT · IIT Bombay · 30-31 January 2027";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -28,11 +28,11 @@ export default function OpenGraphImage() {
             INV.ENT
           </div>
           <div style={{ display: "flex", marginTop: 16, fontSize: 32, color: "#A7B0C3" }}>
-            Innovation and Entrepreneurship
+            Entrepreneurship Research and Venture Practice Conference
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#A7B0C3" }}>
-          <span>DSSE Day · 31 January 2027</span>
+          <span>30-31 January 2027 · Day Zero 30 Jan</span>
           <span>iitbinvent.com</span>
         </div>
       </div>

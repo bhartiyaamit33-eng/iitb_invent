@@ -8,7 +8,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Log in",
-  description: "Log in to INVENT (iitbinvent.com) for DSSE Day at IIT Bombay.",
+  description: "Log in to INV.ENT (iitbinvent.com) for the conference at IIT Bombay.",
   path: "/login",
 });
 

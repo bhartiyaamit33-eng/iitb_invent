@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = pageMetadata({
   title: "Startups, projects and ideas",
   description:
-    "Browse startups, projects, and ideas from the IIT Bombay INVENT / DSSE Day community.",
+    "Browse startups, projects, and ideas from the IIT Bombay INV.ENT community.",
   path: "/ventures",
 });
 

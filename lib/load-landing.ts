@@ -93,12 +93,29 @@ export async function loadLandingData(): Promise<LandingScreenData> {
   };
 }
 
+function faqKey(question: string) {
+  return question
+    .toLowerCase()
+    .replace(/inv\.ent/g, "invent")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function shouldDropFaq(item: LandingFaq) {
+  const blob = `${item.question} ${item.answer}`.toLowerCase();
+  if (blob.includes("dsse day")) return true;
+  if (blob.includes("foundation-day") || blob.includes("foundation day")) return true;
+  if (blob.includes("annual day")) return true;
+  if (/\biitbinvent\b|\biitb_invent\b/i.test(item.question)) return true;
+  return false;
+}
+
 function mergeFaqs(source: LandingFaq[]): LandingFaq[] {
   const seen = new Set<string>();
   const out: LandingFaq[] = [];
   for (const item of [...CANONICAL_FAQS.slice(0, 5), ...source, ...FALLBACK_FAQS]) {
-    const key = item.question.toLowerCase();
-    if (seen.has(key)) continue;
+    const key = faqKey(item.question);
+    if (seen.has(key) || shouldDropFaq(item)) continue;
     seen.add(key);
     out.push(item);
   }

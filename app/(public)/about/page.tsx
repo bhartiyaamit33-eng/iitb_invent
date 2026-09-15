@@ -15,36 +15,36 @@ import {
 } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "What is INVENT (iitbinvent, iitb_invent)?",
+  title: "What is INV.ENT?",
   description:
-    "INVENT (INV.ENT, iitbinvent, iitb_invent) is Innovation and Entrepreneurship at DSSE, IIT Bombay — the public DSSE Day gathering on 31 January.",
+    "INV.ENT is the Entrepreneurship Research and Venture Practice Conference conducted by the Desai Sethi School of Entrepreneurship at IIT Bombay. 30 and 31 January 2027. 30 January is Day Zero.",
   path: "/about",
 });
 
 export default function AboutPage() {
   return (
-    <PublicChrome crumbs={[{ href: "/about", label: "About INVENT" }]}>
+    <PublicChrome crumbs={[{ href: "/about", label: "About INV.ENT" }]}>
       <JsonLd
         data={graphJsonLd(
           websiteJsonLd(),
           organizationJsonLd(),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "About INVENT", path: "/about" },
+            { name: "About INV.ENT", path: "/about" },
           ]),
           {
             "@type": "AboutPage",
-            name: "What is INVENT?",
+            name: "What is INV.ENT?",
             url: absoluteUrl("/about"),
             description: INVENT_DEFINITION,
             mainEntity: {
               "@type": "DefinedTerm",
-              name: "INVENT",
+              name: "INV.ENT",
               alternateName: [
-                "INV.ENT",
+                "INVENT",
                 "iitbinvent",
                 "iitb_invent",
-                "IIT Bombay INVENT",
+                "IIT Bombay INV.ENT",
               ],
               description: INVENT_DEFINITION,
               inDefinedTermSet: "https://iitbinvent.com/",
@@ -57,7 +57,7 @@ export default function AboutPage() {
           IIT Bombay · DSSE
         </p>
         <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-          What is INVENT?
+          What is INV.ENT?
         </h1>
         <p className="mt-6 text-lg leading-8 text-ink">{INVENT_DEFINITION}</p>
         {ABOUT_SECTIONS.map((section) => (
@@ -71,9 +71,9 @@ export default function AboutPage() {
           </section>
         ))}
         <p className="mt-10 text-[17px] leading-7 text-ink-soft">
-          Read{" "}
-          <Link href="/dsse-day">what DSSE Day is</Link>, the{" "}
-          <Link href="/faq">FAQ</Link>, or the{" "}
+          See the{" "}
+          <Link href="/faq">FAQ</Link>, the{" "}
+          <Link href="/conference">call for papers</Link>, or the{" "}
           <Link href="/programme">2027 programme</Link>. School site:{" "}
           <a
             href="https://www.dsse.iitb.ac.in/"

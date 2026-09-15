@@ -34,7 +34,7 @@ export async function generateMetadata({
     title: session.title,
     description:
       session.description?.slice(0, 160) ||
-      `${session.title} at INVENT / DSSE Day, IIT Bombay.`,
+      `${session.title} at INV.ENT, IIT Bombay.`,
     path: `/programme/${slug}`,
   });
 }

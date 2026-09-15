@@ -184,7 +184,7 @@ export function LandingHero({
             </Link>
             <div className="landing-serif justify-self-end text-right leading-none">
               <span className="block whitespace-nowrap text-[clamp(22px,3.4vw,44px)] text-frost">
-                30–31 January
+                30-31 January
               </span>
               <span className="block text-[clamp(16px,2vw,26px)] text-mist">2027</span>
             </div>

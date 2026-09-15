@@ -266,19 +266,19 @@ export function formatInrFromPaise(paise: number): string {
 export function defaultStatusEmailMessage(status: ApplicationStatus): string {
   switch (status) {
     case "SHORTLISTED_PAPER":
-      return "Congratulations — you have been shortlisted to present a paper at the Entrepreneurship Research Conference during Inv.ent 2027 at IIT Bombay.";
+      return "Congratulations. You have been shortlisted to present a paper at INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
     case "SHORTLISTED_POSTER":
-      return "Congratulations — you have been shortlisted for a poster presentation at the Entrepreneurship Research Conference during Inv.ent 2027 at IIT Bombay.";
+      return "Congratulations. You have been shortlisted for a poster presentation at INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
     case "ATTENDEE":
-      return "You are confirmed as an attendee at the Entrepreneurship Research Conference during Inv.ent 2027 at IIT Bombay.";
+      return "You are confirmed as an attendee at INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
     case "WAITLISTED":
-      return "Thank you for applying. You are on the waitlist for the Entrepreneurship Research Conference. We will write again if a place opens.";
+      return "Thank you for applying. You are on the waitlist for INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference. We will write again if a place opens.";
     case "REJECTED":
-      return "Thank you for applying to the Entrepreneurship Research Conference. We are unable to offer a place this year, and we hope to see you at Inv.ent.";
+      return "Thank you for applying to INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference. We are unable to offer a place this year, and we hope to see you at a future edition.";
     case "WITHDRAWN":
       return "Your conference application has been marked as withdrawn. Write to support@iitbinvent.com if this is unexpected.";
     default:
-      return "We have updated the status of your application for the Entrepreneurship Research Conference at Inv.ent 2027.";
+      return "We have updated the status of your application for INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
   }
 }
 

@@ -1,13 +1,13 @@
 /** Final Call for Papers copy for /conference. Poster / Figma desktop wins where drafts disagree. */
 
 export const CFP_OVERVIEW_BEFORE =
-  " invites emerging scholars and researchers to submit their work for presentation at a conference bringing together rigorous ";
+  " is the ";
 
 export const CFP_OVERVIEW_AFTER =
-  ". The conference gives researchers a platform to present new ideas, receive scholarly feedback, build collaborations, and contribute to the growing body of knowledge in entrepreneurship and innovation. It is part of a two-day INV.ENT event by DS School of Entrepreneurship, IIT Bombay, where entrepreneurship researchers, startup founders, VCs, and other ecosystem stakeholders come together.";
+  ". People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice. Emerging scholars are invited to submit work for presentation. Conducted by the Desai Sethi School of Entrepreneurship at IIT Bombay. 30 January is Day Zero. 31 January is the conference day.";
 
 export const CFP_META = [
-  { label: "Presentation date", value: "31 January 2027" },
+  { label: "Conference dates", value: "30-31 January 2027" },
   { label: "Venue", value: "IIT Bombay, Mumbai" },
   { label: "Abstract deadline", value: "15 October 2026" },
 ] as const;
@@ -53,8 +53,8 @@ export const CFP_TIMELINE = [
   },
   {
     id: "conference",
-    kicker: "Conference & workshops",
-    date: "30–31 Jan 2027",
+    kicker: "Conference and workshops",
+    date: "30-31 Jan 2027",
   },
 ] as const;
 

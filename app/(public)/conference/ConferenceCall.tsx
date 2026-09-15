@@ -30,7 +30,7 @@ import type {
   ParticipationCategory,
 } from "@/lib/conference";
 import { CfpTheme } from "./CfpTheme";
-import { SUBMIT_HREF } from "@/lib/landing";
+import { SUBMIT_HREF, TAGLINE } from "@/lib/landing";
 import "./cfp.css";
 
 const inter = Inter({
@@ -188,7 +188,7 @@ export function ConferenceCall({
                 <span className="practice">
                   Entrepreneurship Research
                   <br />
-                  &amp; Practice
+                  and Venture Practice
                 </span>{" "}
                 <span className="conf">Conference</span>
               </p>
@@ -218,7 +218,7 @@ export function ConferenceCall({
             <p className="cfp-lead">
               <strong>IITB INV.ENT</strong>
               {CFP_OVERVIEW_BEFORE}
-              <strong>entrepreneurship research and venture practice</strong>
+              <strong>{TAGLINE}</strong>
               {CFP_OVERVIEW_AFTER}
             </p>
           </div>
@@ -439,7 +439,7 @@ export function ConferenceCall({
           </p>
           <nav aria-label="Site">
             <Link href="/about">About</Link>
-            <Link href="/dsse-day">DSSE Day</Link>
+            <Link href="/">Home</Link>
             <Link href="/faq">FAQ</Link>
             <Link href="/programme">Programme</Link>
             <Link href="/travel">Travel</Link>

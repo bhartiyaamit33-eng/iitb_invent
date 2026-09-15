@@ -31,8 +31,8 @@ export type LandingProps = {
   theme?: LandingThemeName;
 };
 
-export const TAGLINE = "Entrepreneurship Research & Practice Conference";
-export const TAGLINE_LEAD = "Entrepreneurship Research & Practice";
+export const TAGLINE = "Entrepreneurship Research and Venture Practice Conference";
+export const TAGLINE_LEAD = "Entrepreneurship Research and Venture Practice";
 export const TAGLINE_REST = "Conference";
 
 export const SUBMIT_HREF = "/conference#submit";
@@ -56,6 +56,12 @@ export const KEY_DATES: Omit<TimelineItem, "state">[] = [
     kicker: "Acceptance",
     date: "31 Dec 2026",
     at: "2026-12-31",
+  },
+  {
+    id: "day-zero",
+    kicker: "Day Zero",
+    date: "30 Jan 2027",
+    at: "2027-01-30",
   },
   {
     id: "conference",
@@ -83,7 +89,7 @@ export function markTimeline(
 }
 
 export const FALLBACK_STATS: LandingStat[] = [
-  { value: "2014", label: "Board approved the centre. Foundation day locked." },
+  { value: "2014", label: "Board of Governors approved the centre." },
   { value: "5550+", label: "Students through entrepreneurship courses." },
   { value: "1470+", label: "Ventures mentored across cohorts." },
   { value: "670+", label: "Startups touched by the DSSE stack." },
@@ -93,7 +99,7 @@ export const FALLBACK_FAQS: LandingFaq[] = [
   {
     question: "When is INV.ENT 2027?",
     answer:
-      "Sunday 31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay.",
+      "30 and 31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay. 30 January is Day Zero. 31 January is the conference day.",
   },
   {
     question: "Where is the venue?",
@@ -117,7 +123,7 @@ export const PARTICIPATE = [
     title: "Research Papers",
     href: "/submit",
     icon: "paper" as const,
-    body: "Peer sessions where labs show work that can leave the building — methods, evidence, and a concrete next step.",
+    body: "Peer sessions where labs show work that can leave the building: methods, evidence, and a concrete next step.",
   },
   {
     title: "Poster Presentations",
@@ -149,7 +155,7 @@ export const AGENDA = [
   {
     time: "0900",
     title: "Open & badge",
-    body: "Check in with your ticket QR. Meet people before the first talk — directory profiles make names stick.",
+    body: "Check in with your ticket QR. Meet people before the first talk. Directory profiles make names stick.",
   },
   {
     time: "AM",
@@ -159,7 +165,7 @@ export const AGENDA = [
   {
     time: "PM",
     title: "Pitches & ventures",
-    body: "Idea pitching and venture presentations — short, concrete asks. See who is pitching next on the live programme.",
+    body: "Idea pitching and venture presentations: short, concrete asks. See who is pitching next on the live programme.",
   },
   {
     time: "to 1930",

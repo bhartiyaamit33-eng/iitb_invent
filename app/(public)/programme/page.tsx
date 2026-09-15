@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = pageMetadata({
   title: "Programme",
   description:
-    "INVENT 2027 programme — research papers, posters, pitches, and sessions on DSSE Day, 31 January 2027, at IIT Bombay.",
+    "INVENT 2027 programme: research papers, posters, pitches, workshops, and sessions at the Entrepreneurship Research and Venture Practice Conference, 30-31 January 2027, IIT Bombay.",
   path: "/programme",
 });
 

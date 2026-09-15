@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: absoluteUrl(path),
     lastModified,
     changeFrequency: path === "/" ? "weekly" : "monthly",
-    priority: path === "/" ? 1 : path === "/about" || path === "/dsse-day" ? 0.9 : 0.7,
+    priority: path === "/" ? 1 : path === "/about" ? 0.9 : 0.7,
   }));
 
   try {

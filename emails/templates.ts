@@ -202,8 +202,8 @@ export function conferenceApplicationCopyEmail(opts: {
     )
     .join("");
   const thanks = opts.isPaperOrPoster
-    ? "Thank you for submitting your paper or poster to the Entrepreneurship Research Conference"
-    : "Thank you for applying to the Entrepreneurship Research Conference";
+    ? "Thank you for submitting your paper or poster to the Entrepreneurship Research and Venture Practice Conference"
+    : "Thank you for applying to the Entrepreneurship Research and Venture Practice Conference";
   const subject = opts.isPaperOrPoster
     ? `Thank you for submitting — ${opts.eventName}`
     : `Thank you for applying — ${opts.eventName}`;
