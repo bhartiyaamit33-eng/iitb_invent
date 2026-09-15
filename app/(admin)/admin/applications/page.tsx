@@ -3,11 +3,11 @@ import type { ApplicationStatus, ParticipationCategory } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   APPLICATION_STATUS_OPTIONS,
-  DEFAULT_CONFERENCE_FEE_PAISE,
   PARTICIPATION_OPTIONS,
   participationLabel,
   paymentStatusLabel,
   professionalLabel,
+  reviewFeePaise,
 } from "@/lib/conference";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 
@@ -237,7 +237,7 @@ export default async function AdminApplicationsPage({
                       id={a.id}
                       name={a.name}
                       currentStatus={a.status}
-                      feePaise={a.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE}
+                      feePaise={reviewFeePaise(a)}
                       compact
                     />
                   </td>

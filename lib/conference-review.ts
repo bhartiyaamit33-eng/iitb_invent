@@ -5,11 +5,11 @@ import type {
 import { prisma } from "@/lib/db";
 import {
   applicationStatusLabel,
+  conferenceFeePaiseFor,
   formatInrFromPaise,
   statusRequiresPayment,
 } from "@/lib/conference";
 import {
-  conferenceFeePaise,
   conferencePayPath,
   conferencePaymentUrl,
   newConferenceToken,
@@ -57,7 +57,9 @@ export async function reviewConferenceApplication(opts: {
       ...(opts.adminNotes !== undefined ? { adminNotes: opts.adminNotes } : {}),
       paymentStatus: nextPayment,
       paymentAmountPaise: selected
-        ? before.paymentAmountPaise || conferenceFeePaise()
+        ? keepPaid
+          ? before.paymentAmountPaise
+          : conferenceFeePaiseFor(before.professionalCategory)
         : before.paymentAmountPaise,
       paymentToken: before.paymentToken || newConferenceToken(),
     },

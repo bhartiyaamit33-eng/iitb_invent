@@ -2,13 +2,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import {
-  DEFAULT_CONFERENCE_FEE_PAISE,
   applicationStatusLabel,
+  conferenceFeePaiseFor,
+  feeBandForProfessional,
+  feeBandLabel,
+  formatInrFromPaise,
   needsPhdYear,
   participationLabel,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
+  reviewFeePaise,
 } from "@/lib/conference";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
@@ -68,6 +72,10 @@ export default async function AdminApplicationDetailPage({
         application.professionalCategory,
         application.professionalOther,
       ),
+    ],
+    [
+      "Fee band",
+      `${feeBandLabel(feeBandForProfessional(application.professionalCategory))} (${formatInrFromPaise(conferenceFeePaiseFor(application.professionalCategory))})`,
     ],
     ...(needsPhdYear(application.professionalCategory)
       ? ([["PhD year", phdYearLabel(application.phdYear)]] as [string, string][])
@@ -152,9 +160,7 @@ export default async function AdminApplicationDetailPage({
         <ApplicationPaymentPanel
           id={application.id}
           paymentStatus={application.paymentStatus}
-          paymentAmountPaise={
-            application.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE
-          }
+          paymentAmountPaise={reviewFeePaise(application)}
           paymentUrl={conferencePaymentUrl(application.paymentToken)}
           paymentRef={application.paymentRef}
           paidAt={application.paidAt ? istDate(application.paidAt) : null}
@@ -173,9 +179,7 @@ export default async function AdminApplicationDetailPage({
             name={application.name}
             currentStatus={application.status}
             adminNotes={application.adminNotes ?? ""}
-            feePaise={
-              application.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE
-            }
+            feePaise={reviewFeePaise(application)}
           />
         </div>
       </div>

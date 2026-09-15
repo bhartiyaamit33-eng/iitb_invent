@@ -89,7 +89,7 @@ export const CFP_SELECTION = [
   {
     n: "2",
     title: "Selection",
-    body: "Papers are selected for research presentations, and a further set for poster presentations.",
+    body: "Papers are selected for research presentations, and a further set for poster presentations. The registration fee and payment link are sent only after this decision.",
   },
   {
     n: "3",

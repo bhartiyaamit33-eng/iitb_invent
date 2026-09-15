@@ -523,7 +523,7 @@ model ConferenceApplication {
   abstractViewToken String @unique
 
   paymentStatus      ApplicationPaymentStatus @default(NOT_REQUIRED)
-  paymentAmountPaise Int                     @default(300000)
+  paymentAmountPaise Int                     @default(500000)
   paymentToken       String                  @unique
   paymentRef         String?
   paidAt             DateTime?

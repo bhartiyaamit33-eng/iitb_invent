@@ -336,6 +336,21 @@ export function ConferenceCall({
                 </li>
               ))}
             </ol>
+            <p className="cfp-lead cfp-lead-tight" style={{ marginTop: "1.5rem" }}>
+              After organisers select you for a paper, a poster, or as an
+              attendee, you receive the registration fee for your category and a
+              personal IIT Bombay Online Pay link. The amount is the same
+              whether you present or attend:
+            </p>
+            <ul
+              className="cfp-guidelines"
+              data-testid="conference-fee-bands"
+              style={{ marginTop: "0.75rem" }}
+            >
+              <li>Students / research scholars — ₹5,000</li>
+              <li>Faculty / professors — ₹10,000</li>
+              <li>Corporate / industry — ₹20,000</li>
+            </ul>
           </div>
         </section>
 

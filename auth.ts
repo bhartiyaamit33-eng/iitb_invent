@@ -8,6 +8,7 @@ import type { Provider } from "next-auth/providers";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { ensureAttendeeReady } from "@/lib/auth/attendee";
+import { sendSignupThankYouForUser } from "@/lib/email/transactions";
 
 const providers: Provider[] = [
   Credentials({
@@ -118,7 +119,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   events: {
     async createUser({ user }) {
-      if (user.id) await ensureAttendeeReady(user.id);
+      if (!user.id) return;
+      await ensureAttendeeReady(user.id);
+      void sendSignupThankYouForUser(user.id).catch(() => undefined);
     },
   },
 });

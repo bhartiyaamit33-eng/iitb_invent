@@ -1,4 +1,6 @@
 import { sendEmail } from "@/lib/email/ses";
+import { prisma } from "@/lib/db";
+import { siteOrigin } from "@/lib/ticket";
 import {
   accountCreatedEmail,
   conferenceApplicationCopyEmail,
@@ -29,6 +31,39 @@ export async function sendAccountCreated(opts: {
     actorId: opts.userId ?? null,
     entityType: "User",
     entityId: opts.userId ?? null,
+  });
+}
+
+/** Thank-you-for-registering after an account exists (email signup or OAuth). */
+export async function sendSignupThankYouForUser(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, name: true },
+  });
+  if (!user?.email) {
+    return { ok: false as const, error: "User has no email" };
+  }
+
+  const edition = await prisma.edition.findFirst({
+    where: { isCurrent: true },
+  });
+  const registration = edition
+    ? await prisma.registration.findUnique({
+        where: {
+          userId_editionId: { userId: user.id, editionId: edition.id },
+        },
+        select: { ticketCode: true },
+      })
+    : null;
+
+  return sendAccountCreated({
+    to: user.email,
+    name: user.name?.trim() || "there",
+    editionName: edition?.name ?? null,
+    dashboardUrl: `${siteOrigin()}/dashboard`,
+    ticketCode: registration?.ticketCode ?? null,
+    eventDate: edition ? "31 January 2027" : null,
+    userId: user.id,
   });
 }
 
@@ -133,6 +168,7 @@ export async function sendConferenceApplicationCopy(opts: {
   eventName: string;
   userId?: string | null;
   applicationId?: string;
+  isPaperOrPoster?: boolean;
 }) {
   const tpl = conferenceApplicationCopyEmail(opts);
   return sendEmail({
