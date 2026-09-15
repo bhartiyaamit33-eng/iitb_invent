@@ -14,7 +14,7 @@ import {
 } from "@/lib/payu";
 
 export const CONFERENCE_PAYU_PRODUCT =
-  "Inv.ent Research Conference registration";
+  "IITB INV.ENT conference registration";
 
 export type PayUCheckout = {
   action: string;

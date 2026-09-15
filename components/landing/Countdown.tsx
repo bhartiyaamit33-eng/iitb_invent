@@ -18,7 +18,7 @@ export function Countdown() {
       const now = Date.now();
       if (now >= END) {
         setLabel("ENDED");
-        setTitle("INV.ENT day ended 31 Jan 2027 · 19:30 IST");
+        setTitle("IITB INV.ENT day ended 31 Jan 2027 · 19:30 IST");
         return;
       }
       if (now >= START) {

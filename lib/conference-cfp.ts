@@ -1,10 +1,7 @@
 /** Final Call for Papers copy for /conference. Poster / Figma desktop wins where drafts disagree. */
 
-export const CFP_OVERVIEW_BEFORE =
-  " is the ";
-
-export const CFP_OVERVIEW_AFTER =
-  ". People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice. Emerging scholars are invited to submit work for presentation. Conducted by the Desai Sethi School of Entrepreneurship at IIT Bombay. 30 January is Day Zero. 31 January is the conference day.";
+export const CFP_OVERVIEW =
+  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice. Emerging scholars are invited to submit work for presentation. Conference dates: 30-31 January 2027.";
 
 export const CFP_META = [
   { label: "Conference dates", value: "30-31 January 2027" },

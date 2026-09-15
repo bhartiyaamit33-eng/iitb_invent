@@ -109,7 +109,7 @@ export async function reviewConferenceApplication(opts: {
     amountLabel,
     paymentUrl: paymentUrl ?? "",
     dashboardUrl: `${siteOrigin()}/dashboard`,
-    eventName: "Inv.ent 2027 · Research Conference",
+    eventName: "IITB INV.ENT",
     userId: after.userId,
     applicationId: after.id,
   });

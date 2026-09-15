@@ -88,7 +88,7 @@ export default async function AdminApplicationDetailPage({
         application.participationOther,
       ),
     ],
-    ["Proposed title", application.paperTitle ?? "—"],
+    ["Proposed title", application.paperTitle ?? "-"],
     ["Send copy of responses", application.sendCopy ? "Yes" : "No"],
     ["Submitted", istDate(application.createdAt)],
     ["Updated", istDate(application.updatedAt)],
@@ -277,19 +277,19 @@ export default async function AdminApplicationDetailPage({
                     </div>
                     <div>
                       <dt className="text-xs uppercase text-mute">Score</dt>
-                      <dd>{review.score ?? "—"} / 10</dd>
+                      <dd>{review.score ?? "-"} / 10</dd>
                     </div>
                     <div>
                       <dt className="text-xs uppercase text-mute">Expertise</dt>
-                      <dd>{review.expertise ?? "—"} / 5</dd>
+                      <dd>{review.expertise ?? "-"} / 5</dd>
                     </div>
                     <div className="sm:col-span-3">
                       <dt className="text-xs uppercase text-mute">Author-facing comments</dt>
-                      <dd className="whitespace-pre-wrap">{review.publicComments || "—"}</dd>
+                      <dd className="whitespace-pre-wrap">{review.publicComments || "-"}</dd>
                     </div>
                     <div className="sm:col-span-3">
                       <dt className="text-xs uppercase text-mute">Confidential committee comments</dt>
-                      <dd className="whitespace-pre-wrap">{review.confidentialComments || "—"}</dd>
+                      <dd className="whitespace-pre-wrap">{review.confidentialComments || "-"}</dd>
                     </div>
                   </dl>
                 ) : null}

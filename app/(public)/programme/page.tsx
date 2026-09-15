@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = pageMetadata({
   title: "Programme",
   description:
-    "INVENT 2027 programme: research papers, posters, pitches, workshops, and sessions at the Entrepreneurship Research and Venture Practice Conference, 30-31 January 2027, IIT Bombay.",
+    "IITB INV.ENT 2027 programme: research papers, posters, pitches, workshops, and sessions, 30-31 January 2027, IIT Bombay.",
   path: "/programme",
 });
 
@@ -72,7 +72,7 @@ export default async function ProgrammePage() {
         Programme
       </h1>
       <p className="mt-3 text-ink-soft">
-        {edition.venueName}. RSVP for capped sessions — waitlist opens when full.
+        {edition.venueName}. RSVP for capped sessions - waitlist opens when full.
       </p>
       <p className="mt-2 text-sm text-mute">
         <Link href="/" className="underline-offset-2 hover:underline">
@@ -138,7 +138,7 @@ export default async function ProgrammePage() {
                 <span className="font-semibold text-teal-deep">
                   {formatIstRange(s.startsAt, s.endsAt)}
                 </span>{" "}
-                — {s.title}
+                - {s.title}
                 {s.room ? ` · ${s.room}` : ""}
               </div>
             ))

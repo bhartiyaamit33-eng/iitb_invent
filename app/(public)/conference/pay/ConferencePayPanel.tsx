@@ -123,7 +123,7 @@ export function ConferencePayPanel({
               data-testid="onlinepay-campus-only"
             >
               TEST checkout must be finished on the IITB network or VPN.
-              Clicking Pay will keep you on INVENT and give you a gateway
+              Clicking Pay will keep you on IITB INV.ENT and give you a gateway
               link. Do not wait for a new tab that never loads.
             </p>
           ) : null}

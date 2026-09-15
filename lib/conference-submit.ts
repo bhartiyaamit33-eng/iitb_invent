@@ -72,8 +72,12 @@ async function withTimeout<T>(
 export async function processConferenceApplication(
   formData: FormData,
 ): Promise<ConferenceSubmitResult> {
-  const name = str(formData, "name");
-  const email = str(formData, "email").toLowerCase();
+  const sessionUser = await getCurrentUser();
+  if (!sessionUser) {
+    return { error: "Please log in to submit an abstract." };
+  }
+  const email = sessionUser.email.trim().toLowerCase();
+  const name = str(formData, "name") || sessionUser.name.trim();
   const phone = str(formData, "phone");
   const institution = str(formData, "institution");
   const professional = parseProfessional(str(formData, "professionalCategory"));
@@ -150,14 +154,7 @@ export async function processConferenceApplication(
     };
   }
 
-  const sessionUser = await getCurrentUser();
-  const linkedUser =
-    sessionUser && sessionUser.email === email
-      ? sessionUser
-      : await prisma.user.findUnique({
-          where: { email },
-          select: { id: true },
-        });
+  const linkedUser = sessionUser;
 
   const feePaise = conferenceFeePaiseFor(professional);
   const existing = await prisma.conferenceApplication.findUnique({
@@ -238,7 +235,7 @@ export async function processConferenceApplication(
     where: { id: application.id },
   });
 
-  const eventName = `${edition.name} · Research Conference`;
+  const eventName = "IITB INV.ENT";
   const payload = {
     name: saved.name,
     email: application.email,
@@ -258,6 +255,7 @@ export async function processConferenceApplication(
     abstractFileName: saved.abstractFileName ?? "",
     eventName,
     isPaperOrPoster: needsAbstract(saved.participationCategory),
+    participationCategory: saved.participationCategory,
   };
 
   void sendConferenceApplicationCopy({

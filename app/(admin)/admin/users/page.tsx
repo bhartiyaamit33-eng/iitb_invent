@@ -133,7 +133,7 @@ export default async function AdminUsersPage({
                   </form>
                   <code className="mt-1 block text-[10px] text-mute">{u.id}</code>
                 </td>
-                <td className="px-4 py-3">{u.profile?.personaType ?? "—"}</td>
+                <td className="px-4 py-3">{u.profile?.personaType ?? "-"}</td>
                 <td className="px-4 py-3">{u.profile?.completeness ?? 0}</td>
                 <td className="px-4 py-3">
                   {u.profile?.directoryOptIn ? "on" : "off"}
@@ -141,7 +141,7 @@ export default async function AdminUsersPage({
                 <td className="px-4 py-3 text-ink-soft">
                   {u.registrations
                     .map((r) => `${r.edition.year} (${r.status})`)
-                    .join(", ") || "—"}
+                    .join(", ") || "-"}
                 </td>
                 <td className="px-4 py-3 text-xs text-mute">
                   {u.createdAt.toISOString().slice(0, 10)}

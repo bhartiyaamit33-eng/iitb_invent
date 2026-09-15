@@ -8,7 +8,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Log in",
-  description: "Log in to INV.ENT (iitbinvent.com) for the conference at IIT Bombay.",
+  description: "Log in to IITB INV.ENT (iitbinvent.com) for the conference at IIT Bombay.",
   path: "/login",
 });
 
@@ -73,7 +73,7 @@ export default async function LoginPage({
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Inv.ent · Attendee sign in
+        IITB INV.ENT · Attendee sign in
       </p>
       <h1 className="mt-3 font-display text-4xl tracking-wide text-teal-deep">
         Login
@@ -171,7 +171,7 @@ export default async function LoginPage({
         </Link>
         {" · "}
         <Link href="/" className="text-teal-deep underline-offset-2 hover:underline">
-          ← Back to Inv.ent
+          ← Back to IITB INV.ENT
         </Link>
       </p>
     </main>

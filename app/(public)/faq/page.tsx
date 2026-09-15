@@ -11,9 +11,9 @@ import {
 } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "INV.ENT FAQ",
+  title: "IITB INV.ENT FAQ",
   description:
-    "Answers to what INV.ENT is, when the Entrepreneurship Research and Venture Practice Conference is, what Day Zero means, and how to register at IIT Bombay.",
+    "Answers to what IITB INV.ENT is, when the conference is, and how to register at IIT Bombay.",
   path: "/faq",
 });
 
@@ -32,13 +32,13 @@ export default function FaqPage() {
       />
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-          INV.ENT · DSSE · IIT Bombay
+          IITB INV.ENT · DSSE · IIT Bombay
         </p>
         <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
           Frequently asked questions
         </h1>
         <p className="mt-4 text-[17px] leading-7 text-ink-soft">
-          Direct answers for people asking what INV.ENT is, when it is, and how
+          Direct answers for people asking what IITB INV.ENT is, when it is, and how
           to register at IIT Bombay. The same facts appear on{" "}
           <Link href="/about">About</Link>.
         </p>

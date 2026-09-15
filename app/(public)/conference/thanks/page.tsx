@@ -23,13 +23,13 @@ export default async function ConferenceThanksPage() {
       </h1>
       <p className="mt-4 text-ink-soft">
         Thank you. Organisers at the Desai Sethi School of Entrepreneurship will
-        review your submission for Inv.ent 2027. A confirmation email is on its
-        way to the address you entered.
+        review your submission for IITB INV.ENT 2027. A confirmation email is on
+        its way to the address you entered.
       </p>
       <p className="mt-3 text-ink-soft">
         When you are selected for a paper, a poster, or as an attendee, you will
         see the registration fee for your category and a personal IIT Bombay
-        Online Pay link on your dashboard — and in email. You will not fill the
+        Online Pay link on your dashboard and in email. You will not fill the
         application form again.
       </p>
       <p className="mt-3 text-sm text-mute">

@@ -30,8 +30,8 @@ export function ProfileSavedBanner({
         <p className="mt-0.5 text-sm text-ink-soft">
           Your profile is <strong className="text-ink">{percent}% complete</strong>
           {percent < 100
-            ? " — add LinkedIn, a photo, and a headline to reach 100%."
-            : " — nice work."}
+            ? " - add LinkedIn, a photo, and a headline to reach 100%."
+            : " - nice work."}
         </p>
       </div>
       <div className="h-1.5 bg-paper">

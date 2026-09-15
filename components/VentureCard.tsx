@@ -142,7 +142,7 @@ export function VentureCard({ venture }: { venture: VentureCardData }) {
                 </div>
               ) : null}
               <p className="mt-2 text-xs text-mute">
-                Stay on Inv.ent to read first — open the site only when you want
+                Stay on IITB INV.ENT to read first - open the site only when you want
                 to leave.
               </p>
             </div>

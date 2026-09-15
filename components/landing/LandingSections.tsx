@@ -53,7 +53,7 @@ export function LandingSections({
     <>
       <div className="overflow-hidden whitespace-nowrap border-y border-white/10 bg-navy py-3.5 text-xs font-semibold tracking-[0.16em] text-mist uppercase">
         <span className="inline-block animate-[marquee_32s_linear_infinite] pl-[100%]">
-          INV.ENT 2027 · ENTREPRENEURSHIP RESEARCH AND VENTURE PRACTICE CONFERENCE · 30-31 JANUARY · DAY ZERO 30 JANUARY · IIT BOMBAY · SUPPORT@IITBINVENT.COM ·
+          IITB INV.ENT 2027 · ENTREPRENEURSHIP RESEARCH AND PRACTICE CONFERENCE · 30-31 JANUARY · IIT BOMBAY · SUPPORT@IITBINVENT.COM ·
         </span>
       </div>
 
@@ -71,17 +71,17 @@ export function LandingSections({
                 venture practice.
               </h2>
               <p className="lead">
-                INV.ENT is the Entrepreneurship Research and Venture Practice Conference conducted by the Desai Sethi School of Entrepreneurship at IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on actual entrepreneurship and venture practice.
+                IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on actual entrepreneurship and venture practice.
               </p>
               <p className="lead">
                 It exists so ideas do not die in labs: students, faculty, founders, investors, and operators share the campus programme and then stay connected through the year.
               </p>
               <p className="lead">
-                On 31 January 2014, IIT Bombay’s Board of Governors approved what became DSSE. On this occasion we celebrate INV.ENT, where entrepreneurship research meets venture practice, with speaker sessions, poster presentations, workshops, venture pitches, and the conversations that turn prototypes into companies.
+                On 31 January 2014, IIT Bombay’s Board of Governors approved what became DSSE. On this occasion we celebrate IITB INV.ENT, where entrepreneurship research meets venture practice, with speaker sessions, poster presentations, workshops, venture pitches, and the conversations that turn prototypes into companies.
               </p>
               <p className="lead">
-                INV.ENT 2027 is on 30 and 31 January. 30 January is Day Zero. 31 January is the conference day on campus.{" "}
-                <Link href="/about">Read what INV.ENT is</Link>.
+                IITB INV.ENT 2027 is on 30-31 January on campus.{" "}
+                <Link href="/about">Read what IITB INV.ENT is</Link>.
               </p>
               <div className="cta-row" data-testid="cta-signup">
                 <Link className="btn" href={signedInName ? "/dashboard" : "/signup"}>
@@ -102,7 +102,7 @@ export function LandingSections({
             <p className="landing-kicker">Research + practice</p>
             <h2 data-spark-node>One conference. Two languages.</h2>
             <p className="lead">
-              Faculty and labs bring evidence. Founders and operators bring the ask. INV.ENT holds both in the same visual and the same room.
+              Faculty and labs bring evidence. Founders and operators bring the ask. IITB INV.ENT holds both in the same visual and the same room.
             </p>
           </Reveal>
         </div>
@@ -165,7 +165,7 @@ export function LandingSections({
               </p>
               <h2 data-spark-node>Submissions</h2>
               <p className="lead">
-                INV.ENT invites research papers, poster presentations, and workshops from students, faculty, and practitioners. After organisers accept a contribution, you receive an email with a payment link. Fees collect through IIT Bombay Online Pay into an IITB account.
+                IITB INV.ENT invites research papers, poster presentations, and workshops from students, faculty, and practitioners. After organisers accept a contribution, you receive an email with a payment link. Fees collect through IIT Bombay Online Pay into an IITB account.
               </p>
               <p className="lead">
                 Startup showcases and innovation demos live in the venture directory. Case studies may be submitted as papers.
@@ -208,7 +208,7 @@ export function LandingSections({
               <p className="landing-kicker section-kicker">The conference · 30-31 Jan 2027</p>
               <h2 data-spark-node>What happens on campus</h2>
               <p className="lead">
-                INV.ENT 2027 runs 30 and 31 January at the DSSE Building. 30 January is Day Zero. 31 January is the conference day: doors from 9:00 IST, sessions, workshops, and events through the evening. RSVP on the programme for capped rooms; waitlists open when full.
+                IITB INV.ENT 2027 runs 30-31 January at the DSSE Building. Doors from 9:00 IST, sessions, workshops, and events through the evening. RSVP on the programme for capped rooms; waitlists open when full.
               </p>
               <div className="mt-4 border-t border-white/10">
                 {AGENDA.map((row) => (
@@ -269,7 +269,7 @@ export function LandingSections({
             <p className="landing-kicker">Startup directory</p>
             <h2 data-spark-node>Startups, projects &amp; ideas</h2>
             <p className="lead">
-              Browse what IIT Bombay founders and labs are building: logos, short pitches, and links, without leaving INV.ENT. Open a website only when you choose. Add your own from the dashboard after you sign in.
+              Browse what IIT Bombay founders and labs are building: logos, short pitches, and links, without leaving IITB INV.ENT. Open a website only when you choose. Add your own from the dashboard after you sign in.
             </p>
             <div className="mt-8">
               <ImagePanel
@@ -335,7 +335,7 @@ export function LandingSections({
                 Actually connect.
               </h2>
               <p className="lead">
-                INV.ENT is as much a network as a conference. Sign in with name and email (Google optional), complete a short profile (LinkedIn, persona, what you are building), and opt into the attendee directory. Browse who is pitching, speaking, or sitting next to you. Send a LinkedIn note or an intro request without friction.
+                IITB INV.ENT is as much a network as a conference. Sign in with name and email (Google optional), complete a short profile (LinkedIn, persona, what you are building), and opt into the attendee directory. Browse who is pitching, speaking, or sitting next to you. Send a LinkedIn note or an intro request without friction.
               </p>
               <div className="cta-row" data-testid="cta-register">
                 <Link className="btn" href={accountHref} data-spark-node>
@@ -366,7 +366,7 @@ export function LandingSections({
                 All questions
               </Link>
               <Link className="btn ghost" href="/about">
-                What is INV.ENT
+                What is IITB INV.ENT
               </Link>
               <Link className="btn ghost" href="/conference">
                 Call for papers

@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Code of conduct",
   description:
-    "Professional standards for INV.ENT at IIT Bombay. Report issues to support@iitbinvent.com.",
+    "Professional standards for IITB INV.ENT at IIT Bombay. Report issues to support@iitbinvent.com.",
   path: "/code-of-conduct",
 });
 

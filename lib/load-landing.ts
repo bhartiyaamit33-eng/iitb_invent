@@ -103,7 +103,7 @@ function faqKey(question: string) {
 
 function shouldDropFaq(item: LandingFaq) {
   const blob = `${item.question} ${item.answer}`.toLowerCase();
-  if (blob.includes("dsse day")) return true;
+  if (blob.includes("day zero")) return true;
   if (blob.includes("foundation-day") || blob.includes("foundation day")) return true;
   if (blob.includes("annual day")) return true;
   if (/\biitbinvent\b|\biitb_invent\b/i.test(item.question)) return true;

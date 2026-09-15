@@ -43,14 +43,14 @@ export default async function VenturesDirectoryPage({
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        IIT Bombay · Inv.ent
+        IIT Bombay · IITB INV.ENT
       </p>
       <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
         Startups &amp; projects
       </h1>
       <p className="mt-3 text-ink-soft">
         Explore startups, projects, and ideas from the community. Read about
-        them here first — open external links only when you choose.
+        them here first - open external links only when you choose.
       </p>
       <p className="mt-2 text-sm text-mute">
         <Link href="/" className="underline-offset-2 hover:underline">

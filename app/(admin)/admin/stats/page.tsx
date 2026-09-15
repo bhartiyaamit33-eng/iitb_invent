@@ -20,7 +20,7 @@ export default async function AdminStatsPage() {
         <a href="https://www.dsse.iitb.ac.in/" className="underline">
           dsse.iitb.ac.in
         </a>{" "}
-        — edit freely for the homepage strip.
+        - edit freely for the homepage strip.
       </p>
 
       <form action={createStatAction} className="mt-8 flex flex-wrap gap-3 rounded-xl border border-line bg-white p-5">

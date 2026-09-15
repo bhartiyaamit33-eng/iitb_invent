@@ -30,8 +30,8 @@ export const PROFESSIONAL_OPTIONS: {
 ];
 
 export const PHD_YEAR_OPTIONS: { value: PhdYear; label: string }[] = [
-  { value: "YEARS_1_3", label: "1–3" },
-  { value: "YEARS_4_5", label: "4–5" },
+  { value: "YEARS_1_3", label: "1-3" },
+  { value: "YEARS_4_5", label: "4-5" },
   { value: "YEAR_6_PLUS", label: "6th year or above" },
   { value: "THESIS_SUBMITTED", label: "Thesis submitted" },
 ];
@@ -63,8 +63,8 @@ export const APPLICATION_STATUS_OPTIONS: {
   label: string;
 }[] = [
   { value: "RECEIVED", label: "Received" },
-  { value: "SHORTLISTED_PAPER", label: "Shortlisted — paper" },
-  { value: "SHORTLISTED_POSTER", label: "Shortlisted — poster" },
+  { value: "SHORTLISTED_PAPER", label: "Shortlisted: paper" },
+  { value: "SHORTLISTED_POSTER", label: "Shortlisted: poster" },
   { value: "ATTENDEE", label: "Attendee" },
   { value: "WAITLISTED", label: "Waitlisted" },
   { value: "REJECTED", label: "Not selected" },
@@ -77,7 +77,7 @@ export const PAYMENT_STATUS_OPTIONS: {
 }[] = [
   { value: "NOT_REQUIRED", label: "Not required" },
   { value: "UNPAID", label: "Unpaid" },
-  { value: "REPORTED", label: "Reported — confirm" },
+  { value: "REPORTED", label: "Reported: confirm" },
   { value: "PAID", label: "Paid" },
   { value: "WAIVED", label: "Waived" },
 ];
@@ -146,12 +146,12 @@ export function professionalLabel(
 }
 
 export function phdYearLabel(value: PhdYear | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not provided";
   return PHD_YEAR_OPTIONS.find((o) => o.value === value)?.label ?? value;
 }
 
 export function postdocLabel(value: PostdocSeeking | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not provided";
   return POSTDOC_OPTIONS.find((o) => o.value === value)?.label ?? value;
 }
 
@@ -266,19 +266,19 @@ export function formatInrFromPaise(paise: number): string {
 export function defaultStatusEmailMessage(status: ApplicationStatus): string {
   switch (status) {
     case "SHORTLISTED_PAPER":
-      return "Congratulations. You have been shortlisted to present a paper at INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
+      return "Congratulations. You have been shortlisted to present a paper at IITB INV.ENT 2027, an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay.";
     case "SHORTLISTED_POSTER":
-      return "Congratulations. You have been shortlisted for a poster presentation at INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
+      return "Congratulations. You have been shortlisted for a poster presentation at IITB INV.ENT 2027, an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay.";
     case "ATTENDEE":
-      return "You are confirmed as an attendee at INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
+      return "You are confirmed as an attendee at IITB INV.ENT 2027, an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay.";
     case "WAITLISTED":
-      return "Thank you for applying. You are on the waitlist for INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference. We will write again if a place opens.";
+      return "Thank you for applying. You are on the waitlist for IITB INV.ENT 2027. We will write again if a place opens.";
     case "REJECTED":
-      return "Thank you for applying to INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference. We are unable to offer a place this year, and we hope to see you at a future edition.";
+      return "Thank you for applying to IITB INV.ENT 2027. We are unable to offer a place this year, and we hope to see you at a future edition.";
     case "WITHDRAWN":
       return "Your conference application has been marked as withdrawn. Write to support@iitbinvent.com if this is unexpected.";
     default:
-      return "We have updated the status of your application for INV.ENT 2027, the Entrepreneurship Research and Venture Practice Conference at IIT Bombay.";
+      return "We have updated the status of your application for IITB INV.ENT 2027 at IIT Bombay.";
   }
 }
 

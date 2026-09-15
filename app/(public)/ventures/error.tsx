@@ -17,7 +17,7 @@ export default function VenturesError({
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        IIT Bombay · Inv.ent
+        IIT Bombay · IITB INV.ENT
       </p>
       <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
         Startups &amp; projects

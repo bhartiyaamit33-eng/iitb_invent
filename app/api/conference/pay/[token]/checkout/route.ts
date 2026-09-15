@@ -72,11 +72,11 @@ function onlinePayHandoffHtml(opts: {
   </style>
 </head>
 <body>
-  <p>INVENT · Research Conference</p>
+  <p>IITB INV.ENT</p>
   <h1>IIT Bombay Online Pay</h1>
   ${testCopy}
   <p><a class="btn" href="${opUrl}" referrerpolicy="origin" data-testid="onlinepay-handoff">Continue to IIT Bombay Online Pay</a></p>
-  <p><a class="back" href="${backUrl}">← Back to the INVENT payment page</a></p>
+  <p><a class="back" href="${backUrl}">← Back to the IITB INV.ENT payment page</a></p>
   <script>
     window.setTimeout(function () {
       window.location.assign(${JSON.stringify(opts.opUrl)});

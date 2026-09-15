@@ -47,7 +47,7 @@ export default async function AdminOverviewPage() {
       </h1>
       <p className="mt-3 max-w-2xl text-ink-soft">
         Current edition:{" "}
-        <strong className="text-ink">{edition?.name ?? "—"}</strong>. Edit the
+        <strong className="text-ink">{edition?.name ?? "-"}</strong>. Edit the
         programme, speakers, site copy, conference applications, and every
         registered user from the nav above.
       </p>

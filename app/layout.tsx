@@ -21,14 +21,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(originForSeo()),
   title: {
     default: SITE_NAME_LONG,
-    template: "%s · INV.ENT · IIT Bombay",
+    template: "%s · IITB INV.ENT",
   },
   description: DEFAULT_DESCRIPTION,
-  applicationName: "INV.ENT",
+  applicationName: "IITB INV.ENT",
   authors: [{ name: "Desai Sethi School of Entrepreneurship, IIT Bombay" }],
   creator: "DSSE, IIT Bombay",
   category: "education",
   keywords: [
+    "IITB INV.ENT",
     "INV.ENT",
     "INVENT",
     "iitbinvent",

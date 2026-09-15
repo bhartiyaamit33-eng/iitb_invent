@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { CANONICAL_FAQS } from "@/lib/seo-content";
 
-export const SITE_NAME = "INV.ENT";
-export const SITE_NAME_LONG = "INV.ENT · IIT Bombay";
+export const SITE_NAME = "IITB INV.ENT";
+export const SITE_NAME_LONG = "IITB INV.ENT · IIT Bombay";
 export const SITE_TAGLINE =
   "Where entrepreneurship research meets venture practice";
 
@@ -16,10 +16,10 @@ export const ALTERNATE_NAMES = [
 ] as const;
 
 export const DEFAULT_DESCRIPTION =
-  "INV.ENT is the Entrepreneurship Research and Venture Practice Conference conducted by the Desai Sethi School of Entrepreneurship (DSSE) at IIT Bombay. 30 and 31 January 2027 at the DSSE Building, Powai, Mumbai. 30 January is Day Zero.";
+  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027 at the DSSE Building, Powai, Mumbai.";
 
 export const EVENT_2027 = {
-  name: "INV.ENT 2027",
+  name: "IITB INV.ENT 2027",
   start: "2027-01-30T09:00:00+05:30",
   end: "2027-01-31T19:30:00+05:30",
   timezone: "Asia/Kolkata",
@@ -135,7 +135,7 @@ export function organizationJsonLd() {
     "@id": `${origin}/#organization`,
     name: SITE_NAME,
     legalName:
-      "INV.ENT · Desai Sethi School of Entrepreneurship, IIT Bombay",
+      "IITB INV.ENT · Desai Sethi School of Entrepreneurship, IIT Bombay",
     alternateName: [...ALTERNATE_NAMES],
     url: `${origin}/`,
     email: "support@iitbinvent.com",

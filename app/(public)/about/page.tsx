@@ -15,31 +15,31 @@ import {
 } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "What is INV.ENT?",
+  title: "What is IITB INV.ENT?",
   description:
-    "INV.ENT is the Entrepreneurship Research and Venture Practice Conference conducted by the Desai Sethi School of Entrepreneurship at IIT Bombay. 30 and 31 January 2027. 30 January is Day Zero.",
+    "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027.",
   path: "/about",
 });
 
 export default function AboutPage() {
   return (
-    <PublicChrome crumbs={[{ href: "/about", label: "About INV.ENT" }]}>
+    <PublicChrome crumbs={[{ href: "/about", label: "About IITB INV.ENT" }]}>
       <JsonLd
         data={graphJsonLd(
           websiteJsonLd(),
           organizationJsonLd(),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "About INV.ENT", path: "/about" },
+            { name: "About IITB INV.ENT", path: "/about" },
           ]),
           {
             "@type": "AboutPage",
-            name: "What is INV.ENT?",
+            name: "What is IITB INV.ENT?",
             url: absoluteUrl("/about"),
             description: INVENT_DEFINITION,
             mainEntity: {
               "@type": "DefinedTerm",
-              name: "INV.ENT",
+              name: "IITB INV.ENT",
               alternateName: [
                 "INVENT",
                 "iitbinvent",
@@ -57,7 +57,7 @@ export default function AboutPage() {
           IIT Bombay · DSSE
         </p>
         <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-          What is INV.ENT?
+          What is IITB INV.ENT?
         </h1>
         <p className="mt-6 text-lg leading-8 text-ink">{INVENT_DEFINITION}</p>
         {ABOUT_SECTIONS.map((section) => (

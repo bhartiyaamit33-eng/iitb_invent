@@ -16,8 +16,7 @@ import {
   CFP_APPLICANTS,
   CFP_GUIDELINE_POINTS,
   CFP_META,
-  CFP_OVERVIEW_AFTER,
-  CFP_OVERVIEW_BEFORE,
+  CFP_OVERVIEW,
   CFP_RESEARCH_AREAS,
   CFP_SELECTION,
   CFP_STAY,
@@ -30,7 +29,7 @@ import type {
   ParticipationCategory,
 } from "@/lib/conference";
 import { CfpTheme } from "./CfpTheme";
-import { SUBMIT_HREF, TAGLINE } from "@/lib/landing";
+import { SUBMIT_HREF } from "@/lib/landing";
 import "./cfp.css";
 
 const inter = Inter({
@@ -215,12 +214,7 @@ export function ConferenceCall({
                 </div>
               ))}
             </dl>
-            <p className="cfp-lead">
-              <strong>IITB INV.ENT</strong>
-              {CFP_OVERVIEW_BEFORE}
-              <strong>{TAGLINE}</strong>
-              {CFP_OVERVIEW_AFTER}
-            </p>
+            <p className="cfp-lead">{CFP_OVERVIEW}</p>
           </div>
         </section>
 
@@ -347,9 +341,9 @@ export function ConferenceCall({
               data-testid="conference-fee-bands"
               style={{ marginTop: "0.75rem" }}
             >
-              <li>Students / research scholars — ₹5,000</li>
-              <li>Faculty / professors — ₹10,000</li>
-              <li>Corporate / industry — ₹20,000</li>
+              <li>Students / research scholars: ₹5,000</li>
+              <li>Faculty / professors: ₹10,000</li>
+              <li>Corporate / industry: ₹20,000</li>
             </ul>
           </div>
         </section>

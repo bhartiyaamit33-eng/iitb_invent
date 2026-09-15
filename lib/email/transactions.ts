@@ -17,6 +17,7 @@ export async function sendAccountCreated(opts: {
   name: string;
   editionName?: string | null;
   dashboardUrl: string;
+  applyUrl?: string;
   ticketCode?: string | null;
   eventDate?: string | null;
   userId?: string;
@@ -34,7 +35,7 @@ export async function sendAccountCreated(opts: {
   });
 }
 
-/** Thank-you-for-registering after an account exists (email signup or OAuth). */
+/** Account-created note after email signup or OAuth. Not an event place. */
 export async function sendSignupThankYouForUser(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -44,25 +45,12 @@ export async function sendSignupThankYouForUser(userId: string) {
     return { ok: false as const, error: "User has no email" };
   }
 
-  const edition = await prisma.edition.findFirst({
-    where: { isCurrent: true },
-  });
-  const registration = edition
-    ? await prisma.registration.findUnique({
-        where: {
-          userId_editionId: { userId: user.id, editionId: edition.id },
-        },
-        select: { ticketCode: true },
-      })
-    : null;
-
+  const origin = siteOrigin();
   return sendAccountCreated({
     to: user.email,
     name: user.name?.trim() || "there",
-    editionName: edition?.name ?? null,
-    dashboardUrl: `${siteOrigin()}/dashboard`,
-    ticketCode: registration?.ticketCode ?? null,
-    eventDate: edition ? "31 January 2027" : null,
+    dashboardUrl: `${origin}/dashboard`,
+    applyUrl: `${origin}/conference`,
     userId: user.id,
   });
 }
@@ -169,6 +157,7 @@ export async function sendConferenceApplicationCopy(opts: {
   userId?: string | null;
   applicationId?: string;
   isPaperOrPoster?: boolean;
+  participationCategory?: string;
 }) {
   const tpl = conferenceApplicationCopyEmail(opts);
   return sendEmail({
