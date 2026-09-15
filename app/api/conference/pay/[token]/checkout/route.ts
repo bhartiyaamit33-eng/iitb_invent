@@ -6,6 +6,7 @@ import { isOnlinePayConfigured } from "@/lib/onlinepay";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import {
   CONFERENCE_TOKEN_COOKIE,
+  applicationFeeDue,
   conferenceCookieOptions,
 } from "@/lib/conference-access";
 
@@ -102,7 +103,7 @@ async function startCheckout(
   ) {
     return redirectToPay(token, "already");
   }
-  if (application.paymentStatus === "NOT_REQUIRED") {
+  if (!applicationFeeDue(application)) {
     return redirectToPay(token, "not-due");
   }
 

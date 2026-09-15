@@ -15,9 +15,9 @@ import { conferencePayPath } from "@/lib/conference-server";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Research Conference · Call for applications · Inv.ent 2027",
+  title: "Research Conference · Call for applications · INV.ENT 2027",
   description:
-    "Apply to present a paper or poster at the Entrepreneurship Research Conference during Inv.ent, DSSE Day at IIT Bombay. 30–31 January 2027.",
+    "Apply to present a paper or poster at INV.ENT, the Entrepreneurship and Venture Practice Conference at IIT Bombay. 30-31 January 2027. 30 January is Day Zero.",
 };
 
 export default async function ConferencePage() {
@@ -37,13 +37,13 @@ export default async function ConferencePage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Inv.ent · DSSE · IIT Bombay
+        INV.ENT · DSSE · IIT Bombay
       </p>
       <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
         Call for applications
       </h1>
       <p className="mt-2 text-lg text-ink-soft">
-        Entrepreneurship Research Conference 2027
+        Entrepreneurship and Venture Practice Conference 2027
       </p>
       <p className="mt-2 text-sm text-mute">
         <Link href="/" className="underline-offset-2 hover:underline">
@@ -87,24 +87,24 @@ export default async function ConferencePage() {
           <div className="sm:col-span-2">
             <dt className="text-xs uppercase tracking-[0.12em] text-mute">Host</dt>
             <dd className="mt-1 text-ink">
-              Desai Sethi School of Entrepreneurship — IIT Bombay. Part of the
-              DSSE Annual Day Symposium.
+              Desai Sethi School of Entrepreneurship, IIT Bombay.
             </dd>
           </div>
         </dl>
         <p className="mt-5 text-sm leading-relaxed text-ink-soft">
-          Inv.ent is the annual foundation-day gathering of the Desai Sethi
-          School of Entrepreneurship at IIT Bombay. It exists so ideas do not
-          die in labs: students, faculty, founders, investors, and operators
-          share one campus day — then stay connected through the year.
+          INV.ENT is the Entrepreneurship and Venture Practice Conference
+          conducted by the Desai Sethi School of Entrepreneurship at IIT Bombay.
+          It exists so ideas do not die in labs: students, faculty, founders,
+          investors, and operators share the campus programme and then stay
+          connected through the year.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
           On 31 January 2014, IIT Bombay’s Board of Governors approved what
-          became DSSE. That anniversary is DSSE Day. Inv.ent is how the school
-          opens its doors publicly: speaker sessions, poster presentations,
-          venture pitches, and the conversations that turn prototypes into
-          companies. Editions stack year after year. The day is the spark; the
-          platform is the continuity.
+          became DSSE. On this occasion we celebrate INV.ENT, where
+          entrepreneurship research meets venture practice, with speaker
+          sessions, poster presentations, venture pitches, and the conversations
+          that turn prototypes into companies. 30 January is Day Zero. 31
+          January is the conference day.
         </p>
       </section>
 
@@ -115,7 +115,7 @@ export default async function ConferencePage() {
         <p className="mt-3 text-sm leading-relaxed text-ink-soft">
           The Entrepreneurship Research Conference is the premier stage at IIT
           Bombay for advanced PhD scholars and early-career researchers to gain
-          high-impact visibility. This is more than a presentation — it is a
+          high-impact visibility. This is more than a presentation. It is a
           launchpad.
         </p>
         <ul className="mt-4 space-y-3 text-sm text-ink-soft">
@@ -154,10 +154,18 @@ export default async function ConferencePage() {
         </div>
         <p className="mt-4 text-sm leading-relaxed text-ink-soft">
           Complimentary travel and accommodation for domestic participants is
-          limited to paper presenters and poster participants. There is a
-          nominal registration fee of ₹3,000 for those who wish to attend DSSE
-          Day and the Research Conference. After you are selected, pay from your
-          dashboard — you will not fill this form again.
+          limited to paper presenters and poster participants. A registration
+          fee applies after organisers select you — the same amount whether you
+          present a paper, a poster, or attend:
+        </p>
+        <ul className="mt-3 space-y-1 text-sm text-ink" data-testid="conference-fee-bands">
+          <li>Students / research scholars — ₹5,000</li>
+          <li>Faculty / professors — ₹10,000</li>
+          <li>Corporate / industry — ₹20,000</li>
+        </ul>
+        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+          Your amount and the IIT Bombay Online Pay link appear on your
+          dashboard only after that decision. You will not fill this form again.
         </p>
       </section>
 

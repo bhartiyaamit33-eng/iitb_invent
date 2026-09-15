@@ -78,7 +78,7 @@ export function accountCreatedEmail(opts: {
   ticketCode?: string | null;
   eventDate?: string | null;
 }): { subject: string; html: string; text: string } {
-  const subject = "Your INVENT account is ready";
+  const subject = "Thank you for registering — INV.ENT";
   const ticketBlock = opts.ticketCode
     ? `<p>You're registered for <strong>${escapeHtml(opts.editionName ?? "INVENT")}</strong>${
         opts.eventDate ? ` (${escapeHtml(opts.eventDate)})` : ""
@@ -87,17 +87,17 @@ export function accountCreatedEmail(opts: {
       ? `<p>You're set up for <strong>${escapeHtml(opts.editionName)}</strong>.</p>`
       : "";
   const html = layout(
-    "Welcome to INVENT",
+    "Thank you for registering",
     `<p>Hi ${escapeHtml(opts.name)},</p>
-     <p>Your account on <strong>iitbinvent.com</strong> has been created. This message is from <strong>conference@iitbinvent.com</strong>.</p>
+     <p>Thank you for creating your account on <strong>iitbinvent.com</strong>. This message is from <strong>conference@iitbinvent.com</strong>.</p>
      ${ticketBlock}
      <p>Next step: complete your profile (LinkedIn, role, photo) so other attendees can find you.</p>
      <p style="padding:16px 0;"><a href="${escapeHtml(opts.dashboardUrl)}" style="background:#1a6b6b;color:#fff;padding:12px 18px;text-decoration:none;border-radius:3px;">Open your dashboard</a></p>
-     <p>Sign in with the email and password you just chose anytime.</p>`,
+     <p>Sign in with the email you used anytime.</p>`,
   );
   const text = `Hi ${opts.name},
 
-Your INVENT account on iitbinvent.com has been created (from conference@iitbinvent.com).
+Thank you for registering on iitbinvent.com (from conference@iitbinvent.com).
 
 ${opts.ticketCode ? `Registered for ${opts.editionName ?? "INVENT"}${opts.eventDate ? ` (${opts.eventDate})` : ""}.\nTicket code: ${opts.ticketCode}\n\n` : ""}${opts.editionName && !opts.ticketCode ? `You're set up for ${opts.editionName}.\n\n` : ""}Complete your profile so others can find you.
 
@@ -181,6 +181,7 @@ export function conferenceApplicationCopyEmail(opts: {
   paperTitle: string;
   abstractFileName: string;
   eventName: string;
+  isPaperOrPoster?: boolean;
 }): { subject: string; html: string; text: string } {
   const rows: [string, string][] = [
     ["Name", opts.name],
@@ -200,17 +201,22 @@ export function conferenceApplicationCopyEmail(opts: {
         `<tr><td style="padding:6px 0;color:#8aaeb4;width:42%;">${escapeHtml(k)}</td><td style="padding:6px 0;color:#e8f2f4;">${escapeHtml(v)}</td></tr>`,
     )
     .join("");
-  const subject = `Your application — ${opts.eventName}`;
+  const thanks = opts.isPaperOrPoster
+    ? "Thank you for submitting your paper or poster to the Entrepreneurship Research Conference"
+    : "Thank you for applying to the Entrepreneurship Research Conference";
+  const subject = opts.isPaperOrPoster
+    ? `Thank you for submitting — ${opts.eventName}`
+    : `Thank you for applying — ${opts.eventName}`;
   const html = layout(
-    "Application received",
+    opts.isPaperOrPoster ? "Thank you for submitting" : "Thank you for applying",
     `<p>Hi ${escapeHtml(opts.name)},</p>
-     <p>We received your application for the Entrepreneurship Research Conference at <strong>${escapeHtml(opts.eventName)}</strong>. Organisers will review submissions and write to this email.</p>
+     <p>${thanks} at <strong>${escapeHtml(opts.eventName)}</strong>. Organisers will review this and write to this email if you are selected. The registration fee and payment link are sent only after that decision — the fee is the same whether you present a paper, a poster, or attend.</p>
      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">${htmlRows}</table>
      <p>Questions: support@iitbinvent.com</p>`,
   );
   const text = `Hi ${opts.name},
 
-We received your application for the Entrepreneurship Research Conference at ${opts.eventName}.
+${thanks} at ${opts.eventName}. Organisers will review this and write if you are selected. The registration fee and payment link are sent only after that decision.
 
 ${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}
 

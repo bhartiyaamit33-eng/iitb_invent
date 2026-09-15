@@ -8,15 +8,14 @@ import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/auth/roles";
 import { attendeeHome } from "@/lib/auth/attendee";
-import { sendAccountCreated } from "@/lib/email/transactions";
-import { siteOrigin } from "@/lib/ticket";
+import { sendSignupThankYouForUser } from "@/lib/email/transactions";
 import { IconGoogle } from "@/components/icons";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Create an account",
   description:
-    "Create a free INVENT account for DSSE Day at IIT Bombay — programme RSVPs, directory, and ventures.",
+    "Create a free INV.ENT account for the conference at IIT Bombay: programme RSVPs, directory, and ventures.",
   path: "/signup",
 });
 
@@ -86,15 +85,12 @@ export default async function SignupPage({
       },
     });
 
-    const dashboardUrl = `${siteOrigin()}/dashboard`;
-
     const edition = await prisma.edition.findFirst({
       where: { isCurrent: true },
     });
 
-    let ticketCode: string | null = null;
     if (edition) {
-      const reg = await prisma.registration.create({
+      await prisma.registration.create({
         data: {
           userId: user.id,
           editionId: edition.id,
@@ -104,18 +100,9 @@ export default async function SignupPage({
           source: "signup",
         },
       });
-      ticketCode = reg.ticketCode;
     }
 
-    void sendAccountCreated({
-      to: email,
-      name,
-      editionName: edition?.name ?? null,
-      dashboardUrl,
-      ticketCode,
-      eventDate: edition ? "31 January 2027" : null,
-      userId: user.id,
-    }).catch(() => undefined);
+    void sendSignupThankYouForUser(user.id).catch(() => undefined);
 
     const next = isAdminEmail(email)
       ? "/dashboard"
@@ -150,7 +137,7 @@ export default async function SignupPage({
         Sign up
       </h1>
       <p className="mt-3 text-ink-soft">
-        Name and email only. Profile details come after — never a gate.
+        Name and email only. Profile details come after, never a gate.
       </p>
 
       {params.error === "exists" ? (

@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { siteOrigin } from "@/lib/ticket";
+import { statusRequiresPayment } from "@/lib/conference";
 import {
   acknowledgeOnlinePay,
   isOnlinePayConfigured,
@@ -97,6 +98,15 @@ export async function validateOnlinePayRequest(
   });
   if (!application) return "INVALID";
   if (application.paymentStatus === "PAID" || application.paymentStatus === "WAIVED") {
+    return "INVALID";
+  }
+  if (
+    application.paymentStatus !== "UNPAID" &&
+    application.paymentStatus !== "REPORTED"
+  ) {
+    return "INVALID";
+  }
+  if (!statusRequiresPayment(application.status)) {
     return "INVALID";
   }
   if (application.opUserId && application.opUserId !== input.userId) {

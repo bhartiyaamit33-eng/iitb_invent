@@ -25,6 +25,16 @@ export function applicationFeeDue(app: {
   return statusRequiresPayment(app.status) && app.paymentStatus === "UNPAID";
 }
 
+/** Amount and payment link are only for people organisers have selected. */
+export function applicationPaymentVisible(app: {
+  status: Parameters<typeof statusRequiresPayment>[0];
+  paymentStatus: string;
+}): boolean {
+  return (
+    statusRequiresPayment(app.status) && app.paymentStatus !== "NOT_REQUIRED"
+  );
+}
+
 export async function findMyConferenceApplication(opts: {
   userId?: string | null;
   email?: string | null;
@@ -102,7 +112,7 @@ export async function attachConferenceToUser(user: {
       await notifyUser({
         userId: user.id,
         title: "Pay your conference registration fee",
-        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open IIT Bombay Online Pay from this notice — you do not need to apply again.`,
+        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open IIT Bombay Online Pay from this notice. You do not need to apply again.`,
         href,
       });
     }
@@ -133,7 +143,7 @@ export async function notifyApplicationStatus(opts: {
 
   const href = opts.paymentDue && opts.paymentPath ? opts.paymentPath : "/dashboard";
   const title = opts.paymentDue
-    ? "You're selected — pay the registration fee"
+    ? "You're selected. Pay the registration fee"
     : `Application update: ${opts.statusLabel}`;
   const body = opts.paymentDue
     ? `${opts.message}\n\nFee ${opts.amountLabel}. Pay through IIT Bombay Online Pay from your dashboard. You do not fill the application form again.`

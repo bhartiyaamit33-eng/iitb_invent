@@ -82,7 +82,58 @@ export const PAYMENT_STATUS_OPTIONS: {
   { value: "WAIVED", label: "Waived" },
 ];
 
-export const DEFAULT_CONFERENCE_FEE_PAISE = 300_000;
+/** Same fee for paper, poster, or attendee — band is who they are, not what they applied as. */
+export const CONFERENCE_FEE_PAISE = {
+  student: 500_000,
+  faculty: 1_000_000,
+  industry: 2_000_000,
+} as const;
+
+export type ConferenceFeeBand = keyof typeof CONFERENCE_FEE_PAISE;
+
+export function feeBandForProfessional(
+  category: ProfessionalCategory,
+): ConferenceFeeBand {
+  switch (category) {
+    case "PHD_SCHOLAR":
+    case "POSTDOC":
+      return "student";
+    case "PROFESSOR":
+    case "OTHER":
+      return "faculty";
+    case "INDUSTRY":
+      return "industry";
+  }
+}
+
+export function conferenceFeePaiseFor(
+  category: ProfessionalCategory,
+): number {
+  return CONFERENCE_FEE_PAISE[feeBandForProfessional(category)];
+}
+
+export function feeBandLabel(band: ConferenceFeeBand): string {
+  switch (band) {
+    case "student":
+      return "Student / research scholar";
+    case "faculty":
+      return "Faculty / professor";
+    case "industry":
+      return "Corporate / industry";
+  }
+}
+
+/** What organisers should charge unless already paid/waived at a recorded amount. */
+export function reviewFeePaise(app: {
+  professionalCategory: ProfessionalCategory;
+  paymentAmountPaise: number;
+  paymentStatus: ApplicationPaymentStatus;
+}): number {
+  if (app.paymentStatus === "PAID" || app.paymentStatus === "WAIVED") {
+    return app.paymentAmountPaise;
+  }
+  return conferenceFeePaiseFor(app.professionalCategory);
+}
 
 export function professionalLabel(
   value: ProfessionalCategory,
