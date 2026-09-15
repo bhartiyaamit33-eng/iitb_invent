@@ -35,7 +35,7 @@ export const TAGLINE = "Entrepreneurship Research & Practice Conference";
 export const TAGLINE_LEAD = "Entrepreneurship Research & Practice";
 export const TAGLINE_REST = "Conference";
 
-export const SUBMIT_HREF = "/submit";
+export const SUBMIT_HREF = "/conference#submit";
 export const REGISTER_HREF = "/signup";
 
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
