@@ -1,11 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { requireAdmin } from "@/lib/auth/roles";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
+import { deleteConferenceApplication } from "@/lib/conference-delete";
 
 export async function assignReviewerAction(formData: FormData) {
   const actor = requireAdmin(await getCurrentUser());
@@ -85,4 +87,33 @@ export async function removeReviewerAction(formData: FormData) {
   revalidatePath(`/admin/applications/${review.applicationId}`);
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard/reviews");
+}
+
+export async function deleteApplicationAction(formData: FormData) {
+  const actor = requireAdmin(await getCurrentUser());
+  const applicationId = String(formData.get("applicationId") ?? "");
+  const confirm = String(formData.get("confirm") ?? "");
+  const fromList = String(formData.get("from") ?? "") === "list";
+  const failPath = fromList
+    ? "/admin/applications"
+    : `/admin/applications/${applicationId}`;
+  if (!applicationId) throw new Error("Missing application.");
+  if (confirm !== "DELETE") {
+    redirect(`${failPath}?error=confirm`);
+  }
+
+  const result = await deleteConferenceApplication({
+    actorId: actor.id,
+    id: applicationId,
+  });
+  if (!result.ok) {
+    redirect(`${failPath}?error=${encodeURIComponent(result.error)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/applications");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/reviews");
+  revalidatePath("/conference");
+  redirect("/admin/applications?deleted=1");
 }

@@ -29,7 +29,12 @@ export const metadata: Metadata = pageMetadata({
   path: "/conference",
 });
 
-export default async function ConferencePage() {
+export default async function ConferencePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ deleted?: string; error?: string }>;
+}) {
+  const { deleted, error } = await searchParams;
   const user = await getCurrentUser();
   const cookieToken =
     (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
@@ -88,6 +93,8 @@ export default async function ConferencePage() {
         application={
           application
             ? {
+                id: application.id,
+                name: application.name,
                 status: application.status,
                 participationCategory: application.participationCategory,
                 participationOther: application.participationOther,
@@ -101,6 +108,8 @@ export default async function ConferencePage() {
         defaultName={user?.name ?? ""}
         defaultEmail={user?.email ?? ""}
         signedIn={Boolean(user)}
+        deleted={Boolean(deleted)}
+        error={error}
       />
     </>
   );

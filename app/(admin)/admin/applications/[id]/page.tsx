@@ -17,6 +17,7 @@ import {
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPanel";
+import { DeleteApplicationForm } from "@/components/admin/DeleteApplicationForm";
 import { Role } from "@prisma/client";
 import { assignReviewerAction, removeReviewerAction } from "./actions";
 
@@ -32,10 +33,13 @@ function istDate(d: Date): string {
 
 export default async function AdminApplicationDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
+  const { error } = await searchParams;
   const application = await prisma.conferenceApplication.findUnique({
     where: { id },
     include: {
@@ -109,6 +113,30 @@ export default async function AdminApplicationDetailPage({
         {application.name}
       </h1>
       <p className="mt-1 text-ink-soft">{application.email}</p>
+      <p className="mt-3 text-sm">
+        <a
+          href="#delete-submission"
+          className="font-semibold text-red-700 underline-offset-2 hover:underline"
+        >
+          Delete this submission ↓
+        </a>
+      </p>
+      {error === "confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          role="alert"
+        >
+          Type DELETE in the confirm field to remove this submission.
+        </p>
+      ) : null}
+      {error && error !== "confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          role="alert"
+        >
+          {error}
+        </p>
+      ) : null}
 
       <dl className="mt-8 divide-y divide-line rounded-xl border border-line bg-white">
         {rows.map(([k, v]) => (
@@ -120,6 +148,8 @@ export default async function AdminApplicationDetailPage({
           </div>
         ))}
       </dl>
+
+      <DeleteApplicationForm id={application.id} name={application.name} />
 
       <div className="mt-4 rounded-xl border border-line bg-white px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-mute">

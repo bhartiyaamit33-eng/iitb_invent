@@ -10,6 +10,7 @@ import {
   reviewFeePaise,
 } from "@/lib/conference";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
+import { DeleteApplicationForm } from "@/components/admin/DeleteApplicationForm";
 
 export const dynamic = "force-dynamic";
 
@@ -34,9 +35,15 @@ function paymentBadgeClass(status: string): string {
 export default async function AdminApplicationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; participation?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    status?: string;
+    participation?: string;
+    deleted?: string;
+    error?: string;
+  }>;
 }) {
-  const { q, status, participation } = await searchParams;
+  const { q, status, participation, deleted, error } = await searchParams;
   const query = q?.trim() ?? "";
   const statusFilter = APPLICATION_STATUS_OPTIONS.some((o) => o.value === status)
     ? (status as ApplicationStatus)
@@ -89,8 +96,35 @@ export default async function AdminApplicationsPage({
       <p className="mt-2 text-sm text-ink-soft">
         Call for papers / posters / attendees for{" "}
         <strong className="text-ink">{edition?.name ?? "the current edition"}</strong>
-        . {total} received. Review, shortlist, and export from here.
+        . {total} received. Review, shortlist, and export from here. Type
+        DELETE next to a name to remove that submission.
       </p>
+
+      {deleted ? (
+        <p
+          className="mt-4 rounded-md border border-teal/30 bg-teal/5 px-4 py-3 text-sm text-teal-deep"
+          role="status"
+          data-testid="application-deleted"
+        >
+          Submission deleted.
+        </p>
+      ) : null}
+      {error === "confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          role="alert"
+        >
+          Type DELETE in the confirm field to remove a submission.
+        </p>
+      ) : null}
+      {error && error !== "confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          role="alert"
+        >
+          {error}
+        </p>
+      ) : null}
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <a
@@ -173,6 +207,9 @@ export default async function AdminApplicationsPage({
                     </Link>
                     <p className="text-xs text-mute">{a.email}</p>
                     <p className="text-xs text-mute">{a.phone}</p>
+                    <div className="mt-2">
+                      <DeleteApplicationForm id={a.id} name={a.name} compact />
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-ink-soft">
                     {a.institution}

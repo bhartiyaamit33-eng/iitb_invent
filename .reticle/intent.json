@@ -73,7 +73,7 @@
           },
           {
             "kind": "text",
-            "contains": "—",
+            "contains": "\u2014",
             "absent": true
           }
         ]
@@ -208,6 +208,103 @@
         "kind": "route",
         "contains": "/conference/thanks"
       }
+    },
+    "inline:cfp-delete-submission-309d5589": {
+      "id": "inline:cfp-delete-submission-309d5589",
+      "statement": "cfp-delete-submission",
+      "state": "proved",
+      "declaredAt": 1789514698344,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/conference"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "application-deleted"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "conference-form"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "delete-my-application"
+            },
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "components/conference/DeleteMyApplicationForm.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789514699437",
+        "grade": "presence",
+        "at": 1789514699437
+      }
+    },
+    "cfp-delete-submission": {
+      "id": "cfp-delete-submission",
+      "statement": "A signed-in applicant can permanently delete their abstract from Call for Papers and from the dashboard, then see the submit form again.",
+      "state": "proved",
+      "declaredAt": 1789514577938,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/conference"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "application-deleted"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "conference-form"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "delete-my-application"
+            },
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "components/conference/DeleteMyApplicationForm.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789514699437",
+        "grade": "presence",
+        "at": 1789514699437
+      }
+    },
+    "resubmit-refreshes-timestamp": {
+      "id": "resubmit-refreshes-timestamp",
+      "statement": "Deleting a user or an abstract and submitting again records a new submitted time instead of keeping the old one.",
+      "state": "declared",
+      "declaredAt": 1789514577938,
+      "surface": "/admin/applications"
     }
   }
 }

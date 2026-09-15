@@ -1,8 +1,11 @@
 import { Role } from "@prisma/client";
+import { deleteConferenceApplication } from "@/lib/conference-delete";
 import { prisma } from "@/lib/db";
 
 /**
  * Hard-delete a user and cascaded Auth.js / profile / registration rows.
+ * Conference applications for that email are removed first so a later
+ * signup can submit a fresh abstract with a new timestamp.
  * Prisma onDelete: Cascade covers Profile, Registration, Rsvp, Account,
  * Session, ConnectionRequest; AuditLog.actorId is SetNull.
  */
@@ -41,6 +44,22 @@ export async function deleteUserAccount(
         ok: false,
         error: "Cannot delete the last admin account.",
       };
+    }
+  }
+
+  const applications = await prisma.conferenceApplication.findMany({
+    where: {
+      OR: [{ userId }, { email: target.email }],
+    },
+    select: { id: true },
+  });
+  for (const application of applications) {
+    const removed = await deleteConferenceApplication({
+      actorId: opts.actorId,
+      id: application.id,
+    });
+    if (!removed.ok) {
+      return removed;
     }
   }
 
