@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { PersonaType } from "@prisma/client";
-import { signOut } from "@/auth";
+import { endBrowserSession } from "@/lib/auth/session-end";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import {
@@ -153,7 +153,7 @@ export async function deleteMyAccountAction(formData: FormData) {
     after: { email: user.email },
   });
 
-  await signOut({ redirectTo: "/" });
+  await endBrowserSession("/");
 }
 
 export async function uploadProfilePhotoAction(

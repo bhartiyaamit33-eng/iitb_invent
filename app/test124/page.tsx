@@ -28,5 +28,5 @@ export default async function TestLandingLightPage({
 }) {
   const params = await searchParams;
   const heroVariant: HeroVariant = params.hero === "plain" ? "plain" : "photo";
-  return <LandingScreen theme="light" heroVariant={heroVariant} />;
+  return <LandingScreen heroVariant={heroVariant} />;
 }

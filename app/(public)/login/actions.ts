@@ -1,7 +1,7 @@
 "use server";
 
-import { signOut } from "@/auth";
+import { endBrowserSession } from "@/lib/auth/session-end";
 
 export async function logoutAction() {
-  await signOut({ redirectTo: "/" });
+  await endBrowserSession("/");
 }

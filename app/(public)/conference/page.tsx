@@ -19,11 +19,13 @@ import {
 import { ConferenceCall } from "./ConferenceCall";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 export const metadata: Metadata = pageMetadata({
   title: "Call for Papers · Entrepreneurship Research and Venture Practice Conference",
   description:
-    "IITB INV.ENT is the Entrepreneurship Research and Venture Practice Conference at IIT Bombay, 30-31 January 2027. 30 January is Day Zero. Abstract deadline 15 October 2026.",
+    "IITB INV.ENT is an entrepreneurship research and practice conference at IIT Bombay, 30-31 January 2027. Abstract deadline 15 October 2026.",
   path: "/conference",
 });
 
@@ -59,7 +61,7 @@ export default async function ConferencePage() {
           ]),
           {
             "@type": "Event",
-            name: "INV.ENT Entrepreneurship Research and Venture Practice Conference",
+            name: "IITB INV.ENT Entrepreneurship Research and Venture Practice Conference",
             description:
               "A conference where people meet, network, attend sessions, workshops, and events, get exposure to entrepreneurship research, and hear talks on entrepreneurship in practice.",
             url: absoluteUrl("/conference"),

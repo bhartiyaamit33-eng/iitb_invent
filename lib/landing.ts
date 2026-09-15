@@ -19,8 +19,6 @@ export type TimelineItem = {
   state: TimelineState;
 };
 
-export type LandingThemeName = "dark" | "light";
-
 export type LandingProps = {
   heroVariant: HeroVariant;
   signedInName: string | null;
@@ -28,7 +26,6 @@ export type LandingProps = {
   faqs: LandingFaq[];
   stats: LandingStat[];
   timeline: TimelineItem[];
-  theme?: LandingThemeName;
 };
 
 export const TAGLINE = "Entrepreneurship Research and Venture Practice Conference";
@@ -58,16 +55,10 @@ export const KEY_DATES: Omit<TimelineItem, "state">[] = [
     at: "2026-12-31",
   },
   {
-    id: "day-zero",
-    kicker: "Day Zero",
-    date: "30 Jan 2027",
-    at: "2027-01-30",
-  },
-  {
     id: "conference",
     kicker: "Conference",
-    date: "31 Jan 2027",
-    at: "2027-01-31",
+    date: "30-31 Jan 2027",
+    at: "2027-01-30",
   },
 ];
 
@@ -97,9 +88,9 @@ export const FALLBACK_STATS: LandingStat[] = [
 
 export const FALLBACK_FAQS: LandingFaq[] = [
   {
-    question: "When is INV.ENT 2027?",
+    question: "When is IITB INV.ENT 2027?",
     answer:
-      "30 and 31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay. 30 January is Day Zero. 31 January is the conference day.",
+      "30-31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay.",
   },
   {
     question: "Where is the venue?",

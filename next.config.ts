@@ -9,6 +9,37 @@ const nextConfig: NextConfig = {
   },
   // Smaller runtime footprint for t3.micro EC2 deploys.
   output: "standalone",
+  async headers() {
+    return [
+      {
+        source: "/conference/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-store, no-cache, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/conference",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-store, no-cache, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/logout",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-store, no-cache, max-age=0, must-revalidate",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

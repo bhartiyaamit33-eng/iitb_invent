@@ -1,18 +1,10 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import type { LandingProps, LandingThemeName } from "@/lib/landing";
+import type { LandingProps } from "@/lib/landing";
 import { EventLanes } from "./EventLanes";
 import { LandingHero } from "./LandingHero";
 import { LandingSections } from "./LandingSections";
 import { LandingTheme } from "./LandingTheme";
 import { LiveStrip } from "./LiveStrip";
 import { SparkTrail } from "./SparkTrail";
-import {
-  ThemeToggle,
-  readStoredLandingTheme,
-  writeStoredLandingTheme,
-} from "./ThemeToggle";
 import { BrandInline } from "./Wordmark";
 import Link from "next/link";
 
@@ -23,31 +15,13 @@ export function LandingPage({
   faqs,
   stats,
   timeline,
-  theme: initialTheme = "dark",
 }: LandingProps) {
-  const [theme, setTheme] = useState<LandingThemeName>(initialTheme);
-
-  useEffect(() => {
-    const stored = readStoredLandingTheme();
-    if (stored) setTheme(stored);
-  }, []);
-
-  function onThemeChange(next: LandingThemeName) {
-    setTheme(next);
-    writeStoredLandingTheme(next);
-  }
-
   return (
-    <div className="landing" data-theme={theme} data-testid={`landing-theme-${theme}`}>
-      <LandingTheme variant={theme} />
+    <div className="landing" data-theme="light" data-testid="landing-theme-light">
+      <LandingTheme />
       <SparkTrail />
       {live ? <LiveStrip live={live} /> : null}
-      <LandingHero
-        variant={heroVariant}
-        signedInName={signedInName}
-        theme={theme}
-        onThemeChange={onThemeChange}
-      />
+      <LandingHero variant={heroVariant} signedInName={signedInName} />
       <EventLanes />
       <LandingSections
         signedInName={signedInName}
@@ -73,7 +47,6 @@ export function LandingPage({
             <Link href="/code-of-conduct">Code of conduct</Link>
             <Link href="/llms.txt">llms.txt</Link>
           </nav>
-          <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
         </div>
       </footer>
     </div>

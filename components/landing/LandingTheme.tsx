@@ -2,15 +2,16 @@
 
 import { useEffect } from "react";
 
-export function LandingTheme({
-  variant = "dark",
-}: {
-  variant?: "dark" | "light";
-}) {
+export function LandingTheme() {
   useEffect(() => {
     const html = document.documentElement;
-    html.setAttribute("data-landing", variant === "light" ? "light" : "");
+    html.setAttribute("data-landing", "light");
+    try {
+      window.localStorage.removeItem("invent-landing-theme");
+    } catch {
+      /* private mode / blocked storage */
+    }
     return () => html.removeAttribute("data-landing");
-  }, [variant]);
+  }, []);
   return null;
 }

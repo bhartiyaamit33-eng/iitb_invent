@@ -2,14 +2,14 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "INV.ENT · IIT Bombay",
-    short_name: "INV.ENT",
+    name: "IITB INV.ENT · IIT Bombay",
+    short_name: "IITB INV.ENT",
     description:
-      "Entrepreneurship Research and Venture Practice Conference at DSSE, IIT Bombay. 30-31 January 2027. 30 January is Day Zero.",
+      "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027.",
     start_url: "/",
     display: "browser",
-    background_color: "#07111F",
-    theme_color: "#07111F",
+    background_color: "#f6f3ec",
+    theme_color: "#f6f3ec",
     lang: "en-IN",
   };
 }

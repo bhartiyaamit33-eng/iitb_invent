@@ -1,57 +1,212 @@
 {
   "version": 1,
   "intents": {
-    "inline:a-researcher-on-the-call-for-papers-page-can-jum-da09e5cc": {
-      "id": "inline:a-researcher-on-the-call-for-papers-page-can-jum-da09e5cc",
-      "statement": "A researcher on the Call for Papers page can jump from Submit your Abstract to the application form without leaving the page.",
+    "inline:the-about-page-names-iitb-inv-ent-as-an-entrepre-a522bbe5": {
+      "id": "inline:the-about-page-names-iitb-inv-ent-as-an-entrepre-a522bbe5",
+      "statement": "The About page names IITB INV.ENT as an entrepreneurship research and practice conference and does not mention Day Zero.",
       "state": "proved",
-      "declaredAt": 1789073857135,
-      "binding": {
-        "kind": "route",
-        "contains": "#submit"
-      },
-      "surface": {
-        "route": "/conference",
-        "files": [
-          "app/(public)/conference/ConferenceCall.tsx"
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_act_and_wait:1789073857187",
-        "grade": "presence",
-        "at": 1789073857187
-      }
-    },
-    "inline:an-attendee-can-submit-the-call-for-papers-form-1b4760cb": {
-      "id": "inline:an-attendee-can-submit-the-call-for-papers-form-1b4760cb",
-      "statement": "An attendee can submit the Call for Papers form with the original field names and reach the thanks page.",
-      "state": "proved",
-      "declaredAt": 1789074345262,
+      "declaredAt": 1789480992517,
       "binding": {
         "kind": "allOf",
         "predicates": [
           {
-            "kind": "net",
-            "method": "POST",
-            "urlContains": "/api/conference/apply",
-            "status": 200
+            "kind": "route",
+            "contains": "/about"
           },
           {
-            "kind": "route",
-            "contains": "/conference/thanks"
+            "kind": "text",
+            "contains": "IITB INV.ENT"
+          },
+          {
+            "kind": "text",
+            "contains": "entrepreneurship research and practice"
+          },
+          {
+            "kind": "text",
+            "contains": "Day Zero",
+            "absent": true
+          },
+          {
+            "kind": "text",
+            "contains": "DSSE Day",
+            "absent": true
           }
         ]
       },
       "surface": {
-        "route": "/conference/thanks",
-        "files": [
-          "app/(public)/conference/ConferenceForm.tsx"
+        "route": "/about"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789480992554",
+        "grade": "presence",
+        "at": 1789480992554
+      }
+    },
+    "inline:the-conference-page-names-iitb-inv-ent-as-an-ent-28a91119": {
+      "id": "inline:the-conference-page-names-iitb-inv-ent-as-an-ent-28a91119",
+      "statement": "The conference page names IITB INV.ENT as an entrepreneurship research and practice conference, shows 30-31 January, and does not mention Day Zero.",
+      "state": "proved",
+      "declaredAt": 1789481008557,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "/conference"
+          },
+          {
+            "kind": "text",
+            "contains": "IITB INV.ENT"
+          },
+          {
+            "kind": "text",
+            "contains": "entrepreneurship research and practice conference"
+          },
+          {
+            "kind": "text",
+            "contains": "30-31 January"
+          },
+          {
+            "kind": "text",
+            "contains": "Day Zero",
+            "absent": true
+          },
+          {
+            "kind": "text",
+            "contains": "—",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789481008595",
+        "grade": "presence",
+        "at": 1789481008595
+      }
+    },
+    "inline:the-landing-page-names-iitb-inv-ent-shows-30-31-77353b7d": {
+      "id": "inline:the-landing-page-names-iitb-inv-ent-shows-30-31-77353b7d",
+      "statement": "The landing page names IITB INV.ENT, shows 30-31 January, and does not mention Day Zero.",
+      "state": "proved",
+      "declaredAt": 1789481036536,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "text",
+            "contains": "IITB INV.ENT"
+          },
+          {
+            "kind": "text",
+            "contains": "30-31 JANUARY"
+          },
+          {
+            "kind": "text",
+            "contains": "Day Zero",
+            "absent": true
+          },
+          {
+            "kind": "text",
+            "contains": "DAY ZERO",
+            "absent": true
+          }
         ]
       },
       "provenBy": {
-        "verdictId": "reticle_act_and_wait:1789074346054",
-        "grade": "net",
-        "at": 1789074346054
+        "verdictId": "reticle_assert:1789481036591",
+        "grade": "presence",
+        "at": 1789481036591
+      }
+    },
+    "logout-resets-conference-form": {
+      "id": "logout-resets-conference-form",
+      "statement": "After a signed-in attendee signs out, the Call for Papers page shows the public Submit your Abstract form again, not their previous application.",
+      "state": "bound",
+      "declaredAt": 1789481369102,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "contains": "/conference",
+            "kind": "route"
+          },
+          {
+            "kind": "element",
+            "testid": "conference-form"
+          },
+          {
+            "absent": true,
+            "kind": "element",
+            "testid": "conference-status-card"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "app/logout/route.ts",
+          "lib/auth/session-end.ts",
+          "app/(public)/conference/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789481594074",
+        "grade": "presence",
+        "at": 1789481594074
+      }
+    },
+    "landing-light-only": {
+      "id": "landing-light-only",
+      "statement": "The public homepage is always the light appearance, with no control to switch to a dark theme.",
+      "state": "proved",
+      "declaredAt": 1789481369102,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/"
+          },
+          {
+            "kind": "element",
+            "testid": "landing-theme-light"
+          },
+          {
+            "absent": true,
+            "kind": "element",
+            "testid": "theme-dark"
+          },
+          {
+            "absent": true,
+            "kind": "element",
+            "testid": "theme-light"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/",
+        "files": [
+          "components/landing/LandingPage.tsx",
+          "components/landing/LandingHero.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789481640801",
+        "grade": "presence",
+        "at": 1789481640801
+      }
+    },
+    "inline:an-attendee-can-submit-the-call-for-papers-form-2756b4e5": {
+      "id": "inline:an-attendee-can-submit-the-call-for-papers-form-2756b4e5",
+      "statement": "An attendee can submit the Call for Papers form and reach the thanks page.",
+      "state": "bound",
+      "declaredAt": 1789481473972,
+      "binding": {
+        "kind": "route",
+        "contains": "/conference/thanks"
       }
     }
   }

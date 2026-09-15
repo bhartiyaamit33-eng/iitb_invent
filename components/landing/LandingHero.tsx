@@ -9,22 +9,16 @@ import {
   TAGLINE_REST,
   IMAGES,
   type HeroVariant,
-  type LandingThemeName,
 } from "@/lib/landing";
 import { OrbitBackdrop } from "./OrbitBackdrop";
-import { ThemeToggle } from "./ThemeToggle";
 import { Wordmark } from "./Wordmark";
 
 export function LandingHero({
   variant,
   signedInName,
-  theme,
-  onThemeChange,
 }: {
   variant: HeroVariant;
   signedInName: string | null;
-  theme: LandingThemeName;
-  onThemeChange: (theme: LandingThemeName) => void;
 }) {
   const accountHref = signedInName ? "/dashboard" : "/login";
   const accountLabel = signedInName ?? "Login";
@@ -134,7 +128,7 @@ export function LandingHero({
             </p>
             <ol
               className="hero-rise mt-4 flex flex-wrap gap-y-2 p-0"
-              aria-label="The INV.ENT journey"
+              aria-label="The IITB INV.ENT journey"
               data-testid="journey"
               style={{ animationDelay: "0.68s" }}
             >
@@ -171,7 +165,6 @@ export function LandingHero({
                 Desai Sethi School of Entrepreneurship{" "}
                 <span className="whitespace-nowrap">· IIT Bombay</span>
               </p>
-              <ThemeToggle theme={theme} onThemeChange={onThemeChange} testid />
             </div>
             <Link
               className="mb-1 grid size-[42px] place-items-center justify-self-center rounded-full border border-white/40 bg-midnight/35 text-frost backdrop-blur-sm max-[860px]:hidden"
