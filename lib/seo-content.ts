@@ -37,7 +37,7 @@ export const CANONICAL_FAQS: FaqItem[] = [
   {
     question: "How do I register for IITB INV.ENT?",
     answer:
-      "Log in at https://iitbinvent.com/login, then submit a paper or poster abstract. An account is not a ticket. After organisers select you, pay the fee for your category. The ticket then appears on your dashboard and in email.",
+      "Log in at https://iitbinvent.com/login, then submit a paper or poster abstract. An account is not a ticket. Organisers review submissions and write to you with next steps. The ticket then appears on your dashboard and in email.",
   },
   {
     question: "What happens at IITB INV.ENT?",

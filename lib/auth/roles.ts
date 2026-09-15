@@ -19,6 +19,7 @@ export type AuthUser = {
   email: string;
   name: string;
   role: Role;
+  createdAt: Date;
 };
 
 export class AuthError extends Error {

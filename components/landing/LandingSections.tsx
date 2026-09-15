@@ -285,7 +285,7 @@ export function LandingSections({
                 Submit your abstract.
               </h2>
               <p className="lead">
-                Log in with name and email (Google optional), submit your paper or poster abstract, then complete a short profile so organisers know who you are. An account is not a ticket. After approval and payment, your ticket appears on the dashboard.
+                Log in with name and email (Google optional), submit your paper or poster abstract, then complete a short profile so organisers know who you are. An account is not a ticket. After organisers select you, next steps appear on the dashboard.
               </p>
               <div className="cta-row" data-testid="cta-register">
                 <Link className="btn" href={accountHref} data-spark-node>

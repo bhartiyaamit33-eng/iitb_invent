@@ -1,11 +1,6 @@
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
-import {
-  applicationStatusLabel,
-  formatInrFromPaise,
-  statusRequiresPayment,
-} from "@/lib/conference";
-import { conferencePayPath } from "@/lib/conference-server";
+import { statusRequiresPayment } from "@/lib/conference";
 import { sendRegistrationConfirmed } from "@/lib/email/transactions";
 
 export const CONFERENCE_TOKEN_COOKIE = "invent_conference_token";
@@ -37,6 +32,27 @@ export function applicationFeeDue(app: {
   paymentStatus: string;
 }): boolean {
   return statusRequiresPayment(app.status) && app.paymentStatus === "UNPAID";
+}
+
+/** True only for an application this account actually submitted. */
+export function applicationOwnedByAccount(
+  app: { userId: string | null; createdAt: Date },
+  user: { id: string; createdAt: Date },
+): boolean {
+  if (app.userId !== user.id) return false;
+  return app.createdAt.getTime() >= user.createdAt.getTime() - 60_000;
+}
+
+export function isPaymentNotice(notice: {
+  title: string;
+  href?: string | null;
+}): boolean {
+  if (notice.href?.startsWith("/conference/pay/")) return true;
+  const title = notice.title.toLowerCase();
+  return (
+    title.includes("registration fee") ||
+    title.includes("pay your conference")
+  );
 }
 
 /** Amount and payment link are only for people organisers have selected. */
@@ -176,7 +192,12 @@ export async function findMyConferenceApplication(opts: {
   });
 }
 
-/** Link guest applications to this account and surface a pay notice if one is due. */
+/**
+ * Link a guest RECEIVED application to this account.
+ * Do not attach leftover selected/unpaid rows, and never create a pay
+ * notice on login — amounts and payment links wait until organisers
+ * select a submission this account made.
+ */
 export async function attachConferenceToUser(user: {
   id: string;
   email: string;
@@ -184,33 +205,16 @@ export async function attachConferenceToUser(user: {
   try {
     const email = user.email.trim().toLowerCase();
     await prisma.conferenceApplication.updateMany({
-      where: { email },
-      data: { userId: user.id },
-    });
-
-    const due = await prisma.conferenceApplication.findMany({
       where: {
         email,
-        paymentStatus: "UNPAID",
-        status: {
-          in: ["SHORTLISTED_PAPER", "SHORTLISTED_POSTER", "ATTENDEE"],
-        },
+        userId: null,
+        OR: [
+          { status: "RECEIVED" },
+          { paymentStatus: { in: ["PAID", "WAIVED", "NOT_REQUIRED"] } },
+        ],
       },
+      data: { userId: user.id },
     });
-
-    for (const app of due) {
-      const href = conferencePayPath(app.paymentToken, true);
-      const existing = await prisma.userNotification.findFirst({
-        where: { userId: user.id, href },
-      });
-      if (existing) continue;
-      await notifyUser({
-        userId: user.id,
-        title: "Pay your conference registration fee",
-        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open IIT Bombay Online Pay from this notice. You do not need to apply again.`,
-        href,
-      });
-    }
 
     const ready = await prisma.conferenceApplication.findMany({
       where: {

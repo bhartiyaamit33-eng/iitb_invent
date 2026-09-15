@@ -105,12 +105,12 @@ export const FALLBACK_FAQS: LandingFaq[] = [
   {
     question: "How do I submit an abstract?",
     answer:
-      "Log in (or create an account), then submit your paper or poster abstract on the conference page. Organisers review submissions and email a payment link if you are selected. An account is not a ticket.",
+      "Log in (or create an account), then submit your paper or poster abstract on the conference page. Organisers review submissions and write to you with next steps. An account is not a ticket.",
   },
   {
     question: "How do I get a ticket?",
     answer:
-      "Submit an abstract, wait for organisers to select you, then pay the fee for your category. The ticket appears on your dashboard and in email only after that payment.",
+      "Submit an abstract or register your interest in attending. Organisers review applications and write to you with next steps. The ticket appears on your dashboard and in email only after you are confirmed.",
   },
 ];
 

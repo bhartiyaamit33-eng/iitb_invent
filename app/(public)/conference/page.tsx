@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import {
   CONFERENCE_TOKEN_COOKIE,
   applicationFeeDue,
+  applicationOwnedByAccount,
   findMyConferenceApplication,
 } from "@/lib/conference-access";
 import { conferencePayPath } from "@/lib/conference-server";
@@ -29,12 +30,7 @@ export const metadata: Metadata = pageMetadata({
   path: "/conference",
 });
 
-export default async function ConferencePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ deleted?: string; error?: string }>;
-}) {
-  const { deleted, error } = await searchParams;
+export default async function ConferencePage() {
   const user = await getCurrentUser();
   const cookieToken =
     (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
@@ -51,8 +47,15 @@ export default async function ConferencePage({
     console.error("[conference] lookup", err);
   }
 
-  if (application && applicationFeeDue(application)) {
-    redirect(conferencePayPath(application.paymentToken));
+  const mine =
+    application && user && applicationOwnedByAccount(application, user)
+      ? application
+      : user
+        ? null
+        : application;
+
+  if (mine && applicationFeeDue(mine)) {
+    redirect(conferencePayPath(mine.paymentToken));
   }
 
   return (
@@ -91,25 +94,21 @@ export default async function ConferencePage({
       />
       <ConferenceCall
         application={
-          application
+          mine
             ? {
-                id: application.id,
-                name: application.name,
-                status: application.status,
-                participationCategory: application.participationCategory,
-                participationOther: application.participationOther,
-                paperTitle: application.paperTitle,
-                paymentStatus: application.paymentStatus,
-                paymentAmountPaise: application.paymentAmountPaise,
-                paymentToken: application.paymentToken,
+                status: mine.status,
+                participationCategory: mine.participationCategory,
+                participationOther: mine.participationOther,
+                paperTitle: mine.paperTitle,
+                paymentStatus: mine.paymentStatus,
+                paymentAmountPaise: mine.paymentAmountPaise,
+                paymentToken: mine.paymentToken,
               }
             : null
         }
         defaultName={user?.name ?? ""}
         defaultEmail={user?.email ?? ""}
         signedIn={Boolean(user)}
-        deleted={Boolean(deleted)}
-        error={error}
       />
     </>
   );

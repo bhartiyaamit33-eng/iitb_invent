@@ -10,7 +10,6 @@ import {
 } from "next/font/google";
 import { ConferenceForm } from "./ConferenceForm";
 import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
-import { DeleteMyApplicationForm } from "@/components/conference/DeleteMyApplicationForm";
 import { CfpDecor } from "@/components/conference/CfpDecor";
 import {
   CFP_AI_CALLOUT,
@@ -31,7 +30,6 @@ import type {
 } from "@/lib/conference";
 import { CfpTheme } from "./CfpTheme";
 import { SUBMIT_HREF, submitHrefFor } from "@/lib/landing";
-import { ScrollToId } from "@/components/ScrollToId";
 import "./cfp.css";
 
 const inter = Inter({
@@ -77,8 +75,6 @@ const roboto = Roboto({
 });
 
 export type ConferenceCallApplication = {
-  id: string;
-  name: string;
   status: ApplicationStatus;
   participationCategory: ParticipationCategory;
   participationOther: string | null;
@@ -93,15 +89,11 @@ export function ConferenceCall({
   defaultName,
   defaultEmail,
   signedIn,
-  deleted,
-  error,
 }: {
   application: ConferenceCallApplication | null;
   defaultName: string;
   defaultEmail: string;
   signedIn: boolean;
-  deleted?: boolean;
-  error?: string;
 }) {
   return (
     <div
@@ -340,19 +332,8 @@ export function ConferenceCall({
             </ol>
             <p className="cfp-lead cfp-lead-tight" style={{ marginTop: "1.5rem" }}>
               After organisers select you for a paper, a poster, or as an
-              attendee, you receive the registration fee for your category and a
-              personal IIT Bombay Online Pay link. The amount is the same
-              whether you present or attend:
+              attendee, next steps appear on your dashboard and by email.
             </p>
-            <ul
-              className="cfp-guidelines"
-              data-testid="conference-fee-bands"
-              style={{ marginTop: "0.75rem" }}
-            >
-              <li>Students / research scholars: ₹5,000</li>
-              <li>Faculty / professors: ₹10,000</li>
-              <li>Corporate / industry: ₹20,000</li>
-            </ul>
           </div>
         </section>
 
@@ -382,37 +363,6 @@ export function ConferenceCall({
               poster applicants upload an extended abstract as a PDF (max 10 MB).
             </p>
             <div className="cfp-submit-panel">
-              {deleted || error ? <ScrollToId id="submit" /> : null}
-              {deleted ? (
-                <p
-                  className="mb-4 rounded-md border border-teal/30 bg-teal/5 px-4 py-3 text-sm"
-                  role="status"
-                  data-testid="application-deleted"
-                >
-                  Submission deleted. You can submit a new abstract below. The
-                  submitted time will be now.
-                </p>
-              ) : null}
-              {error === "confirm" ? (
-                <p
-                  className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
-                  role="alert"
-                >
-                  Type DELETE in the confirm field to remove this submission.
-                </p>
-              ) : null}
-              {error && error !== "confirm" ? (
-                <p
-                  className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
-                  role="alert"
-                >
-                  {error === "not_found"
-                    ? "That submission was not found."
-                    : error === "missing"
-                      ? "Missing application."
-                      : error}
-                </p>
-              ) : null}
               {application ? (
                 <div className="cfp-status">
                   <p className="cfp-kicker">Your application</p>
@@ -426,17 +376,11 @@ export function ConferenceCall({
                     paymentToken={application.paymentToken}
                   />
                   {signedIn ? (
-                    <>
-                      <DeleteMyApplicationForm
-                        id={application.id}
-                        name={application.name}
-                      />
-                      <p className="mt-4 text-sm">
-                        <Link href="/dashboard" className="font-semibold">
-                          Open dashboard →
-                        </Link>
-                      </p>
-                    </>
+                    <p className="mt-4 text-sm">
+                      <Link href="/dashboard" className="font-semibold">
+                        Open dashboard →
+                      </Link>
+                    </p>
                   ) : null}
                 </div>
               ) : signedIn ? (

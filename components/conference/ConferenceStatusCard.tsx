@@ -91,8 +91,7 @@ export function ConferenceStatusCard({
         </p>
       ) : (
         <p className="mt-3 text-sm text-ink-soft">
-          Organisers will post the decision here and by email. The registration
-          fee and payment link appear only after you are selected.
+          Organisers will post the decision here and by email.
         </p>
       )}
     </div>

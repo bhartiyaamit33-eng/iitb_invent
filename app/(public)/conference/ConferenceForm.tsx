@@ -307,8 +307,8 @@ export function ConferenceForm({
       <p className="text-xs text-mute">
         Submitting this form records your name, email, phone, institution, and
         uploaded files so DSSE organisers can review the call for applications.
-        We email a thank-you to the address above. The registration fee and
-        payment link are sent only after you are selected.
+        We email a thank-you to the address above. Organisers review your
+        application and write to you with next steps.
       </p>
 
       <button

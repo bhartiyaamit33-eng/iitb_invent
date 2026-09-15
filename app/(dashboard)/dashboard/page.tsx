@@ -7,11 +7,12 @@ import { formatIstRange } from "@/lib/editions";
 import { getNextForUser } from "@/lib/live";
 import { ticketBadgeUrl } from "@/lib/ticket";
 import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
-import { DeleteMyApplicationForm } from "@/components/conference/DeleteMyApplicationForm";
 import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
 import {
   applicationFeeDue,
   applicationGrantsTicket,
+  applicationOwnedByAccount,
+  isPaymentNotice,
   issueEventTicketForApplication,
 } from "@/lib/conference-access";
 
@@ -34,23 +35,34 @@ export default async function DashboardPage({
     },
     orderBy: { createdAt: "desc" },
   });
+  const mine =
+    application && applicationOwnedByAccount(application, user)
+      ? application
+      : null;
 
-  if (application && applicationGrantsTicket(application)) {
-    await issueEventTicketForApplication(application.id);
+  if (mine && applicationGrantsTicket(mine)) {
+    await issueEventTicketForApplication(mine.id);
   }
 
   const registration = await prisma.registration.findFirst({
     where: { userId: user.id, edition: { isCurrent: true } },
     include: { edition: true },
   });
-  const notices = await prisma.userNotification.findMany({
-    where: { userId: user.id },
-    orderBy: [{ createdAt: "desc" }],
-    take: 8,
-  });
+  const notices = (
+    await prisma.userNotification.findMany({
+      where: { userId: user.id },
+      orderBy: [{ createdAt: "desc" }],
+      take: 20,
+    })
+  )
+    .filter((n) => {
+      if (!isPaymentNotice(n)) return true;
+      return Boolean(mine && applicationFeeDue(mine));
+    })
+    .slice(0, 8);
 
   const ticketReady = Boolean(
-    application && applicationGrantsTicket(application) && registration,
+    mine && applicationGrantsTicket(mine) && registration,
   );
 
   const completeness = profile?.completeness ?? 0;
@@ -74,7 +86,7 @@ export default async function DashboardPage({
       : [];
 
   const showProfileNudge =
-    Boolean(application) && completeness < 60 && !params.welcome;
+    Boolean(mine) && completeness < 60 && !params.welcome;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -86,8 +98,8 @@ export default async function DashboardPage({
           <p className="font-semibold text-teal-deep">Account created</p>
           <p className="mt-1 text-sm text-ink-soft">
             Logging in is not a ticket to INV.ENT. Submit a paper or poster
-            abstract next. Organisers review it, then you pay the fee for your
-            category. Only after that do you receive a ticket.
+            abstract, or register your interest in attending. Organisers review
+            it and write to you with next steps.
           </p>
           <Link
             href="/conference#submit"
@@ -151,7 +163,7 @@ export default async function DashboardPage({
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <div
           className={`rounded-xl border bg-white p-5 sm:col-span-2 ${
-            application && applicationFeeDue(application)
+            mine && applicationFeeDue(mine)
               ? "border-ent"
               : "border-line"
           }`}
@@ -160,27 +172,22 @@ export default async function DashboardPage({
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
             Paper or poster
           </p>
-          {application ? (
-            <>
-              <ConferenceStatusCard
-                status={application.status}
-                participationCategory={application.participationCategory}
-                participationOther={application.participationOther}
-                paperTitle={application.paperTitle}
-                paymentStatus={application.paymentStatus}
-                paymentAmountPaise={application.paymentAmountPaise}
-                paymentToken={application.paymentToken}
-              />
-              <DeleteMyApplicationForm
-                id={application.id}
-                name={application.name}
-              />
-            </>
+          {mine ? (
+            <ConferenceStatusCard
+              status={mine.status}
+              participationCategory={mine.participationCategory}
+              participationOther={mine.participationOther}
+              paperTitle={mine.paperTitle}
+              paymentStatus={mine.paymentStatus}
+              paymentAmountPaise={mine.paymentAmountPaise}
+              paymentToken={mine.paymentToken}
+            />
           ) : (
             <>
               <p className="mt-2 text-sm text-ink-soft">
-                Submit a paper or poster abstract. After organisers select you,
-                pay the fee for your category to receive your event ticket.
+                Submit a paper or poster abstract, or register your interest in
+                attending. Organisers review it and write to you with next
+                steps.
               </p>
               <Link
                 href="/conference#submit"
@@ -273,7 +280,7 @@ export default async function DashboardPage({
           href="/conference#submit"
           className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
         >
-          {application ? "View application" : "Submit abstract"}
+          {mine ? "View application" : "Submit abstract"}
         </Link>
         <Link
           href="/programme"
