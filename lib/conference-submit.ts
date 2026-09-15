@@ -159,10 +159,15 @@ export async function processConferenceApplication(
   const feePaise = conferenceFeePaiseFor(professional);
   const existing = await prisma.conferenceApplication.findUnique({
     where: { editionId_email: { editionId: edition.id, email } },
-    select: { paymentStatus: true },
+    select: { id: true, paymentStatus: true },
   });
   const lockFee =
     existing?.paymentStatus === "PAID" || existing?.paymentStatus === "WAIVED";
+  if (existing && !lockFee) {
+    await prisma.applicationReview.deleteMany({
+      where: { applicationId: existing.id },
+    });
+  }
 
   const application = await prisma.conferenceApplication.upsert({
     where: { editionId_email: { editionId: edition.id, email } },
@@ -198,7 +203,14 @@ export async function processConferenceApplication(
       participationOther: participation === "OTHER" ? participationOther : null,
       paperTitle: paperTitle || null,
       sendCopy: true,
-      ...(lockFee ? {} : { paymentAmountPaise: feePaise }),
+      createdAt: new Date(),
+      ...(lockFee
+        ? {}
+        : {
+            paymentAmountPaise: feePaise,
+            status: "RECEIVED",
+            paymentStatus: "NOT_REQUIRED",
+          }),
     },
   });
 

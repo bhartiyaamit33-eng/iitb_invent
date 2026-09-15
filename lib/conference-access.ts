@@ -248,6 +248,22 @@ export async function userHasLiveEventTicket(
   return Boolean(app);
 }
 
+export async function revokeEventTicketIfUnqualified(
+  userId: string,
+  editionId: string,
+): Promise<void> {
+  if (await userHasLiveEventTicket(userId, editionId)) return;
+  await prisma.registration.updateMany({
+    where: {
+      userId,
+      editionId,
+      source: "conference-payment",
+      deletedAt: null,
+    },
+    data: { status: "CANCELLED" },
+  });
+}
+
 export async function notifyApplicationStatus(opts: {
   userId?: string | null;
   email: string;

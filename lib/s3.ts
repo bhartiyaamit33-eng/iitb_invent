@@ -1,4 +1,5 @@
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -162,6 +163,16 @@ export async function uploadAbstractPdf(opts: {
     throw err;
   }
   return { key };
+}
+
+export async function deleteAbstractPdf(key: string): Promise<void> {
+  if (!bucket || !key) return;
+  await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
 }
 
 export async function getAbstractPdfObject(

@@ -7,6 +7,7 @@ import { formatIstRange } from "@/lib/editions";
 import { getNextForUser } from "@/lib/live";
 import { ticketBadgeUrl } from "@/lib/ticket";
 import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
+import { DeleteMyApplicationForm } from "@/components/conference/DeleteMyApplicationForm";
 import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
 import {
   applicationFeeDue,
@@ -160,15 +161,21 @@ export default async function DashboardPage({
             Paper or poster
           </p>
           {application ? (
-            <ConferenceStatusCard
-              status={application.status}
-              participationCategory={application.participationCategory}
-              participationOther={application.participationOther}
-              paperTitle={application.paperTitle}
-              paymentStatus={application.paymentStatus}
-              paymentAmountPaise={application.paymentAmountPaise}
-              paymentToken={application.paymentToken}
-            />
+            <>
+              <ConferenceStatusCard
+                status={application.status}
+                participationCategory={application.participationCategory}
+                participationOther={application.participationOther}
+                paperTitle={application.paperTitle}
+                paymentStatus={application.paymentStatus}
+                paymentAmountPaise={application.paymentAmountPaise}
+                paymentToken={application.paymentToken}
+              />
+              <DeleteMyApplicationForm
+                id={application.id}
+                name={application.name}
+              />
+            </>
           ) : (
             <>
               <p className="mt-2 text-sm text-ink-soft">
