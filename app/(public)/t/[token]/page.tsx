@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { ShowBio } from "@/components/ShowBio";
 import { IconGlobe, IconLinkedIn, IconMail } from "@/components/icons";
+import { userHasLiveEventTicket } from "@/lib/conference-access";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,14 @@ export default async function TicketBadgePage({
   });
 
   if (!registration || registration.deletedAt || registration.status === "CANCELLED") {
+    notFound();
+  }
+
+  const ticketLive = await userHasLiveEventTicket(
+    registration.userId,
+    registration.editionId,
+  );
+  if (!ticketLive) {
     notFound();
   }
 

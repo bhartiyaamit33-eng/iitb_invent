@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { siteOrigin } from "@/lib/ticket";
 import { statusRequiresPayment } from "@/lib/conference";
+import { issueEventTicketForApplication } from "@/lib/conference-access";
 import {
   acknowledgeOnlinePay,
   isOnlinePayConfigured,
@@ -163,6 +164,7 @@ export async function applyConferenceOnlinePayCallback(
           opProvId: params.provId || application.opProvId,
         },
       });
+      await issueEventTicketForApplication(application.id, { notify: true });
     }
     if (transId) {
       const ack = await acknowledgeOnlinePay({ transId, requestType: "I" });

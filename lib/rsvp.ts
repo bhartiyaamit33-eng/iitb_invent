@@ -24,8 +24,20 @@ export async function rsvpToSession(opts: {
       },
     },
   });
-  if (!registration || registration.status !== "CONFIRMED") {
-    throw new Error("Confirm your edition registration first");
+  const place = await prisma.conferenceApplication.findFirst({
+    where: {
+      userId: opts.userId,
+      editionId: session.editionId,
+      paymentStatus: { in: ["PAID", "WAIVED"] },
+      status: { in: ["SHORTLISTED_PAPER", "SHORTLISTED_POSTER", "ATTENDEE"] },
+    },
+  });
+  if (
+    !place ||
+    !registration ||
+    registration.status !== "CONFIRMED"
+  ) {
+    throw new Error("Confirm your place with organisers and complete payment first");
   }
 
   const existing = await prisma.rsvp.findUnique({

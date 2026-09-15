@@ -50,7 +50,7 @@ export async function sendSignupThankYouForUser(userId: string) {
     to: user.email,
     name: user.name?.trim() || "there",
     dashboardUrl: `${origin}/dashboard`,
-    applyUrl: `${origin}/conference`,
+    applyUrl: `${origin}/conference#submit`,
     userId: user.id,
   });
 }

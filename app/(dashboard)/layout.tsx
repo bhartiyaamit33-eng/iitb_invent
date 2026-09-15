@@ -36,17 +36,11 @@ export default async function DashboardLayout({
             <Link href="/dashboard/profile" className="text-ink-soft hover:text-teal-deep">
               Profile
             </Link>
-            <Link href="/dashboard/ventures" className="text-ink-soft hover:text-teal-deep">
-              Ventures
-            </Link>
-            <Link href="/ventures" className="text-ink-soft hover:text-teal-deep">
-              Directory
+            <Link href="/conference" className="text-ink-soft hover:text-teal-deep">
+              Conference
             </Link>
             <Link href="/programme" className="text-ink-soft hover:text-teal-deep">
               Programme
-            </Link>
-            <Link href="/conference" className="text-ink-soft hover:text-teal-deep">
-              Conference
             </Link>
             {user.role === Role.REVIEWER || user.role === Role.ADMIN ? (
               <Link

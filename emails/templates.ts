@@ -154,7 +154,7 @@ export function accountCreatedEmail(opts: {
     "Your account is ready",
     `<p style="margin:0 0 14px;">Hi ${escapeHtml(opts.name)},</p>
      <p style="margin:0 0 14px;">Thank you. You have successfully created an account on <strong>iitbinvent.com</strong>.</p>
-     <p style="margin:0 0 14px;">This is not a confirmed place at <strong>${escapeHtml(EMAIL_BRAND)}</strong> yet. You can now apply to submit an abstract (paper or poster), or apply as an attendee.</p>
+     <p style="margin:0 0 14px;">This is not a confirmed place at <strong>${escapeHtml(EMAIL_BRAND)}</strong> yet. Log in, then submit a paper or poster abstract. An account is not a ticket.</p>
      <p style="margin:0 0 14px;">The organising team reviews every application. If you are selected, you will receive an invitation with the registration fee and a payment link. Paying that fee confirms your place at the conference.</p>
      <p style="margin:0 0 8px;">${mailLink(applyUrl, "Apply on the conference page")}</p>
      <p style="margin:0 0 14px;">${mailLink(opts.dashboardUrl, "Open your dashboard")}</p>
@@ -164,7 +164,7 @@ export function accountCreatedEmail(opts: {
 
 Thank you. You have successfully created an account on iitbinvent.com.
 
-This is not a confirmed place at ${EMAIL_BRAND} yet. You can now apply to submit an abstract (paper or poster), or apply as an attendee.
+This is not a confirmed place at ${EMAIL_BRAND} yet. Log in, then submit a paper or poster abstract. An account is not a ticket.
 
 The organising team reviews every application. If you are selected, you will receive an invitation with the registration fee and a payment link. Paying that fee confirms your place at the conference.
 

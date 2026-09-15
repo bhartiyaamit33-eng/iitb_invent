@@ -51,7 +51,6 @@ export const INDEXABLE_PATHS = [
   "/conference",
   "/faq",
   "/programme",
-  "/ventures",
   "/travel",
   "/privacy",
   "/code-of-conduct",

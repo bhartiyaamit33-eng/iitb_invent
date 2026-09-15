@@ -29,7 +29,7 @@ import type {
   ParticipationCategory,
 } from "@/lib/conference";
 import { CfpTheme } from "./CfpTheme";
-import { SUBMIT_HREF } from "@/lib/landing";
+import { SUBMIT_HREF, submitHrefFor } from "@/lib/landing";
 import "./cfp.css";
 
 const inter = Inter({
@@ -131,7 +131,7 @@ export function ConferenceCall({
             >
               <Link
                 className="cfp-nav-submit"
-                href={SUBMIT_HREF}
+                href={signedIn ? SUBMIT_HREF : submitHrefFor(false)}
                 data-testid="nav-submit"
               >
                 Submit your Abstract
@@ -370,8 +370,8 @@ export function ConferenceCall({
               Submit your Abstract
             </h2>
             <p className="cfp-lead">
-              Use the form below. Paper and poster applicants upload an extended
-              abstract as a PDF (max 10 MB).
+              Log in first so the application is tied to your account. Paper and
+              poster applicants upload an extended abstract as a PDF (max 10 MB).
             </p>
             <div className="cfp-submit-panel">
               {application ? (
@@ -392,20 +392,42 @@ export function ConferenceCall({
                         Open dashboard →
                       </Link>
                     </p>
-                  ) : (
-                    <p className="mt-4 text-sm" style={{ color: "var(--cfp-slate)" }}>
-                      <Link href="/signup" className="font-semibold">
-                        Create an account
-                      </Link>{" "}
-                      with this email so notices and Online Pay stay on your dashboard.
-                    </p>
-                  )}
+                  ) : null}
                 </div>
-              ) : (
+              ) : signedIn ? (
                 <ConferenceForm
                   defaultName={defaultName}
                   defaultEmail={defaultEmail}
                 />
+              ) : (
+                <div
+                  className="cfp-status"
+                  data-testid="submit-login-gate"
+                >
+                  <p className="cfp-lead">
+                    Log in to submit your paper or poster abstract. Creating an
+                    account is not a ticket to the event.
+                  </p>
+                  <p className="mt-4">
+                    <Link
+                      href={submitHrefFor(false)}
+                      className="cfp-nav-submit"
+                      data-testid="submit-login-cta"
+                    >
+                      Log in to submit
+                    </Link>
+                  </p>
+                  <p className="mt-3 text-sm" style={{ color: "var(--cfp-slate)" }}>
+                    No account yet?{" "}
+                    <Link
+                      href={`/signup?callbackUrl=${encodeURIComponent("/conference#submit")}`}
+                      className="font-semibold"
+                    >
+                      Create one
+                    </Link>
+                    , then fill the form.
+                  </p>
+                </div>
               )}
             </div>
           </div>
@@ -415,7 +437,7 @@ export function ConferenceCall({
           <div className="cfp-shell">
             <h2 id="close-heading">Connect. Collaborate. Contribute.</h2>
             <p>
-              <a href="#submit" data-testid="cfp-submit-cta">
+              <a href={signedIn ? SUBMIT_HREF : submitHrefFor(false)} data-testid="cfp-submit-cta">
                 Submit your Abstract by 15 October 2026.
               </a>
             </p>

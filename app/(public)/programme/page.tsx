@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
 import { cancelRsvpAction, rsvpAction } from "./actions";
 import { pageMetadata } from "@/lib/seo";
+import { userHasLiveEventTicket } from "@/lib/conference-access";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,9 @@ export default async function ProgrammePage() {
 
   const live = isLiveStatus(edition.status);
   const now = new Date();
+  const canRsvp = user
+    ? await userHasLiveEventTicket(user.id, edition.id)
+    : false;
   const [sessions, happening, upNext, myRsvps] = await Promise.all([
     prisma.session_.findMany({
       where: {
@@ -72,7 +76,7 @@ export default async function ProgrammePage() {
         Programme
       </h1>
       <p className="mt-3 text-ink-soft">
-        {edition.venueName}. RSVP for capped sessions - waitlist opens when full.
+        {edition.venueName}. Confirmed ticket holders can RSVP for capped sessions.
       </p>
       <p className="mt-2 text-sm text-mute">
         <Link href="/" className="underline-offset-2 hover:underline">
@@ -85,13 +89,6 @@ export default async function ProgrammePage() {
         {" · "}
         <Link href="/conference" className="underline-offset-2 hover:underline">
           Call for papers
-        </Link>
-        {" · "}
-        <Link
-          href={`/${edition.slug}/attendees`}
-          className="underline-offset-2 hover:underline"
-        >
-          Directory
         </Link>
         {live ? (
           <>
@@ -192,13 +189,11 @@ export default async function ProgrammePage() {
                 ) : null}
 
                 <div className="mt-3">
-                  {!user ? (
-                    <Link
-                      href={`/login?callbackUrl=${encodeURIComponent("/programme")}`}
-                      className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-                    >
-                      Sign in to RSVP
-                    </Link>
+                  {!canRsvp ? (
+                    <p className="text-sm text-mute">
+                      Session RSVP opens after organisers select your abstract
+                      and you pay the category fee.
+                    </p>
                   ) : mine && mine.status !== "CANCELLED" ? (
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="text-sm font-semibold text-ent">
