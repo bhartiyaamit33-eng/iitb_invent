@@ -103,10 +103,12 @@ export default {
           u.hostname === "43.205.7.101" ||
           u.hostname === "ec2-43-205-7-101.ap-south-1.compute.amazonaws.com" ||
           u.hostname === "127.0.0.1" ||
+          u.hostname === "localhost" ||
           u.protocol === "http:"
         ) {
           u.protocol = "https:";
           u.hostname = incoming.hostname;
+          u.port = "";
           outHeaders.set("Location", u.toString());
         }
       } catch {
