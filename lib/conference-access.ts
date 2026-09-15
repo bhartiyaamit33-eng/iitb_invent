@@ -18,6 +18,18 @@ export function conferenceCookieOptions() {
   };
 }
 
+/** Same flags as the guest cookie so browsers actually drop it on logout. */
+export function conferenceCookieClearOptions() {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: 0,
+    expires: new Date(0),
+    secure: process.env.NODE_ENV === "production",
+  };
+}
+
 export function applicationFeeDue(app: {
   status: Parameters<typeof statusRequiresPayment>[0];
   paymentStatus: string;

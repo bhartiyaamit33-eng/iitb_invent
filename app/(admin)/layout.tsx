@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { AuthError, requireRole } from "@/lib/auth/roles";
 import { Role } from "@prisma/client";
-import { logoutAction } from "@/app/(public)/login/actions";
+import { SignOutForm } from "@/components/SignOutForm";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { noIndex } from "@/lib/seo";
 
@@ -40,14 +40,10 @@ export default async function AdminLayout({
           Access denied
         </h1>
         <p className="mt-4 text-ink-soft">{message}</p>
-        <form action={logoutAction} className="mt-8">
-          <button
-            type="submit"
-            className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-          >
-            Sign out
-          </button>
-        </form>
+        <SignOutForm
+          className="mt-8"
+          buttonClassName="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+        />
       </main>
     );
   }
@@ -59,14 +55,7 @@ export default async function AdminLayout({
           <p className="text-sm text-mute">
             CMS · <span className="font-medium text-ink">{user.email}</span>
           </p>
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-            >
-              Sign out
-            </button>
-          </form>
+          <SignOutForm buttonClassName="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline" />
         </div>
       </div>
       <AdminNav />

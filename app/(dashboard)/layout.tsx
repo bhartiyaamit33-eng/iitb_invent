@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getCurrentUser } from "@/lib/auth/session";
-import { logoutAction } from "@/app/(public)/login/actions";
+import { SignOutForm } from "@/components/SignOutForm";
 import { attachConferenceToUser } from "@/lib/conference-access";
 import { Role } from "@prisma/client";
 import { noIndex } from "@/lib/seo";
@@ -28,7 +28,7 @@ export default async function DashboardLayout({
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-3">
           <nav className="flex flex-wrap items-center gap-4 text-sm font-semibold">
             <Link href="/" className="text-teal-deep">
-              Inv.ent
+              IITB INV.ENT
             </Link>
             <Link href="/dashboard" className="text-ink-soft hover:text-teal-deep">
               Dashboard
@@ -62,14 +62,7 @@ export default async function DashboardLayout({
               </Link>
             ) : null}
           </nav>
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="text-sm font-semibold text-mute underline-offset-2 hover:text-teal-deep hover:underline"
-            >
-              Sign out
-            </button>
-          </form>
+          <SignOutForm buttonClassName="text-sm font-semibold text-mute underline-offset-2 hover:text-teal-deep hover:underline" />
         </div>
       </header>
       {children}

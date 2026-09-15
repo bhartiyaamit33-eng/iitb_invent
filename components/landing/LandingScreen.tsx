@@ -2,7 +2,7 @@ import { landingPreviewFontClass } from "@/app/landing-preview-fonts";
 import { JsonLd } from "@/components/JsonLd";
 import { LandingPage } from "@/components/landing/LandingPage";
 import { loadLandingData } from "@/lib/load-landing";
-import type { HeroVariant, LandingThemeName } from "@/lib/landing";
+import type { HeroVariant } from "@/lib/landing";
 import {
   eventJsonLd,
   faqPageJsonLd,
@@ -13,10 +13,8 @@ import {
 
 export async function LandingScreen({
   heroVariant,
-  theme,
 }: {
   heroVariant: HeroVariant;
-  theme?: LandingThemeName;
 }) {
   const data = await loadLandingData();
   return (
@@ -31,7 +29,6 @@ export async function LandingScreen({
       />
       <LandingPage
         heroVariant={heroVariant}
-        theme={theme}
         signedInName={data.signedInName}
         live={data.live}
         faqs={data.faqs}
