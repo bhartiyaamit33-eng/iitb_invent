@@ -54,6 +54,10 @@ const nextConfig: NextConfig = {
       { source: "/dsse", destination: "/about", permanent: true },
       { source: "/dsse-day", destination: "/about", permanent: true },
       { source: "/dsse-day-2027", destination: "/about", permanent: true },
+      { source: "/ventures", destination: "/", permanent: false },
+      { source: "/ventures/:path*", destination: "/", permanent: false },
+      { source: "/:year(\\d{4})/attendees", destination: "/dashboard", permanent: false },
+      { source: "/:year(\\d{4})/attendees/:path*", destination: "/dashboard", permanent: false },
     ];
   },
   // Keep AWS SDK / sharp as Node requires. Webpack-splitting them into

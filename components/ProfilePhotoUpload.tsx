@@ -61,7 +61,7 @@ export function ProfilePhotoUpload({
           {pending ? "Uploading…" : preview ? "Change photo" : "Add photo"}
         </button>
         <p className="mt-1 text-xs text-mute">
-          Shown on the attendee directory when you opt in.
+          Shown on your profile.
         </p>
         {error ? <p className="mt-1 text-xs text-red-700">{error}</p> : null}
       </div>

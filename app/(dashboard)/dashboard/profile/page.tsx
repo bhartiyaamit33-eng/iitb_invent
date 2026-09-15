@@ -48,8 +48,8 @@ export default async function ProfilePage({
         Your profile
       </h1>
       <p className="mt-3 max-w-2xl text-ink-soft">
-        All fields optional. Saves when you submit. Directory stays off until you
-        opt in.
+        All fields optional. Saves when you submit. This is your profile, not a
+        ticket to the event.
       </p>
 
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-paper">
@@ -163,7 +163,7 @@ export default async function ProfilePage({
         </label>
 
         <label className="block">
-          <span className="text-sm font-medium">Phone (for connection requests)</span>
+          <span className="text-sm font-medium">Phone</span>
           <input
             name="phone"
             defaultValue={profile?.phone ?? ""}
@@ -219,32 +219,6 @@ export default async function ProfilePage({
             placeholder="co-founder, hiring, raising"
             className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-teal"
           />
-        </label>
-
-        <label className="flex items-start gap-3 rounded-lg border border-line bg-paper/60 px-4 py-3">
-          <input
-            type="checkbox"
-            name="directoryOptIn"
-            defaultChecked={profile?.directoryOptIn ?? false}
-            className="mt-1"
-          />
-          <span className="text-sm text-ink-soft">
-            <strong className="text-ink">Show me in the attendee directory.</strong>{" "}
-            Your name, photo, headline and LinkedIn will be visible to other
-            registered attendees of the current edition. Default is off.
-          </span>
-        </label>
-
-        <label className="flex items-start gap-3 rounded-lg border border-line px-4 py-3">
-          <input
-            type="checkbox"
-            name="showEmail"
-            defaultChecked={profile?.showEmail ?? false}
-            className="mt-1"
-          />
-          <span className="text-sm text-ink-soft">
-            Also show my email in the directory (separate from opt-in).
-          </span>
         </label>
 
         <button

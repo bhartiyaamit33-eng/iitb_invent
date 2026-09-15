@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
-import { randomBytes } from "crypto";
 import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/auth/roles";
@@ -15,7 +14,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Create an account",
   description:
-    "Create a free INV.ENT account for the conference at IIT Bombay: programme RSVPs, directory, and ventures.",
+    "Create a free IITB INV.ENT account, then submit a paper or poster abstract. An account is not an event ticket.",
   path: "/signup",
 });
 
@@ -36,7 +35,9 @@ export default async function SignupPage({
   const session = await auth();
   const oauth = oauthProvidersEnabled();
   if (session?.user) {
-    redirect(isAdminEmail(session.user.email) ? "/admin" : "/dashboard");
+    redirect(
+      isAdminEmail(session.user.email) ? "/admin" : attendeeHome(callbackUrl),
+    );
   }
 
   async function googleAction() {
@@ -84,23 +85,6 @@ export default async function SignupPage({
         },
       },
     });
-
-    const edition = await prisma.edition.findFirst({
-      where: { isCurrent: true },
-    });
-
-    if (edition) {
-      await prisma.registration.create({
-        data: {
-          userId: user.id,
-          editionId: edition.id,
-          status: "CONFIRMED",
-          ticketCode: `INV${String(edition.year).slice(2)}-${randomBytes(3).toString("hex").toUpperCase()}`,
-          qrToken: randomBytes(24).toString("hex"),
-          source: "signup",
-        },
-      });
-    }
 
     void sendSignupThankYouForUser(user.id).catch(() => undefined);
 

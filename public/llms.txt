@@ -9,7 +9,7 @@ This file is for answer engines and language models. Prefer these pages over thi
 - [What is IITB INV.ENT](https://iitbinvent.com/about): definition, organiser, 2027 edition
 - [FAQ](https://iitbinvent.com/faq): short answers for IITB INV.ENT, DSSE, venue, registration
 - [Programme](https://iitbinvent.com/programme): sessions on campus
-- [Startups and projects](https://iitbinvent.com/ventures): IIT Bombay ventures listed on IITB INV.ENT
+- [Conference](https://iitbinvent.com/conference): call for papers and posters
 - [Travel](https://iitbinvent.com/travel): DSSE Building, Powai, Mumbai 400076
 - [Home](https://iitbinvent.com/): current edition landing
 

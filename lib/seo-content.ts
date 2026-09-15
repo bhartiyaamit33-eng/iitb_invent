@@ -37,7 +37,7 @@ export const CANONICAL_FAQS: FaqItem[] = [
   {
     question: "How do I register for IITB INV.ENT?",
     answer:
-      "Create a free account at https://iitbinvent.com/signup, then complete your profile if you want to appear in the attendee directory. Session RSVPs and the programme live at https://iitbinvent.com/programme.",
+      "Log in at https://iitbinvent.com/login, then submit a paper or poster abstract. An account is not a ticket. After organisers select you, pay the fee for your category. The ticket then appears on your dashboard and in email.",
   },
   {
     question: "What happens at IITB INV.ENT?",
@@ -66,7 +66,7 @@ export const ABOUT_SECTIONS: { heading: string; body: string }[] = [
   },
   {
     heading: "IITB INV.ENT 2027",
-    body: "The current edition is IITB INV.ENT 2027, on 30-31 January 2027 at the DSSE Building, IIT Bombay, Powai, Mumbai, with sessions from about 9:00 to 19:30 IST. Create an account to join the directory, browse the programme, and add a startup, project, or idea.",
+    body: "The current edition is IITB INV.ENT 2027, on 30-31 January 2027 at the DSSE Building, IIT Bombay, Powai, Mumbai, with sessions from about 9:00 to 19:30 IST. Log in, submit a paper or poster abstract, and complete your profile. An account is not a ticket.",
   },
 ];
 
@@ -80,7 +80,7 @@ Campus access may require a registration badge. Confirm gate instructions closer
 
 export const PRIVACY_FALLBACK = `IITB INV.ENT (iitbinvent.com) is run by the Desai Sethi School of Entrepreneurship at IIT Bombay.
 
-The attendee directory is opt-in. Email is never shown to other attendees unless you enable that in your profile. You can update or delete profile fields from your dashboard.
+You can update or delete profile fields from your dashboard. An account is not a ticket to the event.
 
 Transactional mail is sent from conference@iitbinvent.com. For data requests write to admin@iitbinvent.com or support@iitbinvent.com.`;
 

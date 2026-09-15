@@ -6,14 +6,13 @@ import {
   IMAGES,
   PARTICIPATE,
   REGISTER_HREF,
-  SUBMIT_HREF,
-  VENTURE_KINDS,
+  submitHrefFor,
   type LandingFaq,
   type LandingStat,
   type TimelineItem,
 } from "@/lib/landing";
 import { BrandInline } from "./Wordmark";
-import { ImagePanel, ImageSplit } from "./ImagePanel";
+import { ImageSplit } from "./ImagePanel";
 import { OrbitBackdrop } from "./OrbitBackdrop";
 import { Reveal } from "./Reveal";
 import { Timeline } from "./Timeline";
@@ -30,13 +29,13 @@ export function LandingSections({
   stats: LandingStat[];
   timeline: TimelineItem[];
 }) {
-  const submitHref = SUBMIT_HREF;
+  const submitHref = submitHrefFor(Boolean(signedInName));
   const registerHref = signedInName ? "/dashboard" : REGISTER_HREF;
   const accountHref = signedInName ? "/dashboard" : "/login";
-  const connectLabel = signedInName ? "Go to dashboard" : "Log in to connect";
-  const signupLabel = signedInName ? "Go to dashboard" : "Create free account";
-  const ghostSignupHref = signedInName ? "/2027/attendees" : "/signup";
-  const ghostSignupLabel = signedInName ? "Browse attendees" : "Create account";
+  const connectLabel = signedInName ? "Go to dashboard" : "Log in";
+  const signupLabel = signedInName ? "Go to dashboard" : "Log in to submit";
+  const ghostSignupHref = signedInName ? "/dashboard/profile" : "/signup";
+  const ghostSignupLabel = signedInName ? "Edit profile" : "Create account";
 
   const displayStats =
     stats[0]?.value === "2014"
@@ -84,7 +83,7 @@ export function LandingSections({
                 <Link href="/about">Read what IITB INV.ENT is</Link>.
               </p>
               <div className="cta-row" data-testid="cta-signup">
-                <Link className="btn" href={signedInName ? "/dashboard" : "/signup"}>
+                <Link className="btn" href={signedInName ? "/dashboard" : "/login"}>
                   {signupLabel}
                 </Link>
                 <Link className="btn ghost" href="/programme">
@@ -129,9 +128,9 @@ export function LandingSections({
         <div className="landing-shell relative">
           <Reveal>
             <p className="landing-kicker">Ways to take part</p>
-            <h2 data-spark-node>Five ways onto the floor</h2>
+            <h2 data-spark-node>Three ways onto the floor</h2>
             <p className="lead">
-              Submit a contribution, bring a venture, or simply show up. Workshops are accepted through the same submissions desk as papers and posters.
+              Submit a paper, poster, or case study. Workshops are accepted through the same submissions desk.
             </p>
             <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {PARTICIPATE.map((item) => (
@@ -165,10 +164,10 @@ export function LandingSections({
               </p>
               <h2 data-spark-node>Submissions</h2>
               <p className="lead">
-                IITB INV.ENT invites research papers, poster presentations, and workshops from students, faculty, and practitioners. After organisers accept a contribution, you receive an email with a payment link. Fees collect through IIT Bombay Online Pay into an IITB account.
+                IITB INV.ENT invites research papers, poster presentations, and workshops from students, faculty, and practitioners. Log in first, then submit your abstract. After organisers accept a contribution, you receive an email with a payment link. An account is not a ticket.
               </p>
               <p className="lead">
-                Startup showcases and innovation demos live in the venture directory. Case studies may be submitted as papers.
+                Case studies may be submitted as papers. After you submit, you can complete a short profile on your dashboard.
               </p>
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <div className="border-t border-cyan-glow/40 pt-3">
@@ -189,7 +188,7 @@ export function LandingSections({
                   Submit your abstract
                 </Link>
                 <Link className="btn ghost" href={registerHref}>
-                  Register to attend
+                  Login
                 </Link>
               </div>
             </ImageSplit>
@@ -208,7 +207,7 @@ export function LandingSections({
               <p className="landing-kicker section-kicker">The conference · 30-31 Jan 2027</p>
               <h2 data-spark-node>What happens on campus</h2>
               <p className="lead">
-                IITB INV.ENT 2027 runs 30-31 January at the DSSE Building. Doors from 9:00 IST, sessions, workshops, and events through the evening. RSVP on the programme for capped rooms; waitlists open when full.
+                IITB INV.ENT 2027 runs 30-31 January at the DSSE Building. Doors from 9:00 IST, sessions, workshops, and events through the evening. Session RSVP opens for people who have a confirmed ticket after approval and payment.
               </p>
               <div className="mt-4 border-t border-white/10">
                 {AGENDA.map((row) => (
@@ -228,12 +227,6 @@ export function LandingSections({
                 <Link className="btn ghost" href="/programme">
                   Full programme
                 </Link>
-                <Link className="btn ghost" href="/2027/attendees">
-                  Attendee directory
-                </Link>
-                <Link className="btn ghost" href="/ventures">
-                  Startups &amp; projects
-                </Link>
               </div>
             </ImageSplit>
           </Reveal>
@@ -247,60 +240,17 @@ export function LandingSections({
               <p className="landing-kicker">Before you come</p>
               <h2 data-spark-node>Campus, badge, network</h2>
               <p className="lead">
-                Venue: Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076. Nearest gate: IIT Bombay Main Gate. Check in with your ticket QR. Complete a short profile if you want to be found in the directory.
+                Venue: Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076. Nearest gate: IIT Bombay Main Gate. Log in, submit your abstract, and complete your profile. You receive a ticket QR only after organisers select you and you pay the category fee.
               </p>
               <div className="cta-row">
-                <Link className="btn ghost" href="/programme">
-                  RSVP sessions
+                <Link className="btn ghost" href={submitHref}>
+                  Submit your abstract
                 </Link>
                 <Link className="btn ghost" href={accountHref}>
-                  {signedInName ? "Your ticket" : "Create account"}
+                  {signedInName ? "Dashboard" : "Login"}
                 </Link>
               </div>
             </ImageSplit>
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="startups" className="relative border-t border-[var(--rule)]">
-        <OrbitBackdrop variant="section" />
-        <div className="landing-shell relative">
-          <Reveal>
-            <p className="landing-kicker">Startup directory</p>
-            <h2 data-spark-node>Startups, projects &amp; ideas</h2>
-            <p className="lead">
-              Browse what IIT Bombay founders and labs are building: logos, short pitches, and links, without leaving IITB INV.ENT. Open a website only when you choose. Add your own from the dashboard after you sign in.
-            </p>
-            <div className="mt-8">
-              <ImagePanel
-                src={IMAGES.panel.src}
-                alt={IMAGES.panel.alt}
-                caption="On campus · DSSE"
-                className="min-h-[240px] lg:min-h-[340px]"
-              />
-            </div>
-            <div className="mt-7 grid gap-5 md:grid-cols-3">
-              {VENTURE_KINDS.map((item) => (
-                <Link
-                  key={item.title}
-                  href={item.href}
-                  className="border-t border-white/20 pt-3 min-h-[140px] transition hover:-translate-y-0.5 hover:border-spark"
-                >
-                  <strong className="landing-serif mb-2 block text-[28px] font-normal text-frost">
-                    {item.title}
-                  </strong>
-                  <span className="text-sm leading-relaxed text-mist">{item.body}</span>
-                </Link>
-              ))}
-            </div>
-            <div className="cta-row">
-              <Link className="btn" href="/ventures">
-                Open startup directory
-              </Link>
-              <Link className="btn ghost" href="/dashboard/ventures">
-                Add your venture
-              </Link>
-            </div>
           </Reveal>
         </div>
       </section>
@@ -330,12 +280,12 @@ export function LandingSections({
             <ImageSplit image={IMAGES.handshake} caption="Attendee network">
               <p className="landing-kicker">People</p>
               <h2>
-                See who is coming.
+                Log in.
                 <br />
-                Actually connect.
+                Submit your abstract.
               </h2>
               <p className="lead">
-                IITB INV.ENT is as much a network as a conference. Sign in with name and email (Google optional), complete a short profile (LinkedIn, persona, what you are building), and opt into the attendee directory. Browse who is pitching, speaking, or sitting next to you. Send a LinkedIn note or an intro request without friction.
+                Log in with name and email (Google optional), submit your paper or poster abstract, then complete a short profile so organisers know who you are. An account is not a ticket. After approval and payment, your ticket appears on the dashboard.
               </p>
               <div className="cta-row" data-testid="cta-register">
                 <Link className="btn" href={accountHref} data-spark-node>
@@ -406,7 +356,7 @@ export function LandingSections({
                   Submit your abstract
                 </Link>
                 <Link className="btn outline" href={registerHref}>
-                  Register to attend
+                  Login
                 </Link>
               </div>
             </ImageSplit>

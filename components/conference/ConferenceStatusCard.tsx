@@ -87,7 +87,7 @@ export function ConferenceStatusCard({
         <p className="mt-3 text-sm text-ink">
           {paymentStatus === "WAIVED"
             ? "The registration fee has been waived."
-            : "Payment received. You do not need to apply again."}
+            : "Payment received. Your event ticket is on the dashboard and in email."}
         </p>
       ) : (
         <p className="mt-3 text-sm text-ink-soft">

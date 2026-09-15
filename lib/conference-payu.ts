@@ -12,6 +12,7 @@ import {
   payuRequestHash,
   payuResponseHash,
 } from "@/lib/payu";
+import { issueEventTicketForApplication } from "@/lib/conference-access";
 
 export const CONFERENCE_PAYU_PRODUCT =
   "IITB INV.ENT conference registration";
@@ -155,6 +156,7 @@ export async function processPayUCallback(
           paidAt: new Date(),
         },
       });
+      await issueEventTicketForApplication(application.id, { notify: true });
     }
     return { outcome: "success", paymentToken: token };
   }

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   REGISTER_HREF,
-  SUBMIT_HREF,
+  submitHrefFor,
   TAGLINE_LEAD,
   TAGLINE_REST,
   IMAGES,
@@ -22,9 +22,9 @@ export function LandingHero({
 }) {
   const accountHref = signedInName ? "/dashboard" : "/login";
   const accountLabel = signedInName ?? "Login";
-  const submitHref = SUBMIT_HREF;
+  const submitHref = submitHrefFor(Boolean(signedInName));
   const registerHref = signedInName ? "/dashboard" : REGISTER_HREF;
-  const registerLabel = signedInName ? "Go to dashboard" : "Register to attend";
+  const registerLabel = signedInName ? "Go to dashboard" : "Login";
 
   return (
     <header

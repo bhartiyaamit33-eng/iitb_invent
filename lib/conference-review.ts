@@ -14,7 +14,7 @@ import {
   conferencePaymentUrl,
   newConferenceToken,
 } from "@/lib/conference-server";
-import { notifyApplicationStatus } from "@/lib/conference-access";
+import { notifyApplicationStatus, issueEventTicketForApplication } from "@/lib/conference-access";
 import { sendConferenceStatusUpdate } from "@/lib/email/transactions";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { siteOrigin } from "@/lib/ticket";
@@ -154,4 +154,8 @@ export async function setApplicationPayment(opts: {
     before,
     after,
   });
+
+  if (paidNow) {
+    await issueEventTicketForApplication(after.id, { notify: true });
+  }
 }

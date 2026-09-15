@@ -73,13 +73,14 @@ export default async function LoginPage({
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        IITB INV.ENT · Attendee sign in
+        IITB INV.ENT · Sign in
       </p>
       <h1 className="mt-3 font-display text-4xl tracking-wide text-teal-deep">
         Login
       </h1>
       <p className="mt-3 text-ink-soft">
-        Sign in to RSVP, complete your profile, and join the attendee directory.
+        Sign in to submit a paper or poster abstract and manage your profile.
+        An account is not a ticket to the event.
       </p>
 
       {params.error ? (
