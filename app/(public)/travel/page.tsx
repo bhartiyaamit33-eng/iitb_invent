@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { Prose } from "@/components/Prose";
 import { PublicChrome } from "@/components/PublicChrome";
@@ -43,6 +44,10 @@ export default async function TravelPage() {
         <div className="mt-8">
           <Prose text={body} />
         </div>
+        <p className="mt-8 text-[17px] leading-7 text-ink-soft">
+          Stay options — IIT Bombay guest houses and a nearby hotel — are on the{" "}
+          <Link href="/accommodation">accommodation</Link> page.
+        </p>
       </main>
     </PublicChrome>
   );

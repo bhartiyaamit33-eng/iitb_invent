@@ -242,6 +242,33 @@ export default async function DashboardPage({
       </div>
 
       {ticketReady ? (
+        <section
+          className="mt-10 rounded-xl border border-line bg-white p-5"
+          data-testid="workshop-dashboard-card"
+        >
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
+            30 January 2027
+          </p>
+          <h2 className="mt-1 font-display text-2xl tracking-wide text-teal-deep">
+            Pre-conference workshop
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-ink-soft">
+            Teaching entrepreneurship with Prof. Sankalp Pratap. Included in
+            your registration. Places are limited — reserve a seat when session
+            RSVP opens on the programme.
+          </p>
+          <p className="mt-3">
+            <Link
+              href="/workshops"
+              className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
+            >
+              Workshop details →
+            </Link>
+          </p>
+        </section>
+      ) : null}
+
+      {ticketReady ? (
         <section className="mt-10">
           <h2 className="font-display text-3xl tracking-wide text-teal-deep">
             My schedule
@@ -287,6 +314,12 @@ export default async function DashboardPage({
           className="rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-teal-deep hover:border-teal"
         >
           Programme
+        </Link>
+        <Link
+          href="/workshops"
+          className="rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-teal-deep hover:border-teal"
+        >
+          Workshop
         </Link>
       </div>
     </main>

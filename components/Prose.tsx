@@ -30,6 +30,10 @@ function linkify(text: string): ReactNode[] {
   return parts;
 }
 
+export function LinkedText({ text }: { text: string }) {
+  return <>{linkify(text)}</>;
+}
+
 export function Prose({ text }: { text: string }) {
   const blocks = text.trim().split(/\n\n+/);
   return (

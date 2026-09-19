@@ -215,6 +215,12 @@ export function ConferenceCall({
               ))}
             </dl>
             <p className="cfp-lead">{CFP_OVERVIEW}</p>
+            <p className="cfp-lead cfp-lead-tight" style={{ marginTop: "1.25rem" }}>
+              A pre-conference workshop on teaching entrepreneurship, led by
+              Prof. Sankalp Pratap, runs on 30 January 2027. It is included in
+              registration.{" "}
+              <Link href="/workshops">Workshop details</Link>.
+            </p>
           </div>
         </section>
 
@@ -343,6 +349,12 @@ export function ConferenceCall({
               Stay at IIT Bombay
             </h2>
             <p className="cfp-stay">{CFP_STAY}</p>
+            <p className="cfp-stay">
+              Anantha Hotel in Bhandup West has quoted discounted rates for
+              delegates.{" "}
+              <Link href="/accommodation">Campus guest houses and hotel rates</Link>
+              .
+            </p>
           </div>
         </section>
 
@@ -443,11 +455,14 @@ export function ConferenceCall({
             </a>
           </p>
           <nav aria-label="Site">
-            <Link href="/about">About</Link>
+            <Link href="/about">About IITB INV.ENT</Link>
             <Link href="/">Home</Link>
             <Link href="/faq">FAQ</Link>
+            <Link href="/workshops">Workshop</Link>
             <Link href="/programme">Programme</Link>
+            <Link href="/accommodation">Stay</Link>
             <Link href="/travel">Travel</Link>
+            <Link href="/contact">Contact</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/code-of-conduct">Code of conduct</Link>
           </nav>

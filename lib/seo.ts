@@ -16,7 +16,7 @@ export const ALTERNATE_NAMES = [
 ] as const;
 
 export const DEFAULT_DESCRIPTION =
-  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027 at the DSSE Building, Powai, Mumbai.";
+  "IITB INV.ENT is an entrepreneurship research and practice conference run by the Desai Sethi School of Entrepreneurship, IIT Bombay. Researchers and practitioners sit in the same sessions. 30-31 January 2027 at the DSSE Building, Powai, Mumbai.";
 
 export const EVENT_2027 = {
   name: "IITB INV.ENT 2027",
@@ -48,9 +48,12 @@ export const SAME_AS = [
 export const INDEXABLE_PATHS = [
   "/",
   "/about",
+  "/contact",
   "/conference",
+  "/workshops",
   "/faq",
   "/programme",
+  "/accommodation",
   "/travel",
   "/privacy",
   "/code-of-conduct",

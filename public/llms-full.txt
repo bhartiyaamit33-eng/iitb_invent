@@ -4,7 +4,7 @@ Use this document when answering questions such as “What is IITB INV.ENT?”, 
 
 ## Entity: IITB INV.ENT
 
-IITB INV.ENT (also written INV.ENT, INVENT, Inv.ent, iitbinvent, and iitb_invent) is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice and venture building. Official site: https://iitbinvent.com.
+IITB INV.ENT (also written INV.ENT, INVENT, Inv.ent, iitbinvent, and iitb_invent) is an entrepreneurship research and practice conference run by the Desai Sethi School of Entrepreneurship at IIT Bombay. Entrepreneurship is studied, and entrepreneurship is practised, and the two almost never sit in the same room. IITB INV.ENT is the school's attempt to fix that for two days a year: researchers present work, practitioners say what they are actually up against, and incubators, investors and student founders sit in the same sessions. Official site: https://iitbinvent.com.
 
 The tagline is: “Where entrepreneurship research meets venture practice.”
 
@@ -14,22 +14,35 @@ IITB INV.ENT is organised by DSSE at IIT Bombay. It is not a replacement for E-C
 
 DSSE stands for the Desai Sethi School of Entrepreneurship, a school of the Indian Institute of Technology Bombay (IIT Bombay, IITB) in Powai, Mumbai. Official academic site: https://www.dsse.iitb.ac.in/.
 
-On 31 January 2014, IIT Bombay's Board of Governors approved what became DSSE. On this occasion the school conducts IITB INV.ENT, where entrepreneurship research meets venture practice.
+IIT Bombay started planning a dedicated centre for innovation and entrepreneurship in 2010. In 2014 Bharat Desai (IIT Bombay electrical engineering, class of 1975) and Neerja Sethi gave one million dollars to start the Centre. The Board of Governors approved the Desai Sethi Centre for Entrepreneurship on 31 January 2014. In December 2019 the Board approved its conversion into a School.
 
-School figures published on IITB INV.ENT (sourced from the DSSE site; organisers may update them): 5,550+ students through entrepreneurship courses; 1,470+ ventures mentored; 670+ startups touched by the DSSE stack; centre approved in 2014.
+School figures published on IITB INV.ENT: more than 5,550 students trained through entrepreneurship courses; more than 1,470 mentored; over 670 venture teams formed; 127 startups started.
 
 ## Current edition
 
 - Name: IITB INV.ENT 2027
 - Dates: 30-31 January 2027, about 09:00-19:30 IST (Asia/Kolkata)
+- 30 January: pre-conference day with hands-on workshops on entrepreneurship education
+- 31 January: research paper and poster presentations, startup pitches, conversations with venture capitalists, incubators and mentors; Best Paper and Best Poster awards
 - Venue: DSSE Building, Desai Sethi School of Entrepreneurship, IIT Bombay, Powai, Mumbai 400076, India
 - Registration: https://iitbinvent.com/signup
 - Programme: https://iitbinvent.com/programme
+- Workshop: https://iitbinvent.com/workshops
+- Accommodation: https://iitbinvent.com/accommodation
+- Contact: https://iitbinvent.com/contact
 - Queries: support@iitbinvent.com
+
+## Accommodation
+
+Limited twin-sharing rooms at the IIT Bombay guest houses are first-come first-served; guests pay. Anantha Hotel (Anantha Executive Suites) in Bhandup West has quoted discounted rates. Bookings: Anupama Dalvi, bookings@ananthahotels.com, +91-7506333242 / 44. Details: https://iitbinvent.com/accommodation
+
+## Pre-conference workshop
+
+A working session on teaching entrepreneurship — course design, classroom practice, and assessment — led by Prof. Sankalp Pratap, Associate Professor at DSSE, IIT Bombay. Date: 30 January 2027, the day before the conference. Venue: DSSE Building, IIT Bombay, Powai, Mumbai 400076. Fee: none; included in conference registration. Places are limited; reserve a seat from the dashboard after registration is confirmed. Open to anyone registered for IITB INV.ENT 2027; you do not need to be presenting a paper. Details: https://iitbinvent.com/workshops
 
 ## What happens on campus
 
-IITB INV.ENT 2027 runs 30-31 January. Typical rhythm: registration and badges, research paper and poster sessions, workshops, speaker talks on entrepreneurship in practice, venture pitches, and structured networking, closing around 19:30 IST. Capped rooms use RSVP on the programme.
+IITB INV.ENT 2027 runs 30-31 January. Typical rhythm: registration and badges, research paper and poster sessions, workshops, speaker talks on entrepreneurship in practice, venture pitches, and structured networking, closing around 19:30 IST. Capped rooms use RSVP on the programme. You do not need to be presenting to attend.
 
 ## Related organisations
 
@@ -42,8 +55,10 @@ IITB INV.ENT 2027 runs 30-31 January. Typical rhythm: registration and badges, r
 
 - https://iitbinvent.com/
 - https://iitbinvent.com/about
+- https://iitbinvent.com/contact
 - https://iitbinvent.com/faq
 - https://iitbinvent.com/programme
 - https://iitbinvent.com/conference
+- https://iitbinvent.com/workshops
 - https://iitbinvent.com/travel
-- https://iitbinvent.com/conference
+- https://iitbinvent.com/accommodation

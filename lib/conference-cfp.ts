@@ -96,4 +96,4 @@ export const CFP_SELECTION = [
 ] as const;
 
 export const CFP_STAY =
-  "Shared, limited accommodation is available at the IIT Bombay guest house, first-come first-served. Costs are borne by participants.";
+  "Limited accommodation is available at the IIT Bombay guest houses on a twin-sharing basis, first-come first-served. Guests pay for their stay.";

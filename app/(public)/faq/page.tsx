@@ -40,7 +40,7 @@ export default function FaqPage() {
         <p className="mt-4 text-[17px] leading-7 text-ink-soft">
           Direct answers for people asking what IITB INV.ENT is, when it is, and how
           to register at IIT Bombay. The same facts appear on{" "}
-          <Link href="/about">About</Link>.
+          <Link href="/about">About IITB INV.ENT</Link>.
         </p>
         <dl className="mt-10 divide-y divide-line border-y border-line">
           {CANONICAL_FAQS.map((item) => (

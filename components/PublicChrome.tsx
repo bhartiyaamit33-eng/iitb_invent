@@ -2,10 +2,13 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 const NAV = [
-  { href: "/about", label: "About" },
+  { href: "/about", label: "About IITB INV.ENT" },
   { href: "/conference", label: "Conference" },
+  { href: "/workshops", label: "Workshop" },
   { href: "/programme", label: "Programme" },
+  { href: "/accommodation", label: "Stay" },
   { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function PublicChrome({
@@ -25,12 +28,22 @@ export function PublicChrome({
           <nav
             aria-label="Primary"
             className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold"
+            data-testid="nav"
           >
             {NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="py-2 text-ink-soft hover:text-teal-deep sm:py-0"
+                className="whitespace-nowrap py-2 text-ink-soft hover:text-teal-deep sm:py-0"
+                data-testid={
+                  item.href === "/about"
+                    ? "nav-about"
+                    : item.href === "/contact"
+                      ? "nav-contact"
+                      : item.href === "/workshops"
+                        ? "nav-workshop"
+                        : undefined
+                }
               >
                 {item.label}
               </Link>
@@ -80,10 +93,13 @@ export function PublicChrome({
             IITB INV.ENT · entrepreneurship research and practice conference · IIT Bombay
           </p>
           <p className="flex flex-wrap gap-x-4 gap-y-1">
-            <Link href="/about">About</Link>
+            <Link href="/about">About IITB INV.ENT</Link>
             <Link href="/conference">Conference</Link>
+            <Link href="/workshops">Workshop</Link>
             <Link href="/faq">FAQ</Link>
+            <Link href="/accommodation">Stay</Link>
             <Link href="/travel">Travel</Link>
+            <Link href="/contact">Contact</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/code-of-conduct">Code of conduct</Link>
             <a href="mailto:support@iitbinvent.com">support@iitbinvent.com</a>

@@ -39,6 +39,9 @@ export default async function DashboardLayout({
             <Link href="/conference" className="text-ink-soft hover:text-teal-deep">
               Conference
             </Link>
+            <Link href="/workshops" className="text-ink-soft hover:text-teal-deep">
+              Workshop
+            </Link>
             <Link href="/programme" className="text-ink-soft hover:text-teal-deep">
               Programme
             </Link>

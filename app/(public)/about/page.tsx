@@ -1,10 +1,7 @@
-import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
+import { LinkedText } from "@/components/Prose";
 import { PublicChrome } from "@/components/PublicChrome";
-import {
-  ABOUT_SECTIONS,
-  INVENT_DEFINITION,
-} from "@/lib/seo-content";
+import { ABOUT_PAGE, INVENT_DEFINITION } from "@/lib/seo-content";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -15,9 +12,8 @@ import {
 } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "What is IITB INV.ENT?",
-  description:
-    "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027.",
+  title: "About IITB INV.ENT",
+  description: INVENT_DEFINITION,
   path: "/about",
 });
 
@@ -34,7 +30,7 @@ export default function AboutPage() {
           ]),
           {
             "@type": "AboutPage",
-            name: "What is IITB INV.ENT?",
+            name: ABOUT_PAGE.title,
             url: absoluteUrl("/about"),
             description: INVENT_DEFINITION,
             mainEntity: {
@@ -52,38 +48,46 @@ export default function AboutPage() {
           },
         )}
       />
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      <main
+        className="mx-auto max-w-3xl px-4 py-10 sm:px-6"
+        data-testid="about-page"
+      >
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-          IIT Bombay · DSSE
+          {ABOUT_PAGE.kicker}
         </p>
-        <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-          What is IITB INV.ENT?
+        <h1
+          className="mt-2 font-display text-4xl tracking-wide text-teal-deep"
+          data-testid="about-heading"
+        >
+          {ABOUT_PAGE.title}
         </h1>
-        <p className="mt-6 text-lg leading-8 text-ink">{INVENT_DEFINITION}</p>
-        {ABOUT_SECTIONS.map((section) => (
+        {ABOUT_PAGE.lede.map((paragraph, i) => (
+          <p
+            key={paragraph}
+            className={
+              i === 0
+                ? "mt-6 text-lg leading-8 text-ink"
+                : "mt-4 text-lg leading-8 text-ink"
+            }
+          >
+            <LinkedText text={paragraph} />
+          </p>
+        ))}
+        {ABOUT_PAGE.sections.map((section) => (
           <section key={section.heading} className="mt-10">
             <h2 className="font-display text-2xl tracking-wide text-teal-deep">
               {section.heading}
             </h2>
-            <p className="mt-3 text-[17px] leading-7 text-ink-soft">
-              {section.body}
-            </p>
+            {section.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="mt-3 text-[17px] leading-7 text-ink-soft"
+              >
+                <LinkedText text={paragraph} />
+              </p>
+            ))}
           </section>
         ))}
-        <p className="mt-10 text-[17px] leading-7 text-ink-soft">
-          See the{" "}
-          <Link href="/faq">FAQ</Link>, the{" "}
-          <Link href="/conference">call for papers</Link>, or the{" "}
-          <Link href="/programme">2027 programme</Link>. School site:{" "}
-          <a
-            href="https://www.dsse.iitb.ac.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            dsse.iitb.ac.in
-          </a>
-          .
-        </p>
       </main>
     </PublicChrome>
   );

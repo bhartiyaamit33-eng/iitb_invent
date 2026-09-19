@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { buildIcs } from "@/lib/calendar";
+import { PROGRAMME_SCHEDULE_PUBLISHED } from "@/lib/programme";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +9,10 @@ export async function GET(
   _req: Request,
   ctx: { params: Promise<{ slug: string }> },
 ) {
+  if (!PROGRAMME_SCHEDULE_PUBLISHED) {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
   const raw = (await ctx.params).slug;
   const slug = raw.replace(/\.ics$/i, "");
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
