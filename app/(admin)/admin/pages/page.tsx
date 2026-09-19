@@ -15,7 +15,7 @@ export default async function AdminPagesPage() {
   return (
     <main className="px-6 py-10">
       <h1 className="font-display text-4xl tracking-wide text-teal-deep">Pages</h1>
-      <p className="mt-2 text-sm text-ink-soft">Markdown body — about, travel, privacy, code of conduct.</p>
+      <p className="mt-2 text-sm text-ink-soft">Markdown body - about, travel, privacy, code of conduct.</p>
       <div className="mt-8 space-y-4">
         {pages.map((p) => (
           <form key={p.id} action={updatePageAction} className="rounded-xl border border-line bg-white p-5">

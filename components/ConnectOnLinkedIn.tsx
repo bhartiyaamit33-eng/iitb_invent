@@ -34,7 +34,7 @@ export function ConnectOnLinkedIn({
         type="button"
         onClick={handleClick}
         className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-[#0A66C2] transition hover:bg-paper"
-        title={copied ? "Note copied — LinkedIn opened" : "Copy intro note & open LinkedIn"}
+        title={copied ? "Note copied - LinkedIn opened" : "Copy intro note & open LinkedIn"}
         aria-label="Connect on LinkedIn"
       >
         <IconLinkedIn className="h-4 w-4" />

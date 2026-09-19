@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth/session";
 import { saveAbstractFile } from "@/lib/abstract-storage";
 import {
+  conferenceFeePaiseFor,
   isPdfBuffer,
   isValidEmail,
   isValidPhone,
@@ -71,8 +72,12 @@ async function withTimeout<T>(
 export async function processConferenceApplication(
   formData: FormData,
 ): Promise<ConferenceSubmitResult> {
-  const name = str(formData, "name");
-  const email = str(formData, "email").toLowerCase();
+  const sessionUser = await getCurrentUser();
+  if (!sessionUser) {
+    return { error: "Please log in to submit an abstract." };
+  }
+  const email = sessionUser.email.trim().toLowerCase();
+  const name = str(formData, "name") || sessionUser.name.trim();
   const phone = str(formData, "phone");
   const institution = str(formData, "institution");
   const professional = parseProfessional(str(formData, "professionalCategory"));
@@ -86,7 +91,6 @@ export async function processConferenceApplication(
   );
   const participationOther = str(formData, "participationOther");
   const paperTitle = str(formData, "paperTitle");
-  const sendCopy = formData.get("sendCopy") === "on";
   const file = formData.get("abstract");
 
   if (!name || name.length < 2) {
@@ -150,14 +154,20 @@ export async function processConferenceApplication(
     };
   }
 
-  const sessionUser = await getCurrentUser();
-  const linkedUser =
-    sessionUser && sessionUser.email === email
-      ? sessionUser
-      : await prisma.user.findUnique({
-          where: { email },
-          select: { id: true },
-        });
+  const linkedUser = sessionUser;
+
+  const feePaise = conferenceFeePaiseFor(professional);
+  const existing = await prisma.conferenceApplication.findUnique({
+    where: { editionId_email: { editionId: edition.id, email } },
+    select: { id: true, paymentStatus: true },
+  });
+  const lockFee =
+    existing?.paymentStatus === "PAID" || existing?.paymentStatus === "WAIVED";
+  if (existing && !lockFee) {
+    await prisma.applicationReview.deleteMany({
+      where: { applicationId: existing.id },
+    });
+  }
 
   const application = await prisma.conferenceApplication.upsert({
     where: { editionId_email: { editionId: edition.id, email } },
@@ -175,9 +185,10 @@ export async function processConferenceApplication(
       participationCategory: participation,
       participationOther: participation === "OTHER" ? participationOther : null,
       paperTitle: paperTitle || null,
-      sendCopy,
+      sendCopy: true,
       abstractViewToken: newConferenceToken(),
       paymentToken: newConferenceToken(),
+      paymentAmountPaise: feePaise,
     },
     update: {
       userId: linkedUser?.id ?? null,
@@ -191,7 +202,15 @@ export async function processConferenceApplication(
       participationCategory: participation,
       participationOther: participation === "OTHER" ? participationOther : null,
       paperTitle: paperTitle || null,
-      sendCopy,
+      sendCopy: true,
+      createdAt: new Date(),
+      ...(lockFee
+        ? {}
+        : {
+            paymentAmountPaise: feePaise,
+            status: "RECEIVED",
+            paymentStatus: "NOT_REQUIRED",
+          }),
     },
   });
 
@@ -228,7 +247,7 @@ export async function processConferenceApplication(
     where: { id: application.id },
   });
 
-  const eventName = `${edition.name} · Research Conference`;
+  const eventName = "IITB INV.ENT";
   const payload = {
     name: saved.name,
     email: application.email,
@@ -247,16 +266,16 @@ export async function processConferenceApplication(
     paperTitle: saved.paperTitle ?? "",
     abstractFileName: saved.abstractFileName ?? "",
     eventName,
+    isPaperOrPoster: needsAbstract(saved.participationCategory),
+    participationCategory: saved.participationCategory,
   };
 
-  if (sendCopy) {
-    void sendConferenceApplicationCopy({
-      ...payload,
-      to: saved.email,
-      userId: saved.userId,
-      applicationId: saved.id,
-    }).catch(() => undefined);
-  }
+  void sendConferenceApplicationCopy({
+    ...payload,
+    to: saved.email,
+    userId: saved.userId,
+    applicationId: saved.id,
+  }).catch(() => undefined);
 
   void sendConferenceOrganiserNotify({
     to: getEmailFromAddress(),

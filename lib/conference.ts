@@ -30,8 +30,8 @@ export const PROFESSIONAL_OPTIONS: {
 ];
 
 export const PHD_YEAR_OPTIONS: { value: PhdYear; label: string }[] = [
-  { value: "YEARS_1_3", label: "1–3" },
-  { value: "YEARS_4_5", label: "4–5" },
+  { value: "YEARS_1_3", label: "1-3" },
+  { value: "YEARS_4_5", label: "4-5" },
   { value: "YEAR_6_PLUS", label: "6th year or above" },
   { value: "THESIS_SUBMITTED", label: "Thesis submitted" },
 ];
@@ -63,8 +63,8 @@ export const APPLICATION_STATUS_OPTIONS: {
   label: string;
 }[] = [
   { value: "RECEIVED", label: "Received" },
-  { value: "SHORTLISTED_PAPER", label: "Shortlisted — paper" },
-  { value: "SHORTLISTED_POSTER", label: "Shortlisted — poster" },
+  { value: "SHORTLISTED_PAPER", label: "Shortlisted: paper" },
+  { value: "SHORTLISTED_POSTER", label: "Shortlisted: poster" },
   { value: "ATTENDEE", label: "Attendee" },
   { value: "WAITLISTED", label: "Waitlisted" },
   { value: "REJECTED", label: "Not selected" },
@@ -77,12 +77,63 @@ export const PAYMENT_STATUS_OPTIONS: {
 }[] = [
   { value: "NOT_REQUIRED", label: "Not required" },
   { value: "UNPAID", label: "Unpaid" },
-  { value: "REPORTED", label: "Reported — confirm" },
+  { value: "REPORTED", label: "Reported: confirm" },
   { value: "PAID", label: "Paid" },
   { value: "WAIVED", label: "Waived" },
 ];
 
-export const DEFAULT_CONFERENCE_FEE_PAISE = 300_000;
+/** Same fee for paper, poster, or attendee — band is who they are, not what they applied as. */
+export const CONFERENCE_FEE_PAISE = {
+  student: 500_000,
+  faculty: 1_000_000,
+  industry: 2_000_000,
+} as const;
+
+export type ConferenceFeeBand = keyof typeof CONFERENCE_FEE_PAISE;
+
+export function feeBandForProfessional(
+  category: ProfessionalCategory,
+): ConferenceFeeBand {
+  switch (category) {
+    case "PHD_SCHOLAR":
+    case "POSTDOC":
+      return "student";
+    case "PROFESSOR":
+    case "OTHER":
+      return "faculty";
+    case "INDUSTRY":
+      return "industry";
+  }
+}
+
+export function conferenceFeePaiseFor(
+  category: ProfessionalCategory,
+): number {
+  return CONFERENCE_FEE_PAISE[feeBandForProfessional(category)];
+}
+
+export function feeBandLabel(band: ConferenceFeeBand): string {
+  switch (band) {
+    case "student":
+      return "Student / research scholar";
+    case "faculty":
+      return "Faculty / professor";
+    case "industry":
+      return "Corporate / industry";
+  }
+}
+
+/** What organisers should charge unless already paid/waived at a recorded amount. */
+export function reviewFeePaise(app: {
+  professionalCategory: ProfessionalCategory;
+  paymentAmountPaise: number;
+  paymentStatus: ApplicationPaymentStatus;
+}): number {
+  if (app.paymentStatus === "PAID" || app.paymentStatus === "WAIVED") {
+    return app.paymentAmountPaise;
+  }
+  return conferenceFeePaiseFor(app.professionalCategory);
+}
 
 export function professionalLabel(
   value: ProfessionalCategory,
@@ -95,12 +146,12 @@ export function professionalLabel(
 }
 
 export function phdYearLabel(value: PhdYear | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not provided";
   return PHD_YEAR_OPTIONS.find((o) => o.value === value)?.label ?? value;
 }
 
 export function postdocLabel(value: PostdocSeeking | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not provided";
   return POSTDOC_OPTIONS.find((o) => o.value === value)?.label ?? value;
 }
 
@@ -215,19 +266,19 @@ export function formatInrFromPaise(paise: number): string {
 export function defaultStatusEmailMessage(status: ApplicationStatus): string {
   switch (status) {
     case "SHORTLISTED_PAPER":
-      return "Congratulations — you have been shortlisted to present a paper at the Entrepreneurship Research Conference during Inv.ent 2027 at IIT Bombay.";
+      return "Congratulations. You have been shortlisted to present a paper at IITB INV.ENT 2027, an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay.";
     case "SHORTLISTED_POSTER":
-      return "Congratulations — you have been shortlisted for a poster presentation at the Entrepreneurship Research Conference during Inv.ent 2027 at IIT Bombay.";
+      return "Congratulations. You have been shortlisted for a poster presentation at IITB INV.ENT 2027, an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay.";
     case "ATTENDEE":
-      return "You are confirmed as an attendee at the Entrepreneurship Research Conference during Inv.ent 2027 at IIT Bombay.";
+      return "You are confirmed as an attendee at IITB INV.ENT 2027, an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay.";
     case "WAITLISTED":
-      return "Thank you for applying. You are on the waitlist for the Entrepreneurship Research Conference. We will write again if a place opens.";
+      return "Thank you for applying. You are on the waitlist for IITB INV.ENT 2027. We will write again if a place opens.";
     case "REJECTED":
-      return "Thank you for applying to the Entrepreneurship Research Conference. We are unable to offer a place this year, and we hope to see you at Inv.ent.";
+      return "Thank you for applying to IITB INV.ENT 2027. We are unable to offer a place this year, and we hope to see you at a future edition.";
     case "WITHDRAWN":
       return "Your conference application has been marked as withdrawn. Write to support@iitbinvent.com if this is unexpected.";
     default:
-      return "We have updated the status of your application for the Entrepreneurship Research Conference at Inv.ent 2027.";
+      return "We have updated the status of your application for IITB INV.ENT 2027 at IIT Bombay.";
   }
 }
 

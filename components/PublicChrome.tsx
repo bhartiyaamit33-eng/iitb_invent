@@ -3,9 +3,8 @@ import type { ReactNode } from "react";
 
 const NAV = [
   { href: "/about", label: "About" },
-  { href: "/dsse-day", label: "DSSE Day" },
+  { href: "/conference", label: "Conference" },
   { href: "/programme", label: "Programme" },
-  { href: "/ventures", label: "Startups" },
   { href: "/faq", label: "FAQ" },
 ];
 
@@ -21,7 +20,7 @@ export function PublicChrome({
       <header className="border-b border-line bg-white">
         <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Link href="/" className="text-lg font-semibold text-teal-deep">
-            INV.ENT
+            IITB INV.ENT
           </Link>
           <nav
             aria-label="Primary"
@@ -78,11 +77,11 @@ export function PublicChrome({
       <footer className="mt-16 border-t border-line">
         <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-8 text-sm text-mute sm:px-6">
           <p>
-            INVENT (INV.ENT, iitbinvent, iitb_invent) · DSSE Day · IIT Bombay
+            IITB INV.ENT · entrepreneurship research and practice conference · IIT Bombay
           </p>
           <p className="flex flex-wrap gap-x-4 gap-y-1">
             <Link href="/about">About</Link>
-            <Link href="/dsse-day">DSSE Day</Link>
+            <Link href="/conference">Conference</Link>
             <Link href="/faq">FAQ</Link>
             <Link href="/travel">Travel</Link>
             <Link href="/privacy">Privacy</Link>

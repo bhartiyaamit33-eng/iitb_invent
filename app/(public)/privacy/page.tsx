@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Privacy",
   description:
-    "How INVENT (iitbinvent.com) handles attendee directory opt-in, email visibility, and data requests at DSSE, IIT Bombay.",
+    "How IITB INV.ENT (iitbinvent.com) handles profile data and data requests at DSSE, IIT Bombay.",
   path: "/privacy",
 });
 

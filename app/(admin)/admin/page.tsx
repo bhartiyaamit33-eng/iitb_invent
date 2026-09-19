@@ -47,9 +47,9 @@ export default async function AdminOverviewPage() {
       </h1>
       <p className="mt-3 max-w-2xl text-ink-soft">
         Current edition:{" "}
-        <strong className="text-ink">{edition?.name ?? "—"}</strong>. Edit the
-        DSSE Day programme mock, speakers, site copy, conference applications,
-        and every registered user from the nav above.
+        <strong className="text-ink">{edition?.name ?? "-"}</strong>. Edit the
+        programme, speakers, site copy, conference applications, and every
+        registered user from the nav above.
       </p>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

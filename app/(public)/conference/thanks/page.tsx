@@ -1,73 +1,16 @@
-import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Application received · Research Conference",
+  title: "Application received · INV.ENT",
 };
 
 export default async function ConferenceThanksPage() {
   const user = await getCurrentUser();
-
-  return (
-    <main className="mx-auto max-w-xl px-6 py-16">
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Research Conference
-      </p>
-      <h1
-        className="mt-2 font-display text-4xl tracking-wide text-teal-deep"
-        data-testid="conference-thanks"
-      >
-        Application received
-      </h1>
-      <p className="mt-4 text-ink-soft">
-        Thank you. Organisers at the Desai Sethi School of Entrepreneurship will
-        review your submission for Inv.ent 2027. If you asked for a copy, it is
-        on its way to the email you entered.
-      </p>
-      <p className="mt-3 text-ink-soft">
-        When you are selected, you will get a notice on your dashboard (and
-        email when SES can send). Pay the ₹3,000 fee through IIT Bombay Online
-        Pay from there — you will not fill the application form again.
-      </p>
-      <p className="mt-3 text-sm text-mute">
-        Questions:{" "}
-        <a href="mailto:support@iitbinvent.com">support@iitbinvent.com</a>
-      </p>
-      <div className="mt-8 flex flex-wrap gap-3">
-        {user ? (
-          <Link
-            href="/dashboard"
-            className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
-            data-testid="thanks-dashboard"
-          >
-            Open dashboard
-          </Link>
-        ) : (
-          <>
-            <Link
-              href="/signup?callbackUrl=%2Fdashboard"
-              className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
-              data-testid="thanks-signup"
-            >
-              Create account
-            </Link>
-            <Link
-              href="/login?callbackUrl=%2Fdashboard"
-              className="rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-teal-deep hover:border-teal"
-            >
-              Sign in
-            </Link>
-          </>
-        )}
-        <Link
-          href="/programme"
-          className="rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-teal-deep hover:border-teal"
-        >
-          See the programme
-        </Link>
-      </div>
-    </main>
-  );
+  if (user) {
+    redirect("/dashboard?submitted=1");
+  }
+  redirect(`/login?callbackUrl=${encodeURIComponent("/dashboard?submitted=1")}`);
 }

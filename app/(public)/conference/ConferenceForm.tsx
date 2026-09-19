@@ -62,6 +62,10 @@ export function ConferenceForm({
       const data = (await res.json().catch(() => null)) as
         | { ok?: boolean; error?: string }
         | null;
+      if (res.status === 401) {
+        window.location.href = `/login?callbackUrl=${encodeURIComponent("/conference#submit")}`;
+        return;
+      }
       if (!res.ok || !data?.ok) {
         setError(
           data?.error ||
@@ -69,7 +73,7 @@ export function ConferenceForm({
         );
         return;
       }
-      router.push("/conference/thanks");
+      router.push("/dashboard?submitted=1");
     } catch {
       setError(
         controller.signal.aborted
@@ -122,9 +126,15 @@ export function ConferenceForm({
           required
           autoComplete="email"
           defaultValue={defaultEmail}
+          readOnly={Boolean(defaultEmail)}
           className={fieldClass}
           data-testid="field-email"
         />
+        {defaultEmail ? (
+          <p className="mt-1.5 text-xs text-mute">
+            Tied to your logged-in account.
+          </p>
+        ) : null}
       </label>
 
       <label className="block">
@@ -294,21 +304,11 @@ export function ConferenceForm({
         </p>
       </label>
 
-      <label className="flex items-start gap-3 rounded-lg border border-line bg-paper/60 px-4 py-3">
-        <input
-          type="checkbox"
-          name="sendCopy"
-          className="mt-1"
-          data-testid="field-send-copy"
-        />
-        <span className="text-sm text-ink-soft">
-          Send me a copy of my responses at the email above.
-        </span>
-      </label>
-
       <p className="text-xs text-mute">
         Submitting this form records your name, email, phone, institution, and
         uploaded files so DSSE organisers can review the call for applications.
+        We email a thank-you to the address above. The registration fee and
+        payment link are sent only after you are selected.
       </p>
 
       <button

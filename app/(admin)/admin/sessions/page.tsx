@@ -40,7 +40,7 @@ export default async function AdminSessionsPage() {
         Programme
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">
-        Editable DSSE Day schedule (seeded from 2026 organiser artwork). Changes
+        Editable conference schedule (seeded from 2026 organiser artwork). Changes
         publish to <code>/programme</code> when marked published.
       </p>
 

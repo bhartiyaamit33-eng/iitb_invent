@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { applicationStatusLabel } from "@/lib/conference";
 import { isConferenceGatewayReady } from "@/lib/conference-onlinepay";
+import { applicationPaymentVisible } from "@/lib/conference-access";
 import { isOnlinePayTest } from "@/lib/onlinepay";
 import { ConferencePayPanel } from "../ConferencePayPanel";
 
@@ -47,6 +48,7 @@ export default async function ConferencePayPage({
         outcome={payu ?? null}
         campusOnly={isOnlinePayTest()}
         autoStart={start === "1" && !payu && !isOnlinePayTest()}
+        paymentVisible={applicationPaymentVisible(application)}
       />
       <p className="mt-6 text-sm text-mute">
         Questions:{" "}

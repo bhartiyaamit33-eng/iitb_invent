@@ -14,7 +14,7 @@ export function RequestConnectForm({
 }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState(
-    `Hi ${toName.split(" ")[0] || toName}, I'd like to connect at INVENT — happy to share more about what I'm working on.`,
+    `Hi ${toName.split(" ")[0] || toName}, I'd like to connect at IITB INV.ENT - happy to share more about what I'm working on.`,
   );
   const [status, setStatus] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -33,8 +33,8 @@ export function RequestConnectForm({
       }
       setStatus(
         res.emailed
-          ? "Sent — they'll get an email from INVENT with your details (you are not CC'd)."
-          : "Saved. Email could not be delivered yet (SES sandbox) — we'll retry when outbound mail is fully open.",
+          ? "Sent - they'll get an email from IITB INV.ENT with your details (you are not CC'd)."
+          : "Saved. Email could not be delivered yet (SES sandbox) - we'll retry when outbound mail is fully open.",
       );
       setOpen(false);
     });

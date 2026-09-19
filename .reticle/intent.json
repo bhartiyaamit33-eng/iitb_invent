@@ -1,0 +1,310 @@
+{
+  "version": 1,
+  "intents": {
+    "inline:the-about-page-names-iitb-inv-ent-as-an-entrepre-a522bbe5": {
+      "id": "inline:the-about-page-names-iitb-inv-ent-as-an-entrepre-a522bbe5",
+      "statement": "The About page names IITB INV.ENT as an entrepreneurship research and practice conference and does not mention Day Zero.",
+      "state": "proved",
+      "declaredAt": 1789480992517,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "/about"
+          },
+          {
+            "kind": "text",
+            "contains": "IITB INV.ENT"
+          },
+          {
+            "kind": "text",
+            "contains": "entrepreneurship research and practice"
+          },
+          {
+            "kind": "text",
+            "contains": "Day Zero",
+            "absent": true
+          },
+          {
+            "kind": "text",
+            "contains": "DSSE Day",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/about"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789480992554",
+        "grade": "presence",
+        "at": 1789480992554
+      }
+    },
+    "inline:the-conference-page-names-iitb-inv-ent-as-an-ent-28a91119": {
+      "id": "inline:the-conference-page-names-iitb-inv-ent-as-an-ent-28a91119",
+      "statement": "The conference page names IITB INV.ENT as an entrepreneurship research and practice conference, shows 30-31 January, and does not mention Day Zero.",
+      "state": "proved",
+      "declaredAt": 1789481008557,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "contains": "/conference"
+          },
+          {
+            "kind": "text",
+            "contains": "IITB INV.ENT"
+          },
+          {
+            "kind": "text",
+            "contains": "entrepreneurship research and practice conference"
+          },
+          {
+            "kind": "text",
+            "contains": "30-31 January"
+          },
+          {
+            "kind": "text",
+            "contains": "Day Zero",
+            "absent": true
+          },
+          {
+            "kind": "text",
+            "contains": "\u2014",
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference"
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789481008595",
+        "grade": "presence",
+        "at": 1789481008595
+      }
+    },
+    "inline:the-landing-page-names-iitb-inv-ent-shows-30-31-77353b7d": {
+      "id": "inline:the-landing-page-names-iitb-inv-ent-shows-30-31-77353b7d",
+      "statement": "The landing page names IITB INV.ENT, shows 30-31 January, and does not mention Day Zero.",
+      "state": "proved",
+      "declaredAt": 1789481036536,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "text",
+            "contains": "IITB INV.ENT"
+          },
+          {
+            "kind": "text",
+            "contains": "30-31 JANUARY"
+          },
+          {
+            "kind": "text",
+            "contains": "Day Zero",
+            "absent": true
+          },
+          {
+            "kind": "text",
+            "contains": "DAY ZERO",
+            "absent": true
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789481036591",
+        "grade": "presence",
+        "at": 1789481036591
+      }
+    },
+    "logout-resets-conference-form": {
+      "id": "logout-resets-conference-form",
+      "statement": "After a signed-in attendee signs out, the Call for Papers page shows the public Submit your Abstract form again, not their previous application.",
+      "state": "bound",
+      "declaredAt": 1789481369102,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "contains": "/conference",
+            "kind": "route"
+          },
+          {
+            "kind": "element",
+            "testid": "conference-form"
+          },
+          {
+            "absent": true,
+            "kind": "element",
+            "testid": "conference-status-card"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "app/logout/route.ts",
+          "lib/auth/session-end.ts",
+          "app/(public)/conference/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789481594074",
+        "grade": "presence",
+        "at": 1789481594074
+      }
+    },
+    "landing-light-only": {
+      "id": "landing-light-only",
+      "statement": "The public homepage is always the light appearance, with no control to switch to a dark theme.",
+      "state": "proved",
+      "declaredAt": 1789481369102,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/"
+          },
+          {
+            "kind": "element",
+            "testid": "landing-theme-light"
+          },
+          {
+            "absent": true,
+            "kind": "element",
+            "testid": "theme-dark"
+          },
+          {
+            "absent": true,
+            "kind": "element",
+            "testid": "theme-light"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/",
+        "files": [
+          "components/landing/LandingPage.tsx",
+          "components/landing/LandingHero.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789481640801",
+        "grade": "presence",
+        "at": 1789481640801
+      }
+    },
+    "inline:an-attendee-can-submit-the-call-for-papers-form-2756b4e5": {
+      "id": "inline:an-attendee-can-submit-the-call-for-papers-form-2756b4e5",
+      "statement": "An attendee can submit the Call for Papers form and reach the thanks page.",
+      "state": "bound",
+      "declaredAt": 1789481473972,
+      "binding": {
+        "kind": "route",
+        "contains": "/conference/thanks"
+      }
+    },
+    "inline:cfp-delete-submission-309d5589": {
+      "id": "inline:cfp-delete-submission-309d5589",
+      "statement": "cfp-delete-submission",
+      "state": "proved",
+      "declaredAt": 1789514698344,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/conference"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "application-deleted"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "conference-form"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "delete-my-application"
+            },
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "components/conference/DeleteMyApplicationForm.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789514699437",
+        "grade": "presence",
+        "at": 1789514699437
+      }
+    },
+    "cfp-delete-submission": {
+      "id": "cfp-delete-submission",
+      "statement": "A signed-in applicant can permanently delete their abstract from Call for Papers and from the dashboard, then see the submit form again.",
+      "state": "proved",
+      "declaredAt": 1789514577938,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/conference"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "application-deleted"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "conference-form"
+            }
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "delete-my-application"
+            },
+            "absent": true
+          }
+        ]
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "components/conference/DeleteMyApplicationForm.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789514699437",
+        "grade": "presence",
+        "at": 1789514699437
+      }
+    },
+    "resubmit-refreshes-timestamp": {
+      "id": "resubmit-refreshes-timestamp",
+      "statement": "Deleting a user or an abstract and submitting again records a new submitted time instead of keeping the old one.",
+      "state": "declared",
+      "declaredAt": 1789514577938,
+      "surface": "/admin/applications"
+    }
+  }
+}

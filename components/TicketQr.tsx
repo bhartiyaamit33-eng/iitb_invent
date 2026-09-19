@@ -31,7 +31,7 @@ export function TicketQr({
     <div className="inline-block rounded-xl border border-line bg-white p-3">
       <canvas ref={canvasRef} aria-label="Attendee badge QR code" />
       <p className="mt-2 max-w-[220px] text-center text-[10px] text-mute">
-        Opens your Inv.ent badge · show at gate
+        Opens your IITB INV.ENT badge · show at gate
       </p>
       {badgeUrl ? (
         <a

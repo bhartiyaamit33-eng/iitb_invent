@@ -9,6 +9,37 @@ const nextConfig: NextConfig = {
   },
   // Smaller runtime footprint for t3.micro EC2 deploys.
   output: "standalone",
+  async headers() {
+    return [
+      {
+        source: "/conference/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-store, no-cache, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/conference",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-store, no-cache, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/logout",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-store, no-cache, max-age=0, must-revalidate",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {
@@ -20,8 +51,13 @@ const nextConfig: NextConfig = {
       { source: "/iitb-invent", destination: "/about", permanent: true },
       { source: "/iitb_invent", destination: "/about", permanent: true },
       { source: "/iitbinvent", destination: "/about", permanent: true },
-      { source: "/dsse", destination: "/dsse-day", permanent: true },
-      { source: "/dsse-day-2027", destination: "/dsse-day", permanent: true },
+      { source: "/dsse", destination: "/about", permanent: true },
+      { source: "/dsse-day", destination: "/about", permanent: true },
+      { source: "/dsse-day-2027", destination: "/about", permanent: true },
+      { source: "/ventures", destination: "/", permanent: false },
+      { source: "/ventures/:path*", destination: "/", permanent: false },
+      { source: "/:year(\\d{4})/attendees", destination: "/dashboard", permanent: false },
+      { source: "/:year(\\d{4})/attendees/:path*", destination: "/dashboard", permanent: false },
     ];
   },
   // Keep AWS SDK / sharp as Node requires. Webpack-splitting them into

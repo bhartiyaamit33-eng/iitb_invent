@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { ShowBio } from "@/components/ShowBio";
 import { IconGlobe, IconLinkedIn, IconMail } from "@/components/icons";
+import { userHasLiveEventTicket } from "@/lib/conference-access";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,14 @@ export default async function TicketBadgePage({
     notFound();
   }
 
+  const ticketLive = await userHasLiveEventTicket(
+    registration.userId,
+    registration.editionId,
+  );
+  if (!ticketLive) {
+    notFound();
+  }
+
   const user = registration.user;
   const profile = user.profile;
   const verified = registration.status === "CONFIRMED";
@@ -37,7 +46,7 @@ export default async function TicketBadgePage({
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col px-6 py-12">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Inv.ent · IIT Bombay
+        IITB INV.ENT · IIT Bombay
       </p>
       <h1 className="mt-2 font-display text-3xl tracking-wide text-teal-deep">
         Attendee badge
@@ -94,7 +103,7 @@ export default async function TicketBadgePage({
           <p className="mt-6 text-sm leading-relaxed text-ink-soft">
             I&apos;m attending{" "}
             <strong className="text-ink">
-              IIT Bombay Inv.ent
+              IIT Bombay INV.ENT
             </strong>
             {registration.edition.name !== "Inv.ent"
               ? ` (${registration.edition.name})`
@@ -165,7 +174,7 @@ export default async function TicketBadgePage({
 
       <p className="mt-8 text-center text-sm text-mute">
         <Link href="/" className="font-semibold text-teal-deep underline-offset-2 hover:underline">
-          Inv.ent home
+          IITB INV.ENT home
         </Link>
         {" · "}
         <Link href="/programme" className="underline-offset-2 hover:underline">

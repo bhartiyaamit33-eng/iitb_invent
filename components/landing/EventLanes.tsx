@@ -44,7 +44,7 @@ export function EventLanes() {
   return (
     <section
       className="event-lanes"
-      aria-label="Scenes from INV.ENT at DSSE"
+      aria-label="Scenes from IITB INV.ENT at DSSE"
       data-testid="event-lanes"
     >
       <h2 className="sr-only">Events from campus</h2>

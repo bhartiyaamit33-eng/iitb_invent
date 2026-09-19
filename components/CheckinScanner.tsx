@@ -74,7 +74,7 @@ export function CheckinScanner({
     } catch {
       setResult({
         ok: false,
-        message: "Network error — try again or paste the token.",
+        message: "Network error - try again or paste the token.",
       });
     }
   }, []);
@@ -120,7 +120,7 @@ export function CheckinScanner({
       const { Html5Qrcode } = await import("html5-qrcode");
       const el = document.getElementById(REGION_ID);
       if (!el) {
-        setCameraError("Scanner container missing — refresh the page.");
+        setCameraError("Scanner container missing - refresh the page.");
         setCameraBusy(false);
         return;
       }
@@ -145,7 +145,7 @@ export function CheckinScanner({
         err instanceof Error ? err.message : "Could not start the camera";
       setCameraError(
         /NotAllowedError|Permission/i.test(msg)
-          ? "Camera permission denied — allow camera access or paste the token."
+          ? "Camera permission denied - allow camera access or paste the token."
           : /secure|https|Only secure/i.test(msg)
             ? "Camera needs HTTPS on this host. Paste the QR token below instead."
             : `Camera unavailable (${msg}). Paste the QR token below.`,

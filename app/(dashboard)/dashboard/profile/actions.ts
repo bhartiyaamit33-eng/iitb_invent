@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { PersonaType } from "@prisma/client";
-import { signOut } from "@/auth";
+import { endBrowserSession } from "@/lib/auth/session-end";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import {
@@ -53,8 +53,6 @@ export async function saveProfileAction(formData: FormData) {
   const githubUrl = String(formData.get("githubUrl") ?? "").trim() || null;
   const interests = csvToList(String(formData.get("interests") ?? ""));
   const lookingFor = csvToList(String(formData.get("lookingFor") ?? ""));
-  const directoryOptIn = formData.get("directoryOptIn") === "on";
-  const showEmail = formData.get("showEmail") === "on";
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
@@ -92,8 +90,8 @@ export async function saveProfileAction(formData: FormData) {
       githubUrl,
       interests,
       lookingFor,
-      directoryOptIn,
-      showEmail,
+      directoryOptIn: false,
+      showEmail: false,
       completeness,
     },
     update: {
@@ -109,8 +107,8 @@ export async function saveProfileAction(formData: FormData) {
       githubUrl,
       interests,
       lookingFor,
-      directoryOptIn,
-      showEmail,
+      directoryOptIn: false,
+      showEmail: false,
       completeness,
     },
   });
@@ -120,12 +118,11 @@ export async function saveProfileAction(formData: FormData) {
     action: "profile.update",
     entityType: "Profile",
     entityId: user.id,
-    after: { completeness, directoryOptIn },
+    after: { completeness },
   });
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/profile");
-  revalidatePath("/2027/attendees");
   redirect(`/dashboard/profile?saved=1&pct=${completeness}`);
 }
 
@@ -153,7 +150,7 @@ export async function deleteMyAccountAction(formData: FormData) {
     after: { email: user.email },
   });
 
-  await signOut({ redirectTo: "/" });
+  await endBrowserSession("/");
 }
 
 export async function uploadProfilePhotoAction(

@@ -1,8 +1,7 @@
-import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
 import { attachConferenceToUser } from "@/lib/conference-access";
 
-/** After OAuth/credentials sign-in: ensure Profile + current-edition Registration. */
+/** After OAuth/credentials sign-in: ensure Profile. Do not mint an event ticket. */
 export async function ensureAttendeeReady(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -14,27 +13,6 @@ export async function ensureAttendeeReady(userId: string) {
     await prisma.profile.create({
       data: { userId, completeness: user.image ? 10 : 0 },
     });
-  }
-
-  const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
-  if (edition) {
-    const existing = await prisma.registration.findUnique({
-      where: {
-        userId_editionId: { userId, editionId: edition.id },
-      },
-    });
-    if (!existing) {
-      await prisma.registration.create({
-        data: {
-          userId,
-          editionId: edition.id,
-          status: "CONFIRMED",
-          ticketCode: `INV${String(edition.year).slice(2)}-${randomBytes(3).toString("hex").toUpperCase()}`,
-          qrToken: randomBytes(24).toString("hex"),
-          source: "oauth",
-        },
-      });
-    }
   }
 
   await attachConferenceToUser({ id: user.id, email: user.email });

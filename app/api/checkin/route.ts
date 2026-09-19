@@ -4,6 +4,7 @@ import { requireOrganiserOrAdmin } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { extractQrToken } from "@/lib/ticket";
+import { userHasLiveEventTicket } from "@/lib/conference-access";
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -35,6 +36,17 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: false,
       message: "Unknown or cancelled ticket",
+    });
+  }
+
+  const ticketLive = await userHasLiveEventTicket(
+    registration.userId,
+    registration.editionId,
+  );
+  if (!ticketLive) {
+    return NextResponse.json({
+      ok: false,
+      message: "Ticket is not valid until the application is selected and paid",
     });
   }
 

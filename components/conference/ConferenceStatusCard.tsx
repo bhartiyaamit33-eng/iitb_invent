@@ -8,7 +8,7 @@ import {
   type ApplicationStatus,
   type ParticipationCategory,
 } from "@/lib/conference";
-import { applicationFeeDue } from "@/lib/conference-access";
+import { applicationFeeDue, applicationPaymentVisible } from "@/lib/conference-access";
 import { conferencePayPath } from "@/lib/conference-server";
 
 export function ConferencePayCta({
@@ -48,6 +48,7 @@ export function ConferenceStatusCard({
   paymentToken: string;
 }) {
   const feeDue = applicationFeeDue({ status, paymentStatus });
+  const showFee = applicationPaymentVisible({ status, paymentStatus });
   const payPath = conferencePayPath(paymentToken);
 
   return (
@@ -59,15 +60,17 @@ export function ConferenceStatusCard({
         {participationLabel(participationCategory, participationOther)}
         {paperTitle ? ` · ${paperTitle}` : ""}
       </p>
-      <p className="mt-1 text-sm text-ink-soft">
-        Fee: {paymentStatusLabel(paymentStatus)}
-        {feeDue ? ` · ${formatInrFromPaise(paymentAmountPaise)}` : ""}
-      </p>
+      {showFee ? (
+        <p className="mt-1 text-sm text-ink-soft">
+          Fee: {paymentStatusLabel(paymentStatus)}
+          {` · ${formatInrFromPaise(paymentAmountPaise)}`}
+        </p>
+      ) : null}
       {feeDue ? (
         <div className="mt-4 space-y-2">
           <p className="text-sm text-ink">
             You are selected. Pay the registration fee through IIT Bombay
-            Online Pay — you do not fill the application form again.
+            Online Pay. You do not fill the application form again.
           </p>
           <ConferencePayCta
             token={paymentToken}
@@ -84,12 +87,12 @@ export function ConferenceStatusCard({
         <p className="mt-3 text-sm text-ink">
           {paymentStatus === "WAIVED"
             ? "The registration fee has been waived."
-            : "Payment received. You do not need to apply again."}
+            : "Payment received. Your event ticket is on the dashboard and in email."}
         </p>
       ) : (
         <p className="mt-3 text-sm text-ink-soft">
-          Organisers will post the decision here and by email. You do not need
-          to submit the form again.
+          Organisers will post the decision here and by email. The registration
+          fee and payment link appear only after you are selected.
         </p>
       )}
     </div>

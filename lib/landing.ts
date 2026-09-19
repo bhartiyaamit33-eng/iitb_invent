@@ -28,11 +28,17 @@ export type LandingProps = {
   timeline: TimelineItem[];
 };
 
-export const TAGLINE =
-  "Where entrepreneurship research meets venture practice";
+export const TAGLINE = "Entrepreneurship Research and Venture Practice Conference";
+export const TAGLINE_LEAD = "Entrepreneurship Research and Venture Practice";
+export const TAGLINE_REST = "Conference";
 
-export const SUBMIT_HREF = "/submit";
-export const REGISTER_HREF = "/signup";
+export const SUBMIT_HREF = "/conference#submit";
+export const LOGIN_TO_SUBMIT_HREF = `/login?callbackUrl=${encodeURIComponent("/conference#submit")}`;
+export const REGISTER_HREF = "/login";
+
+export function submitHrefFor(signedIn: boolean) {
+  return signedIn ? SUBMIT_HREF : LOGIN_TO_SUBMIT_HREF;
+}
 
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
@@ -56,8 +62,8 @@ export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
     id: "conference",
     kicker: "Conference",
-    date: "31 Jan 2027",
-    at: "2027-01-31",
+    date: "30-31 Jan 2027",
+    at: "2027-01-30",
   },
 ];
 
@@ -79,7 +85,7 @@ export function markTimeline(
 }
 
 export const FALLBACK_STATS: LandingStat[] = [
-  { value: "2014", label: "Board approved the centre. Foundation day locked." },
+  { value: "2014", label: "Board of Governors approved the centre." },
   { value: "5550+", label: "Students through entrepreneurship courses." },
   { value: "1470+", label: "Ventures mentored across cohorts." },
   { value: "670+", label: "Startups touched by the DSSE stack." },
@@ -87,9 +93,9 @@ export const FALLBACK_STATS: LandingStat[] = [
 
 export const FALLBACK_FAQS: LandingFaq[] = [
   {
-    question: "When is INV.ENT 2027?",
+    question: "When is IITB INV.ENT 2027?",
     answer:
-      "Sunday 31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay.",
+      "30-31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay.",
   },
   {
     question: "Where is the venue?",
@@ -99,12 +105,12 @@ export const FALLBACK_FAQS: LandingFaq[] = [
   {
     question: "How do I submit an abstract?",
     answer:
-      "Create a free account, then open Papers, posters & workshops in the dashboard. Organisers review submissions and email a payment link if accepted.",
+      "Log in (or create an account), then submit your paper or poster abstract on the conference page. Organisers review submissions and email a payment link if you are selected. An account is not a ticket.",
   },
   {
-    question: "How do I register to attend?",
+    question: "How do I get a ticket?",
     answer:
-      "Create an account via Sign up. Completing your profile is optional but helps other attendees find you in the directory.",
+      "Submit an abstract, wait for organisers to select you, then pay the fee for your category. The ticket appears on your dashboard and in email only after that payment.",
   },
 ];
 
@@ -113,25 +119,13 @@ export const PARTICIPATE = [
     title: "Research Papers",
     href: "/submit",
     icon: "paper" as const,
-    body: "Peer sessions where labs show work that can leave the building — methods, evidence, and a concrete next step.",
+    body: "Peer sessions where labs show work that can leave the building: methods, evidence, and a concrete next step.",
   },
   {
     title: "Poster Presentations",
     href: "/submit",
     icon: "poster" as const,
     body: "Corridor conversations with the work on the wall. The format for early results, prototypes, and precise questions.",
-  },
-  {
-    title: "Startup Showcases",
-    href: "/ventures?kind=STARTUP",
-    icon: "startup" as const,
-    body: "Registered or shipping ventures. Logo, tagline, and an in-site preview before anyone clicks out.",
-  },
-  {
-    title: "Innovation Demos",
-    href: "/ventures?kind=PROJECT",
-    icon: "demo" as const,
-    body: "Lab builds, campus products, and hardware on a table. Read the story first, then open the link if you want more.",
   },
   {
     title: "Case Studies",
@@ -145,7 +139,7 @@ export const AGENDA = [
   {
     time: "0900",
     title: "Open & badge",
-    body: "Check in with your ticket QR. Meet people before the first talk — directory profiles make names stick.",
+    body: "Doors open. Confirmed attendees who have paid check in with their ticket QR.",
   },
   {
     time: "AM",
@@ -154,31 +148,13 @@ export const AGENDA = [
   },
   {
     time: "PM",
-    title: "Pitches & ventures",
-    body: "Idea pitching and venture presentations — short, concrete asks. See who is pitching next on the live programme.",
+    title: "Sessions & workshops",
+    body: "Talks and workshops on entrepreneurship research and venture practice.",
   },
   {
     time: "to 1930",
     title: "Connect & close",
-    body: "Office hours, hallway intros, LinkedIn connects. The day ends ~7:30 pm IST; the attendee network does not.",
-  },
-];
-
-export const VENTURE_KINDS = [
-  {
-    href: "/ventures?kind=STARTUP",
-    title: "Startups",
-    body: "Registered or shipping ventures. Custom logo or initials, tagline, and in-site preview before you click out.",
-  },
-  {
-    href: "/ventures?kind=PROJECT",
-    title: "Projects",
-    body: "Lab builds, prototypes, and campus products. Read the story first, then open the link if you want more.",
-  },
-  {
-    href: "/ventures?kind=IDEA",
-    title: "Ideas",
-    body: "Early concepts looking for co-founders, mentors, or a first customer. Explore the directory and connect.",
+    body: "Office hours and hallway intros. The day ends around 7:30 pm IST.",
   },
 ];
 

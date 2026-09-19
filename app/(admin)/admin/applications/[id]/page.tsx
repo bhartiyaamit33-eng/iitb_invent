@@ -2,17 +2,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import {
-  DEFAULT_CONFERENCE_FEE_PAISE,
   applicationStatusLabel,
+  conferenceFeePaiseFor,
+  feeBandForProfessional,
+  feeBandLabel,
+  formatInrFromPaise,
   needsPhdYear,
   participationLabel,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
+  reviewFeePaise,
 } from "@/lib/conference";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPanel";
+import { DeleteApplicationForm } from "@/components/admin/DeleteApplicationForm";
 import { Role } from "@prisma/client";
 import { assignReviewerAction, removeReviewerAction } from "./actions";
 
@@ -28,10 +33,13 @@ function istDate(d: Date): string {
 
 export default async function AdminApplicationDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
+  const { error } = await searchParams;
   const application = await prisma.conferenceApplication.findUnique({
     where: { id },
     include: {
@@ -69,6 +77,10 @@ export default async function AdminApplicationDetailPage({
         application.professionalOther,
       ),
     ],
+    [
+      "Fee band",
+      `${feeBandLabel(feeBandForProfessional(application.professionalCategory))} (${formatInrFromPaise(conferenceFeePaiseFor(application.professionalCategory))})`,
+    ],
     ...(needsPhdYear(application.professionalCategory)
       ? ([["PhD year", phdYearLabel(application.phdYear)]] as [string, string][])
       : []),
@@ -80,7 +92,7 @@ export default async function AdminApplicationDetailPage({
         application.participationOther,
       ),
     ],
-    ["Proposed title", application.paperTitle ?? "—"],
+    ["Proposed title", application.paperTitle ?? "-"],
     ["Send copy of responses", application.sendCopy ? "Yes" : "No"],
     ["Submitted", istDate(application.createdAt)],
     ["Updated", istDate(application.updatedAt)],
@@ -101,6 +113,30 @@ export default async function AdminApplicationDetailPage({
         {application.name}
       </h1>
       <p className="mt-1 text-ink-soft">{application.email}</p>
+      <p className="mt-3 text-sm">
+        <a
+          href="#delete-submission"
+          className="font-semibold text-red-700 underline-offset-2 hover:underline"
+        >
+          Delete this submission ↓
+        </a>
+      </p>
+      {error === "confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          role="alert"
+        >
+          Type DELETE in the confirm field to remove this submission.
+        </p>
+      ) : null}
+      {error && error !== "confirm" ? (
+        <p
+          className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          role="alert"
+        >
+          {error}
+        </p>
+      ) : null}
 
       <dl className="mt-8 divide-y divide-line rounded-xl border border-line bg-white">
         {rows.map(([k, v]) => (
@@ -112,6 +148,8 @@ export default async function AdminApplicationDetailPage({
           </div>
         ))}
       </dl>
+
+      <DeleteApplicationForm id={application.id} name={application.name} />
 
       <div className="mt-4 rounded-xl border border-line bg-white px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-mute">
@@ -152,9 +190,7 @@ export default async function AdminApplicationDetailPage({
         <ApplicationPaymentPanel
           id={application.id}
           paymentStatus={application.paymentStatus}
-          paymentAmountPaise={
-            application.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE
-          }
+          paymentAmountPaise={reviewFeePaise(application)}
           paymentUrl={conferencePaymentUrl(application.paymentToken)}
           paymentRef={application.paymentRef}
           paidAt={application.paidAt ? istDate(application.paidAt) : null}
@@ -174,9 +210,7 @@ export default async function AdminApplicationDetailPage({
             name={application.name}
             currentStatus={application.status}
             adminNotes={application.adminNotes ?? ""}
-            feePaise={
-              application.paymentAmountPaise || DEFAULT_CONFERENCE_FEE_PAISE
-            }
+            feePaise={reviewFeePaise(application)}
           />
         </div>
       </div>
@@ -274,19 +308,19 @@ export default async function AdminApplicationDetailPage({
                     </div>
                     <div>
                       <dt className="text-xs uppercase text-mute">Score</dt>
-                      <dd>{review.score ?? "—"} / 10</dd>
+                      <dd>{review.score ?? "-"} / 10</dd>
                     </div>
                     <div>
                       <dt className="text-xs uppercase text-mute">Expertise</dt>
-                      <dd>{review.expertise ?? "—"} / 5</dd>
+                      <dd>{review.expertise ?? "-"} / 5</dd>
                     </div>
                     <div className="sm:col-span-3">
                       <dt className="text-xs uppercase text-mute">Author-facing comments</dt>
-                      <dd className="whitespace-pre-wrap">{review.publicComments || "—"}</dd>
+                      <dd className="whitespace-pre-wrap">{review.publicComments || "-"}</dd>
                     </div>
                     <div className="sm:col-span-3">
                       <dt className="text-xs uppercase text-mute">Confidential committee comments</dt>
-                      <dd className="whitespace-pre-wrap">{review.confidentialComments || "—"}</dd>
+                      <dd className="whitespace-pre-wrap">{review.confidentialComments || "-"}</dd>
                     </div>
                   </dl>
                 ) : null}

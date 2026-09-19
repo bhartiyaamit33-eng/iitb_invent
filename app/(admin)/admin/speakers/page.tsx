@@ -21,7 +21,7 @@ export default async function AdminSpeakersPage() {
         Speakers
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
-        Seeded from DSSE Day 2026 artwork — fully editable.
+        Seeded from 2026 organiser artwork. Fully editable.
         {!s3Ready ? (
           <span className="block text-amber-800">
             Photo upload needs S3_BUCKET in the server env.

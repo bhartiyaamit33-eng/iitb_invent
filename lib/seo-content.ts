@@ -1,10 +1,7 @@
 /** Canonical copy for SEO / GEO / AEO. Keep facts aligned with the landing page. */
 
 export const INVENT_DEFINITION =
-  "INVENT (also written INV.ENT, iitbinvent, and iitb_invent) is the annual Innovation and Entrepreneurship gathering of the Desai Sethi School of Entrepreneurship (DSSE) at IIT Bombay. It is held on 31 January as DSSE Day at the DSSE Building, Powai, Mumbai.";
-
-export const DSSE_DAY_DEFINITION =
-  "DSSE Day is the foundation-day anniversary of the Desai Sethi School of Entrepreneurship at IIT Bombay. On 31 January 2014, IIT Bombay’s Board of Governors approved what became DSSE. That date is marked each year on campus; INVENT is how the school opens the day to students, faculty, founders, investors, and operators.";
+  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice and venture building. The 2027 edition is on 30-31 January at the DSSE Building, Powai, Mumbai.";
 
 export const DSSE_DEFINITION =
   "DSSE is the Desai Sethi School of Entrepreneurship at the Indian Institute of Technology Bombay (IIT Bombay, IITB) in Powai, Mumbai. The school trains aspiring entrepreneurs through academic and pre-incubation programmes.";
@@ -13,14 +10,9 @@ export type FaqItem = { question: string; answer: string };
 
 export const CANONICAL_FAQS: FaqItem[] = [
   {
-    question: "What is INVENT (iitbinvent / iitb_invent)?",
+    question: "What is IITB INV.ENT?",
     answer:
-      "INVENT — also written INV.ENT, iitbinvent, and iitb_invent — is Innovation and Entrepreneurship at the Desai Sethi School of Entrepreneurship (DSSE), IIT Bombay. It is the school’s public foundation-day gathering: research sessions, posters, venture pitches, and a year-round attendee network. The official website is https://iitbinvent.com.",
-  },
-  {
-    question: "What is DSSE Day?",
-    answer:
-      "DSSE Day is the foundation day of the Desai Sethi School of Entrepreneurship at IIT Bombay, observed on 31 January. INVENT is the public programme held on DSSE Day at the DSSE Building, Powai, Mumbai.",
+      "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, see research from the entrepreneurship ecosystem, and hear talks on actual entrepreneurship and venture practice. The official website is https://iitbinvent.com.",
   },
   {
     question: "What does DSSE stand for?",
@@ -28,95 +20,71 @@ export const CANONICAL_FAQS: FaqItem[] = [
       "DSSE stands for the Desai Sethi School of Entrepreneurship, a school of IIT Bombay. Official site: https://www.dsse.iitb.ac.in/.",
   },
   {
-    question: "When is INVENT 2027 / DSSE Day 2027?",
+    question: "When is IITB INV.ENT 2027?",
     answer:
-      "INVENT 2027 is on Sunday 31 January 2027. Doors open from 9:00 IST; sessions run through about 19:30 IST, Asia/Kolkata.",
+      "IITB INV.ENT 2027 is on 30-31 January 2027 at the DSSE Building, IIT Bombay. Doors open from 9:00 IST; sessions run through about 19:30 IST, Asia/Kolkata.",
   },
   {
-    question: "Where is INVENT / DSSE Day held?",
+    question: "Where is IITB INV.ENT held?",
     answer:
       "At the DSSE Building, Desai Sethi School of Entrepreneurship, IIT Bombay, Powai, Mumbai 400076, India.",
   },
   {
-    question: "Who organises INVENT?",
+    question: "Who organises IITB INV.ENT?",
     answer:
-      "INVENT is organised by the Desai Sethi School of Entrepreneurship (DSSE) at IIT Bombay. Campus partners include E-Cell (ecell.in) and SINE (sineiitb.org). Queries: support@iitbinvent.com.",
+      "IITB INV.ENT is conducted by the Desai Sethi School of Entrepreneurship (DSSE) at IIT Bombay. Campus partners include E-Cell (ecell.in) and SINE (sineiitb.org). Queries: support@iitbinvent.com.",
   },
   {
-    question: "Is INVENT the same as DSSE Day?",
+    question: "How do I register for IITB INV.ENT?",
     answer:
-      "DSSE Day is the anniversary (31 January). INVENT is the Innovation and Entrepreneurship programme the school runs on that day, plus the multi-year platform at iitbinvent.com for profiles, the programme, and ventures.",
+      "Log in at https://iitbinvent.com/login, then submit a paper or poster abstract. An account is not a ticket. After organisers select you, pay the fee for your category. The ticket then appears on your dashboard and in email.",
   },
   {
-    question: "How do I register for INVENT?",
+    question: "What happens at IITB INV.ENT?",
     answer:
-      "Create a free account at https://iitbinvent.com/signup, then complete your profile if you want to appear in the attendee directory. Session RSVPs and the programme live at https://iitbinvent.com/programme.",
+      "IITB INV.ENT is a two-day conference on campus, 30-31 January. People meet and network, attend sessions, workshops, and events, get exposure to entrepreneurship research, and hear talks on entrepreneurship in practice, including venture pitches.",
   },
   {
-    question: "What happens at INVENT?",
+    question: "How is IITB INV.ENT related to IIT Bombay, E-Cell, and SINE?",
     answer:
-      "A campus day of check-in, research paper and poster sessions, speaker talks, venture pitches, and structured networking. Attendees can browse startups and projects on the site and connect on LinkedIn. The 2027 edition is 31 January at IIT Bombay.",
-  },
-  {
-    question: "How is INVENT related to IIT Bombay, E-Cell, and SINE?",
-    answer:
-      "INVENT is hosted by DSSE at IIT Bombay. E-Cell and SINE are campus partners in IIT Bombay’s entrepreneurship stack. INVENT is not a replacement for those organisations; it is DSSE’s foundation-day gathering and year-round platform.",
+      "IITB INV.ENT is conducted by DSSE at IIT Bombay. E-Cell and SINE are campus partners in IIT Bombay's entrepreneurship stack. IITB INV.ENT is not a replacement for those organisations.",
   },
 ];
 
 export const ABOUT_SECTIONS: { heading: string; body: string }[] = [
   {
-    heading: "Names you will see",
-    body: "The same programme is referred to as INVENT, INV.ENT (Innovation · Entrepreneurship), iitbinvent, iitb_invent, IIT Bombay INVENT, and DSSE Day. All of those names point to the Desai Sethi School of Entrepreneurship gathering at IIT Bombay and to this website, iitbinvent.com.",
-  },
-  {
-    heading: "What INVENT is for",
-    body: "INVENT exists so ideas do not stay in labs. Students, faculty, founders, investors, and operators share one campus day — speaker sessions, poster presentations, venture pitches — then stay connected through profiles, the attendee directory, and the startup directory for the rest of the year. Editions stack; the day is the spark and the platform is the continuity.",
+    heading: "What IITB INV.ENT is for",
+    body: "IITB INV.ENT exists so ideas do not die in labs. It is an entrepreneurship research and practice conference where students, faculty, founders, investors, and operators meet, network, attend sessions, workshops, and events, see research from the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice and venture building.",
   },
   {
     heading: "Who it is for",
     body: "Student and faculty founders. Researchers working on lab-to-market. Alumni who mentor. Investors and operators who open doors. Anyone building something India needs, and willing to meet the people doing the same on the IIT Bombay campus.",
   },
   {
-    heading: "INVENT 2027",
-    body: "The current edition is INVENT 2027, on Sunday 31 January 2027, 9:00–19:30 IST, at the DSSE Building, IIT Bombay, Powai, Mumbai. Create an account to join the directory, browse the programme, and add a startup, project, or idea.",
-  },
-];
-
-export const DSSE_DAY_SECTIONS: { heading: string; body: string }[] = [
-  {
-    heading: "The date",
-    body: "31 January is DSSE Day every year. In 2027 it falls on a Sunday. INVENT 2027 is the public programme for that edition.",
-  },
-  {
     heading: "The school",
-    body: "DSSE — the Desai Sethi School of Entrepreneurship — sits on the IIT Bombay campus in Powai. Figures published by the school (and shown on INVENT) include 5,550+ students through entrepreneurship courses, 1,470+ ventures mentored, and 670+ startups touched by the DSSE stack, with the centre approved in 2014. For academic programmes see dsse.iitb.ac.in.",
+    body: "On 31 January 2014, IIT Bombay's Board of Governors approved what became DSSE. IITB INV.ENT is conducted by the Desai Sethi School of Entrepreneurship at IIT Bombay, where entrepreneurship research meets venture practice.",
   },
   {
-    heading: "The venue",
-    body: "Sessions run at the DSSE Building, IIT Bombay, Powai, Mumbai 400076. Doors from 9:00 IST. Travel notes, gate access, and maps are on the Travel page.",
-  },
-  {
-    heading: "On the day",
-    body: "Typical DSSE Day rhythm: registration and badges, research papers and posters, coffee and hallway conversations, lightning talks, venture pitches, and a close around 19:30 IST. Capped rooms use RSVP on the programme; waitlists open when full.",
+    heading: "IITB INV.ENT 2027",
+    body: "The current edition is IITB INV.ENT 2027, on 30-31 January 2027 at the DSSE Building, IIT Bombay, Powai, Mumbai, with sessions from about 9:00 to 19:30 IST. Log in, submit a paper or poster abstract, and complete your profile. An account is not a ticket.",
   },
 ];
 
 export const TRAVEL_FALLBACK = `Venue: Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076.
 
-INVENT / DSSE Day is an on-campus event. The nearest landmark is IIT Bombay, Powai. Use the institute’s public directions to the Main Gate, then follow signage to the DSSE Building.
+IITB INV.ENT is an on-campus conference. The nearest landmark is IIT Bombay, Powai. Use the institute's public directions to the Main Gate, then follow signage to the DSSE Building.
 
-If you are flying in, Chhatrapati Shivaji Maharaj International Airport (BOM) is the usual arrival point for Mumbai. From the airport or from central Mumbai, Powai is typically 45–90 minutes by car depending on traffic.
+If you are flying in, Chhatrapati Shivaji Maharaj International Airport (BOM) is the usual arrival point for Mumbai. From the airport or from central Mumbai, Powai is typically 45 to 90 minutes by car depending on traffic.
 
-Campus access on the day may require a registration badge. Confirm gate instructions closer to 31 January 2027. Queries: support@iitbinvent.com.`;
+Campus access may require a registration badge. Confirm gate instructions closer to 30 January 2027. Queries: support@iitbinvent.com.`;
 
-export const PRIVACY_FALLBACK = `INVENT (iitbinvent.com) is run by the Desai Sethi School of Entrepreneurship at IIT Bombay.
+export const PRIVACY_FALLBACK = `IITB INV.ENT (iitbinvent.com) is run by the Desai Sethi School of Entrepreneurship at IIT Bombay.
 
-The attendee directory is opt-in. Email is never shown to other attendees unless you enable that in your profile. You can update or delete profile fields from your dashboard.
+You can update or delete profile fields from your dashboard. An account is not a ticket to the event.
 
 Transactional mail is sent from conference@iitbinvent.com. For data requests write to admin@iitbinvent.com or support@iitbinvent.com.`;
 
-export const CONDUCT_FALLBACK = `INVENT and DSSE Day are professional academic and venture gatherings on the IIT Bombay campus.
+export const CONDUCT_FALLBACK = `IITB INV.ENT is a professional academic and venture conference on the IIT Bombay campus.
 
 Harassment, discrimination, or making the room worse for others is not acceptable. Organisers may remove anyone who breaks this standard.
 

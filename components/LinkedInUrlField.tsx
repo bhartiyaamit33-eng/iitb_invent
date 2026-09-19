@@ -22,11 +22,11 @@ export function LinkedInUrlField({
   function onChange(raw: string) {
     const v = raw.trim();
     if (/linkedin\.com|lnkd\.in|^https?:\/\//i.test(v) || v.includes("/")) {
-      // Pasted full URL — extract slug when possible, else keep raw path handling server-side
+      // Pasted full URL - extract slug when possible, else keep raw path handling server-side
       const extracted = linkedInSlugFromUrl(v);
       if (extracted) {
         setSlug(extracted);
-        setHint("Got it — using your profile slug.");
+        setHint("Got it - using your profile slug.");
       } else {
         setSlug(v);
         setHint("We'll normalise this when you save.");
@@ -63,7 +63,7 @@ export function LinkedInUrlField({
       <input type="hidden" name={name} value={stored} />
       <p className="mt-1.5 text-xs text-mute">
         {hint ??
-          "Type your handle, or paste the full LinkedIn URL — either works."}
+          "Type your handle, or paste the full LinkedIn URL - either works."}
       </p>
     </div>
   );

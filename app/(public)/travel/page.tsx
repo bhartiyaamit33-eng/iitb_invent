@@ -12,8 +12,8 @@ import {
 } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Travel to INVENT / DSSE Day at IIT Bombay",
-  description: `INVENT and DSSE Day are held at the ${VENUE.formatted}. Directions for 31 January 2027.`,
+  title: "Travel to IITB INV.ENT at IIT Bombay",
+  description: `IITB INV.ENT is held at the ${VENUE.formatted}. Directions for 30-31 January 2027.`,
   path: "/travel",
 });
 
@@ -38,7 +38,7 @@ export default async function TravelPage() {
           {title}
         </h1>
         <p className="mt-4 text-lg leading-8 text-ink">
-          INVENT / DSSE Day venue: {VENUE.formatted}.
+          IITB INV.ENT venue: {VENUE.formatted}.
         </p>
         <div className="mt-8">
           <Prose text={body} />

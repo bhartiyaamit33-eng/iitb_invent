@@ -31,6 +31,7 @@ export function ConferencePayPanel({
   outcome,
   autoStart,
   campusOnly,
+  paymentVisible,
 }: {
   token: string;
   name: string;
@@ -41,6 +42,7 @@ export function ConferencePayPanel({
   outcome?: string | null;
   autoStart?: boolean;
   campusOnly?: boolean;
+  paymentVisible: boolean;
 }) {
   const amount = formatInrFromPaise(amountPaise);
   const settled = paymentStatus === "PAID" || paymentStatus === "WAIVED";
@@ -58,10 +60,26 @@ export function ConferencePayPanel({
   }, [token]);
 
   useEffect(() => {
-    if (!autoStart || !gatewayReady || settled || started.current) return;
+    if (!autoStart || !gatewayReady || settled || !paymentVisible || started.current)
+      return;
     started.current = true;
     formRef.current?.requestSubmit();
-  }, [autoStart, gatewayReady, settled]);
+  }, [autoStart, gatewayReady, settled, paymentVisible]);
+
+  if (!paymentVisible) {
+    return (
+      <section className="mt-8 rounded-xl border border-line bg-white p-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
+          Registration fee
+        </p>
+        <p className="mt-3 text-sm text-ink-soft" data-testid="pay-awaiting-decision">
+          Hi {name}. Organisers still need to select you for a paper, a poster,
+          or as an attendee. The fee for your category and the IIT Bombay
+          Online Pay link will appear here after that decision.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="mt-8 rounded-xl border border-line bg-white p-6">

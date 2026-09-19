@@ -9,6 +9,7 @@ import { fillConnectNote, firstNameFromFullName } from "@/lib/connect";
 import { ConnectOnLinkedIn } from "@/components/ConnectOnLinkedIn";
 import { cancelRsvpAction, rsvpAction } from "../actions";
 import { pageMetadata } from "@/lib/seo";
+import { userHasLiveEventTicket } from "@/lib/conference-access";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export async function generateMetadata({
     title: session.title,
     description:
       session.description?.slice(0, 160) ||
-      `${session.title} at INVENT / DSSE Day, IIT Bombay.`,
+      `${session.title} at IITB INV.ENT, IIT Bombay.`,
     path: `/programme/${slug}`,
   });
 }
@@ -66,6 +67,9 @@ export default async function SessionDetailPage({
   });
   if (!session) notFound();
 
+  const canRsvp = user
+    ? await userHasLiveEventTicket(user.id, edition.id)
+    : false;
   const myRsvp = user
     ? await prisma.rsvp.findUnique({
         where: {
@@ -146,13 +150,11 @@ export default async function SessionDetailPage({
       </div>
 
       <div className="mt-6">
-        {!user ? (
-          <Link
-            href={`/login?callbackUrl=${encodeURIComponent(`/programme/${session.slug}`)}`}
-            className="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-          >
-            Sign in to RSVP
-          </Link>
+        {!canRsvp ? (
+          <p className="text-sm text-mute">
+            Session RSVP opens after organisers select your abstract and you pay
+            the category fee.
+          </p>
         ) : myRsvp && myRsvp.status !== "CANCELLED" ? (
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-ent">

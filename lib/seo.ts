@@ -1,27 +1,26 @@
 import type { Metadata } from "next";
 import { CANONICAL_FAQS } from "@/lib/seo-content";
 
-export const SITE_NAME = "INVENT";
-export const SITE_NAME_LONG = "INVENT · DSSE Day · IIT Bombay";
+export const SITE_NAME = "IITB INV.ENT";
+export const SITE_NAME_LONG = "IITB INV.ENT · IIT Bombay";
 export const SITE_TAGLINE =
   "Where entrepreneurship research meets venture practice";
 
 export const ALTERNATE_NAMES = [
-  "INV.ENT",
+  "INVENT",
   "Inv.ent",
   "iitbinvent",
   "iitb_invent",
-  "IIT Bombay INVENT",
-  "IITB INVENT",
-  "DSSE Day",
+  "IIT Bombay INV.ENT",
+  "IITB INV.ENT",
 ] as const;
 
 export const DEFAULT_DESCRIPTION =
-  "INVENT (INV.ENT, iitbinvent, iitb_invent) is Innovation and Entrepreneurship at the Desai Sethi School of Entrepreneurship (DSSE), IIT Bombay. DSSE Day is held on 31 January each year at the DSSE Building, Powai, Mumbai.";
+  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027 at the DSSE Building, Powai, Mumbai.";
 
 export const EVENT_2027 = {
-  name: "INVENT 2027 · DSSE Day",
-  start: "2027-01-31T09:00:00+05:30",
+  name: "IITB INV.ENT 2027",
+  start: "2027-01-30T09:00:00+05:30",
   end: "2027-01-31T19:30:00+05:30",
   timezone: "Asia/Kolkata",
 } as const;
@@ -49,10 +48,9 @@ export const SAME_AS = [
 export const INDEXABLE_PATHS = [
   "/",
   "/about",
-  "/dsse-day",
+  "/conference",
   "/faq",
   "/programme",
-  "/ventures",
   "/travel",
   "/privacy",
   "/code-of-conduct",
@@ -136,7 +134,7 @@ export function organizationJsonLd() {
     "@id": `${origin}/#organization`,
     name: SITE_NAME,
     legalName:
-      "INVENT · Desai Sethi School of Entrepreneurship, IIT Bombay",
+      "IITB INV.ENT · Desai Sethi School of Entrepreneurship, IIT Bombay",
     alternateName: [...ALTERNATE_NAMES],
     url: `${origin}/`,
     email: "support@iitbinvent.com",
@@ -186,10 +184,9 @@ export function eventJsonLd() {
     "@id": `${origin}/#event-2027`,
     name: EVENT_2027.name,
     alternateName: [
-      "DSSE Day 2027",
       "INVENT 2027",
-      "IIT Bombay INVENT 2027",
-      "IIT Bombay DSSE Day",
+      "IIT Bombay INV.ENT 2027",
+      "Entrepreneurship Research and Venture Practice Conference",
     ],
     description: DEFAULT_DESCRIPTION,
     url: `${origin}/`,

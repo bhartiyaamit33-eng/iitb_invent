@@ -1,6 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { siteOrigin } from "@/lib/ticket";
+import { statusRequiresPayment } from "@/lib/conference";
+import { issueEventTicketForApplication } from "@/lib/conference-access";
 import {
   acknowledgeOnlinePay,
   firstField,
@@ -107,6 +109,15 @@ export async function validateOnlinePayRequest(
     console.warn("[onlinepay] validate INVALID already settled", input.requestId);
     return "INVALID";
   }
+  if (
+    application.paymentStatus !== "UNPAID" &&
+    application.paymentStatus !== "REPORTED"
+  ) {
+    return "INVALID";
+  }
+  if (!statusRequiresPayment(application.status)) {
+    return "INVALID";
+  }
   if (application.opUserId && application.opUserId !== input.userId) {
     console.warn("[onlinepay] validate INVALID userId", {
       expected: application.opUserId,
@@ -182,6 +193,7 @@ export async function applyConferenceOnlinePayCallback(
           opProvId: psp || application.opProvId,
         },
       });
+      await issueEventTicketForApplication(application.id, { notify: true });
     }
     if (transId) {
       const ack = await acknowledgeOnlinePay({ transId, requestType: "I" });

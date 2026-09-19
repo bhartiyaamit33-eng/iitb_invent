@@ -1,6 +1,7 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
+  deleteAbstractPdf,
   getAbstractPdfObject,
   isS3Configured,
   uploadAbstractPdf,
@@ -33,4 +34,20 @@ export async function readAbstractFile(opts: {
   }
   const bytes = await readFile(path.join(LOCAL_DIR, path.basename(opts.key)));
   return { bytes, contentType: "application/pdf" };
+}
+
+export async function deleteAbstractFile(opts: {
+  storage: string | null;
+  key: string | null;
+}): Promise<void> {
+  if (!opts.storage || !opts.key) return;
+  try {
+    if (opts.storage === "s3") {
+      await deleteAbstractPdf(opts.key);
+      return;
+    }
+    await unlink(path.join(LOCAL_DIR, path.basename(opts.key)));
+  } catch (err) {
+    console.error("[abstract] delete file", err);
+  }
 }

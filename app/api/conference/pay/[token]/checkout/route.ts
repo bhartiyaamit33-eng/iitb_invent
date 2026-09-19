@@ -6,6 +6,7 @@ import { isOnlinePayConfigured } from "@/lib/onlinepay";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import {
   CONFERENCE_TOKEN_COOKIE,
+  applicationFeeDue,
   conferenceCookieOptions,
 } from "@/lib/conference-access";
 
@@ -52,7 +53,7 @@ function onlinePayHandoffHtml(opts: {
     ? `<p>IIT Bombay TEST Online Pay only loads on the IITB network. Do not paste the
         gateway URL into the address bar — OP rejects that with
         <strong>Requesting page referer not received</strong>.</p>
-       <p>This page will open the gateway so the Referer is INVENT.
+       <p>This page will open the gateway so the Referer is IITB INV.ENT.
        Paying as user id <code>${userId}</code>.</p>`
     : `<p>Opening IIT Bombay Online Pay…</p>`;
 
@@ -71,11 +72,11 @@ function onlinePayHandoffHtml(opts: {
   </style>
 </head>
 <body>
-  <p>INVENT · Research Conference</p>
+  <p>IITB INV.ENT</p>
   <h1>IIT Bombay Online Pay</h1>
   ${testCopy}
   <p><a class="btn" href="${opUrl}" referrerpolicy="origin" data-testid="onlinepay-handoff">Continue to IIT Bombay Online Pay</a></p>
-  <p><a class="back" href="${backUrl}">← Back to the INVENT payment page</a></p>
+  <p><a class="back" href="${backUrl}">← Back to the IITB INV.ENT payment page</a></p>
   <script>
     window.setTimeout(function () {
       window.location.assign(${JSON.stringify(opts.opUrl)});
@@ -102,7 +103,7 @@ async function startCheckout(
   ) {
     return redirectToPay(token, "already");
   }
-  if (application.paymentStatus === "NOT_REQUIRED") {
+  if (!applicationFeeDue(application)) {
     return redirectToPay(token, "not-due");
   }
 

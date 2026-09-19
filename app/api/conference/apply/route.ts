@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { processConferenceApplication } from "@/lib/conference-submit";
-import {
-  CONFERENCE_TOKEN_COOKIE,
-  conferenceCookieOptions,
-} from "@/lib/conference-access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +12,13 @@ export const maxDuration = 60;
  */
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { ok: false, error: "Please log in to submit an abstract." },
+        { status: 401 },
+      );
+    }
     const formData = await req.formData();
     const result = await processConferenceApplication(formData);
     if ("error" in result) {
@@ -27,11 +31,6 @@ export async function POST(req: Request) {
       ok: true,
       paymentToken: result.paymentToken,
     });
-    res.cookies.set(
-      CONFERENCE_TOKEN_COOKIE,
-      result.paymentToken,
-      conferenceCookieOptions(),
-    );
     return res;
   } catch (err) {
     console.error("[api/conference/apply]", err);

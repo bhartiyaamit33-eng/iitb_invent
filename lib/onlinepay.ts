@@ -33,7 +33,7 @@ export function onlinePayConfig(): OnlinePayConfig | null {
   const testEnv: OnlinePayEnv = raw === "live" ? "live" : "test";
   const purpose =
     env("ONLINEPAY_PURPOSE") ||
-    (testEnv === "live" ? "INVENT conference registration" : "testing");
+    (testEnv === "live" ? "IITB INV.ENT conference registration" : "testing");
   return {
     env: testEnv,
     appId,

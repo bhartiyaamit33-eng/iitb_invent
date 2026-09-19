@@ -223,7 +223,7 @@ const SPEAKER_DEFS = [
 
 /**
  * DSSE homepage stats scraped 2026-09 from https://www.dsse.iitb.ac.in/
- * (school-level scoreboard — editable in admin).
+ * (school-level scoreboard - editable in admin).
  */
 const DSSE_SITE_STATS = [
   { label: "Students trained", value: "5550+", sortOrder: 0 },
@@ -240,9 +240,9 @@ async function seedProgrammeForEdition(
   const track = await prisma.track.create({
     data: {
       editionId,
-      name: "DSSE Day Main",
+      name: "Main",
       slug: "main",
-      description: "Full-day DSSE Day programme (editable mock from 2026 schedule).",
+      description: "Full conference programme (editable mock from 2026 schedule).",
       colour: "#f58233",
       sortOrder: 0,
     },
@@ -281,7 +281,7 @@ async function seedProgrammeForEdition(
         slug,
         description:
           slot.description ??
-          "Editable programme placeholder — update times/rooms in admin.",
+          "Editable programme placeholder - update times/rooms in admin.",
         format: slot.format,
         startsAt: ist(year, slot.start[0], slot.start[1]),
         endsAt: ist(year, slot.end[0], slot.end[1]),
@@ -385,14 +385,14 @@ async function main() {
   await prisma.registration.deleteMany();
   await prisma.edition.deleteMany();
 
-  // ─── 2026 ARCHIVED — full DSSE Day schedule from artwork ─────────────────
+  // ─── 2026 ARCHIVED ─────────────────────────────────────────────────────────
   const edition2026 = await prisma.edition.create({
     data: {
       year: 2026,
       slug: "2026",
-      name: "INVENT 2026 · DSSE Day",
-      tagline: "DSSE Day 2026 archive",
-      theme: "DSSE Day",
+      name: "INV.ENT 2026",
+      tagline: "2026 archive",
+      theme: "Entrepreneurship Research and Venture Practice",
       startsAt: ist(2026, 0, 0),
       endsAt: new Date("2026-01-31T23:59:59+05:30"),
       venueName: VENUE_NAME,
@@ -412,19 +412,19 @@ async function main() {
       editionId: edition2026.id,
       slug: "about",
       title: "About INVENT 2026",
-      body: "Archived DSSE Day 2026 programme. Content sourced from organiser schedule artwork — editable in CMS.",
+      body: "Archived INV.ENT 2026 programme. Content sourced from organiser schedule artwork. Editable in CMS.",
       isPublished: true,
     },
   });
 
-  // ─── 2027 CURRENT — same mock schedule, fully editable ───────────────────
+  // ─── 2027 CURRENT - same mock schedule, fully editable ───────────────────
   const edition2027 = await prisma.edition.create({
     data: {
       year: 2027,
       slug: "2027",
       name: "INVENT 2027",
       tagline: "Where entrepreneurship research meets venture practice",
-      theme: "DSSE Day",
+      theme: "Entrepreneurship Research and Venture Practice",
       startsAt: ist(2027, 0, 0),
       endsAt: new Date("2027-01-31T23:59:59+05:30"),
       venueName: VENUE_NAME,
@@ -435,11 +435,11 @@ async function main() {
       status: EditionStatus.ANNOUNCED,
       isCurrent: true,
       connectNoteTemplate:
-        "Hi {firstName}, I'm {senderName}, attending IIT Bombay INVENT on {eventDateShort}. Nice to connect.",
+        "Hi {firstName}, I'm {senderName}, attending IITB INV.ENT on {eventDateShort}. Nice to connect.",
     },
   });
 
-  // Stats from DSSE website scrape (https://www.dsse.iitb.ac.in/) — editable
+  // Stats from DSSE website scrape (https://www.dsse.iitb.ac.in/) - editable
   await prisma.editionStat.createMany({
     data: DSSE_SITE_STATS.map((s) => ({
       editionId: edition2027.id,
@@ -455,7 +455,7 @@ async function main() {
         editionId: edition2027.id,
         slug: "about",
         title: "About",
-        body: `On 31 January the Desai Sethi School of Entrepreneurship marks DSSE Day at IIT Bombay.\n\nDSSE trains aspiring entrepreneurs through academic and pre-incubation programs. Scraped school figures (editable): 5550+ students trained, 1470+ mentored, 670+ venture teams, 127 startups initiated.\n\nSource: [dsse.iitb.ac.in](https://www.dsse.iitb.ac.in/). Campus partners include [E-Cell](https://ecell.in) and [SINE](https://sineiitb.org).`,
+        body: `IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay.\n\nThe 2027 edition is on 30-31 January.\n\nDSSE trains aspiring entrepreneurs through academic and pre-incubation programs. Scraped school figures (editable): 5550+ students trained, 1470+ mentored, 670+ venture teams, 127 startups initiated.\n\nSource: [dsse.iitb.ac.in](https://www.dsse.iitb.ac.in/). Campus partners include [E-Cell](https://ecell.in) and [SINE](https://sineiitb.org).`,
         isPublished: true,
       },
       {
@@ -486,8 +486,8 @@ async function main() {
     data: [
       {
         editionId: edition2027.id,
-        question: "When is INVENT 2027?",
-        answer: "Sunday 31 January 2027, Asia/Kolkata, DSSE Building, IIT Bombay.",
+        question: "When is IITB INV.ENT 2027?",
+        answer: "30-31 January 2027, Asia/Kolkata, DSSE Building, IIT Bombay.",
         sortOrder: 0,
         isPublished: true,
       },
@@ -509,24 +509,16 @@ async function main() {
         editionId: edition2027.id,
         question: "How do I apply for the research conference?",
         answer:
-          "Use the on-site form at /conference. Paper and poster applicants upload an extended abstract (PDF, 10 MB). Organisers review submissions in the admin CMS. Selected domestic presenters may receive TA and twin-sharing accommodation. Attendee fee is ₹3,000.",
+          "Use the on-site form at /conference. Paper and poster applicants upload an extended abstract (PDF, 10 MB). Organisers review submissions in the admin CMS.",
         sortOrder: 3,
         isPublished: true,
       },
       {
         editionId: edition2027.id,
-        question: "What is INVENT (iitbinvent / iitb_invent)?",
+        question: "What is IITB INV.ENT?",
         answer:
-          "INVENT — also written INV.ENT, iitbinvent, and iitb_invent — is Innovation and Entrepreneurship at DSSE, IIT Bombay. Official site: https://iitbinvent.com.",
+          "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. Official site: https://iitbinvent.com.",
         sortOrder: 4,
-        isPublished: true,
-      },
-      {
-        editionId: edition2027.id,
-        question: "What is DSSE Day?",
-        answer:
-          "DSSE Day is the 31 January foundation day of the Desai Sethi School of Entrepreneurship at IIT Bombay. INVENT is the public programme held that day.",
-        sortOrder: 5,
         isPublished: true,
       },
       {
@@ -534,7 +526,7 @@ async function main() {
         question: "What does DSSE stand for?",
         answer:
           "Desai Sethi School of Entrepreneurship, IIT Bombay. https://www.dsse.iitb.ac.in/",
-        sortOrder: 6,
+        sortOrder: 5,
         isPublished: true,
       },
     ],
@@ -587,7 +579,7 @@ async function main() {
     },
   });
 
-  console.log("Seeded editions 2026 (archive) + 2027 (current) with DSSE Day programme.");
+  console.log("Seeded editions 2026 (archive) + 2027 (current) with conference programme.");
   console.log("  • Stats from dsse.iitb.ac.in (editable in admin)");
   console.log("  • Demo attendee: demo@iitbinvent.com / Attendee@3101");
 }

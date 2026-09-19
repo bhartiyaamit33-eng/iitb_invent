@@ -40,7 +40,7 @@ function onlinePayHandoffHtml(opUrl) {
   </style>
 </head>
 <body>
-  <p>INVENT · Research Conference</p>
+  <p>IITB INV.ENT</p>
   <h1>Opening IIT Bombay Online Pay</h1>
   <p>Stay on this page for a moment. The gateway must see a Referer from iitbinvent.com.</p>
   <p><a class="btn" href="${escapeHtml(opUrl)}" referrerpolicy="origin">Continue to IIT Bombay Online Pay</a></p>
@@ -103,10 +103,12 @@ export default {
           u.hostname === "43.205.7.101" ||
           u.hostname === "ec2-43-205-7-101.ap-south-1.compute.amazonaws.com" ||
           u.hostname === "127.0.0.1" ||
+          u.hostname === "localhost" ||
           u.protocol === "http:"
         ) {
           u.protocol = "https:";
           u.hostname = incoming.hostname;
+          u.port = "";
           outHeaders.set("Location", u.toString());
         }
       } catch {

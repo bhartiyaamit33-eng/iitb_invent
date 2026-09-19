@@ -5,16 +5,16 @@ import type {
 import { prisma } from "@/lib/db";
 import {
   applicationStatusLabel,
+  conferenceFeePaiseFor,
   formatInrFromPaise,
   statusRequiresPayment,
 } from "@/lib/conference";
 import {
-  conferenceFeePaise,
   conferencePayPath,
   conferencePaymentUrl,
   newConferenceToken,
 } from "@/lib/conference-server";
-import { notifyApplicationStatus } from "@/lib/conference-access";
+import { notifyApplicationStatus, issueEventTicketForApplication } from "@/lib/conference-access";
 import { sendConferenceStatusUpdate } from "@/lib/email/transactions";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { siteOrigin } from "@/lib/ticket";
@@ -57,7 +57,9 @@ export async function reviewConferenceApplication(opts: {
       ...(opts.adminNotes !== undefined ? { adminNotes: opts.adminNotes } : {}),
       paymentStatus: nextPayment,
       paymentAmountPaise: selected
-        ? before.paymentAmountPaise || conferenceFeePaise()
+        ? keepPaid
+          ? before.paymentAmountPaise
+          : conferenceFeePaiseFor(before.professionalCategory)
         : before.paymentAmountPaise,
       paymentToken: before.paymentToken || newConferenceToken(),
     },
@@ -107,7 +109,7 @@ export async function reviewConferenceApplication(opts: {
     amountLabel,
     paymentUrl: paymentUrl ?? "",
     dashboardUrl: `${siteOrigin()}/dashboard`,
-    eventName: "Inv.ent 2027 · Research Conference",
+    eventName: "IITB INV.ENT",
     userId: after.userId,
     applicationId: after.id,
   });
@@ -152,4 +154,8 @@ export async function setApplicationPayment(opts: {
     before,
     after,
   });
+
+  if (paidNow) {
+    await issueEventTicketForApplication(after.id, { notify: true });
+  }
 }

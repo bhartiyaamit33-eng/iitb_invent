@@ -10,7 +10,7 @@ export function siteOrigin(): string {
   // Never encode preview IPs (e.g. old 15.206.*) in badge QR URLs.
   try {
     const host = new URL(cleaned).hostname;
-    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host === "localhost") {
       return PUBLIC_FALLBACK;
     }
   } catch {
