@@ -292,6 +292,40 @@ html[data-landing] body {
   color: #111;
 }
 
+.landing-nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--frost);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: 999px;
+}
+
+.landing-nav-link:hover {
+  color: var(--cyan-glow);
+}
+
+.landing-site-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 clamp(18px, 3.4vw, 64px) 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.landing-site-nav::-webkit-scrollbar {
+  display: none;
+}
+
 /* Wordmark — poster serif lockup */
 .brand-lockup {
   display: inline-flex;
@@ -991,15 +1025,13 @@ section > .orbit-field {
   box-shadow: 0 8px 20px rgba(12, 58, 107, 0.1);
 }
 
-.landing[data-theme="light"] .hero-nav a:not(.btn) {
-  border-color: var(--cyan-glow);
-  background: rgba(255, 255, 255, 0.88);
+.landing[data-theme="light"] .landing-nav-link {
   color: var(--frost);
 }
 
-.landing[data-theme="light"] .hero-nav a:not(.btn):hover {
-  border-color: var(--cyan-glow);
-  background: #fff;
+.landing[data-theme="light"] .landing-nav-link:hover {
+  color: var(--cyan-glow);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .landing[data-theme="light"] [data-testid="hero-building"] {

@@ -1,4 +1,4 @@
-import type { LandingProps } from "@/lib/landing";
+import { LANDING_NAV, type LandingProps } from "@/lib/landing";
 import { EventLanes } from "./EventLanes";
 import { LandingHero } from "./LandingHero";
 import { LandingSections } from "./LandingSections";
@@ -38,10 +38,11 @@ export function LandingPage({
         </div>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <nav className="flex flex-wrap gap-x-4 gap-y-2" aria-label="Site">
-            <Link href="/about">About INV.ENT</Link>
-            <Link href="/conference">Conference</Link>
-            <Link href="/faq">FAQ</Link>
-            <Link href="/programme">Programme</Link>
+            {LANDING_NAV.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.href === "/about" ? "About IITB INV.ENT" : item.label}
+              </Link>
+            ))}
             <Link href="/travel">Travel</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/code-of-conduct">Code of conduct</Link>

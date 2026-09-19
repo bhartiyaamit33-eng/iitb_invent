@@ -1,310 +1,718 @@
 {
   "version": 1,
   "intents": {
-    "inline:the-about-page-names-iitb-inv-ent-as-an-entrepre-a522bbe5": {
-      "id": "inline:the-about-page-names-iitb-inv-ent-as-an-entrepre-a522bbe5",
-      "statement": "The About page names IITB INV.ENT as an entrepreneurship research and practice conference and does not mention Day Zero.",
+    "inline:the-public-programme-page-shows-coming-soon-and-3b38a30b": {
+      "id": "inline:the-public-programme-page-shows-coming-soon-and-3b38a30b",
+      "statement": "The public programme page shows Coming soon and does not list last year's session outline.",
       "state": "proved",
-      "declaredAt": 1789480992517,
+      "declaredAt": 1789821515329,
       "binding": {
         "kind": "allOf",
         "predicates": [
           {
-            "kind": "route",
-            "contains": "/about"
+            "kind": "element",
+            "query": {
+              "testid": "programme-coming-soon"
+            }
           },
           {
             "kind": "text",
-            "contains": "IITB INV.ENT"
+            "contains": "Coming soon"
           },
           {
-            "kind": "text",
-            "contains": "entrepreneurship research and practice"
-          },
-          {
-            "kind": "text",
-            "contains": "Day Zero",
-            "absent": true
-          },
-          {
-            "kind": "text",
-            "contains": "DSSE Day",
-            "absent": true
+            "kind": "not",
+            "predicate": {
+              "kind": "text",
+              "contains": "Welcome Address"
+            }
           }
         ]
       },
       "surface": {
-        "route": "/about"
+        "route": "/programme"
       },
       "provenBy": {
-        "verdictId": "reticle_assert:1789480992554",
+        "verdictId": "reticle_assert:1789821515349",
         "grade": "presence",
-        "at": 1789480992554
+        "at": 1789821515349
       }
     },
-    "inline:the-conference-page-names-iitb-inv-ent-as-an-ent-28a91119": {
-      "id": "inline:the-conference-page-names-iitb-inv-ent-as-an-ent-28a91119",
-      "statement": "The conference page names IITB INV.ENT as an entrepreneurship research and practice conference, shows 30-31 January, and does not mention Day Zero.",
-      "state": "proved",
-      "declaredAt": 1789481008557,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "route",
-            "contains": "/conference"
-          },
-          {
-            "kind": "text",
-            "contains": "IITB INV.ENT"
-          },
-          {
-            "kind": "text",
-            "contains": "entrepreneurship research and practice conference"
-          },
-          {
-            "kind": "text",
-            "contains": "30-31 January"
-          },
-          {
-            "kind": "text",
-            "contains": "Day Zero",
-            "absent": true
-          },
-          {
-            "kind": "text",
-            "contains": "\u2014",
-            "absent": true
-          }
-        ]
-      },
-      "surface": {
-        "route": "/conference"
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1789481008595",
-        "grade": "presence",
-        "at": 1789481008595
-      }
-    },
-    "inline:the-landing-page-names-iitb-inv-ent-shows-30-31-77353b7d": {
-      "id": "inline:the-landing-page-names-iitb-inv-ent-shows-30-31-77353b7d",
-      "statement": "The landing page names IITB INV.ENT, shows 30-31 January, and does not mention Day Zero.",
-      "state": "proved",
-      "declaredAt": 1789481036536,
-      "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "kind": "text",
-            "contains": "IITB INV.ENT"
-          },
-          {
-            "kind": "text",
-            "contains": "30-31 JANUARY"
-          },
-          {
-            "kind": "text",
-            "contains": "Day Zero",
-            "absent": true
-          },
-          {
-            "kind": "text",
-            "contains": "DAY ZERO",
-            "absent": true
-          }
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1789481036591",
-        "grade": "presence",
-        "at": 1789481036591
-      }
-    },
-    "logout-resets-conference-form": {
-      "id": "logout-resets-conference-form",
-      "statement": "After a signed-in attendee signs out, the Call for Papers page shows the public Submit your Abstract form again, not their previous application.",
+    "inline:visitors-can-read-what-iitb-inv-ent-is-for-and-r-56770731": {
+      "id": "inline:visitors-can-read-what-iitb-inv-ent-is-for-and-r-56770731",
+      "statement": "Visitors can read what IITB INV.ENT is for and reach the organisers from the primary navigation.",
       "state": "bound",
-      "declaredAt": 1789481369102,
+      "declaredAt": 1789821530238,
       "binding": {
-        "kind": "allOf",
-        "predicates": [
-          {
-            "contains": "/conference",
-            "kind": "route"
-          },
-          {
-            "kind": "element",
-            "testid": "conference-form"
-          },
-          {
-            "absent": true,
-            "kind": "element",
-            "testid": "conference-status-card"
-          }
-        ]
-      },
-      "surface": {
-        "route": "/conference",
-        "files": [
-          "app/logout/route.ts",
-          "lib/auth/session-end.ts",
-          "app/(public)/conference/page.tsx"
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_assert:1789481594074",
-        "grade": "presence",
-        "at": 1789481594074
+        "kind": "element",
+        "query": {
+          "testid": "about-heading"
+        }
       }
     },
-    "landing-light-only": {
-      "id": "landing-light-only",
-      "statement": "The public homepage is always the light appearance, with no control to switch to a dark theme.",
+    "inline:a-visitor-on-a-public-page-can-open-the-pre-conf-98ac069f": {
+      "id": "inline:a-visitor-on-a-public-page-can-open-the-pre-conf-98ac069f",
+      "statement": "A visitor on a public page can open the pre-conference workshop from the primary nav.",
       "state": "proved",
-      "declaredAt": 1789481369102,
+      "declaredAt": 1789821541655,
       "binding": {
         "kind": "allOf",
         "predicates": [
           {
             "kind": "route",
-            "pathname": "/"
+            "pathname": "/workshops"
           },
           {
             "kind": "element",
-            "testid": "landing-theme-light"
-          },
-          {
-            "absent": true,
-            "kind": "element",
-            "testid": "theme-dark"
-          },
-          {
-            "absent": true,
-            "kind": "element",
-            "testid": "theme-light"
+            "query": {
+              "testid": "workshops-page"
+            },
+            "state": "visible"
           }
         ]
       },
       "surface": {
-        "route": "/",
+        "route": "/workshops",
         "files": [
-          "components/landing/LandingPage.tsx",
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789821542247",
+        "grade": "presence",
+        "at": 1789821542247
+      }
+    },
+    "inline:the-workshop-page-states-the-teaching-session-le-094ea9cd": {
+      "id": "inline:the-workshop-page-states-the-teaching-session-le-094ea9cd",
+      "statement": "The workshop page states the teaching session, leader, date, and that it is included in registration.",
+      "state": "proved",
+      "declaredAt": 1789821550497,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "route",
+            "pathname": "/workshops"
+          },
+          {
+            "kind": "text",
+            "contains": "Teaching entrepreneurship"
+          },
+          {
+            "kind": "text",
+            "contains": "Prof. Sankalp Pratap"
+          },
+          {
+            "kind": "text",
+            "contains": "30 January 2027"
+          },
+          {
+            "kind": "text",
+            "contains": "Included in conference registration"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "workshops-rsvp"
+            },
+            "state": "visible"
+          },
+          {
+            "kind": "element",
+            "query": {
+              "testid": "nav-workshop"
+            },
+            "state": "visible"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/workshops",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789821550514",
+        "grade": "presence",
+        "at": 1789821550514
+      }
+    },
+    "inline:from-about-the-contact-nav-item-opens-the-querie-c288d88f": {
+      "id": "inline:from-about-the-contact-nav-item-opens-the-querie-c288d88f",
+      "statement": "From About, the Contact nav item opens the queries page with the support inbox.",
+      "state": "proved",
+      "declaredAt": 1789821555692,
+      "binding": {
+        "kind": "element",
+        "query": {
+          "testid": "contact-email"
+        }
+      },
+      "surface": {
+        "route": "/contact",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789821556326",
+        "grade": "presence",
+        "at": 1789821556326
+      }
+    },
+    "inline:the-about-iitb-inv-ent-nav-item-opens-the-confer-cfd6a064": {
+      "id": "inline:the-about-iitb-inv-ent-nav-item-opens-the-confer-cfd6a064",
+      "statement": "The About IITB INV.ENT nav item opens the conference story, not a stub.",
+      "state": "proved",
+      "declaredAt": 1789821561322,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "element",
+            "query": {
+              "testid": "about-heading"
+            }
+          },
+          {
+            "kind": "text",
+            "contains": "almost never sit in the same room"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/about",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789821561907",
+        "grade": "presence",
+        "at": 1789821561907
+      }
+    },
+    "inline:unregistered-visitors-can-start-a-workshop-seat-af63330a": {
+      "id": "inline:unregistered-visitors-can-start-a-workshop-seat-af63330a",
+      "statement": "Unregistered visitors can start a workshop seat reservation from the workshop page by logging in.",
+      "state": "proved",
+      "declaredAt": 1789821563179,
+      "binding": {
+        "kind": "route",
+        "contains": "/login"
+      },
+      "surface": {
+        "route": "/dashboard",
+        "files": [
+          "app/(public)/workshops/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789821572679",
+        "grade": "presence",
+        "at": 1789821572679
+      }
+    },
+    "inline:the-landing-hero-states-that-researchers-and-pra-7812a1af": {
+      "id": "inline:the-landing-hero-states-that-researchers-and-pra-7812a1af",
+      "statement": "The landing hero states that researchers and practitioners share the same room for two days.",
+      "state": "bound",
+      "declaredAt": 1789822218387,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "element",
+            "query": {
+              "testid": "hero-lede"
+            }
+          },
+          {
+            "kind": "text",
+            "contains": "Same room, two days a year"
+          }
+        ]
+      }
+    },
+    "inline:from-the-landing-nav-about-opens-the-iitb-inv-en-1d842646": {
+      "id": "inline:from-the-landing-nav-about-opens-the-iitb-inv-en-1d842646",
+      "statement": "From the landing nav, About opens the IITB INV.ENT story.",
+      "state": "proved",
+      "declaredAt": 1789822252555,
+      "binding": {
+        "kind": "element",
+        "query": {
+          "testid": "about-heading"
+        }
+      },
+      "surface": {
+        "route": "/about",
+        "files": [
           "components/landing/LandingHero.tsx"
         ]
       },
       "provenBy": {
-        "verdictId": "reticle_assert:1789481640801",
+        "verdictId": "reticle_act_and_wait:1789822254430",
         "grade": "presence",
-        "at": 1789481640801
+        "at": 1789822254430
       }
     },
-    "inline:an-attendee-can-submit-the-call-for-papers-form-2756b4e5": {
-      "id": "inline:an-attendee-can-submit-the-call-for-papers-form-2756b4e5",
-      "statement": "An attendee can submit the Call for Papers form and reach the thanks page.",
+    "inline:stay-in-the-site-nav-opens-accommodation-for-gue-049bdd0a": {
+      "id": "inline:stay-in-the-site-nav-opens-accommodation-for-gue-049bdd0a",
+      "statement": "Stay in the site nav opens accommodation for guest houses and Anantha Hotel.",
       "state": "bound",
-      "declaredAt": 1789481473972,
+      "declaredAt": 1789822261087,
+      "binding": {
+        "kind": "element",
+        "query": {
+          "testid": "accommodation-page"
+        }
+      }
+    },
+    "inline:the-about-page-workshop-mention-opens-the-live-t-560a5a2b": {
+      "id": "inline:the-about-page-workshop-mention-opens-the-live-t-560a5a2b",
+      "statement": "The About page workshop mention opens the live teaching-workshop page.",
+      "state": "bound",
+      "declaredAt": 1789822713520,
       "binding": {
         "kind": "route",
-        "contains": "/conference/thanks"
+        "contains": "/workshops"
       }
     },
-    "inline:cfp-delete-submission-309d5589": {
-      "id": "inline:cfp-delete-submission-309d5589",
-      "statement": "cfp-delete-submission",
-      "state": "proved",
-      "declaredAt": 1789514698344,
+    "inline:the-homepage-should-keep-identifying-iitb-inv-en-1525478d": {
+      "id": "inline:the-homepage-should-keep-identifying-iitb-inv-en-1525478d",
+      "statement": "The homepage should keep identifying IITB INV.ENT, and the document should request the IIT Bombay seal as the site icon.",
+      "state": "bound",
+      "declaredAt": 1789823589664,
       "binding": {
         "kind": "allOf",
         "predicates": [
           {
-            "kind": "route",
-            "pathname": "/conference"
+            "kind": "text",
+            "contains": "INV.ENT",
+            "visible": true
           },
           {
-            "kind": "element",
-            "query": {
-              "testid": "application-deleted"
-            }
-          },
-          {
-            "kind": "element",
-            "query": {
-              "testid": "conference-form"
-            }
-          },
-          {
-            "kind": "element",
-            "query": {
-              "testid": "delete-my-application"
-            },
-            "absent": true
+            "kind": "net",
+            "urlContains": "icon.png",
+            "status": 200
           }
         ]
-      },
-      "surface": {
-        "route": "/conference",
-        "files": [
-          "components/conference/DeleteMyApplicationForm.tsx"
-        ]
-      },
-      "provenBy": {
-        "verdictId": "reticle_act_and_wait:1789514699437",
-        "grade": "presence",
-        "at": 1789514699437
       }
     },
-    "cfp-delete-submission": {
-      "id": "cfp-delete-submission",
-      "statement": "A signed-in applicant can permanently delete their abstract from Call for Papers and from the dashboard, then see the submit form again.",
+    "inline:after-adding-the-iit-bombay-seal-as-the-site-ico-d67ff3e2": {
+      "id": "inline:after-adding-the-iit-bombay-seal-as-the-site-ico-d67ff3e2",
+      "statement": "After adding the IIT Bombay seal as the site icon, the homepage tab title should still be IITB INV.ENT · IIT Bombay.",
+      "state": "bound",
+      "declaredAt": 1789823622333,
+      "binding": {
+        "kind": "element",
+        "query": {
+          "role": "document",
+          "name": "IITB INV.ENT · IIT Bombay"
+        }
+      }
+    },
+    "inline:landing-hero-copy-matches-the-new-about-voice-an-e10334c8": {
+      "id": "inline:landing-hero-copy-matches-the-new-about-voice-an-e10334c8",
+      "statement": "Landing hero copy matches the new About voice and CFP dates.",
       "state": "proved",
-      "declaredAt": 1789514577938,
+      "declaredAt": 1789826242113,
       "binding": {
         "kind": "allOf",
         "predicates": [
           {
-            "kind": "route",
-            "pathname": "/conference"
+            "kind": "text",
+            "contains": "Same room, two days a year"
           },
           {
-            "kind": "element",
-            "query": {
-              "testid": "application-deleted"
-            }
+            "kind": "text",
+            "contains": "5,550"
           },
           {
-            "kind": "element",
-            "query": {
-              "testid": "conference-form"
-            }
+            "kind": "text",
+            "contains": "127"
           },
           {
-            "kind": "element",
-            "query": {
-              "testid": "delete-my-application"
-            },
-            "absent": true
+            "kind": "text",
+            "contains": "support@iitbinvent.com"
+          },
+          {
+            "kind": "text",
+            "contains": "15 Oct 2026"
+          }
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789826242133",
+        "grade": "presence",
+        "at": 1789826242133
+      }
+    },
+    "inline:landing-site-nav-about-opens-the-about-iitb-inv-7b719733": {
+      "id": "inline:landing-site-nav-about-opens-the-about-iitb-inv-7b719733",
+      "statement": "Landing site nav About opens the About IITB INV.ENT essay.",
+      "state": "proved",
+      "declaredAt": 1789826252519,
+      "binding": {
+        "kind": "route",
+        "contains": "/about"
+      },
+      "surface": {
+        "route": "/about",
+        "files": [
+          "components/landing/LandingHero.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826254327",
+        "grade": "presence",
+        "at": 1789826254327
+      }
+    },
+    "inline:about-page-publishes-dsse-figures-and-links-the-5d1255db": {
+      "id": "inline:about-page-publishes-dsse-figures-and-links-the-5d1255db",
+      "statement": "About page publishes DSSE figures and links the live teaching workshop.",
+      "state": "proved",
+      "declaredAt": 1789826270167,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "text",
+            "contains": "5,550"
+          },
+          {
+            "kind": "text",
+            "contains": "1,470"
+          },
+          {
+            "kind": "text",
+            "contains": "670"
+          },
+          {
+            "kind": "text",
+            "contains": "127"
+          },
+          {
+            "kind": "text",
+            "contains": "pre-conference teaching workshop"
           }
         ]
       },
       "surface": {
-        "route": "/conference",
+        "route": "/about",
         "files": [
-          "components/conference/DeleteMyApplicationForm.tsx"
+          "components/landing/LandingHero.tsx"
         ]
       },
       "provenBy": {
-        "verdictId": "reticle_act_and_wait:1789514699437",
+        "verdictId": "reticle_assert:1789826270174",
         "grade": "presence",
-        "at": 1789514699437
+        "at": 1789826270174
       }
     },
-    "resubmit-refreshes-timestamp": {
-      "id": "resubmit-refreshes-timestamp",
-      "statement": "Deleting a user or an abstract and submitting again records a new submitted time instead of keeping the old one.",
-      "state": "declared",
-      "declaredAt": 1789514577938,
-      "surface": "/admin/applications"
+    "inline:about-navbar-workshop-opens-the-live-teaching-wo-879a09cd": {
+      "id": "inline:about-navbar-workshop-opens-the-live-teaching-wo-879a09cd",
+      "statement": "About navbar Workshop opens the live teaching-workshop page.",
+      "state": "proved",
+      "declaredAt": 1789826274983,
+      "binding": {
+        "kind": "route",
+        "contains": "/workshops"
+      },
+      "surface": {
+        "route": "/workshops",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826277313",
+        "grade": "presence",
+        "at": 1789826277313
+      }
+    },
+    "inline:workshop-log-in-to-reserve-opens-login-with-a-da-1aaef92b": {
+      "id": "inline:workshop-log-in-to-reserve-opens-login-with-a-da-1aaef92b",
+      "statement": "Workshop Log in to reserve opens login with a dashboard callback.",
+      "state": "proved",
+      "declaredAt": 1789826281710,
+      "binding": {
+        "kind": "route",
+        "contains": "/login"
+      },
+      "surface": {
+        "route": "/login",
+        "files": [
+          "app/(public)/workshops/page.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826283313",
+        "grade": "presence",
+        "at": 1789826283313
+      }
+    },
+    "inline:login-back-link-returns-to-the-public-landing-pa-183e26d6": {
+      "id": "inline:login-back-link-returns-to-the-public-landing-pa-183e26d6",
+      "statement": "Login back-link returns to the public landing page.",
+      "state": "bound",
+      "declaredAt": 1789826288479,
+      "binding": {
+        "kind": "route",
+        "contains": "/"
+      }
+    },
+    "inline:landing-contact-nav-opens-the-queries-page-with-3f879eb5": {
+      "id": "inline:landing-contact-nav-opens-the-queries-page-with-3f879eb5",
+      "statement": "Landing Contact nav opens the queries page with support@iitbinvent.com.",
+      "state": "proved",
+      "declaredAt": 1789826294637,
+      "binding": {
+        "kind": "route",
+        "contains": "/contact"
+      },
+      "surface": {
+        "route": "/contact",
+        "files": [
+          "components/landing/LandingHero.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826296318",
+        "grade": "presence",
+        "at": 1789826296318
+      }
+    },
+    "inline:contact-page-shows-the-queries-inbox-and-dsse-ad-aadea716": {
+      "id": "inline:contact-page-shows-the-queries-inbox-and-dsse-ad-aadea716",
+      "statement": "Contact page shows the queries inbox and DSSE address.",
+      "state": "proved",
+      "declaredAt": 1789826303639,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "text",
+            "contains": "Queries"
+          },
+          {
+            "kind": "text",
+            "contains": "support@iitbinvent.com"
+          },
+          {
+            "kind": "text",
+            "contains": "One inbox"
+          },
+          {
+            "kind": "text",
+            "contains": "Powai, Mumbai 400076"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/contact",
+        "files": [
+          "components/landing/LandingHero.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789826303665",
+        "grade": "presence",
+        "at": 1789826303665
+      }
+    },
+    "inline:contact-navbar-stay-opens-campus-and-hotel-accom-62b50943": {
+      "id": "inline:contact-navbar-stay-opens-campus-and-hotel-accom-62b50943",
+      "statement": "Contact navbar Stay opens campus and hotel accommodation.",
+      "state": "bound",
+      "declaredAt": 1789826303640,
+      "binding": {
+        "kind": "route",
+        "contains": "/accommodation"
+      }
+    },
+    "inline:primary-stay-nav-opens-the-accommodation-page-9c201b14": {
+      "id": "inline:primary-stay-nav-opens-the-accommodation-page-9c201b14",
+      "statement": "Primary Stay nav opens the accommodation page.",
+      "state": "proved",
+      "declaredAt": 1789826308072,
+      "binding": {
+        "kind": "route",
+        "contains": "/accommodation"
+      },
+      "surface": {
+        "route": "/accommodation",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826310322",
+        "grade": "presence",
+        "at": 1789826310322
+      }
+    },
+    "inline:nearby-hotel-tab-reveals-anantha-hotel-rates-and-824ffef3": {
+      "id": "inline:nearby-hotel-tab-reveals-anantha-hotel-rates-and-824ffef3",
+      "statement": "Nearby hotel tab reveals Anantha Hotel rates and contact.",
+      "state": "proved",
+      "declaredAt": 1789826314821,
+      "binding": {
+        "kind": "text",
+        "contains": "Anantha Hotel"
+      },
+      "surface": {
+        "route": "/accommodation",
+        "files": [
+          "app/(public)/accommodation/AccommodationStay.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826316327",
+        "grade": "presence",
+        "at": 1789826316327
+      }
+    },
+    "inline:stay-navbar-conference-opens-the-call-for-papers-c7597055": {
+      "id": "inline:stay-navbar-conference-opens-the-call-for-papers-c7597055",
+      "statement": "Stay navbar Conference opens the call for papers.",
+      "state": "bound",
+      "declaredAt": 1789826320147,
+      "binding": {
+        "kind": "route",
+        "contains": "/conference"
+      }
+    },
+    "inline:primary-conference-nav-opens-the-call-for-papers-6afdd933": {
+      "id": "inline:primary-conference-nav-opens-the-call-for-papers-6afdd933",
+      "statement": "Primary Conference nav opens the call for papers.",
+      "state": "proved",
+      "declaredAt": 1789826325776,
+      "binding": {
+        "kind": "route",
+        "contains": "/conference"
+      },
+      "surface": {
+        "route": "/conference",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826327316",
+        "grade": "presence",
+        "at": 1789826327317
+      }
+    },
+    "inline:conference-workshop-details-opens-the-teaching-w-2769c749": {
+      "id": "inline:conference-workshop-details-opens-the-teaching-w-2769c749",
+      "statement": "Conference Workshop details opens the teaching-workshop page.",
+      "state": "proved",
+      "declaredAt": 1789826332314,
+      "binding": {
+        "kind": "route",
+        "contains": "/workshops"
+      },
+      "surface": {
+        "route": "/workshops",
+        "files": [
+          "app/(public)/conference/ConferenceCall.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826334313",
+        "grade": "presence",
+        "at": 1789826334313
+      }
+    },
+    "inline:workshop-navbar-programme-opens-the-coming-soon-e396800b": {
+      "id": "inline:workshop-navbar-programme-opens-the-coming-soon-e396800b",
+      "statement": "Workshop navbar Programme opens the coming-soon programme page.",
+      "state": "proved",
+      "declaredAt": 1789826340982,
+      "binding": {
+        "kind": "route",
+        "contains": "/programme"
+      },
+      "surface": {
+        "route": "/programme",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826343316",
+        "grade": "presence",
+        "at": 1789826343316
+      }
+    },
+    "inline:programme-navbar-faq-opens-the-frequently-asked-0090a5af": {
+      "id": "inline:programme-navbar-faq-opens-the-frequently-asked-0090a5af",
+      "statement": "Programme navbar FAQ opens the frequently asked questions page.",
+      "state": "bound",
+      "declaredAt": 1789826347262,
+      "binding": {
+        "kind": "route",
+        "contains": "/faq"
+      }
+    },
+    "inline:primary-faq-nav-opens-the-faq-page-with-the-new-5770caf9": {
+      "id": "inline:primary-faq-nav-opens-the-faq-page-with-the-new-5770caf9",
+      "statement": "Primary FAQ nav opens the FAQ page with the new contact question.",
+      "state": "proved",
+      "declaredAt": 1789826350510,
+      "binding": {
+        "kind": "route",
+        "contains": "/faq"
+      },
+      "surface": {
+        "route": "/faq",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_act_and_wait:1789826352316",
+        "grade": "presence",
+        "at": 1789826352316
+      }
+    },
+    "inline:faq-includes-the-new-contact-question-and-the-li-278698bf": {
+      "id": "inline:faq-includes-the-new-contact-question-and-the-li-278698bf",
+      "statement": "FAQ includes the new contact question and the live workshop.",
+      "state": "proved",
+      "declaredAt": 1789826359505,
+      "binding": {
+        "kind": "allOf",
+        "predicates": [
+          {
+            "kind": "text",
+            "contains": "How do I contact IITB INV.ENT?"
+          },
+          {
+            "kind": "text",
+            "contains": "Is there a pre-conference workshop at IITB INV.ENT?"
+          },
+          {
+            "kind": "text",
+            "contains": "support@iitbinvent.com"
+          }
+        ]
+      },
+      "surface": {
+        "route": "/faq",
+        "files": [
+          "components/PublicChrome.tsx"
+        ]
+      },
+      "provenBy": {
+        "verdictId": "reticle_assert:1789826359533",
+        "grade": "presence",
+        "at": 1789826359533
+      }
     }
   }
 }

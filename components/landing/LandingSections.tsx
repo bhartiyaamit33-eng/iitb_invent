@@ -33,7 +33,6 @@ export function LandingSections({
   const registerHref = signedInName ? "/dashboard" : REGISTER_HREF;
   const accountHref = signedInName ? "/dashboard" : "/login";
   const connectLabel = signedInName ? "Go to dashboard" : "Log in";
-  const signupLabel = signedInName ? "Go to dashboard" : "Log in to submit";
   const ghostSignupHref = signedInName ? "/dashboard/profile" : "/signup";
   const ghostSignupLabel = signedInName ? "Edit profile" : "Create account";
 
@@ -70,24 +69,21 @@ export function LandingSections({
                 venture practice.
               </h2>
               <p className="lead">
-                IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on actual entrepreneurship and venture practice.
+                Entrepreneurship is studied, and entrepreneurship is practised, and the two almost never sit in the same room. IITB INV.ENT is our attempt to fix that for two days a year.
               </p>
               <p className="lead">
-                It exists so ideas do not die in labs: students, faculty, founders, investors, and operators share the campus programme and then stay connected through the year.
-              </p>
-              <p className="lead">
-                On 31 January 2014, IIT Bombay’s Board of Governors approved what became DSSE. On this occasion we celebrate IITB INV.ENT, where entrepreneurship research meets venture practice, with speaker sessions, poster presentations, workshops, venture pitches, and the conversations that turn prototypes into companies.
+                Researchers present work. Practitioners say what they are actually up against. Incubators, investors and student founders sit in the same sessions rather than in a parallel track down the corridor.
               </p>
               <p className="lead">
                 IITB INV.ENT 2027 is on 30-31 January on campus.{" "}
-                <Link href="/about">Read what IITB INV.ENT is</Link>.
+                <Link href="/about">Read about IITB INV.ENT</Link>.
               </p>
               <div className="cta-row" data-testid="cta-signup">
-                <Link className="btn" href={signedInName ? "/dashboard" : "/login"}>
-                  {signupLabel}
+                <Link className="btn" href={submitHref}>
+                  Submit your abstract
                 </Link>
-                <Link className="btn ghost" href="/programme">
-                  See the programme
+                <Link className="btn ghost" href="/about">
+                  About IITB INV.ENT
                 </Link>
               </div>
             </ImageSplit>
@@ -98,11 +94,16 @@ export function LandingSections({
       <section id="practice" className="relative border-t border-[var(--rule)]">
         <div className="landing-shell">
           <Reveal>
-            <p className="landing-kicker">Research + practice</p>
-            <h2 data-spark-node>One conference. Two languages.</h2>
+            <p className="landing-kicker">The pipeline</p>
+            <h2 data-spark-node>What an idea runs into here</h2>
             <p className="lead">
-              Faculty and labs bring evidence. Founders and operators bring the ask. IITB INV.ENT holds both in the same visual and the same room.
+              At IIT Bombay, research and practice are already stacked. E-Cell and the labs sit upstream. DSSE is in the middle — twenty courses, IDEAS, WiE, the Groww programme. SINE takes over downstream. IITB INV.ENT is where people at every stage of that stack stand in the same room for two days.
             </p>
+            <div className="cta-row">
+              <Link className="btn ghost" href="/about">
+                Read the full story
+              </Link>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -115,8 +116,9 @@ export function LandingSections({
               <h2 data-spark-node>Who this is for</h2>
               <aside className="border-t border-spark pt-7">
                 <p className="lead">
-                  Student and faculty founders. Researchers stuck at lab-to-market. Alumni who mentor. Investors and operators who open doors. Anyone building something India actually needs, and willing to meet the people doing the same.
+                  Faculty and doctoral scholars working on entrepreneurship, innovation and strategy. Mentors and incubation teams. Founders, including the ones who think academic research has nothing to say to them, who we would particularly like to argue with. Investors and operators who can open a door. Students who want to work in any of this.
                 </p>
+                <p className="lead">You do not need to be presenting to attend.</p>
               </aside>
             </ImageSplit>
           </Reveal>
@@ -128,9 +130,9 @@ export function LandingSections({
         <div className="landing-shell relative">
           <Reveal>
             <p className="landing-kicker">Ways to take part</p>
-            <h2 data-spark-node>Three ways onto the floor</h2>
+            <h2 data-spark-node>Papers, posters, and a teaching day</h2>
             <p className="lead">
-              Submit a paper, poster, or case study. Workshops are accepted through the same submissions desk.
+              Submit a research paper or a poster on the conference page. 30 January is a pre-conference workshop day on entrepreneurship education. You do not need to be presenting to attend.
             </p>
             <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {PARTICIPATE.map((item) => (
@@ -138,6 +140,9 @@ export function LandingSections({
                   <Link
                     href={item.href === "/submit" ? submitHref : item.href}
                     className="group flex h-full flex-col border border-white/10 bg-navy/60 p-6 transition hover:-translate-y-0.5 hover:border-spark/50"
+                    data-testid={
+                      item.href === "/workshops" ? "landing-workshop" : undefined
+                    }
                   >
                     <TypeIcon name={item.icon} />
                     <strong className="landing-serif mt-4 mb-2 text-[26px] font-normal text-frost">
@@ -164,10 +169,10 @@ export function LandingSections({
               </p>
               <h2 data-spark-node>Submissions</h2>
               <p className="lead">
-                IITB INV.ENT invites research papers, poster presentations, and workshops from students, faculty, and practitioners. Log in first, then submit your abstract. After organisers accept a contribution, you receive an email with a payment link. An account is not a ticket.
+                IITB INV.ENT invites research papers and poster presentations from students, faculty, and practitioners. Log in first, then submit your abstract. After organisers accept a contribution, you receive an email with a payment link. An account is not a ticket.
               </p>
               <p className="lead">
-                Case studies may be submitted as papers. After you submit, you can complete a short profile on your dashboard.
+                Case studies may be submitted as papers. Abstract deadline: 15 October 2026.
               </p>
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <div className="border-t border-cyan-glow/40 pt-3">
@@ -200,14 +205,14 @@ export function LandingSections({
         </div>
       </section>
 
-      <section id="day" className="relative border-t border-[var(--rule)]">
+      <section id="day" className="relative border-t border-[var(--rule)]" data-testid="landing-day">
         <div className="landing-shell">
           <Reveal>
             <ImageSplit image={IMAGES.speaker} caption="Programme · 30-31 Jan 2027">
               <p className="landing-kicker section-kicker">The conference · 30-31 Jan 2027</p>
               <h2 data-spark-node>What happens on campus</h2>
               <p className="lead">
-                IITB INV.ENT 2027 runs 30-31 January at the DSSE Building. Doors from 9:00 IST, sessions, workshops, and events through the evening. Session RSVP opens for people who have a confirmed ticket after approval and payment.
+                30 January is the pre-conference day. 31 January is the conference: papers, posters, pitches, and conversations with venture capitalists, incubators and mentors. Doors from 9:00 IST; the day runs to about 19:30.
               </p>
               <div className="mt-4 border-t border-white/10">
                 {AGENDA.map((row) => (
@@ -227,6 +232,9 @@ export function LandingSections({
                 <Link className="btn ghost" href="/programme">
                   Full programme
                 </Link>
+                <Link className="btn ghost" href="/workshops">
+                  Pre-conference workshop
+                </Link>
               </div>
             </ImageSplit>
           </Reveal>
@@ -236,18 +244,24 @@ export function LandingSections({
       <section id="arrive" className="relative">
         <div className="landing-shell">
           <Reveal>
-            <ImageSplit image={IMAGES.welcome} imageSide="left" caption="DSSE auditorium">
+            <ImageSplit image={IMAGES.welcome} imageSide="left" caption="DSSE Building · Powai">
               <p className="landing-kicker">Before you come</p>
-              <h2 data-spark-node>Campus, badge, network</h2>
+              <h2 data-spark-node>Campus, stay, travel</h2>
               <p className="lead">
-                Venue: Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076. Nearest gate: IIT Bombay Main Gate. Log in, submit your abstract, and complete your profile. You receive a ticket QR only after organisers select you and you pay the category fee.
+                Venue: Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076. Nearest gate: IIT Bombay Main Gate.
+              </p>
+              <p className="lead">
+                Limited twin-sharing rooms at the IIT Bombay guest houses are first-come first-served; guests pay. Anantha Hotel in Bhandup West has quoted discounted rates for delegates.
               </p>
               <div className="cta-row">
-                <Link className="btn ghost" href={submitHref}>
-                  Submit your abstract
+                <Link className="btn ghost" href="/accommodation" data-testid="landing-stay">
+                  Stay
                 </Link>
-                <Link className="btn ghost" href={accountHref}>
-                  {signedInName ? "Dashboard" : "Login"}
+                <Link className="btn ghost" href="/travel">
+                  Travel
+                </Link>
+                <Link className="btn ghost" href="/workshops">
+                  Workshop
                 </Link>
               </div>
             </ImageSplit>
@@ -260,7 +274,10 @@ export function LandingSections({
           <Reveal>
             <p className="landing-kicker">DSSE since 2014</p>
             <h2 data-spark-node>Scoreboard</h2>
-            <div className="mt-3 grid grid-cols-2 gap-6 md:grid-cols-4">
+            <p className="lead">
+              Twenty courses later, DSSE has trained more than 5,550 students. The 127 startups are what is left standing.
+            </p>
+            <div className="mt-3 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
               {displayStats.map((s) => (
                 <div key={s.value + s.label}>
                   <b className="landing-serif mb-2 block text-[clamp(36px,4.6vw,52px)] font-normal leading-none text-frost">
@@ -316,10 +333,16 @@ export function LandingSections({
                 All questions
               </Link>
               <Link className="btn ghost" href="/about">
-                What is IITB INV.ENT
+                About IITB INV.ENT
               </Link>
               <Link className="btn ghost" href="/conference">
                 Call for papers
+              </Link>
+              <Link className="btn ghost" href="/workshops">
+                Workshop
+              </Link>
+              <Link className="btn ghost" href="/contact">
+                Contact
               </Link>
             </div>
           </Reveal>
@@ -352,11 +375,11 @@ export function LandingSections({
                 Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076
               </p>
               <div className="cta-row">
-                <Link className="btn" href={submitHref}>
-                  Submit your abstract
+                <Link className="btn" href="/contact" data-testid="query-contact">
+                  Contact page
                 </Link>
-                <Link className="btn outline" href={registerHref}>
-                  Login
+                <Link className="btn ghost" href={submitHref}>
+                  Submit your abstract
                 </Link>
               </div>
             </ImageSplit>

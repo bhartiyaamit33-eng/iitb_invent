@@ -40,24 +40,34 @@ export function submitHrefFor(signedIn: boolean) {
   return signedIn ? SUBMIT_HREF : LOGIN_TO_SUBMIT_HREF;
 }
 
+export const LANDING_NAV = [
+  { href: "/about", label: "About" },
+  { href: "/conference", label: "Conference" },
+  { href: "/workshops", label: "Workshop" },
+  { href: "/programme", label: "Programme" },
+  { href: "/accommodation", label: "Stay" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
+] as const;
+
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
-    id: "open",
-    kicker: "Submissions open",
-    date: "10 Sep 2026",
-    at: "2026-09-10",
-  },
-  {
     id: "deadline",
-    kicker: "Submission deadline",
+    kicker: "Abstract deadline",
     date: "15 Oct 2026",
     at: "2026-10-15",
   },
   {
     id: "accept",
     kicker: "Acceptance",
-    date: "31 Dec 2026",
-    at: "2026-12-31",
+    date: "15 Nov 2026",
+    at: "2026-11-15",
+  },
+  {
+    id: "final",
+    kicker: "Final papers",
+    date: "1 Jan 2027",
+    at: "2027-01-01",
   },
   {
     id: "conference",
@@ -87,15 +97,16 @@ export function markTimeline(
 export const FALLBACK_STATS: LandingStat[] = [
   { value: "2014", label: "Board of Governors approved the centre." },
   { value: "5550+", label: "Students through entrepreneurship courses." },
-  { value: "1470+", label: "Ventures mentored across cohorts." },
-  { value: "670+", label: "Startups touched by the DSSE stack." },
+  { value: "1470+", label: "Students mentored." },
+  { value: "670+", label: "Venture teams formed." },
+  { value: "127", label: "Startups actually started." },
 ];
 
 export const FALLBACK_FAQS: LandingFaq[] = [
   {
     question: "When is IITB INV.ENT 2027?",
     answer:
-      "30-31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay.",
+      "30-31 January 2027, Asia/Kolkata, at the DSSE Building, IIT Bombay. 30 January is the pre-conference workshop day; 31 January is the conference.",
   },
   {
     question: "Where is the venue?",
@@ -103,14 +114,24 @@ export const FALLBACK_FAQS: LandingFaq[] = [
       "Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076.",
   },
   {
+    question: "Where can I stay?",
+    answer:
+      "Limited twin-sharing rooms at the IIT Bombay guest houses are first-come first-served; guests pay. Anantha Hotel in Bhandup West has quoted discounted rates. See the accommodation page.",
+  },
+  {
+    question: "Is there a pre-conference workshop?",
+    answer:
+      "Yes. A working session on teaching entrepreneurship, led by Prof. Sankalp Pratap, runs on 30 January 2027 at the DSSE Building. It is included in conference registration; reserve a seat from your dashboard after you are confirmed. See the workshop page.",
+  },
+  {
     question: "How do I submit an abstract?",
     answer:
       "Log in (or create an account), then submit your paper or poster abstract on the conference page. Organisers review submissions and write to you with next steps. An account is not a ticket.",
   },
   {
-    question: "How do I get a ticket?",
+    question: "How do I contact IITB INV.ENT?",
     answer:
-      "Submit an abstract or register your interest in attending. Organisers review applications and write to you with next steps. The ticket appears on your dashboard and in email only after you are confirmed.",
+      "Write to support@iitbinvent.com. One inbox for press, partners, speakers, volunteers, campus access, and other queries. Humans read it.",
   },
 ];
 
@@ -119,42 +140,37 @@ export const PARTICIPATE = [
     title: "Research Papers",
     href: "/submit",
     icon: "paper" as const,
-    body: "Peer sessions where labs show work that can leave the building: methods, evidence, and a concrete next step.",
+    body: "Methods, evidence, and a concrete next step — presented to founders and researchers in the same session, not a parallel track.",
   },
   {
     title: "Poster Presentations",
     href: "/submit",
     icon: "poster" as const,
-    body: "Corridor conversations with the work on the wall. The format for early results, prototypes, and precise questions.",
+    body: "Early results, prototypes, and precise questions on the wall. The corridor is part of the conference.",
   },
   {
-    title: "Case Studies",
-    href: "/submit",
-    icon: "case" as const,
-    body: "Practice as evidence: what shipped, what stalled, and what another founder should copy or avoid.",
+    title: "Teaching workshop",
+    href: "/workshops",
+    icon: "workshop" as const,
+    body: "30 January. A working session on teaching entrepreneurship, led by Prof. Sankalp Pratap. Included in conference registration.",
   },
 ];
 
 export const AGENDA = [
   {
+    time: "30 Jan",
+    title: "Pre-conference day",
+    body: "Hands-on workshops on entrepreneurship education, including the teaching workshop. You do not need to be presenting a paper to attend.",
+  },
+  {
+    time: "31 Jan",
+    title: "The conference",
+    body: "Research papers and posters. Startup pitches. Open conversations with venture capitalists, incubators and mentors. Best Paper and Best Poster awards.",
+  },
+  {
     time: "0900",
-    title: "Open & badge",
-    body: "Doors open. Confirmed attendees who have paid check in with their ticket QR.",
-  },
-  {
-    time: "AM",
-    title: "Speakers & research",
-    body: "Keynotes and panels from faculty and operators. Poster presentations where labs show work that can leave the building.",
-  },
-  {
-    time: "PM",
-    title: "Sessions & workshops",
-    body: "Talks and workshops on entrepreneurship research and venture practice.",
-  },
-  {
-    time: "to 1930",
-    title: "Connect & close",
-    body: "Office hours and hallway intros. The day ends around 7:30 pm IST.",
+    title: "Doors open",
+    body: "Both days start at 9:00 IST at the DSSE Building. Sessions run to about 19:30.",
   },
 ];
 

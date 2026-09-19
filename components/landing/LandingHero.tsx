@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
+  LANDING_NAV,
   REGISTER_HREF,
   submitHrefFor,
   TAGLINE_LEAD,
@@ -106,6 +107,23 @@ export function LandingHero({
         </Link>
       </div>
 
+      <nav
+        className="landing-site-nav relative z-10"
+        aria-label="Site"
+        data-testid="landing-site-nav"
+      >
+        {LANDING_NAV.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="landing-nav-link"
+            data-testid={`landing-nav-${item.href.slice(1)}`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
       <div className="relative z-10 flex min-h-0 flex-1 flex-col">
         <div className="flex min-h-0 flex-1 flex-col justify-between px-[clamp(18px,4.6vw,72px)] pt-2 pb-[clamp(20px,3vw,36px)]">
           <div className="flex flex-1 flex-col justify-center py-3">
@@ -126,13 +144,21 @@ export function LandingHero({
               <span className="hero-tagline-lead">{TAGLINE_LEAD}</span>{" "}
               <span className="hero-tagline-rest">{TAGLINE_REST}</span>
             </p>
+            <p
+              className="hero-rise mt-4 max-w-[36rem] text-[15px] leading-7 text-mist"
+              data-testid="hero-lede"
+              style={{ animationDelay: "0.62s" }}
+            >
+              Researchers present work. Practitioners say what they are actually
+              up against. Same room, two days a year.
+            </p>
             <ol
               className="hero-rise mt-4 flex flex-wrap gap-y-2 p-0"
               aria-label="The IITB INV.ENT journey"
               data-testid="journey"
               style={{ animationDelay: "0.68s" }}
             >
-              {["Research", "Innovation", "Entrepreneurship", "Impact"].map(
+              {["Research", "Practice", "Same room"].map(
                 (step, i) => (
                   <li
                     key={step}

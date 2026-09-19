@@ -1,4 +1,4 @@
-type IconName = "paper" | "poster" | "startup" | "demo" | "case";
+type IconName = "paper" | "poster" | "startup" | "demo" | "case" | "workshop";
 
 const stroke = {
   fill: "none",
@@ -35,10 +35,10 @@ export function TypeIcon({ name }: { name: IconName }) {
           <path {...stroke} d="M16 40h16M24 32v8M20 20l8 4-8 4z" />
         </>
       ) : null}
-      {name === "case" ? (
+      {name === "workshop" ? (
         <>
-          <path {...stroke} d="M12 14h24v22H12z" />
-          <path {...stroke} d="M18 14V10h12v4M18 24h12M18 30h8" />
+          <path {...stroke} d="M10 34V16l14-6 14 6v18" />
+          <path {...stroke} d="M24 10v24M10 34h28M16 22h6M16 28h6" />
         </>
       ) : null}
     </svg>
