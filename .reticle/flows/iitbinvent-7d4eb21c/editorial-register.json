@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "name": "editorial-register",
+  "projectId": "iitbinvent-7d4eb21c",
+  "createdAt": 1789945288092,
+  "steps": [
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "testid",
+        "value": "nav-register",
+        "source": {
+          "file": "components/site/SiteHeader.tsx",
+          "line": 64,
+          "column": 8
+        }
+      },
+      "args": {},
+      "action": "click",
+      "expect": {
+        "element": {
+          "testid": "conference-hero"
+        }
+      }
+    }
+  ],
+  "startPath": "/",
+  "intent": "Register from the public header opens Call for Papers. Submit remains behind login.",
+  "intentId": "flow:editorial-register"
+}

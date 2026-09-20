@@ -21,10 +21,15 @@ export const metadata = pageMetadata({
 });
 
 export default async function ProgrammePage() {
-  const user = await getCurrentUser();
-  const edition = await prisma.edition.findFirst({
-    where: { isCurrent: true },
-  });
+  const user = await getCurrentUser().catch(() => null);
+  let edition: Awaited<ReturnType<typeof prisma.edition.findFirst>> = null;
+  try {
+    edition = await prisma.edition.findFirst({
+      where: { isCurrent: true },
+    });
+  } catch {
+    edition = null;
+  }
   const live = edition ? isLiveStatus(edition.status) : false;
   const showSchedule = PROGRAMME_SCHEDULE_PUBLISHED || live;
 

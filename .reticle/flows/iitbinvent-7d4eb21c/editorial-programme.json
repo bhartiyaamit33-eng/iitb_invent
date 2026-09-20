@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "name": "editorial-programme",
+  "projectId": "iitbinvent-7d4eb21c",
+  "createdAt": 1789945289338,
+  "steps": [
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "testid",
+        "value": "nav-programme",
+        "source": {
+          "file": "components/site/SiteHeader.tsx",
+          "line": 46,
+          "column": 8
+        }
+      },
+      "args": {},
+      "action": "click"
+    }
+  ],
+  "startPath": "/",
+  "intent": "The programme page shows the preliminary two-day outline, not last year session CMS.",
+  "intentId": "flow:editorial-programme"
+}
