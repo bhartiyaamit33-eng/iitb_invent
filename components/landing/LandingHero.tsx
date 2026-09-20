@@ -19,7 +19,12 @@ export function LandingHero({
       data-testid="hero"
       aria-labelledby="hero-heading"
     >
-      <IntersectionField labels />
+      <IntersectionField />
+      <p className="hero-pole is-left" data-testid="hero-pole-practice">
+        Venture
+        <br />
+        Practice
+      </p>
       <div className="landing-hero-copy">
         <p className="site-kicker">IITB INV.ENT 2027</p>
         <h1 id="hero-heading">
@@ -42,6 +47,11 @@ export function LandingHero({
           </Link>
         </div>
       </div>
+      <p className="hero-pole is-right" data-testid="hero-pole-research">
+        Entrepreneurship
+        <br />
+        Research
+      </p>
     </section>
   );
 }

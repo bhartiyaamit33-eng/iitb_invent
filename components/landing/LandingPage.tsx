@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteTheme } from "@/components/site/SiteTheme";
 import type { LiveStripData } from "@/lib/landing";
+import { EventLanes } from "./EventLanes";
 import { LandingHero } from "./LandingHero";
 import { LandingSections } from "./LandingSections";
 import { LiveStrip } from "./LiveStrip";
@@ -24,6 +25,7 @@ export function LandingPage({
       <SiteHeader signedInName={signedInName} />
       <main id="main">
         <LandingHero signedInName={signedInName} />
+        <EventLanes />
         <LandingSections signedInName={signedInName} />
       </main>
       <SiteFooter />

@@ -319,20 +319,25 @@ html[data-site] body {
   position: relative;
   isolation: isolate;
   display: grid;
-  place-items: center;
+  grid-template-columns: minmax(8.5rem, 1fr) minmax(0, 46rem) minmax(8.5rem, 1fr);
+  grid-template-areas: "pole-l copy pole-r";
+  align-items: center;
+  column-gap: clamp(12px, 2vw, 32px);
   min-height: 86vh;
-  padding: 48px 20px 72px;
+  padding: 48px clamp(16px, 3vw, 40px) 72px;
   text-align: center;
   overflow: hidden;
 }
 
 .landing-hero-copy {
+  grid-area: copy;
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 920px;
+  max-width: 46rem;
+  justify-self: center;
 }
 
 .landing-hero h1 {
@@ -346,39 +351,36 @@ html[data-site] body {
   color: var(--blue);
 }
 
-.hero-poles {
-  position: absolute;
+.hero-pole {
+  position: relative;
   z-index: 1;
-  left: 50%;
-  top: 48%;
-  transform: translate(-50%, -50%);
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 20px;
-  width: min(1080px, 92%);
   margin: 0;
+  max-width: 14ch;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.18em;
+  line-height: 1.45;
   text-transform: uppercase;
   color: var(--mute);
   pointer-events: none;
-  opacity: 0.72;
 }
 
-.hero-poles span {
-  white-space: pre-line;
+.hero-pole.is-left {
+  grid-area: pole-l;
+  justify-self: start;
+  align-self: start;
+  padding-top: 18vh;
+  text-align: left;
+  color: var(--blue);
 }
 
-.hero-poles .is-left { text-align: right; }
-.hero-poles .is-right { text-align: left; color: var(--navy); }
-.hero-poles .is-node {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 0 6px rgba(105, 179, 63, 0.12);
+.hero-pole.is-right {
+  grid-area: pole-r;
+  justify-self: end;
+  align-self: end;
+  padding-bottom: 20vh;
+  text-align: right;
+  color: var(--navy);
 }
 
 .hero-meta {
@@ -876,6 +878,159 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
   text-transform: uppercase;
 }
 
+.org-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 8px 0 72px;
+  border-top: 1px solid var(--rule);
+}
+
+.org-split > section {
+  padding: 36px 40px 8px 0;
+}
+
+.org-split > section + section {
+  padding-left: 40px;
+  padding-right: 0;
+  border-left: 1px solid var(--rule);
+}
+
+.org-split h2 {
+  margin: 8px 0 16px;
+}
+
+.org-list {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.org-card {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.org-card p {
+  margin: 0;
+  font-size: 18px;
+}
+
+.org-meta {
+  margin-top: 6px !important;
+  font-size: 11px !important;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+/* Campus photo lanes — opposite directions, just below the hero */
+
+.site .event-lanes {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 0 4px;
+  overflow: hidden;
+  background: var(--navy);
+  border-block: 1px solid var(--rule);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+.site .event-lane-card {
+  background: #071628;
+}
+
+.site .event-lane-card img {
+  filter: saturate(0.78) contrast(1.06) brightness(0.82);
+}
+
+.site .event-lane-card::after {
+  background: linear-gradient(20deg, rgba(20, 91, 239, 0.12), transparent 50%);
+}
+
+.name-lanes {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 48px 0 8px;
+  overflow: hidden;
+  border-block: 1px solid var(--rule);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.name-lane {
+  overflow: hidden;
+  border-bottom: 1px solid var(--rule);
+}
+
+.name-lane:last-child {
+  border-bottom: 0;
+}
+
+.name-lane-track {
+  display: flex;
+  width: max-content;
+  animation: name-lane 48s linear infinite;
+  will-change: transform;
+}
+
+.name-lane.is-reverse .name-lane-track {
+  animation-direction: reverse;
+  animation-duration: 62s;
+}
+
+.name-lane-set {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.name-lane-set li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-width: 220px;
+  padding: 22px 36px 22px 0;
+  margin-right: 36px;
+  border-right: 1px solid var(--rule);
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--navy);
+}
+
+.name-lane-set em {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.name-lanes:hover .name-lane-track,
+.site .event-lanes:hover .event-lane-track {
+  animation-play-state: paused;
+}
+
+@keyframes name-lane {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+#partners .cta-row {
+  margin-top: 28px;
+}
+
 .speaker-card strong {
   display: block;
   font-family: var(--font-serif);
@@ -1167,6 +1322,7 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
   .theme-list,
   .partner-grid,
   .speaker-grid,
+  .org-split,
   .site-footer-grid {
     grid-template-columns: 1fr;
   }
@@ -1177,19 +1333,17 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
   }
 
   .two-worlds-col.is-practice,
-  .two-worlds-col.is-research,
-  .hero-poles {
-    top: auto;
-    bottom: 7%;
-    transform: translate(-50%, 0);
-    grid-template-columns: 1fr;
-    justify-items: center;
-    gap: 10px;
+  .two-worlds-col.is-research {
+    text-align: left;
   }
 
-  .hero-poles .is-left,
-  .hero-poles .is-right {
+  .hero-pole.is-left,
+  .hero-pole.is-right {
     text-align: center;
+    justify-self: center;
+    align-self: center;
+    padding: 16px 0 0;
+    max-width: none;
   }
 
   .two-worlds-center {
@@ -1223,9 +1377,24 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
     padding-right: 0;
   }
 
+  .org-split > section,
+  .org-split > section + section {
+    padding: 28px 0 8px;
+    border-left: 0;
+  }
+
+  .org-split > section + section {
+    border-top: 1px solid var(--rule);
+  }
+
   .landing-hero {
-    min-height: 88vh;
+    min-height: auto;
     padding-top: 32px;
+    padding-bottom: 40px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "copy copy"
+      "pole-l pole-r";
   }
 }
 
@@ -1234,8 +1403,18 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
   .orbit-a,
   .orbit-b,
   .orbit-c,
-  .pulse {
+  .pulse,
+  .name-lane-track,
+  .site .event-lane-track {
     animation: none !important;
   }
   .draw { stroke-dashoffset: 0; }
+  .name-lane,
+  .site .event-lane {
+    overflow-x: auto;
+  }
+  .name-lanes,
+  .site .event-lanes {
+    mask-image: none;
+  }
 }

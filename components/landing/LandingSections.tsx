@@ -13,6 +13,7 @@ import {
   VENTURES,
   registerHrefFor,
 } from "@/lib/site";
+import { NameLanes } from "./NameLanes";
 
 export function LandingSections({
   signedInName,
@@ -111,6 +112,36 @@ export function LandingSections({
               ))}
             </ul>
           </Reveal>
+        </div>
+      </section>
+
+      <section className="site-section is-rule" id="partners" data-testid="landing-partners">
+        <div className="site-shell">
+          <Reveal>
+            <p className="site-kicker">Together</p>
+            <h2>
+              Partners
+              <br />
+              and sponsors.
+            </h2>
+            <p className="lead">
+              Hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay.
+              We are in conversation with institutions including IIT Kanpur and
+              IIT Kharagpur, and with companies including GreyLabs AI.
+            </p>
+            <p className="lead">
+              Names here are conversations, not confirmed logos. The full list
+              lives on one page: sponsors on the left, partners on the right.
+            </p>
+          </Reveal>
+        </div>
+        <NameLanes />
+        <div className="site-shell">
+          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+            <Link className="site-btn site-btn-ghost" href="/partners">
+              Partners &amp; sponsors →
+            </Link>
+          </div>
         </div>
       </section>
 

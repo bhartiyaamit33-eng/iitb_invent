@@ -147,27 +147,58 @@ export const RESEARCH_THEMES = [
   "Entrepreneurial Finance",
 ] as const;
 
-export const PARTNER_TIERS = [
+export type OrgMention = {
+  name: string;
+  href?: string;
+  status: "confirmed" | "in-conversation";
+  note?: string;
+};
+
+/** Named conversations, not confirmed logos. */
+export const SPONSORS: OrgMention[] = [
   {
-    id: "hosted",
-    title: "Hosted by",
-    partners: [
-      { name: "Desai Sethi School of Entrepreneurship", href: "https://www.dsse.iitb.ac.in/" },
-      { name: "IIT Bombay", href: "https://www.iitb.ac.in/" },
-    ],
+    name: "GreyLabs AI",
+    href: "https://greylabs.ai",
+    status: "in-conversation",
   },
-  { id: "institutional", title: "Institutional partners", partners: [] as { name: string; href?: string }[] },
-  { id: "knowledge", title: "Knowledge partners", partners: [] as { name: string; href?: string }[] },
+];
+
+export const PARTNERS: OrgMention[] = [
   {
-    id: "ecosystem",
-    title: "Ecosystem partners",
-    partners: [
-      { name: "E-Cell", href: "https://ecell.in" },
-      { name: "SINE", href: "https://sineiitb.org" },
-    ],
+    name: "Desai Sethi School of Entrepreneurship",
+    href: "https://www.dsse.iitb.ac.in/",
+    status: "confirmed",
+    note: "Host",
   },
-  { id: "sponsors", title: "Sponsors", partners: [] as { name: string; href?: string }[] },
-] as const;
+  {
+    name: "IIT Bombay",
+    href: "https://www.iitb.ac.in/",
+    status: "confirmed",
+    note: "Host",
+  },
+  {
+    name: "IIT Kanpur",
+    href: "https://www.iitk.ac.in/",
+    status: "in-conversation",
+  },
+  {
+    name: "IIT Kharagpur",
+    href: "https://www.iitkgp.ac.in/",
+    status: "in-conversation",
+  },
+  {
+    name: "E-Cell",
+    href: "https://ecell.in",
+    status: "confirmed",
+    note: "Campus",
+  },
+  {
+    name: "SINE",
+    href: "https://sineiitb.org",
+    status: "confirmed",
+    note: "Campus",
+  },
+];
 
 export const SPEAKER_CATEGORIES = [
   "Researchers",

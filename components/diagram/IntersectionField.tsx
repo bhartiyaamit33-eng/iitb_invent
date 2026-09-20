@@ -1,8 +1,4 @@
-export function IntersectionField({
-  labels = false,
-}: {
-  labels?: boolean;
-}) {
+export function IntersectionField() {
   return (
     <div className="intersect-field" aria-hidden="true">
       <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
@@ -23,13 +19,6 @@ export function IntersectionField({
         <circle className="intersect-dot" cx="600" cy="620" r="2" />
         <circle className="intersect-core pulse" cx="600" cy="400" r="7" />
       </svg>
-      {labels ? (
-        <div className="hero-poles">
-          <span className="is-left">Venture Practice</span>
-          <span className="is-node intersect-core pulse" />
-          <span className="is-right">Entrepreneurship Research</span>
-        </div>
-      ) : null}
     </div>
   );
 }
