@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
+import { isLiveStatus } from "@/lib/live";
+import { PROGRAMME_SCHEDULE_PUBLISHED } from "@/lib/programme";
 import { INDEXABLE_PATHS, absoluteUrl } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -13,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
-    if (edition) {
+    if (edition && (PROGRAMME_SCHEDULE_PUBLISHED || isLiveStatus(edition.status))) {
       const sessions = await prisma.session_.findMany({
         where: {
           editionId: edition.id,

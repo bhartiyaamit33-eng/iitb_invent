@@ -16,6 +16,7 @@ import {
   organizationJsonLd,
   pageMetadata,
 } from "@/lib/seo";
+import { signedInLabel } from "@/lib/site";
 import { ConferenceCall } from "./ConferenceCall";
 
 export const dynamic = "force-dynamic";
@@ -108,6 +109,7 @@ export default async function ConferencePage({
         defaultName={user?.name ?? ""}
         defaultEmail={user?.email ?? ""}
         signedIn={Boolean(user)}
+        signedInName={signedInLabel(user)}
         deleted={Boolean(deleted)}
         error={error}
       />

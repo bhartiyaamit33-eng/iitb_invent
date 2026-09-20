@@ -1,8 +1,6 @@
-import { landingPreviewFontClass } from "@/app/landing-preview-fonts";
 import { JsonLd } from "@/components/JsonLd";
 import { LandingPage } from "@/components/landing/LandingPage";
 import { loadLandingData } from "@/lib/load-landing";
-import type { HeroVariant } from "@/lib/landing";
 import {
   eventJsonLd,
   faqPageJsonLd,
@@ -11,14 +9,10 @@ import {
   websiteJsonLd,
 } from "@/lib/seo";
 
-export async function LandingScreen({
-  heroVariant,
-}: {
-  heroVariant: HeroVariant;
-}) {
+export async function LandingScreen() {
   const data = await loadLandingData();
   return (
-    <div className={landingPreviewFontClass}>
+    <>
       <JsonLd
         data={graphJsonLd(
           websiteJsonLd(),
@@ -27,14 +21,7 @@ export async function LandingScreen({
           faqPageJsonLd(),
         )}
       />
-      <LandingPage
-        heroVariant={heroVariant}
-        signedInName={data.signedInName}
-        live={data.live}
-        faqs={data.faqs}
-        stats={data.stats}
-        timeline={data.timeline}
-      />
-    </div>
+      <LandingPage signedInName={data.signedInName} live={data.live} />
+    </>
   );
 }

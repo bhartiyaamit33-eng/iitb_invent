@@ -1,8 +1,7 @@
 import { LandingScreen } from "@/components/landing/LandingScreen";
-import type { HeroVariant } from "@/lib/landing";
 import {
   DEFAULT_DESCRIPTION,
-  SITE_NAME_LONG,
+  HOME_TITLE,
   noIndex,
   pageMetadata,
 } from "@/lib/seo";
@@ -11,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   ...pageMetadata({
-    title: SITE_NAME_LONG,
+    title: HOME_TITLE,
     description: DEFAULT_DESCRIPTION,
     path: "/test123",
     absoluteTitle: true,
@@ -19,14 +18,6 @@ export const metadata = {
   ...noIndex,
 };
 
-type SearchParams = Promise<{ hero?: string }>;
-
-export default async function TestLandingPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const params = await searchParams;
-  const heroVariant: HeroVariant = params.hero === "plain" ? "plain" : "photo";
-  return <LandingScreen heroVariant={heroVariant} />;
+export default async function TestLandingPage() {
+  return <LandingScreen />;
 }

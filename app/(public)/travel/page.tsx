@@ -1,6 +1,7 @@
 import { JsonLd } from "@/components/JsonLd";
 import { Prose } from "@/components/Prose";
 import { PublicChrome } from "@/components/PublicChrome";
+import { PageHero } from "@/components/site/PageHero";
 import { getPublishedPage } from "@/lib/pages";
 import { TRAVEL_FALLBACK } from "@/lib/seo-content";
 import {
@@ -19,28 +20,23 @@ export const metadata = pageMetadata({
 
 export default async function TravelPage() {
   const cms = await getPublishedPage("travel");
-  const title = cms?.title || "Travel";
+  const title = cms?.title || "Venue";
   const body = cms?.body?.trim() || TRAVEL_FALLBACK;
 
   return (
-    <PublicChrome crumbs={[{ href: "/travel", label: "Travel" }]}>
+    <PublicChrome crumbs={[{ href: "/travel", label: "Venue" }]}>
       <JsonLd
         data={graphJsonLd(
           organizationJsonLd(),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "Travel", path: "/travel" },
+            { name: "Venue", path: "/travel" },
           ]),
         )}
       />
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-        <h1 className="font-display text-4xl tracking-wide text-teal-deep">
-          {title}
-        </h1>
-        <p className="mt-4 text-lg leading-8 text-ink">
-          IITB INV.ENT venue: {VENUE.formatted}.
-        </p>
-        <div className="mt-8">
+      <main id="main">
+        <PageHero kicker="IIT Bombay · Powai" title={title} lede={VENUE.formatted} />
+        <div className="site-shell editorial">
           <Prose text={body} />
         </div>
       </main>

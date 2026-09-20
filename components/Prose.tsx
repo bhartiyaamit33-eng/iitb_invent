@@ -30,20 +30,17 @@ function linkify(text: string): ReactNode[] {
   return parts;
 }
 
+export function LinkedText({ text }: { text: string }) {
+  return <>{linkify(text)}</>;
+}
+
 export function Prose({ text }: { text: string }) {
   const blocks = text.trim().split(/\n\n+/);
   return (
-    <div className="space-y-4 text-[17px] leading-7 text-ink-soft">
+    <div className="site-prose">
       {blocks.map((block, i) => {
         if (block.startsWith("## ")) {
-          return (
-            <h2
-              key={i}
-              className="pt-4 font-display text-2xl tracking-wide text-teal-deep"
-            >
-              {block.slice(3)}
-            </h2>
-          );
+          return <h2 key={i}>{block.slice(3)}</h2>;
         }
         return (
           <p key={i} className="whitespace-pre-line">

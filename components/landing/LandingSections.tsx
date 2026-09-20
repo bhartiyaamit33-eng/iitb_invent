@@ -1,272 +1,147 @@
 "use client";
 
 import Link from "next/link";
-import {
-  AGENDA,
-  IMAGES,
-  PARTICIPATE,
-  REGISTER_HREF,
-  submitHrefFor,
-  type LandingFaq,
-  type LandingStat,
-  type TimelineItem,
-} from "@/lib/landing";
-import { BrandInline } from "./Wordmark";
-import { ImageSplit } from "./ImagePanel";
-import { OrbitBackdrop } from "./OrbitBackdrop";
+import { LineIcon } from "@/components/diagram/LineIcon";
+import { Pipeline } from "@/components/diagram/Pipeline";
+import { TwoWorlds } from "@/components/diagram/TwoWorlds";
+import { ProgrammeOutline } from "@/components/site/ProgrammeOutline";
 import { Reveal } from "./Reveal";
-import { Timeline } from "./Timeline";
-import { TypeIcon } from "./TypeIcon";
+import { CountUp } from "@/components/site/CountUp";
+import {
+  ECOSYSTEM_STATS,
+  ROOM_CATEGORIES,
+  VENTURES,
+  registerHrefFor,
+} from "@/lib/site";
 
 export function LandingSections({
   signedInName,
-  faqs,
-  stats,
-  timeline,
 }: {
   signedInName: string | null;
-  faqs: LandingFaq[];
-  stats: LandingStat[];
-  timeline: TimelineItem[];
 }) {
-  const submitHref = submitHrefFor(Boolean(signedInName));
-  const registerHref = signedInName ? "/dashboard" : REGISTER_HREF;
-  const accountHref = signedInName ? "/dashboard" : "/login";
-  const connectLabel = signedInName ? "Go to dashboard" : "Log in";
-  const signupLabel = signedInName ? "Go to dashboard" : "Log in to submit";
-  const ghostSignupHref = signedInName ? "/dashboard/profile" : "/signup";
-  const ghostSignupLabel = signedInName ? "Edit profile" : "Create account";
-
-  const displayStats =
-    stats[0]?.value === "2014"
-      ? stats
-      : [
-          {
-            value: "2014",
-            label: "Board of Governors approved the centre.",
-          },
-          ...stats,
-        ];
+  const registerHref = registerHrefFor(Boolean(signedInName));
 
   return (
     <>
-      <div className="overflow-hidden whitespace-nowrap border-y border-white/10 bg-navy py-3.5 text-xs font-semibold tracking-[0.16em] text-mist uppercase">
-        <span className="inline-block animate-[marquee_32s_linear_infinite] pl-[100%]">
-          IITB INV.ENT 2027 · ENTREPRENEURSHIP RESEARCH AND PRACTICE CONFERENCE · 30-31 JANUARY · IIT BOMBAY · SUPPORT@IITBINVENT.COM ·
-        </span>
-      </div>
-
-      <section id="about" className="relative">
-        <OrbitBackdrop variant="section" />
-        <div className="landing-shell relative">
+      <section id="about" className="site-section is-rule">
+        <div className="site-shell">
           <Reveal>
-            <p className="landing-kicker section-kicker">
-              Why <BrandInline />
-            </p>
-            <ImageSplit image={IMAGES.campus} caption="DSSE Building · IIT Bombay">
-              <h2 data-spark-node>
-                Research meets
-                <br />
-                venture practice.
-              </h2>
-              <p className="lead">
-                IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on actual entrepreneurship and venture practice.
-              </p>
-              <p className="lead">
-                It exists so ideas do not die in labs: students, faculty, founders, investors, and operators share the campus programme and then stay connected through the year.
-              </p>
-              <p className="lead">
-                On 31 January 2014, IIT Bombay’s Board of Governors approved what became DSSE. On this occasion we celebrate IITB INV.ENT, where entrepreneurship research meets venture practice, with speaker sessions, poster presentations, workshops, venture pitches, and the conversations that turn prototypes into companies.
-              </p>
-              <p className="lead">
-                IITB INV.ENT 2027 is on 30-31 January on campus.{" "}
-                <Link href="/about">Read what IITB INV.ENT is</Link>.
-              </p>
-              <div className="cta-row" data-testid="cta-signup">
-                <Link className="btn" href={signedInName ? "/dashboard" : "/login"}>
-                  {signupLabel}
-                </Link>
-                <Link className="btn ghost" href="/programme">
-                  See the programme
-                </Link>
+            <div className="quote-split">
+              <div>
+                <blockquote>
+                  “Entrepreneurship is studied,
+                  and entrepreneurship is practised,
+                  and the two almost never sit
+                  in the same room.”
+                </blockquote>
+                <p className="attr">~ IITB INV.ENT</p>
               </div>
-            </ImageSplit>
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="practice" className="relative border-t border-[var(--rule)]">
-        <div className="landing-shell">
-          <Reveal>
-            <p className="landing-kicker">Research + practice</p>
-            <h2 data-spark-node>One conference. Two languages.</h2>
-            <p className="lead">
-              Faculty and labs bring evidence. Founders and operators bring the ask. IITB INV.ENT holds both in the same visual and the same room.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="audience" className="relative">
-        <div className="landing-shell">
-          <Reveal>
-            <ImageSplit image={IMAGES.networking} imageSide="left" caption="Who this is for">
-              <p className="landing-kicker">Who it is for</p>
-              <h2 data-spark-node>Who this is for</h2>
-              <aside className="border-t border-spark pt-7">
+              <div className="divider" aria-hidden="true" />
+              <div>
                 <p className="lead">
-                  Student and faculty founders. Researchers stuck at lab-to-market. Alumni who mentor. Investors and operators who open doors. Anyone building something India actually needs, and willing to meet the people doing the same.
+                  IITB INV.ENT is our attempt to fix that for two days a year.
                 </p>
-              </aside>
-            </ImageSplit>
+                <p className="lead">
+                  It is an entrepreneurship research and practice conference, organised by the Desai Sethi School of Entrepreneurship at IIT Bombay. Researchers present work. Practitioners say what they are actually up against. Incubators, investors and founders sit in the same sessions rather than in a parallel track down the corridor.
+                </p>
+                <p className="lead">
+                  That is the whole idea. Everything else on this page is detail.
+                </p>
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>
 
-      <section id="participate" className="relative border-t border-[var(--rule)]">
-        <OrbitBackdrop variant="section" />
-        <div className="landing-shell relative">
+      <section className="site-section is-rule">
+        <div className="site-shell">
           <Reveal>
-            <p className="landing-kicker">Ways to take part</p>
-            <h2 data-spark-node>Three ways onto the floor</h2>
+            <p className="site-kicker">The meeting point</p>
+            <h2>
+              Two worlds.
+              <br />
+              One room.
+            </h2>
+            <TwoWorlds />
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="site-section is-rule" data-testid="landing-day">
+        <div className="site-shell">
+          <Reveal>
+            <p className="site-kicker">30–31 January 2027</p>
+            <h2>
+              Two days.
+              <br />
+              One ecosystem.
+            </h2>
             <p className="lead">
-              Submit a paper, poster, or case study. Workshops are accepted through the same submissions desk.
+              Preliminary. The detailed agenda will be published closer to the conference.
             </p>
-            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {PARTICIPATE.map((item) => (
-                <li key={item.title}>
-                  <Link
-                    href={item.href === "/submit" ? submitHref : item.href}
-                    className="group flex h-full flex-col border border-white/10 bg-navy/60 p-6 transition hover:-translate-y-0.5 hover:border-spark/50"
-                  >
-                    <TypeIcon name={item.icon} />
-                    <strong className="landing-serif mt-4 mb-2 text-[26px] font-normal text-frost">
-                      {item.title}
-                    </strong>
-                    <span className="text-sm leading-relaxed text-mist">{item.body}</span>
-                  </Link>
-                </li>
+            <ProgrammeOutline />
+            <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+              <Link className="site-btn site-btn-ghost" href="/programme">
+                View Full Programme →
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="site-section is-rule">
+        <div className="site-shell">
+          <Reveal>
+            <p className="site-kicker">The stack</p>
+            <h2>
+              From campus
+              <br />
+              to company
+            </h2>
+            <p className="lead">
+              A complete pipeline, from student clubs to successful ventures.
+            </p>
+            <Pipeline />
+            <p className="site-kicker" style={{ marginTop: 48 }}>
+              Some of our ventures
+            </p>
+            <ul className="venture-list">
+              {VENTURES.map((name) => (
+                <li key={name}>{name}</li>
               ))}
             </ul>
           </Reveal>
         </div>
       </section>
 
-      <section id="contribute" className="relative">
-        <div className="landing-shell">
-          <Reveal>
-            <ImageSplit
-              image={IMAGES.research}
-              caption="Poster session · DSSE"
-            >
-              <p className="mb-2 text-[13px] font-bold tracking-[0.2em] text-spark uppercase">
-                Call for
-              </p>
-              <h2 data-spark-node>Submissions</h2>
-              <p className="lead">
-                IITB INV.ENT invites research papers, poster presentations, and workshops from students, faculty, and practitioners. Log in first, then submit your abstract. After organisers accept a contribution, you receive an email with a payment link. An account is not a ticket.
-              </p>
-              <p className="lead">
-                Case studies may be submitted as papers. After you submit, you can complete a short profile on your dashboard.
-              </p>
-              <div className="mt-6 grid grid-cols-2 gap-4">
-                <div className="border-t border-cyan-glow/40 pt-3">
-                  <TypeIcon name="paper" />
-                  <p className="mt-2 text-[12px] font-semibold tracking-[0.16em] text-cyan-glow uppercase">
-                    Research paper
-                  </p>
-                </div>
-                <div className="border-t border-cyan-glow/40 pt-3">
-                  <TypeIcon name="poster" />
-                  <p className="mt-2 text-[12px] font-semibold tracking-[0.16em] text-cyan-glow uppercase">
-                    Poster presentation
-                  </p>
-                </div>
-              </div>
-              <div className="cta-row">
-                <Link className="btn" href={submitHref} data-testid="cta-submit">
-                  Submit your abstract
-                </Link>
-                <Link className="btn ghost" href={registerHref}>
-                  Login
-                </Link>
-              </div>
-            </ImageSplit>
-            <div id="dates" className="mt-6">
-              <p className="landing-kicker">Key dates</p>
-              <Timeline items={timeline} />
-            </div>
-          </Reveal>
+      <section className="site-section is-navy">
+        <div className="navy-geometry" aria-hidden="true">
+          <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+            <line x1="0" y1="300" x2="1200" y2="300" stroke="#145BEF" strokeWidth="0.6" opacity="0.5" />
+            <circle cx="200" cy="140" r="90" fill="none" stroke="#69B33F" strokeWidth="0.6" opacity="0.45" />
+            <circle cx="980" cy="420" r="140" fill="none" stroke="#145BEF" strokeWidth="0.6" opacity="0.35" />
+            <line x1="600" y1="0" x2="600" y2="600" stroke="#69B33F" strokeWidth="0.5" opacity="0.35" />
+          </svg>
         </div>
-      </section>
-
-      <section id="day" className="relative border-t border-[var(--rule)]">
-        <div className="landing-shell">
+        <div className="site-shell" style={{ position: "relative" }}>
           <Reveal>
-            <ImageSplit image={IMAGES.speaker} caption="Programme · 30-31 Jan 2027">
-              <p className="landing-kicker section-kicker">The conference · 30-31 Jan 2027</p>
-              <h2 data-spark-node>What happens on campus</h2>
-              <p className="lead">
-                IITB INV.ENT 2027 runs 30-31 January at the DSSE Building. Doors from 9:00 IST, sessions, workshops, and events through the evening. Session RSVP opens for people who have a confirmed ticket after approval and payment.
-              </p>
-              <div className="mt-4 border-t border-white/10">
-                {AGENDA.map((row) => (
-                  <article
-                    key={row.title}
-                    className="grid grid-cols-[100px_1fr] gap-5 border-b border-white/10 py-[22px] max-[860px]:grid-cols-1 max-[860px]:gap-1.5"
-                  >
-                    <time className="landing-serif text-[22px] text-cyan-glow">{row.time}</time>
-                    <div>
-                      <strong className="mb-1 block text-frost">{row.title}</strong>
-                      <p className="m-0 text-sm leading-relaxed text-mist">{row.body}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-              <div className="cta-row">
-                <Link className="btn ghost" href="/programme">
-                  Full programme
-                </Link>
-              </div>
-            </ImageSplit>
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="arrive" className="relative">
-        <div className="landing-shell">
-          <Reveal>
-            <ImageSplit image={IMAGES.welcome} imageSide="left" caption="DSSE auditorium">
-              <p className="landing-kicker">Before you come</p>
-              <h2 data-spark-node>Campus, badge, network</h2>
-              <p className="lead">
-                Venue: Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076. Nearest gate: IIT Bombay Main Gate. Log in, submit your abstract, and complete your profile. You receive a ticket QR only after organisers select you and you pay the category fee.
-              </p>
-              <div className="cta-row">
-                <Link className="btn ghost" href={submitHref}>
-                  Submit your abstract
-                </Link>
-                <Link className="btn ghost" href={accountHref}>
-                  {signedInName ? "Dashboard" : "Login"}
-                </Link>
-              </div>
-            </ImageSplit>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="relative">
-        <div className="landing-shell">
-          <Reveal>
-            <p className="landing-kicker">DSSE since 2014</p>
-            <h2 data-spark-node>Scoreboard</h2>
-            <div className="mt-3 grid grid-cols-2 gap-6 md:grid-cols-4">
-              {displayStats.map((s) => (
-                <div key={s.value + s.label}>
-                  <b className="landing-serif mb-2 block text-[clamp(36px,4.6vw,52px)] font-normal leading-none text-frost">
-                    {s.value}
+            <p className="site-kicker is-green">DSSE</p>
+            <h2>
+              The ecosystem
+              <br />
+              behind the conference
+            </h2>
+            <div className="stats-grid">
+              {ECOSYSTEM_STATS.map((stat) => (
+                <div className="stat-block" key={stat.label}>
+                  <b>
+                    <CountUp
+                      value={stat.value}
+                      numeric={stat.numeric}
+                      suffix={stat.suffix}
+                    />
                   </b>
-                  <span className="text-[13px] leading-snug text-haze">{s.label}</span>
+                  <span>{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -274,92 +149,52 @@ export function LandingSections({
         </div>
       </section>
 
-      <section id="connect" className="relative">
-        <div className="landing-shell">
+      <section className="site-section">
+        <div className="site-shell">
           <Reveal>
-            <ImageSplit image={IMAGES.handshake} caption="Attendee network">
-              <p className="landing-kicker">People</p>
-              <h2>
-                Log in.
-                <br />
-                Submit your abstract.
-              </h2>
-              <p className="lead">
-                Log in with name and email (Google optional), submit your paper or poster abstract, then complete a short profile so organisers know who you are. An account is not a ticket. After approval and payment, your ticket appears on the dashboard.
-              </p>
-              <div className="cta-row" data-testid="cta-register">
-                <Link className="btn" href={accountHref} data-spark-node>
-                  {connectLabel}
-                </Link>
-                <Link className="btn ghost" href={ghostSignupHref}>
-                  {ghostSignupLabel}
-                </Link>
-              </div>
-            </ImageSplit>
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="faq" className="relative border-t border-[var(--rule)]">
-        <div className="landing-shell landing-faq">
-          <Reveal>
-            <p className="landing-kicker">FAQ</p>
-            <h2 data-spark-node>Before you write in</h2>
-            {faqs.map((f) => (
-              <details key={f.question}>
-                <summary>{f.question}</summary>
-                <p>{f.answer}</p>
-              </details>
-            ))}
-            <div className="cta-row">
-              <Link className="btn ghost" href="/faq">
-                All questions
-              </Link>
-              <Link className="btn ghost" href="/about">
-                What is IITB INV.ENT
-              </Link>
-              <Link className="btn ghost" href="/conference">
-                Call for papers
-              </Link>
+            <p className="site-kicker">Audience</p>
+            <h2>Who’s in the room?</h2>
+            <p className="lead">
+              IITB INV.ENT brings together the people who study entrepreneurship and the people who live it.
+            </p>
+            <div className="room-grid">
+              {ROOM_CATEGORIES.map((item) => (
+                <div className="room-item" key={item.label}>
+                  <LineIcon name={item.icon} />
+                  <p>{item.label}</p>
+                </div>
+              ))}
             </div>
           </Reveal>
         </div>
       </section>
 
-      <section id="query" className="relative">
-        <OrbitBackdrop variant="section" />
-        <div className="landing-shell relative">
+      <section className="site-section is-blue">
+        <div className="cta-orbits" aria-hidden="true">
+          <svg viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice">
+            <ellipse cx="980" cy="80" rx="260" ry="160" fill="none" stroke="currentColor" strokeWidth="0.8" />
+            <ellipse cx="980" cy="80" rx="180" ry="110" fill="none" stroke="currentColor" strokeWidth="0.6" />
+            <circle cx="980" cy="80" r="6" fill="#69B33F" />
+            <line x1="0" y1="250" x2="1200" y2="250" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+          </svg>
+        </div>
+        <div className="site-shell" style={{ position: "relative" }}>
           <Reveal>
-            <ImageSplit
-              image={IMAGES.faculty}
-              caption="DSSE team · IIT Bombay"
-              grade="photo"
-              testId="query-team"
-              imageClassName="aspect-[3/2] min-h-[220px]"
-              imgClassName="object-[center_68%]"
-            >
-              <p className="landing-kicker">Contact</p>
-              <h2 data-spark-node>Queries</h2>
-              <p className="lead" data-testid="query-lead">
-                Press, partners, speakers, volunteers, campus access, or “I have a company and a problem.” One inbox. Humans read it.
-              </p>
-              <p>
-                <a className="mail" href="mailto:support@iitbinvent.com">
-                  support@iitbinvent.com
-                </a>
-              </p>
-              <p className="lead mt-5">
-                Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076
-              </p>
-              <div className="cta-row">
-                <Link className="btn" href={submitHref}>
-                  Submit your abstract
-                </Link>
-                <Link className="btn outline" href={registerHref}>
-                  Login
-                </Link>
-              </div>
-            </ImageSplit>
+            <h2>
+              Come build
+              <br />
+              the conversation.
+            </h2>
+            <p className="lead">
+              Researchers, founders, investors, incubators,
+              students and operators — all in the same room.
+            </p>
+            <p className="lead">That’s IITB INV.ENT.</p>
+            <div className="cta-row">
+              <Link className="site-btn site-btn-white" href={registerHref}>
+                Register →
+              </Link>
+            </div>
           </Reveal>
         </div>
       </section>

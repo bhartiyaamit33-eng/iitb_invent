@@ -1,17 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Fraunces,
-  Inter,
-  Playfair_Display,
-  Plus_Jakarta_Sans,
-  Pridi,
-  Roboto,
-} from "next/font/google";
 import { ConferenceForm } from "./ConferenceForm";
 import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
 import { DeleteMyApplicationForm } from "@/components/conference/DeleteMyApplicationForm";
 import { CfpDecor } from "@/components/conference/CfpDecor";
+import { SiteShell } from "@/components/site/SiteShell";
+import { publicFontClass } from "@/app/landing-preview-fonts";
 import {
   CFP_AI_CALLOUT,
   CFP_APPLICANTS,
@@ -29,52 +23,9 @@ import type {
   ApplicationStatus,
   ParticipationCategory,
 } from "@/lib/conference";
-import { CfpTheme } from "./CfpTheme";
 import { SUBMIT_HREF, submitHrefFor } from "@/lib/landing";
 import { ScrollToId } from "@/components/ScrollToId";
 import "./cfp.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  weight: ["500", "700"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-const pridi = Pridi({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-pridi",
-  display: "swap",
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-jakarta",
-  display: "swap",
-});
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-roboto",
-  display: "swap",
-});
 
 export type ConferenceCallApplication = {
   id: string;
@@ -93,6 +44,7 @@ export function ConferenceCall({
   defaultName,
   defaultEmail,
   signedIn,
+  signedInName,
   deleted,
   error,
 }: {
@@ -100,18 +52,14 @@ export function ConferenceCall({
   defaultName: string;
   defaultEmail: string;
   signedIn: boolean;
+  signedInName: string | null;
   deleted?: boolean;
   error?: string;
 }) {
   return (
-    <div
-      className={`cfp ${inter.variable} ${playfair.variable} ${fraunces.variable} ${pridi.variable} ${jakarta.variable} ${roboto.variable}`}
-    >
-      <CfpTheme />
+    <SiteShell signedInName={signedInName}>
+    <div className={`cfp ${publicFontClass}`}>
       <CfpDecor />
-      <a href="#main" className="cfp-skip">
-        Skip to content
-      </a>
 
       <header className="cfp-hero" data-testid="conference-hero">
         <div className="cfp-shell cfp-hero-inner">
@@ -132,23 +80,13 @@ export function ConferenceCall({
                 priority
               />
             </Link>
-            <nav
-              className="cfp-nav"
-              aria-label="Primary"
-              data-testid="nav"
-            >
+            <nav className="cfp-hero-cta" aria-label="Submit">
               <Link
                 className="cfp-nav-submit"
                 href={signedIn ? SUBMIT_HREF : submitHrefFor(false)}
                 data-testid="nav-submit"
               >
                 Submit your Abstract
-              </Link>
-              <Link
-                className="cfp-nav-login"
-                href={signedIn ? "/dashboard" : "/login"}
-              >
-                {signedIn ? "Dashboard" : "Login"}
               </Link>
             </nav>
             <Link
@@ -176,7 +114,7 @@ export function ConferenceCall({
               </p>
               <div
                 className="cfp-lockup"
-                data-testid="brand-mark"
+                data-testid="cfp-lockup"
                 aria-label="INV.ENT: Innovation and Entrepreneurship"
               >
                 <div className="half">
@@ -486,33 +424,16 @@ export function ConferenceCall({
                 Submit your Abstract by 15 October 2026.
               </a>
             </p>
+            <p className="cfp-stay">
+              For any queries, write to{" "}
+              <a href="mailto:conference@iitbinvent.com">
+                conference@iitbinvent.com
+              </a>
+            </p>
           </div>
         </section>
       </main>
-
-      <footer className="cfp-footer">
-        <div className="cfp-shell">
-          <p className="queries">
-            For any queries, write to{" "}
-            <a href="mailto:conference@iitbinvent.com">
-              conference@iitbinvent.com
-            </a>
-          </p>
-          <nav aria-label="Site">
-            <Link href="/about">About</Link>
-            <Link href="/">Home</Link>
-            <Link href="/faq">FAQ</Link>
-            <Link href="/programme">Programme</Link>
-            <Link href="/travel">Travel</Link>
-            <Link href="/privacy">Privacy</Link>
-            <Link href="/code-of-conduct">Code of conduct</Link>
-          </nav>
-          <p>
-            Desai Sethi School of Entrepreneurship · DSSE Building · Powai,
-            Mumbai 400076
-          </p>
-        </div>
-      </footer>
     </div>
+    </SiteShell>
   );
 }
