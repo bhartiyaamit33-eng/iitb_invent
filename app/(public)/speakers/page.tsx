@@ -36,6 +36,7 @@ export default async function SpeakersPage() {
         <PageHero
           kicker="Line-up"
           title="Speakers"
+          testId="speakers-heading"
           lede={
             speakers.length === 0
               ? "The 2027 speakers will be announced here. We do not list names until they are confirmed."

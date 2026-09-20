@@ -3,6 +3,7 @@ import { SUBMIT_HREF, submitHrefFor } from "@/lib/landing";
 export const SITE_NAV = [
   { href: "/about", label: "About", testId: "nav-about" },
   { href: "/programme", label: "Programme", testId: "nav-programme" },
+  { href: "/speakers", label: "Speakers", testId: "nav-speakers" },
   { href: "/research", label: "Research", testId: "nav-research" },
   { href: "/workshops", label: "Workshop", testId: "nav-workshop" },
   { href: "/partners", label: "Partners", testId: "nav-partners" },
@@ -150,52 +151,31 @@ export const RESEARCH_THEMES = [
 export type OrgMention = {
   name: string;
   href?: string;
-  status: "confirmed" | "in-conversation";
   note?: string;
 };
 
-/** Named conversations, not confirmed logos. */
-export const SPONSORS: OrgMention[] = [
-  {
-    name: "GreyLabs AI",
-    href: "https://greylabs.ai",
-    status: "in-conversation",
-  },
-];
+/** Confirmed names only. Unsigned MoUs stay off the site. */
+export const SPONSORS: OrgMention[] = [];
 
 export const PARTNERS: OrgMention[] = [
   {
     name: "Desai Sethi School of Entrepreneurship",
     href: "https://www.dsse.iitb.ac.in/",
-    status: "confirmed",
     note: "Host",
   },
   {
     name: "IIT Bombay",
     href: "https://www.iitb.ac.in/",
-    status: "confirmed",
     note: "Host",
-  },
-  {
-    name: "IIT Kanpur",
-    href: "https://www.iitk.ac.in/",
-    status: "in-conversation",
-  },
-  {
-    name: "IIT Kharagpur",
-    href: "https://www.iitkgp.ac.in/",
-    status: "in-conversation",
   },
   {
     name: "E-Cell",
     href: "https://ecell.in",
-    status: "confirmed",
     note: "Campus",
   },
   {
     name: "SINE",
     href: "https://sineiitb.org",
-    status: "confirmed",
     note: "Campus",
   },
 ];

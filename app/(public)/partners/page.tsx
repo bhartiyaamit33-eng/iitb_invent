@@ -12,7 +12,7 @@ import {
 export const metadata = pageMetadata({
   title: "Partners & Sponsors",
   description:
-    "IITB INV.ENT 2027 is hosted by DSSE at IIT Bombay. Sponsors and institutional partners — including conversations with GreyLabs AI, IIT Kanpur, and IIT Kharagpur — are listed here as they are confirmed.",
+    "IITB INV.ENT 2027 is hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay. Sponsors and further institutional partners will be named here when they are confirmed.",
   path: "/partners",
 });
 
@@ -39,11 +39,7 @@ function OrgList({
               org.name
             )}
           </p>
-          <p className="org-meta">
-            {org.status === "in-conversation"
-              ? "In conversation"
-              : org.note ?? "Confirmed"}
-          </p>
+          {org.note ? <p className="org-meta">{org.note}</p> : null}
         </li>
       ))}
     </ul>
@@ -71,7 +67,7 @@ export default function PartnersPage() {
           kicker="Together"
           title="Partners & Sponsors"
           testId="partners-heading"
-          lede="One page, two sides. Sponsors on the left. Institutional partners on the right. Conversations are named; logos go up when a partnership is confirmed."
+          lede="One page, two sides. Sponsors on the left. Institutional partners on the right. Names and logos go up after they are confirmed — not while an agreement is still unsigned."
         />
         <div className="site-shell">
           <div className="org-split" data-testid="partners-split">
@@ -79,26 +75,25 @@ export default function PartnersPage() {
               <p className="site-kicker is-blue">Sponsors</p>
               <h2 id="sponsors-heading">Companies</h2>
               <p className="lead">
-                We are approaching organisations to sponsor IITB INV.ENT 2027,
-                including GreyLabs AI. Further names will be added as
-                conversations close.
+                Space for the companies that back IITB INV.ENT. The list can
+                grow; nothing is named here until it is confirmed.
               </p>
               <OrgList
                 items={SPONSORS}
-                empty="Sponsors will be named here when conversations close."
+                empty="To be announced"
               />
             </section>
             <section id="institutions" aria-labelledby="institutions-heading">
               <p className="site-kicker">Partners</p>
               <h2 id="institutions-heading">Institutions</h2>
               <p className="lead">
-                Hosted by DSSE at IIT Bombay. We are in conversation with
-                IIT Kanpur and IIT Kharagpur, alongside campus partners E-Cell
-                and SINE.
+                Hosted by DSSE at IIT Bombay, with campus partners E-Cell and
+                SINE. Further institutions will be added on this side when they
+                are confirmed.
               </p>
               <OrgList
                 items={PARTNERS}
-                empty="Partners will be named here when they are confirmed."
+                empty="To be announced"
               />
             </section>
           </div>

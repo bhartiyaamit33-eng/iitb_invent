@@ -1029,8 +1029,14 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
   to { transform: translate3d(-50%, 0, 0); }
 }
 
-#partners .cta-row {
+#partners .cta-row,
+#speakers .cta-row {
   margin-top: 28px;
+}
+
+#speakers .coming-card {
+  margin-top: 12px;
+  border-top: 0;
 }
 
 .speaker-card strong {

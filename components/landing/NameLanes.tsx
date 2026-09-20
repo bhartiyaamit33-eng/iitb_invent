@@ -20,11 +20,7 @@ function LaneSet({
       {items.map((item, i) => (
         <li key={`${inert ? "dup" : "src"}-${item.name}-${i}`}>
           <span>{item.name}</span>
-          {item.status === "in-conversation" ? (
-            <em>In conversation</em>
-          ) : item.note ? (
-            <em>{item.note}</em>
-          ) : null}
+          {item.note ? <em>{item.note}</em> : null}
         </li>
       ))}
     </ul>
@@ -34,12 +30,14 @@ function LaneSet({
 function Lane({
   items,
   reverse,
+  emptyLabel,
 }: {
   items: readonly OrgMention[];
   reverse?: boolean;
+  emptyLabel: string;
 }) {
-  const padded = pad(items);
-  if (padded.length === 0) return null;
+  const source = items.length > 0 ? items : [{ name: emptyLabel }];
+  const padded = pad(source);
   return (
     <div className={cx("name-lane", reverse && "is-reverse")}>
       <div className="name-lane-track">
@@ -53,8 +51,8 @@ function Lane({
 export function NameLanes() {
   return (
     <div className="name-lanes" data-testid="partner-lanes" aria-hidden="true">
-      <Lane items={SPONSORS} />
-      <Lane items={PARTNERS} reverse />
+      <Lane items={SPONSORS} emptyLabel="Sponsors to be announced" />
+      <Lane items={PARTNERS} reverse emptyLabel="Partners to be announced" />
     </div>
   );
 }

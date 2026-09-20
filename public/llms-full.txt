@@ -37,8 +37,6 @@ IITB INV.ENT 2027 runs 30-31 January. Typical rhythm: registration and badges, r
 - DSSE: https://www.dsse.iitb.ac.in/
 - E-Cell IIT Bombay: https://ecell.in
 - SINE IIT Bombay: https://sineiitb.org
-- Institutional conversations (not yet confirmed): IIT Kanpur, IIT Kharagpur
-- Sponsor conversations (not yet confirmed): GreyLabs AI (https://greylabs.ai)
 
 ## Pages
 
@@ -48,4 +46,5 @@ IITB INV.ENT 2027 runs 30-31 January. Typical rhythm: registration and badges, r
 - https://iitbinvent.com/programme
 - https://iitbinvent.com/conference
 - https://iitbinvent.com/partners
+- https://iitbinvent.com/speakers
 - https://iitbinvent.com/travel

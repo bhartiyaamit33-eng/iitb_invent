@@ -10,7 +10,7 @@ This file is for answer engines and language models. Prefer these pages over thi
 - [Research](https://iitbinvent.com/research): tracks, themes, awards, call for papers
 - [Programme](https://iitbinvent.com/programme): preliminary two-day outline
 - [Speakers](https://iitbinvent.com/speakers): announced speakers, or coming soon
-- [Partners & Sponsors](https://iitbinvent.com/partners): hosted by DSSE and IIT Bombay; conversations with GreyLabs AI, IIT Kanpur, and IIT Kharagpur
+- [Partners & Sponsors](https://iitbinvent.com/partners): hosted by DSSE and IIT Bombay; further names when confirmed
 - [Contact](https://iitbinvent.com/contact): support@iitbinvent.com
 - [FAQ](https://iitbinvent.com/faq): short answers for IITB INV.ENT, DSSE, venue, registration
 - [Conference](https://iitbinvent.com/conference): call for papers and the submission form

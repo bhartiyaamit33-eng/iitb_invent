@@ -10,6 +10,7 @@ import { CountUp } from "@/components/site/CountUp";
 import {
   ECOSYSTEM_STATS,
   ROOM_CATEGORIES,
+  SPEAKER_CATEGORIES,
   VENTURES,
   registerHrefFor,
 } from "@/lib/site";
@@ -115,6 +116,35 @@ export function LandingSections({
         </div>
       </section>
 
+      <section className="site-section is-rule" id="speakers" data-testid="landing-speakers">
+        <div className="site-shell">
+          <Reveal>
+            <p className="site-kicker">Line-up</p>
+            <h2>
+              Speakers.
+            </h2>
+            <p className="lead">
+              Researchers, founders, investors, and operators on the same stage.
+              The 2027 line-up will be published here as names are confirmed —
+              there will be many of them.
+            </p>
+            <div className="room-grid">
+              {SPEAKER_CATEGORIES.map((label) => (
+                <div className="room-item" key={label}>
+                  <p>{label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="coming-card">Coming soon</p>
+            <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+              <Link className="site-btn site-btn-ghost" href="/speakers">
+                Speakers →
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       <section className="site-section is-rule" id="partners" data-testid="landing-partners">
         <div className="site-shell">
           <Reveal>
@@ -126,12 +156,9 @@ export function LandingSections({
             </h2>
             <p className="lead">
               Hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay.
-              We are in conversation with institutions including IIT Kanpur and
-              IIT Kharagpur, and with companies including GreyLabs AI.
-            </p>
-            <p className="lead">
-              Names here are conversations, not confirmed logos. The full list
-              lives on one page: sponsors on the left, partners on the right.
+              This page is built for a long list of institutions and companies.
+              Names and logos go up after they are confirmed, not while an
+              agreement is still unsigned.
             </p>
           </Reveal>
         </div>
