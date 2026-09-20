@@ -8,16 +8,16 @@ export function IntersectionField() {
           </pattern>
         </defs>
         <rect className="intersect-grid" width="1200" height="800" fill="url(#hero-grid)" />
-        <line className="intersect-axis draw" x1="80" y1="400" x2="1120" y2="400" />
-        <line className="intersect-axis draw delay-2" x1="600" y1="80" x2="600" y2="720" />
-        <ellipse className="intersect-orbit orbit-a" cx="600" cy="400" rx="280" ry="160" />
-        <ellipse className="intersect-orbit orbit-b" cx="600" cy="400" rx="420" ry="240" />
-        <ellipse className="intersect-orbit orbit-c" cx="600" cy="400" rx="160" ry="160" />
-        <circle className="intersect-dot" cx="320" cy="400" r="2.5" />
-        <circle className="intersect-dot" cx="880" cy="400" r="2.5" />
-        <circle className="intersect-dot" cx="600" cy="180" r="2" />
-        <circle className="intersect-dot" cx="600" cy="620" r="2" />
-        <circle className="intersect-core pulse" cx="600" cy="400" r="7" />
+        <line className="intersect-axis draw" x1="80" y1="560" x2="1120" y2="560" />
+        <line className="intersect-axis draw delay-2" x1="600" y1="140" x2="600" y2="760" />
+        <ellipse className="intersect-orbit orbit-a" cx="600" cy="480" rx="300" ry="180" />
+        <ellipse className="intersect-orbit orbit-b" cx="600" cy="480" rx="440" ry="250" />
+        <ellipse className="intersect-orbit orbit-c" cx="600" cy="480" rx="170" ry="170" />
+        <circle className="intersect-dot" cx="300" cy="560" r="2.5" />
+        <circle className="intersect-dot" cx="900" cy="560" r="2.5" />
+        <circle className="intersect-dot" cx="600" cy="250" r="2" />
+        <circle className="intersect-dot" cx="600" cy="710" r="2" />
+        <circle className="intersect-core pulse" cx="600" cy="560" r="7" />
       </svg>
     </div>
   );

@@ -336,8 +336,10 @@ html[data-site] body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-self: start;
   max-width: 46rem;
   justify-self: center;
+  padding-top: clamp(28px, 6vh, 64px);
 }
 
 .landing-hero h1 {
