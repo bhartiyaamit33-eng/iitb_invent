@@ -132,6 +132,42 @@ export async function uploadVentureLogo(opts: {
   return { key, url: publicObjectUrl(key) };
 }
 
+export async function uploadOrgLogo(opts: {
+  orgId: string;
+  bytes: Buffer;
+  contentType: string;
+}): Promise<{ key: string; url: string }> {
+  if (!bucket) throw new Error("S3_BUCKET is not configured");
+
+  const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (!allowed.includes(opts.contentType)) {
+    throw new Error("Only JPEG, PNG, WebP, or GIF images are allowed");
+  }
+  if (opts.bytes.length > 8 * 1024 * 1024) {
+    throw new Error("Image must be under 8 MB");
+  }
+
+  const processed = await sharp(opts.bytes)
+    .rotate()
+    .resize(640, 320, { fit: "inside", withoutEnlargement: true })
+    .png()
+    .toBuffer();
+
+  const key = `${prefix}orgs/${opts.orgId}-${Date.now()}.png`;
+
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: processed,
+      ContentType: "image/png",
+      CacheControl: "public, max-age=31536000, immutable",
+    }),
+  );
+
+  return { key, url: publicObjectUrl(key) };
+}
+
 export async function uploadAbstractPdf(opts: {
   applicationId: string;
   bytes: Buffer;

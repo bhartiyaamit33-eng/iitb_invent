@@ -1,9 +1,9 @@
-import { PARTNERS, SPONSORS, type OrgMention } from "@/lib/site";
+import type { PublicOrg } from "@/lib/orgs-public";
 import { cx } from "./cx";
 
-function pad(items: readonly OrgMention[], min = 8): OrgMention[] {
+function pad(items: readonly PublicOrg[], min = 8): PublicOrg[] {
   if (items.length === 0) return [];
-  const out: OrgMention[] = [];
+  const out: PublicOrg[] = [];
   while (out.length < min) out.push(...items);
   return out;
 }
@@ -12,15 +12,16 @@ function LaneSet({
   items,
   inert,
 }: {
-  items: readonly OrgMention[];
+  items: readonly PublicOrg[];
   inert?: boolean;
 }) {
   return (
     <ul className="name-lane-set" aria-hidden={inert || undefined}>
       {items.map((item, i) => (
-        <li key={`${inert ? "dup" : "src"}-${item.name}-${i}`}>
+        <li key={`${inert ? "dup" : "src"}-${item.id}-${i}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="name-lane-logo" src={item.logoUrl} alt="" />
           <span>{item.name}</span>
-          {item.note ? <em>{item.note}</em> : null}
         </li>
       ))}
     </ul>
@@ -30,16 +31,17 @@ function LaneSet({
 function Lane({
   items,
   reverse,
-  emptyLabel,
+  label,
 }: {
-  items: readonly OrgMention[];
+  items: readonly PublicOrg[];
   reverse?: boolean;
-  emptyLabel: string;
+  label: string;
 }) {
-  const source = items.length > 0 ? items : [{ name: emptyLabel }];
-  const padded = pad(source);
+  if (items.length === 0) return null;
+  const padded = pad(items);
   return (
     <div className={cx("name-lane", reverse && "is-reverse")}>
+      <p className="sr-only">{label}</p>
       <div className="name-lane-track">
         <LaneSet items={padded} />
         <LaneSet items={padded} inert />
@@ -48,11 +50,18 @@ function Lane({
   );
 }
 
-export function NameLanes() {
+export function NameLanes({
+  sponsors,
+  partners,
+}: {
+  sponsors: readonly PublicOrg[];
+  partners: readonly PublicOrg[];
+}) {
+  if (sponsors.length === 0 && partners.length === 0) return null;
   return (
-    <div className="name-lanes" data-testid="partner-lanes" aria-hidden="true">
-      <Lane items={SPONSORS} emptyLabel="Sponsors to be announced" />
-      <Lane items={PARTNERS} reverse emptyLabel="Partners to be announced" />
+    <div className="name-lanes" data-testid="partner-lanes">
+      <Lane items={sponsors} label="Sponsors" />
+      <Lane items={partners} reverse label="Partners" />
     </div>
   );
 }

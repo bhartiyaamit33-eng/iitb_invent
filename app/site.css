@@ -337,10 +337,20 @@ html[data-site] body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  align-self: start;
+  align-self: center;
   max-width: 46rem;
   justify-self: center;
-  padding-top: clamp(28px, 6vh, 64px);
+  padding-top: 0;
+}
+
+.hero-lockup {
+  margin: 0 0 18px;
+  font-family: var(--font-serif);
+  font-size: clamp(1.7rem, 4.4vw, 2.75rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  color: var(--navy);
 }
 
 .landing-hero h1 {
@@ -351,17 +361,29 @@ html[data-site] body {
 }
 
 .landing-hero .accent {
+  position: relative;
   color: var(--blue);
+}
+
+.hero-node {
+  display: inline-block;
+  width: 0.22em;
+  height: 0.22em;
+  margin-left: 0.12em;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 7px rgba(105, 179, 63, 0.16);
+  vertical-align: 0.14em;
 }
 
 .hero-pole {
   position: relative;
   z-index: 1;
   margin: 0;
-  max-width: 14ch;
+  max-width: 16ch;
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   line-height: 1.45;
   text-transform: uppercase;
   color: var(--mute);
@@ -371,8 +393,8 @@ html[data-site] body {
 .hero-pole.is-left {
   grid-area: pole-l;
   justify-self: start;
-  align-self: start;
-  padding-top: 18vh;
+  align-self: center;
+  padding-top: 0;
   text-align: left;
   color: var(--blue);
 }
@@ -380,10 +402,10 @@ html[data-site] body {
 .hero-pole.is-right {
   grid-area: pole-r;
   justify-self: end;
-  align-self: end;
-  padding-bottom: 20vh;
+  align-self: center;
+  padding-bottom: 0;
   text-align: right;
-  color: var(--navy);
+  color: var(--green);
 }
 
 .hero-meta {
@@ -417,17 +439,28 @@ html[data-site] body {
   height: 100%;
 }
 
-.intersect-grid { opacity: 0.35; }
+.intersect-grid { opacity: 0.28; }
 .intersect-axis {
   stroke: rgba(20, 91, 239, 0.28);
   stroke-width: 0.8;
 }
 .intersect-orbit {
   fill: none;
-  stroke: rgba(11, 37, 69, 0.16);
-  stroke-width: 0.7;
+  stroke-width: 0.85;
 }
+.intersect-orbit.is-practice {
+  stroke: rgba(20, 91, 239, 0.38);
+}
+.intersect-orbit.is-research {
+  stroke: rgba(105, 179, 63, 0.4);
+}
+.intersect-orbit.is-inner {
+  stroke: rgba(11, 37, 69, 0.16);
+}
+.intersect-marks { opacity: 0.45; }
 .intersect-dot { fill: rgba(11, 37, 69, 0.35); }
+.intersect-dot.is-green { fill: #69b33f; }
+.intersect-dot.is-blue { fill: #145bef; }
 .intersect-core {
   display: inline-block;
   width: 10px;
@@ -903,6 +936,14 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
   margin: 8px 0 16px;
 }
 
+.org-split.is-single {
+  grid-template-columns: 1fr;
+}
+
+.org-split.is-single > section + section {
+  border-left: 0;
+}
+
 .org-list {
   list-style: none;
   margin: 28px 0 0;
@@ -915,9 +956,25 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
   border-bottom: 1px solid var(--rule);
 }
 
-.org-card p {
+.org-card a,
+.org-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.org-card p,
+.org-card span {
   margin: 0;
   font-size: 18px;
+}
+
+.org-logo,
+.name-lane-logo {
+  width: 56px;
+  height: 40px;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
 .org-meta {
@@ -997,9 +1054,9 @@ svg .orbit-a, svg .orbit-b, svg .orbit-c {
 
 .name-lane-set li {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
   flex: 0 0 auto;
   min-width: 220px;
   padding: 22px 36px 22px 0;

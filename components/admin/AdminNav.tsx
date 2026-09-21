@@ -6,6 +6,7 @@ const LINKS = [
   { href: "/admin/applications", label: "Applications" },
   { href: "/admin/sessions", label: "Programme" },
   { href: "/admin/speakers", label: "Speakers" },
+  { href: "/admin/orgs", label: "Sponsors" },
   { href: "/admin/pages", label: "Pages" },
   { href: "/admin/faqs", label: "FAQs" },
   { href: "/admin/stats", label: "Stats" },

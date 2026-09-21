@@ -14,12 +14,17 @@ import {
   VENTURES,
   registerHrefFor,
 } from "@/lib/site";
+import type { PublicOrg } from "@/lib/orgs-public";
 import { NameLanes } from "./NameLanes";
 
 export function LandingSections({
   signedInName,
+  sponsors,
+  partners,
 }: {
   signedInName: string | null;
+  sponsors: PublicOrg[];
+  partners: PublicOrg[];
 }) {
   const registerHref = registerHrefFor(Boolean(signedInName));
 
@@ -145,32 +150,32 @@ export function LandingSections({
         </div>
       </section>
 
-      <section className="site-section is-rule" id="partners" data-testid="landing-partners">
-        <div className="site-shell">
-          <Reveal>
-            <p className="site-kicker">Together</p>
-            <h2>
-              Partners
-              <br />
-              and sponsors.
-            </h2>
-            <p className="lead">
-              Hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay.
-              This page is built for a long list of institutions and companies.
-              Names and logos go up after they are confirmed, not while an
-              agreement is still unsigned.
-            </p>
-          </Reveal>
-        </div>
-        <NameLanes />
-        <div className="site-shell">
-          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-            <Link className="site-btn site-btn-ghost" href="/partners">
-              Partners &amp; sponsors →
-            </Link>
+      {sponsors.length > 0 || partners.length > 0 ? (
+        <section className="site-section is-rule" id="partners" data-testid="landing-partners">
+          <div className="site-shell">
+            <Reveal>
+              <p className="site-kicker">Together</p>
+              <h2>
+                Partners
+                <br />
+                and sponsors.
+              </h2>
+              <p className="lead">
+                Hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay.
+                Confirmed names and logos appear here as they are added.
+              </p>
+            </Reveal>
           </div>
-        </div>
-      </section>
+          <NameLanes sponsors={sponsors} partners={partners} />
+          <div className="site-shell">
+            <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+              <Link className="site-btn site-btn-ghost" href="/partners">
+                Partners &amp; sponsors →
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="site-section is-navy">
         <div className="navy-geometry" aria-hidden="true">

@@ -21,7 +21,12 @@ export async function LandingScreen() {
           faqPageJsonLd(),
         )}
       />
-      <LandingPage signedInName={data.signedInName} live={data.live} />
+      <LandingPage
+        signedInName={data.signedInName}
+        live={data.live}
+        sponsors={data.sponsors}
+        partners={data.partners}
+      />
     </>
   );
 }

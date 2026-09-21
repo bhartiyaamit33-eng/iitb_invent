@@ -148,38 +148,6 @@ export const RESEARCH_THEMES = [
   "Entrepreneurial Finance",
 ] as const;
 
-export type OrgMention = {
-  name: string;
-  href?: string;
-  note?: string;
-};
-
-/** Confirmed names only. Unsigned MoUs stay off the site. */
-export const SPONSORS: OrgMention[] = [];
-
-export const PARTNERS: OrgMention[] = [
-  {
-    name: "Desai Sethi School of Entrepreneurship",
-    href: "https://www.dsse.iitb.ac.in/",
-    note: "Host",
-  },
-  {
-    name: "IIT Bombay",
-    href: "https://www.iitb.ac.in/",
-    note: "Host",
-  },
-  {
-    name: "E-Cell",
-    href: "https://ecell.in",
-    note: "Campus",
-  },
-  {
-    name: "SINE",
-    href: "https://sineiitb.org",
-    note: "Campus",
-  },
-];
-
 export const SPEAKER_CATEGORIES = [
   "Researchers",
   "Founders",
