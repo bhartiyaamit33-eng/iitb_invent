@@ -6,7 +6,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { requireAdmin } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
 import { writeAuditLog } from "@/lib/admin/audit";
-import { isS3Configured, uploadSpeakerPhoto } from "@/lib/s3";
+import { isS3Configured, uploadOrgLogo, uploadSpeakerPhoto } from "@/lib/s3";
 
 /** Treat naked datetime-local strings as Asia/Kolkata wall time. */
 function parseIstDate(raw: string): Date {
@@ -370,4 +370,128 @@ export async function setEditionStatusAction(formData: FormData) {
   revalidatePath("/programme");
   revalidatePath("/now");
   revalidatePath("/");
+}
+
+function parseOrgKind(raw: FormDataEntryValue | null) {
+  return String(raw ?? "") === "partner" ? "partner" : "sponsor";
+}
+
+function revalidateOrgSurfaces() {
+  revalidatePath("/admin/orgs");
+  revalidatePath("/");
+  revalidatePath("/partners");
+}
+
+export async function createOrgAction(formData: FormData) {
+  const user = await actor();
+  const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
+  if (!edition) throw new Error("No current edition");
+  const created = await prisma.sponsor.create({
+    data: {
+      editionId: edition.id,
+      name: String(formData.get("name") ?? "").trim() || "Untitled",
+      logoUrl: String(formData.get("logoUrl") ?? "").trim(),
+      websiteUrl: String(formData.get("websiteUrl") ?? "").trim() || null,
+      kind: parseOrgKind(formData.get("kind")),
+      tier: "standard",
+      isPublished: formData.get("isPublished") === "on",
+      sortOrder: Number(formData.get("sortOrder") ?? 99),
+    },
+  });
+  await writeAuditLog({
+    actorId: user.id,
+    action: "org.create",
+    entityType: "Sponsor",
+    entityId: created.id,
+    after: created,
+  });
+  revalidateOrgSurfaces();
+}
+
+export async function updateOrgAction(formData: FormData) {
+  const user = await actor();
+  const id = String(formData.get("id") ?? "");
+  const data = {
+    name: String(formData.get("name") ?? "").trim(),
+    logoUrl: String(formData.get("logoUrl") ?? "").trim(),
+    websiteUrl: String(formData.get("websiteUrl") ?? "").trim() || null,
+    kind: parseOrgKind(formData.get("kind")),
+    isPublished: formData.get("isPublished") === "on",
+    sortOrder: Number(formData.get("sortOrder") ?? 0),
+  };
+  const before = await prisma.sponsor.findUnique({ where: { id } });
+  const after = await prisma.sponsor.update({ where: { id }, data });
+  await writeAuditLog({
+    actorId: user.id,
+    action: "org.update",
+    entityType: "Sponsor",
+    entityId: id,
+    before,
+    after,
+  });
+  revalidateOrgSurfaces();
+}
+
+export async function softDeleteOrgAction(formData: FormData) {
+  const user = await actor();
+  const id = String(formData.get("id") ?? "");
+  const before = await prisma.sponsor.findUnique({ where: { id } });
+  await prisma.sponsor.update({
+    where: { id },
+    data: { deletedAt: new Date(), isPublished: false },
+  });
+  await writeAuditLog({
+    actorId: user.id,
+    action: "org.soft_delete",
+    entityType: "Sponsor",
+    entityId: id,
+    before,
+  });
+  revalidateOrgSurfaces();
+}
+
+export async function uploadOrgLogoAction(
+  formData: FormData,
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  const user = await actor();
+  if (!isS3Configured()) {
+    return { ok: false, error: "S3_BUCKET is not set on the server" };
+  }
+  const orgId = String(formData.get("orgId") ?? "");
+  const file = formData.get("file");
+  if (!orgId || !(file instanceof File)) {
+    return { ok: false, error: "Missing organisation or file" };
+  }
+  const org = await prisma.sponsor.findUnique({ where: { id: orgId } });
+  if (!org || org.deletedAt) {
+    return { ok: false, error: "Organisation not found" };
+  }
+
+  try {
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const { url } = await uploadOrgLogo({
+      orgId,
+      bytes,
+      contentType: file.type || "image/png",
+    });
+    const after = await prisma.sponsor.update({
+      where: { id: orgId },
+      data: { logoUrl: url },
+    });
+    await writeAuditLog({
+      actorId: user.id,
+      action: "org.logo_upload",
+      entityType: "Sponsor",
+      entityId: orgId,
+      before: { logoUrl: org.logoUrl },
+      after: { logoUrl: after.logoUrl },
+    });
+    revalidateOrgSurfaces();
+    return { ok: true, url };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Upload failed",
+    };
+  }
 }

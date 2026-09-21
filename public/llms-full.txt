@@ -45,5 +45,6 @@ IITB INV.ENT 2027 runs 30-31 January. Typical rhythm: registration and badges, r
 - https://iitbinvent.com/faq
 - https://iitbinvent.com/programme
 - https://iitbinvent.com/conference
+- https://iitbinvent.com/partners
+- https://iitbinvent.com/speakers
 - https://iitbinvent.com/travel
-- https://iitbinvent.com/conference

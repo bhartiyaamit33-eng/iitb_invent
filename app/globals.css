@@ -1,9 +1,9 @@
 @import "tailwindcss";
+@import "./site.css";
 
 /*
   App chrome (dashboard/admin) keeps the teal paper tokens.
-  The public landing uses the INV.ENT poster system: ivory paper, serif
-  headlines, navy rules, DSSE green (#007E43).
+  The public site uses navy / blue / green / paper editorial tokens in site.css.
 */
 
 :root {
@@ -69,6 +69,10 @@
   --color-haze: var(--haze);
   --font-sans: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --color-invent: #0b2545;
+  --color-invent-blue: #145bef;
+  --color-invent-green: #69b33f;
+  --color-invent-paper: #f7f7f2;
 }
 
 @layer base {

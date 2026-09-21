@@ -10,6 +10,9 @@ import { ConnectOnLinkedIn } from "@/components/ConnectOnLinkedIn";
 import { cancelRsvpAction, rsvpAction } from "../actions";
 import { pageMetadata } from "@/lib/seo";
 import { userHasLiveEventTicket } from "@/lib/conference-access";
+import { PROGRAMME_SCHEDULE_PUBLISHED } from "@/lib/programme";
+import { isLiveStatus } from "@/lib/live";
+import { PublicChrome } from "@/components/PublicChrome";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +24,9 @@ export async function generateMetadata({
   const { slug } = await params;
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
   if (!edition) return { title: "Session" };
+  if (!PROGRAMME_SCHEDULE_PUBLISHED && !isLiveStatus(edition.status)) {
+    return { title: "Programme" };
+  }
   const session = await prisma.session_.findFirst({
     where: {
       editionId: edition.id,
@@ -49,6 +55,9 @@ export default async function SessionDetailPage({
   const user = await getCurrentUser();
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
   if (!edition) notFound();
+  if (!PROGRAMME_SCHEDULE_PUBLISHED && !isLiveStatus(edition.status)) {
+    notFound();
+  }
 
   const session = await prisma.session_.findFirst({
     where: {
@@ -105,7 +114,13 @@ export default async function SessionDetailPage({
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
+    <PublicChrome
+      crumbs={[
+        { href: "/programme", label: "Programme" },
+        { href: `/programme/${session.slug}`, label: session.title },
+      ]}
+    >
+    <main id="main" className="site-shell editorial">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
         <Link href="/programme" className="underline-offset-2 hover:underline">
           Programme
@@ -276,5 +291,6 @@ export default async function SessionDetailPage({
         )}
       </section>
     </main>
+    </PublicChrome>
   );
 }

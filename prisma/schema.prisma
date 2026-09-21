@@ -416,15 +416,19 @@ model EditionStat {
 }
 
 model Sponsor {
-  id         String    @id @default(cuid())
-  editionId  String
-  edition    Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
-  name       String
-  logoUrl    String
-  websiteUrl String?
-  tier       String
-  sortOrder  Int       @default(0)
-  deletedAt  DateTime?
+  id          String    @id @default(cuid())
+  editionId   String
+  edition     Edition   @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  name        String
+  logoUrl     String
+  websiteUrl  String?
+  /// gold / silver / standard — unused on the public site for now
+  tier        String    @default("standard")
+  /// "sponsor" | "partner"
+  kind        String    @default("sponsor")
+  isPublished Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  deletedAt   DateTime?
 }
 
 model NotifySignup {

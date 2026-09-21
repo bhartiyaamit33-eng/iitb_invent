@@ -20,7 +20,6 @@ export type TimelineItem = {
 };
 
 export type LandingProps = {
-  heroVariant: HeroVariant;
   signedInName: string | null;
   live: LiveStripData | null;
   faqs: LandingFaq[];
@@ -34,7 +33,7 @@ export const TAGLINE_REST = "Conference";
 
 export const SUBMIT_HREF = "/conference#submit";
 export const LOGIN_TO_SUBMIT_HREF = `/login?callbackUrl=${encodeURIComponent("/conference#submit")}`;
-export const REGISTER_HREF = "/login";
+export const REGISTER_HREF = "/conference";
 
 export function submitHrefFor(signedIn: boolean) {
   return signedIn ? SUBMIT_HREF : LOGIN_TO_SUBMIT_HREF;
@@ -85,10 +84,10 @@ export function markTimeline(
 }
 
 export const FALLBACK_STATS: LandingStat[] = [
-  { value: "2014", label: "Board of Governors approved the centre." },
-  { value: "5550+", label: "Students through entrepreneurship courses." },
-  { value: "1470+", label: "Ventures mentored across cohorts." },
-  { value: "670+", label: "Startups touched by the DSSE stack." },
+  { value: "5,550+", label: "Students trained" },
+  { value: "1,470+", label: "Students mentored" },
+  { value: "670+", label: "Venture teams" },
+  { value: "127", label: "Startups" },
 ];
 
 export const FALLBACK_FAQS: LandingFaq[] = [

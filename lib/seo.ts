@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { CANONICAL_FAQS } from "@/lib/seo-content";
 
 export const SITE_NAME = "IITB INV.ENT";
-export const SITE_NAME_LONG = "IITB INV.ENT · IIT Bombay";
+export const HOME_TITLE =
+  "IITB INV.ENT 2027 | Entrepreneurship Research & Practice Conference";
+export const SITE_NAME_LONG = HOME_TITLE;
 export const SITE_TAGLINE =
   "Where entrepreneurship research meets venture practice";
 
@@ -16,7 +18,7 @@ export const ALTERNATE_NAMES = [
 ] as const;
 
 export const DEFAULT_DESCRIPTION =
-  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027 at the DSSE Building, Powai, Mumbai.";
+  "Where entrepreneurship research meets venture practice. IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. 30-31 January 2027 at the DSSE Building, Powai, Mumbai.";
 
 export const EVENT_2027 = {
   name: "IITB INV.ENT 2027",
@@ -49,8 +51,14 @@ export const INDEXABLE_PATHS = [
   "/",
   "/about",
   "/conference",
-  "/faq",
+  "/research",
+  "/speakers",
+  "/partners",
   "/programme",
+  "/workshops",
+  "/accommodation",
+  "/contact",
+  "/faq",
   "/travel",
   "/privacy",
   "/code-of-conduct",

@@ -2,38 +2,38 @@
 
 html[data-cfp],
 html[data-cfp] body {
-  background: #fafbfc;
+  background: #f7f7f2;
 }
 
 .cfp {
-  --cfp-ivory: #fafbfc;
-  --cfp-navy: #0f172a;
-  --cfp-slate: #334155;
-  --cfp-blue: #1d4ed8;
-  --cfp-link: #2563eb;
-  --cfp-green: #7cb342;
+  --cfp-ivory: #f7f7f2;
+  --cfp-navy: #0b2545;
+  --cfp-slate: #3a4d66;
+  --cfp-blue: #145bef;
+  --cfp-link: #145bef;
+  --cfp-green: #69b33f;
   --cfp-green-text: #3a6b16;
   --cfp-green-display: #3f7318;
-  --cfp-dot: #6ecf08;
-  --cfp-particle: #007e43;
-  --cfp-orbit: rgba(46, 143, 255, 0.26);
-  --cfp-grid: rgba(142, 180, 229, 0.5);
-  --cfp-border: #d8e0ea;
+  --cfp-dot: #69b33f;
+  --cfp-particle: #69b33f;
+  --cfp-orbit: rgba(20, 91, 239, 0.22);
+  --cfp-grid: rgba(11, 37, 69, 0.12);
+  --cfp-border: rgba(11, 37, 69, 0.14);
   --cfp-paper: #ffffff;
   --cfp-tint: #f3f7ee;
   --cfp-warn-bg: #f7efee;
   --cfp-warn: #b63232;
-  --font-display: var(--font-fraunces), "Playfair Display", Georgia, serif;
-  --font-serif: var(--font-playfair), "Palatino Linotype", Palatino, Georgia, serif;
-  --font-tagline: var(--font-pridi), Georgia, serif;
-  --font-date: var(--font-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
-  --font-warn: var(--font-roboto), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-display: var(--font-instrument), "Iowan Old Style", Palatino, Georgia, serif;
+  --font-serif: var(--font-instrument), "Iowan Old Style", Palatino, Georgia, serif;
+  --font-tagline: var(--font-instrument), Palatino, Georgia, serif;
+  --font-date: var(--font-inter), ui-sans-serif, sans-serif;
+  --font-warn: var(--font-inter), ui-sans-serif, sans-serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   position: relative;
   isolation: isolate;
-  min-height: 100svh;
+  min-height: 0;
   overflow-x: clip;
-  background: var(--cfp-ivory);
+  background: transparent;
   color: var(--cfp-navy);
   font-family: var(--font-body);
 }
@@ -253,15 +253,33 @@ html[data-cfp] body {
   background: #fff;
 }
 
-.cfp-nav .cfp-nav-submit {
+.cfp-nav .cfp-nav-submit,
+a.cfp-nav-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-color: var(--cfp-blue);
   background: var(--cfp-blue);
   color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 12px 18px;
 }
 
-.cfp-nav .cfp-nav-submit:hover {
-  border-color: #1e40af;
-  background: #1e40af;
+.cfp-nav .cfp-nav-submit:hover,
+a.cfp-nav-submit:hover,
+.site a.cfp-nav-submit:hover {
+  border-color: #0f4ad4;
+  background: #0f4ad4;
+  color: #fff;
+}
+
+.cfp-hero-cta {
+  grid-area: nav;
+  justify-self: center;
 }
 
 .cfp-nav .cfp-nav-login {

@@ -10,6 +10,7 @@ export default async function AdminOverviewPage() {
     applications,
     sessions,
     speakers,
+    orgs,
     pages,
     faqs,
     stats,
@@ -20,6 +21,7 @@ export default async function AdminOverviewPage() {
     prisma.conferenceApplication.count(),
     prisma.session_.count({ where: { deletedAt: null } }),
     prisma.speaker.count({ where: { deletedAt: null } }),
+    prisma.sponsor.count({ where: { deletedAt: null } }),
     prisma.page.count(),
     prisma.faq.count(),
     prisma.editionStat.count(),
@@ -32,6 +34,7 @@ export default async function AdminOverviewPage() {
     { label: "Applications", value: applications, href: "/admin/applications" },
     { label: "Sessions", value: sessions, href: "/admin/sessions" },
     { label: "Speakers", value: speakers, href: "/admin/speakers" },
+    { label: "Sponsors & Partners", value: orgs, href: "/admin/orgs" },
     { label: "Pages", value: pages, href: "/admin/pages" },
     { label: "FAQs", value: faqs, href: "/admin/faqs" },
     { label: "Stats", value: stats, href: "/admin/stats" },
@@ -48,7 +51,7 @@ export default async function AdminOverviewPage() {
       <p className="mt-3 max-w-2xl text-ink-soft">
         Current edition:{" "}
         <strong className="text-ink">{edition?.name ?? "-"}</strong>. Edit the
-        programme, speakers, site copy, conference applications, and every
+        programme, speakers, sponsors, site copy, conference applications, and every
         registered user from the nav above.
       </p>
 

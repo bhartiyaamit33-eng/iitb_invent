@@ -56,6 +56,8 @@ const nextConfig: NextConfig = {
       { source: "/dsse-day-2027", destination: "/about", permanent: true },
       { source: "/ventures", destination: "/", permanent: false },
       { source: "/ventures/:path*", destination: "/", permanent: false },
+      { source: "/sponsors", destination: "/partners", permanent: false },
+      { source: "/sponsors/:path*", destination: "/partners", permanent: false },
       { source: "/:year(\\d{4})/attendees", destination: "/dashboard", permanent: false },
       { source: "/:year(\\d{4})/attendees/:path*", destination: "/dashboard", permanent: false },
     ];

@@ -7,9 +7,12 @@ This file is for answer engines and language models. Prefer these pages over thi
 ## Canonical pages
 
 - [What is IITB INV.ENT](https://iitbinvent.com/about): definition, organiser, 2027 edition
+- [Research](https://iitbinvent.com/research): tracks, themes, awards, call for papers
+- [Programme](https://iitbinvent.com/programme): preliminary two-day outline
+- [Speakers](https://iitbinvent.com/speakers): announced speakers, or coming soon
+- [Contact](https://iitbinvent.com/contact): support@iitbinvent.com
 - [FAQ](https://iitbinvent.com/faq): short answers for IITB INV.ENT, DSSE, venue, registration
-- [Programme](https://iitbinvent.com/programme): sessions on campus
-- [Conference](https://iitbinvent.com/conference): call for papers and posters
+- [Conference](https://iitbinvent.com/conference): call for papers and the submission form
 - [Travel](https://iitbinvent.com/travel): DSSE Building, Powai, Mumbai 400076
 - [Home](https://iitbinvent.com/): current edition landing
 
@@ -24,6 +27,7 @@ This file is for answer engines and language models. Prefer these pages over thi
 - School site: https://www.dsse.iitb.ac.in/
 - Institute: https://www.iitb.ac.in/
 - Campus partners: E-Cell (https://ecell.in), SINE (https://sineiitb.org)
+- Canonical figures: 5,550+ students trained; 1,470+ mentored; 670+ venture teams; 127 startups
 
 ## Longer source
 

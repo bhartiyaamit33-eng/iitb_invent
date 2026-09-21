@@ -6,6 +6,10 @@ import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
 import { cancelRsvpAction, rsvpAction } from "./actions";
 import { pageMetadata } from "@/lib/seo";
 import { userHasLiveEventTicket } from "@/lib/conference-access";
+import { PROGRAMME_SCHEDULE_PUBLISHED } from "@/lib/programme";
+import { PublicChrome } from "@/components/PublicChrome";
+import { PageHero } from "@/components/site/PageHero";
+import { ProgrammeOutline } from "@/components/site/ProgrammeOutline";
 
 export const dynamic = "force-dynamic";
 
@@ -17,21 +21,57 @@ export const metadata = pageMetadata({
 });
 
 export default async function ProgrammePage() {
-  const user = await getCurrentUser();
-  const edition = await prisma.edition.findFirst({
-    where: { isCurrent: true },
-  });
+  const user = await getCurrentUser().catch(() => null);
+  let edition: Awaited<ReturnType<typeof prisma.edition.findFirst>> = null;
+  try {
+    edition = await prisma.edition.findFirst({
+      where: { isCurrent: true },
+    });
+  } catch {
+    edition = null;
+  }
+  const live = edition ? isLiveStatus(edition.status) : false;
+  const showSchedule = PROGRAMME_SCHEDULE_PUBLISHED || live;
 
-  if (!edition) {
+  if (!showSchedule) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <h1 className="font-display text-4xl text-teal-deep">Programme</h1>
-        <p className="mt-4 text-ink-soft">No current edition configured.</p>
-      </main>
+      <PublicChrome crumbs={[{ href: "/programme", label: "Programme" }]}>
+        <main id="main">
+          <PageHero
+            kicker="30–31 January 2027"
+            title="Programme"
+            lede="Two days. One ecosystem. A preliminary outline — the detailed agenda will be published closer to the conference."
+          />
+          <div className="site-shell editorial">
+            <p className="site-notice">
+              Preliminary. The detailed agenda will be published closer to the
+              conference.
+            </p>
+            <ProgrammeOutline />
+            <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+              <Link className="site-btn site-btn-ghost" href="/workshops">
+                Workshop →
+              </Link>
+              <Link className="site-btn site-btn-ghost" href="/research">
+                Research →
+              </Link>
+            </div>
+          </div>
+        </main>
+      </PublicChrome>
     );
   }
 
-  const live = isLiveStatus(edition.status);
+  if (!edition) {
+    return (
+      <PublicChrome crumbs={[{ href: "/programme", label: "Programme" }]}>
+        <main id="main">
+          <PageHero title="Programme" lede="No current edition configured." />
+        </main>
+      </PublicChrome>
+    );
+  }
+
   const now = new Date();
   const canRsvp = user
     ? await userHasLiveEventTicket(user.id, edition.id)
@@ -67,173 +107,138 @@ export default async function ProgrammePage() {
   const rsvpBySession = new Map(myRsvps.map((r) => [r.sessionId, r]));
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        {edition.name} · Asia/Kolkata
-        {live ? " · LIVE" : ""}
-      </p>
-      <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-        Programme
-      </h1>
-      <p className="mt-3 text-ink-soft">
-        {edition.venueName}. Confirmed ticket holders can RSVP for capped sessions.
-      </p>
-      <p className="mt-2 text-sm text-mute">
-        <Link href="/" className="underline-offset-2 hover:underline">
-          ← Home
-        </Link>
-        {" · "}
-        <Link href="/dashboard" className="underline-offset-2 hover:underline">
-          Dashboard
-        </Link>
-        {" · "}
-        <Link href="/conference" className="underline-offset-2 hover:underline">
-          Call for papers
-        </Link>
-        {live ? (
-          <>
-            {" · "}
-            <Link href="/now" className="underline-offset-2 hover:underline">
-              Now screen
-            </Link>
-          </>
-        ) : null}
-      </p>
-
-      {live ? (
-        <section className="mt-8 space-y-4 rounded-xl border border-ent/30 bg-white p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ent">
-            Happening now ·{" "}
-            {now.toLocaleTimeString("en-IN", {
-              timeZone: "Asia/Kolkata",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            IST
-          </p>
-          {happening.length === 0 ? (
-            <p className="text-sm text-ink-soft">No session in progress.</p>
-          ) : (
-            happening.map((s) => (
-              <div key={s.id}>
-                <p className="font-semibold text-ink">{s.title}</p>
-                <p className="text-sm text-mute">
-                  {s.room}
-                  {s.floor ? ` · ${s.floor}` : ""}
-                </p>
-              </div>
-            ))
-          )}
-          <p className="pt-2 text-xs font-semibold uppercase tracking-[0.14em] text-mute">
-            Up next
-          </p>
-          {upNext.length === 0 ? (
-            <p className="text-sm text-ink-soft">Nothing in the next 90 minutes.</p>
-          ) : (
-            upNext.map((s) => (
-              <div key={s.id} className="text-sm">
-                <span className="font-semibold text-teal-deep">
-                  {formatIstRange(s.startsAt, s.endsAt)}
-                </span>{" "}
-                - {s.title}
-                {s.room ? ` · ${s.room}` : ""}
-              </div>
-            ))
-          )}
-        </section>
-      ) : null}
-
-      <div className="mt-10 overflow-hidden rounded-xl border border-line bg-white">
-        {sessions.map((s) => {
-          const mine = rsvpBySession.get(s.id);
-          const going = s._count.rsvps;
-          const full = s.capacity != null && going >= s.capacity;
-          return (
-            <article
-              key={s.id}
-              className="grid gap-3 border-b border-line px-5 py-4 last:border-b-0 sm:grid-cols-[11rem_1fr]"
-            >
-              <time className="text-sm font-semibold text-teal-deep">
-                {formatIstRange(s.startsAt, s.endsAt)}
-              </time>
-              <div>
-                <h2 className="font-semibold text-ink">
-                  <Link
-                    href={`/programme/${s.slug}`}
-                    prefetch={false}
-                    className="underline-offset-2 hover:underline"
-                  >
-                    {s.title}
-                  </Link>
-                </h2>
-                <p className="mt-0.5 text-xs uppercase tracking-[0.1em] text-mute">
-                  {s.room}
-                  {s.floor ? ` · ${s.floor}` : ""} · {s.format.replaceAll("_", " ")}
-                  {s.capacity != null
-                    ? ` · ${going}/${s.capacity} going`
-                    : ` · ${going} going`}
-                </p>
-                {s.speakers.length > 0 ? (
-                  <ul className="mt-2 space-y-1 text-sm text-ink-soft">
-                    {s.speakers.map((ss) => (
-                      <li key={ss.speakerId}>
-                        <span className="font-medium text-ink">
-                          {ss.speaker.name}
-                        </span>
-                        {ss.role ? (
-                          <span className="text-mute"> ({ss.role})</span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-
-                <div className="mt-3">
-                  {!canRsvp ? (
-                    <p className="text-sm text-mute">
-                      Session RSVP opens after organisers select your abstract
-                      and you pay the category fee.
+    <PublicChrome crumbs={[{ href: "/programme", label: "Programme" }]}>
+      <main id="main">
+        <PageHero
+          kicker={`${edition.name} · Asia/Kolkata${live ? " · LIVE" : ""}`}
+          title="Programme"
+          lede={`${edition.venueName}. Confirmed ticket holders can RSVP for capped sessions.`}
+        />
+        <div className="site-shell editorial">
+          {live ? (
+            <section className="site-notice">
+              <p className="site-kicker is-green">
+                Happening now ·{" "}
+                {now.toLocaleTimeString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                IST
+              </p>
+              {happening.length === 0 ? (
+                <p>No session in progress.</p>
+              ) : (
+                happening.map((s) => (
+                  <div key={s.id}>
+                    <p>
+                      <strong>{s.title}</strong>
                     </p>
-                  ) : mine && mine.status !== "CANCELLED" ? (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="text-sm font-semibold text-ent">
-                        {mine.status === "GOING"
-                          ? "You're going"
-                          : `Waitlist #${mine.position ?? "?"}`}
-                      </span>
-                      <form action={cancelRsvpAction}>
-                        <input type="hidden" name="sessionId" value={s.id} />
-                        <button
-                          type="submit"
-                          className="text-sm text-mute underline-offset-2 hover:underline"
-                        >
-                          Cancel
-                        </button>
-                      </form>
+                    <p>
+                      {s.room}
+                      {s.floor ? ` · ${s.floor}` : ""}
+                    </p>
+                  </div>
+                ))
+              )}
+              <p className="site-kicker" style={{ marginTop: 16 }}>
+                Up next
+              </p>
+              {upNext.length === 0 ? (
+                <p>Nothing in the next 90 minutes.</p>
+              ) : (
+                upNext.map((s) => (
+                  <div key={s.id}>
+                    <span>{formatIstRange(s.startsAt, s.endsAt)}</span> — {s.title}
+                    {s.room ? ` · ${s.room}` : ""}
+                  </div>
+                ))
+              )}
+            </section>
+          ) : null}
+
+          <div>
+            {sessions.map((s) => {
+              const mine = rsvpBySession.get(s.id);
+              const going = s._count.rsvps;
+              const full = s.capacity != null && going >= s.capacity;
+              return (
+                <article
+                  key={s.id}
+                  className="grid gap-3 border-b border-line px-0 py-6 last:border-b-0 sm:grid-cols-[11rem_1fr]"
+                >
+                  <time className="text-sm font-semibold">
+                    {formatIstRange(s.startsAt, s.endsAt)}
+                  </time>
+                  <div>
+                    <h2 className="font-semibold">
+                      <Link href={`/programme/${s.slug}`} prefetch={false}>
+                        {s.title}
+                      </Link>
+                    </h2>
+                    <p className="mt-0.5 text-xs uppercase tracking-[0.1em] text-mute">
+                      {s.room}
+                      {s.floor ? ` · ${s.floor}` : ""} ·{" "}
+                      {s.format.replaceAll("_", " ")}
+                      {s.capacity != null
+                        ? ` · ${going}/${s.capacity} going`
+                        : ` · ${going} going`}
+                    </p>
+                    {s.speakers.length > 0 ? (
+                      <ul className="mt-2 space-y-1 text-sm">
+                        {s.speakers.map((ss) => (
+                          <li key={ss.speakerId}>
+                            <span className="font-medium">{ss.speaker.name}</span>
+                            {ss.role ? (
+                              <span className="text-mute"> ({ss.role})</span>
+                            ) : null}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+
+                    <div className="mt-3">
+                      {!canRsvp ? (
+                        <p className="text-sm text-mute">
+                          Session RSVP opens after organisers select your abstract
+                          and you pay the category fee.
+                        </p>
+                      ) : mine && mine.status !== "CANCELLED" ? (
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="text-sm font-semibold text-ent">
+                            {mine.status === "GOING"
+                              ? "You're going"
+                              : `Waitlist #${mine.position ?? "?"}`}
+                          </span>
+                          <form action={cancelRsvpAction}>
+                            <input type="hidden" name="sessionId" value={s.id} />
+                            <button type="submit" className="text-sm underline">
+                              Cancel
+                            </button>
+                          </form>
+                        </div>
+                      ) : (
+                        <form action={rsvpAction}>
+                          <input type="hidden" name="sessionId" value={s.id} />
+                          <button type="submit" className="site-btn site-btn-sm">
+                            {full && s.waitlistOpen
+                              ? "Join waitlist"
+                              : full
+                                ? "Full"
+                                : s.rsvpRequired
+                                  ? "RSVP"
+                                  : "I'm going"}
+                          </button>
+                        </form>
+                      )}
                     </div>
-                  ) : (
-                    <form action={rsvpAction}>
-                      <input type="hidden" name="sessionId" value={s.id} />
-                      <button
-                        type="submit"
-                        className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
-                      >
-                        {full && s.waitlistOpen
-                          ? "Join waitlist"
-                          : full
-                            ? "Full"
-                            : s.rsvpRequired
-                              ? "RSVP"
-                              : "I'm going"}
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    </main>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </main>
+    </PublicChrome>
   );
 }

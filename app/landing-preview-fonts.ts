@@ -1,4 +1,4 @@
-import { Inter, Playfair_Display, Source_Serif_4 } from "next/font/google";
+import { Instrument_Serif, Inter } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -6,20 +6,13 @@ const inter = Inter({
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+const instrument = Instrument_Serif({
   subsets: ["latin"],
+  weight: "400",
   style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-playfair",
+  variable: "--font-instrument",
   display: "swap",
 });
 
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-source-serif",
-  display: "swap",
-});
-
-export const landingPreviewFontClass = `${inter.variable} ${playfair.variable} ${sourceSerif.variable}`;
+export const publicFontClass = `${inter.variable} ${instrument.variable}`;
+export const landingPreviewFontClass = publicFontClass;

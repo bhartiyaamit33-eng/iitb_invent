@@ -12,7 +12,9 @@ import {
   type TimelineItem,
 } from "@/lib/landing";
 import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
+import { signedInLabel } from "@/lib/site";
 import { CANONICAL_FAQS } from "@/lib/seo-content";
+import { getPublishedOrgs, type PublicOrg } from "@/lib/orgs-public";
 
 export type LandingScreenData = {
   signedInName: string | null;
@@ -20,13 +22,13 @@ export type LandingScreenData = {
   faqs: LandingFaq[];
   stats: LandingStat[];
   timeline: TimelineItem[];
+  sponsors: PublicOrg[];
+  partners: PublicOrg[];
 };
 
 export async function loadLandingData(): Promise<LandingScreenData> {
   const user = await getCurrentUser().catch(() => null);
-  const signedInName = user
-    ? user.name.trim().split(/\s+/)[0] || user.name || "Account"
-    : null;
+  const signedInName = signedInLabel(user);
 
   let live: LiveStripData | null = null;
   let faqs: LandingFaq[] = mergeFaqs(FALLBACK_FAQS);
@@ -84,12 +86,16 @@ export async function loadLandingData(): Promise<LandingScreenData> {
     // Public teaser must render even if the database is down.
   }
 
+  const { sponsors, partners } = await getPublishedOrgs();
+
   return {
     signedInName,
     live,
     faqs,
     stats,
     timeline: markTimeline(KEY_DATES),
+    sponsors,
+    partners,
   };
 }
 
