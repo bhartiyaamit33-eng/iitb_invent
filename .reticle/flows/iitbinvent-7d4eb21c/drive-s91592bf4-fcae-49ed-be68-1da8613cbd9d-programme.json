@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "name": "drive-s91592bf4-fcae-49ed-be68-1da8613cbd9d-programme",
+  "projectId": "iitbinvent-7d4eb21c",
+  "createdAt": 1790026935145,
+  "steps": [
+    {
+      "tool": "reticle_act",
+      "anchor": {
+        "kind": "role",
+        "role": "link",
+        "name": "Welcome Address & Program Launch"
+      },
+      "args": {},
+      "action": "click",
+      "expect": {
+        "element": {
+          "testid": "page-hero"
+        },
+        "console": {
+          "level": "error",
+          "absent": true
+        },
+        "route": {
+          "contains": "/programme/welcome-address-program-launch"
+        }
+      }
+    }
+  ],
+  "startPath": "/programme"
+}

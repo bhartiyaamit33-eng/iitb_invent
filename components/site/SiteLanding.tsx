@@ -65,10 +65,11 @@ export function SiteLanding({
           <div className="hero-presents">
             <Image
               className="hero-presents-dsse"
-              src="/assets/dsse-logo.png"
+              src="/assets/dsse-wordmark.png"
               alt="Desai Sethi School of Entrepreneurship"
-              width={1477}
-              height={254}
+              width={1600}
+              height={320}
+              sizes="400px"
               priority
             />
             <span>presents</span>

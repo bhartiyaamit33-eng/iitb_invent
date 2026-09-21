@@ -51,28 +51,33 @@ export function registerHrefFor(signedIn: boolean) {
   return submitHrefFor(signedIn);
 }
 
+/**
+ * The four milestones from the Call for Papers artwork, which is the source of
+ * truth for dates. One list, used by the landing page and the Research page, so
+ * the two can never drift apart.
+ */
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
-    id: "open",
-    kicker: "Submissions open",
-    date: "10 Sep 2026",
-    at: "2026-09-10",
-  },
-  {
-    id: "deadline",
-    kicker: "Submission deadline",
+    id: "abstract",
+    kicker: "Abstract submission deadline",
     date: "15 Oct 2026",
     at: "2026-10-15",
   },
   {
     id: "accept",
-    kicker: "Acceptance",
-    date: "31 Dec 2026",
-    at: "2026-12-31",
+    kicker: "Acceptance announcement",
+    date: "15 Nov 2026",
+    at: "2026-11-15",
+  },
+  {
+    id: "final",
+    kicker: "Final paper submissions",
+    date: "1 Jan 2027",
+    at: "2027-01-01",
   },
   {
     id: "conference",
-    kicker: "Conference",
+    kicker: "Conference and workshops",
     date: "30-31 Jan 2027",
     at: "2027-01-30",
   },

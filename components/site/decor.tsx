@@ -64,15 +64,19 @@ const ICON_PATHS = {
   chart: "M6 22 L16 10 L22 16 L28 8 M6 26 h22",
   building: "M8 24 V12 l8-4 8 4 v12 M16 8 v16 M10 24 h12",
   cube: "M6 14 l10-6 10 6-10 6z M10 16 v6 l6 3 6-3 v-6",
-  poster: "M7 7 h18 v14 H7z M7 21 l6-6 4 4 3-3 5 5 M11 12 a1.5 1.5 0 1 0 0.01 0z M16 25 v3",
+  // A pinned research poster, not a picture frame: the frame-plus-landscape
+  // reading of a generic image icon looks like a broken image at 28px.
+  poster:
+    "M16 4 a1.5 1.5 0 1 0 0.01 0z M16 7 v2 M8 9 h16 v18 H8z M12 14 h8 M12 18 h8 M12 22 h5",
   award:
     "M16 6 a6 6 0 1 0 0.01 0z M16 10 l1.6 3.2 3.4 0.5-2.5 2.4 0.6 3.4-3.1-1.7-3.1 1.7 0.6-3.4-2.5-2.4 3.4-0.5z M12 22 l-2 6 6-3 6 3-2-6",
   journal:
     "M8 7 h11 a3 3 0 0 1 3 3 v15 H11 a3 3 0 0 0-3 3z M8 7 v21 M12 12 h7 M12 16 h7",
   network:
     "M16 7 a3 3 0 1 0 0.01 0z M8 20 a3 3 0 1 0 0.01 0z M24 20 a3 3 0 1 0 0.01 0z M16 10 L9.5 17.5 M16 10 l6.5 7.5 M10.5 22 h11",
+  // A board on legs with a working sketch on it: a session you do, not watch.
   workshop:
-    "M7 9 h18 v12 H7z M11 25 h10 M16 21 v4 M11 13 l3 3-3 3 M17 19 h4",
+    "M16 3 v3 M4 6 h24 v14 H4z M9 16 l4-5 3 3 3-4 4 6 M13 20 l-3 8 M19 20 l3 8",
 } as const;
 
 export type LineIconName = keyof typeof ICON_PATHS;

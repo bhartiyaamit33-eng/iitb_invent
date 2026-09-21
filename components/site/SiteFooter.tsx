@@ -29,8 +29,8 @@ export function SiteFooter() {
             <Image
               src="/assets/iitb-logo.png"
               alt="IIT Bombay"
-              width={1024}
-              height={998}
+              width={512}
+              height={499}
               style={{ height: 36, width: "auto", display: "block" }}
             />
             <span
@@ -43,11 +43,12 @@ export function SiteFooter() {
               }}
             />
             <Image
-              src="/assets/dsse-logo.png"
+              src="/assets/dsse-wordmark.png"
               alt="Desai Sethi School of Entrepreneurship"
-              width={1477}
-              height={254}
-              style={{ height: 30, width: "auto", display: "block" }}
+              width={1600}
+              height={320}
+              sizes="200px"
+              style={{ height: 26, width: "auto", display: "block" }}
             />
           </div>
           <p className="site-kicker site-footer-date">

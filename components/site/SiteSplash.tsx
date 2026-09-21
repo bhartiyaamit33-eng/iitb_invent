@@ -141,19 +141,20 @@ export function SiteSplash() {
           <Image
             src="/assets/iitb-logo.png"
             alt="IIT Bombay"
-            width={1024}
-            height={998}
+            width={512}
+            height={499}
             priority
             style={{ height: 52 }}
           />
           <span className="sep" aria-hidden="true" />
           <Image
-            src="/assets/dsse-logo.png"
+            src="/assets/dsse-wordmark.png"
             alt="Desai Sethi School of Entrepreneurship"
-            width={1477}
-            height={254}
+            width={1600}
+            height={320}
+            sizes="200px"
             priority
-            style={{ height: 26 }}
+            style={{ height: 24 }}
           />
         </div>
         <InventMark style={{ fontSize: "clamp(2.6rem, 7vw, 4.4rem)" }} />

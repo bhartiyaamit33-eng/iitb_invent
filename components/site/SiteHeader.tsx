@@ -36,8 +36,8 @@ export function SiteHeader({
             <Image
               src="/assets/iitb-logo.png"
               alt="IIT Bombay"
-              width={1024}
-              height={998}
+              width={512}
+              height={499}
               style={{ height: 30, width: "auto", display: "block" }}
               priority
             />

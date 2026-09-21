@@ -96,7 +96,7 @@ export const HOSTS: SiteOrg[] = [
     name: "Desai Sethi School of Entrepreneurship",
     role: "Host",
     tier: "host",
-    logo: "/assets/dsse-logo.png",
+    logo: "/assets/dsse-wordmark.png",
     href: "https://www.dsse.iitb.ac.in/",
   },
   {
