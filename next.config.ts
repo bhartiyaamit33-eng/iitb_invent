@@ -1,6 +1,16 @@
 import { withReticle } from '@reticlehq/next';
 import type { NextConfig } from "next";
 
+/**
+ * Extra hosts allowed to POST Server Actions, comma-separated, for review or
+ * tunnel URLs that are not known at build time.
+ * e.g. SERVER_ACTION_ORIGINS="preview.example.com,foo.trycloudflare.com"
+ */
+const extraServerActionOrigins = (process.env.SERVER_ACTION_ORIGINS ?? "")
+  .split(",")
+  .map((host) => host.trim())
+  .filter(Boolean);
+
 const nextConfig: NextConfig = {
   // Static landing assets live in /public (hero must remain visually unchanged).
   poweredByHeader: false,
@@ -79,13 +89,15 @@ const nextConfig: NextConfig = {
     // Extended abstracts are PDFs up to 10 MB.
     // allowedOrigins: the public site is served via Cloudflare Worker while
     // Next.js sees Host: origin.iitbinvent.com. Without this, Server Actions
-    // fail CSRF and the browser can sit on "Submitting…" forever.
+    // fail CSRF and the browser can sit on "Submitting…" forever — which is
+    // also what happens behind any preview/staging host, hence EXTRA_ORIGINS.
     serverActions: {
       bodySizeLimit: "12mb",
       allowedOrigins: [
         "iitbinvent.com",
         "www.iitbinvent.com",
         "origin.iitbinvent.com",
+        ...extraServerActionOrigins,
       ],
     },
   },
