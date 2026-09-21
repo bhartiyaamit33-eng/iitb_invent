@@ -15,8 +15,8 @@ const STATUS_STEPS = [
   { at: 0.94, text: "Ready" },
 ] as const;
 
-function statusAt(fraction: number) {
-  let text = STATUS_STEPS[0].text;
+function statusAt(fraction: number): string {
+  let text: string = STATUS_STEPS[0].text;
   for (const step of STATUS_STEPS) {
     if (fraction >= step.at) text = step.text;
   }
@@ -30,7 +30,7 @@ function statusAt(fraction: number) {
  */
 export function SiteSplash() {
   const [shown, setShown] = useState(true);
-  const [status, setStatus] = useState(STATUS_STEPS[0].text);
+  const [status, setStatus] = useState<string>(STATUS_STEPS[0].text);
 
   // Before paint, so a repeat visit never sees the overlay flash.
   useLayoutEffect(() => {

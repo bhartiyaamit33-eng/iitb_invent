@@ -1986,6 +1986,10 @@ html[data-site] body {
   .hero-pole { display: none; }
   .site-table th,
   .site-table td { padding-right: 12px; }
+  .programme-row {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

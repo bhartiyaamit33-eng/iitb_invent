@@ -4,8 +4,11 @@ import { formatIstRange } from "@/lib/editions";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getHappeningNow, getUpNext, isLiveStatus } from "@/lib/live";
 import { cancelRsvpAction, rsvpAction } from "./actions";
+import { PageHero } from "@/components/site/PageHero";
+import { SiteShell } from "@/components/site/SiteShell";
 import { pageMetadata } from "@/lib/seo";
 import { userHasLiveEventTicket } from "@/lib/conference-access";
+import { EVENT_DATES, PROGRAMME_DAYS } from "@/lib/site-content";
 
 export const dynamic = "force-dynamic";
 
@@ -16,39 +19,58 @@ export const metadata = pageMetadata({
   path: "/programme",
 });
 
+/** Shape of the two days, shown until sessions are published in admin. */
+function ProgrammeShape() {
+  return (
+    <div className="days-grid" data-testid="programme-shape">
+      {PROGRAMME_DAYS.map((day) => (
+        <article className="day-col" key={day.id}>
+          <p className="site-kicker is-blue">{day.kicker}</p>
+          <p className="date">{day.date}</p>
+          <h3>{day.title}</h3>
+          <p className="lead">{day.lead}</p>
+          <ul>
+            {day.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 export default async function ProgrammePage() {
   const user = await getCurrentUser();
-  const edition = await prisma.edition.findFirst({
-    where: { isCurrent: true },
-  });
+  const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
 
   if (!edition) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <h1 className="font-display text-4xl text-teal-deep">Programme</h1>
-        <p className="mt-4 text-ink-soft">No current edition configured.</p>
-      </main>
+      <SiteShell crumbs={[{ href: "/programme", label: "Programme" }]}>
+        <PageHero
+          kicker={EVENT_DATES}
+          title="Programme"
+          lede="The full session grid is published here as it is confirmed. Below is the shape of the two days."
+        />
+        <section className="site-section is-tight">
+          <div className="site-shell">
+            <ProgrammeShape />
+          </div>
+        </section>
+      </SiteShell>
     );
   }
 
   const live = isLiveStatus(edition.status);
   const now = new Date();
-  const canRsvp = user
-    ? await userHasLiveEventTicket(user.id, edition.id)
-    : false;
+  const canRsvp = user ? await userHasLiveEventTicket(user.id, edition.id) : false;
   const [sessions, happening, upNext, myRsvps] = await Promise.all([
     prisma.session_.findMany({
-      where: {
-        editionId: edition.id,
-        isPublished: true,
-        deletedAt: null,
-      },
+      where: { editionId: edition.id, isPublished: true, deletedAt: null },
       orderBy: [{ startsAt: "asc" }, { sortOrder: "asc" }],
       include: {
         speakers: { include: { speaker: true } },
-        _count: {
-          select: { rsvps: { where: { status: "GOING" } } },
-        },
+        _count: { select: { rsvps: { where: { status: "GOING" } } } },
       },
     }),
     live ? getHappeningNow(edition.id, now) : Promise.resolve([]),
@@ -67,173 +89,222 @@ export default async function ProgrammePage() {
   const rsvpBySession = new Map(myRsvps.map((r) => [r.sessionId, r]));
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        {edition.name} · Asia/Kolkata
-        {live ? " · LIVE" : ""}
-      </p>
-      <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-        Programme
-      </h1>
-      <p className="mt-3 text-ink-soft">
-        {edition.venueName}. Confirmed ticket holders can RSVP for capped sessions.
-      </p>
-      <p className="mt-2 text-sm text-mute">
-        <Link href="/" className="underline-offset-2 hover:underline">
-          ← Home
-        </Link>
-        {" · "}
-        <Link href="/dashboard" className="underline-offset-2 hover:underline">
-          Dashboard
-        </Link>
-        {" · "}
-        <Link href="/research" className="underline-offset-2 hover:underline">
-          Call for papers
-        </Link>
-        {live ? (
-          <>
-            {" · "}
-            <Link href="/now" className="underline-offset-2 hover:underline">
+    <SiteShell crumbs={[{ href: "/programme", label: "Programme" }]}>
+      <PageHero
+        kicker={`${edition.name} · Asia/Kolkata${live ? " · LIVE" : ""}`}
+        title="Programme"
+        lede={`${edition.venueName}. Confirmed ticket holders can RSVP for capped sessions.`}
+        meta={[`Conference · ${EVENT_DATES}`, "Venue · IIT Bombay"]}
+      >
+        <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+          <Link className="site-btn site-btn-ghost" href="/research">
+            Call for papers →
+          </Link>
+          <Link className="site-btn site-btn-ghost" href="/workshop">
+            Workshops
+          </Link>
+          {live ? (
+            <Link className="site-btn site-btn-ghost" href="/now">
               Now screen
             </Link>
-          </>
-        ) : null}
-      </p>
+          ) : null}
+        </div>
+      </PageHero>
 
       {live ? (
-        <section className="mt-8 space-y-4 rounded-xl border border-ent/30 bg-white p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ent">
-            Happening now ·{" "}
-            {now.toLocaleTimeString("en-IN", {
-              timeZone: "Asia/Kolkata",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            IST
-          </p>
-          {happening.length === 0 ? (
-            <p className="text-sm text-ink-soft">No session in progress.</p>
-          ) : (
-            happening.map((s) => (
-              <div key={s.id}>
-                <p className="font-semibold text-ink">{s.title}</p>
-                <p className="text-sm text-mute">
-                  {s.room}
-                  {s.floor ? ` · ${s.floor}` : ""}
+        <section className="site-section is-tight" aria-labelledby="now-heading">
+          <div className="site-shell">
+            <p className="site-kicker is-green">
+              Happening now ·{" "}
+              {now.toLocaleTimeString("en-IN", {
+                timeZone: "Asia/Kolkata",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}{" "}
+              IST
+            </p>
+            <h2 id="now-heading" className="sr-only">
+              Happening now
+            </h2>
+            {happening.length === 0 ? (
+              <p className="lead">No session in progress.</p>
+            ) : (
+              happening.map((session) => (
+                <div key={session.id} style={{ marginBottom: 16 }}>
+                  <p
+                    className="site-serif"
+                    style={{ margin: 0, fontSize: "1.6rem", color: "var(--navy)" }}
+                  >
+                    {session.title}
+                  </p>
+                  <p className="site-kicker" style={{ margin: "6px 0 0" }}>
+                    {session.room}
+                    {session.floor ? ` · ${session.floor}` : ""}
+                  </p>
+                </div>
+              ))
+            )}
+            <p className="site-kicker" style={{ marginTop: 28 }}>
+              Up next
+            </p>
+            {upNext.length === 0 ? (
+              <p className="lead">Nothing in the next 90 minutes.</p>
+            ) : (
+              upNext.map((session) => (
+                <p key={session.id} style={{ margin: "0 0 6px", color: "var(--ink-soft)" }}>
+                  <span style={{ color: "var(--blue)" }}>
+                    {formatIstRange(session.startsAt, session.endsAt)}
+                  </span>{" "}
+                  — {session.title}
+                  {session.room ? ` · ${session.room}` : ""}
                 </p>
-              </div>
-            ))
-          )}
-          <p className="pt-2 text-xs font-semibold uppercase tracking-[0.14em] text-mute">
-            Up next
-          </p>
-          {upNext.length === 0 ? (
-            <p className="text-sm text-ink-soft">Nothing in the next 90 minutes.</p>
-          ) : (
-            upNext.map((s) => (
-              <div key={s.id} className="text-sm">
-                <span className="font-semibold text-teal-deep">
-                  {formatIstRange(s.startsAt, s.endsAt)}
-                </span>{" "}
-                - {s.title}
-                {s.room ? ` · ${s.room}` : ""}
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </section>
       ) : null}
 
-      <div className="mt-10 overflow-hidden rounded-xl border border-line bg-white">
-        {sessions.map((s) => {
-          const mine = rsvpBySession.get(s.id);
-          const going = s._count.rsvps;
-          const full = s.capacity != null && going >= s.capacity;
-          return (
-            <article
-              key={s.id}
-              className="grid gap-3 border-b border-line px-5 py-4 last:border-b-0 sm:grid-cols-[11rem_1fr]"
-            >
-              <time className="text-sm font-semibold text-teal-deep">
-                {formatIstRange(s.startsAt, s.endsAt)}
-              </time>
-              <div>
-                <h2 className="font-semibold text-ink">
-                  <Link
-                    href={`/programme/${s.slug}`}
-                    prefetch={false}
-                    className="underline-offset-2 hover:underline"
-                  >
-                    {s.title}
-                  </Link>
-                </h2>
-                <p className="mt-0.5 text-xs uppercase tracking-[0.1em] text-mute">
-                  {s.room}
-                  {s.floor ? ` · ${s.floor}` : ""} · {s.format.replaceAll("_", " ")}
-                  {s.capacity != null
-                    ? ` · ${going}/${s.capacity} going`
-                    : ` · ${going} going`}
-                </p>
-                {s.speakers.length > 0 ? (
-                  <ul className="mt-2 space-y-1 text-sm text-ink-soft">
-                    {s.speakers.map((ss) => (
-                      <li key={ss.speakerId}>
-                        <span className="font-medium text-ink">
-                          {ss.speaker.name}
-                        </span>
-                        {ss.role ? (
-                          <span className="text-mute"> ({ss.role})</span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
+      <section className="site-section is-rule" aria-labelledby="sessions-heading">
+        <div className="site-shell">
+          <p className="site-kicker">Sessions</p>
+          <h2 id="sessions-heading">The grid</h2>
 
-                <div className="mt-3">
-                  {!canRsvp ? (
-                    <p className="text-sm text-mute">
-                      Session RSVP opens after organisers select your abstract
-                      and you pay the category fee.
-                    </p>
-                  ) : mine && mine.status !== "CANCELLED" ? (
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="text-sm font-semibold text-ent">
-                        {mine.status === "GOING"
-                          ? "You're going"
-                          : `Waitlist #${mine.position ?? "?"}`}
-                      </span>
-                      <form action={cancelRsvpAction}>
-                        <input type="hidden" name="sessionId" value={s.id} />
-                        <button
-                          type="submit"
-                          className="text-sm text-mute underline-offset-2 hover:underline"
-                        >
-                          Cancel
-                        </button>
-                      </form>
-                    </div>
-                  ) : (
-                    <form action={rsvpAction}>
-                      <input type="hidden" name="sessionId" value={s.id} />
-                      <button
-                        type="submit"
-                        className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
+          {sessions.length === 0 ? (
+            <>
+              <p className="lead">
+                Individual sessions are published here as they are confirmed. Below is the
+                shape of the two days.
+              </p>
+              <ProgrammeShape />
+            </>
+          ) : (
+            <div
+              style={{ marginTop: 36, borderTop: "1px solid var(--rule)" }}
+              data-testid="programme-sessions"
+            >
+              {sessions.map((session) => {
+                const mine = rsvpBySession.get(session.id);
+                const going = session._count.rsvps;
+                const full = session.capacity != null && going >= session.capacity;
+                return (
+                  <article
+                    key={session.id}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "minmax(0, 11rem) 1fr",
+                      gap: 24,
+                      padding: "26px 0",
+                      borderBottom: "1px solid var(--rule)",
+                    }}
+                    className="programme-row"
+                  >
+                    <time
+                      className="site-serif"
+                      style={{ fontSize: "1.3rem", color: "var(--blue)" }}
+                    >
+                      {formatIstRange(session.startsAt, session.endsAt)}
+                    </time>
+                    <div>
+                      <h3
+                        className="site-serif"
+                        style={{
+                          margin: 0,
+                          fontSize: "1.5rem",
+                          fontWeight: 400,
+                          color: "var(--navy)",
+                        }}
                       >
-                        {full && s.waitlistOpen
-                          ? "Join waitlist"
-                          : full
-                            ? "Full"
-                            : s.rsvpRequired
-                              ? "RSVP"
-                              : "I'm going"}
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    </main>
+                        <Link href={`/programme/${session.slug}`} prefetch={false}>
+                          {session.title}
+                        </Link>
+                      </h3>
+                      <p className="site-kicker" style={{ margin: "10px 0 0" }}>
+                        {session.room}
+                        {session.floor ? ` · ${session.floor}` : ""} ·{" "}
+                        {session.format.replaceAll("_", " ")}
+                        {session.capacity != null
+                          ? ` · ${going}/${session.capacity} going`
+                          : ` · ${going} going`}
+                      </p>
+                      {session.speakers.length > 0 ? (
+                        <ul
+                          style={{
+                            margin: "14px 0 0",
+                            padding: 0,
+                            listStyle: "none",
+                            color: "var(--ink-soft)",
+                            fontSize: 15,
+                          }}
+                        >
+                          {session.speakers.map((link) => (
+                            <li key={link.speakerId} style={{ padding: "2px 0" }}>
+                              <span style={{ color: "var(--ink)" }}>
+                                {link.speaker.name}
+                              </span>
+                              {link.role ? (
+                                <span style={{ color: "var(--mute)" }}> ({link.role})</span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+
+                      <div style={{ marginTop: 18 }}>
+                        {!canRsvp ? (
+                          <p style={{ margin: 0, fontSize: 14, color: "var(--mute)" }}>
+                            Session RSVP opens after organisers select your abstract and
+                            you pay the category fee.
+                          </p>
+                        ) : mine && mine.status !== "CANCELLED" ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexWrap: "wrap",
+                              alignItems: "center",
+                              gap: 16,
+                            }}
+                          >
+                            <span
+                              className="site-kicker"
+                              style={{ margin: 0, color: "var(--green)" }}
+                            >
+                              {mine.status === "GOING"
+                                ? "You’re going"
+                                : `Waitlist #${mine.position ?? "?"}`}
+                            </span>
+                            <form action={cancelRsvpAction}>
+                              <input type="hidden" name="sessionId" value={session.id} />
+                              <button
+                                type="submit"
+                                className="site-btn site-btn-ghost site-btn-sm"
+                              >
+                                Cancel
+                              </button>
+                            </form>
+                          </div>
+                        ) : (
+                          <form action={rsvpAction}>
+                            <input type="hidden" name="sessionId" value={session.id} />
+                            <button type="submit" className="site-btn site-btn-sm">
+                              {full && session.waitlistOpen
+                                ? "Join waitlist"
+                                : full
+                                  ? "Full"
+                                  : session.rsvpRequired
+                                    ? "RSVP"
+                                    : "I’m going"}
+                            </button>
+                          </form>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+    </SiteShell>
   );
 }

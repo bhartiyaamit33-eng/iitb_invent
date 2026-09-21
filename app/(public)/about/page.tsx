@@ -1,10 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
-import { PublicChrome } from "@/components/PublicChrome";
-import {
-  ABOUT_SECTIONS,
-  INVENT_DEFINITION,
-} from "@/lib/seo-content";
+import { PageHero } from "@/components/site/PageHero";
+import { SiteShell } from "@/components/site/SiteShell";
+import { NavyGeometry } from "@/components/site/decor";
+import { ABOUT_SECTIONS, INVENT_DEFINITION } from "@/lib/seo-content";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -13,6 +13,12 @@ import {
   pageMetadata,
   websiteJsonLd,
 } from "@/lib/seo";
+import {
+  ABOUT_QUOTE,
+  EVENT_DATES,
+  PIPELINE,
+  VENTURES,
+} from "@/lib/site-content";
 
 export const metadata = pageMetadata({
   title: "What is IITB INV.ENT?",
@@ -23,7 +29,7 @@ export const metadata = pageMetadata({
 
 export default function AboutPage() {
   return (
-    <PublicChrome crumbs={[{ href: "/about", label: "About IITB INV.ENT" }]}>
+    <SiteShell crumbs={[{ href: "/about", label: "About IITB INV.ENT" }]}>
       <JsonLd
         data={graphJsonLd(
           websiteJsonLd(),
@@ -52,39 +58,125 @@ export default function AboutPage() {
           },
         )}
       />
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-          IIT Bombay · DSSE
-        </p>
-        <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-          What is IITB INV.ENT?
-        </h1>
-        <p className="mt-6 text-lg leading-8 text-ink">{INVENT_DEFINITION}</p>
-        {ABOUT_SECTIONS.map((section) => (
-          <section key={section.heading} className="mt-10">
-            <h2 className="font-display text-2xl tracking-wide text-teal-deep">
-              {section.heading}
-            </h2>
-            <p className="mt-3 text-[17px] leading-7 text-ink-soft">
-              {section.body}
-            </p>
-          </section>
-        ))}
-        <p className="mt-10 text-[17px] leading-7 text-ink-soft">
-          See the{" "}
-          <Link href="/faq">FAQ</Link>, the{" "}
-          <Link href="/research">call for papers</Link>, or the{" "}
-          <Link href="/programme">2027 programme</Link>. School site:{" "}
-          <a
-            href="https://www.dsse.iitb.ac.in/"
-            target="_blank"
-            rel="noopener noreferrer"
+
+      <PageHero
+        kicker="IIT Bombay · DSSE"
+        title="What is IITB INV.ENT?"
+        lede={INVENT_DEFINITION}
+        meta={[`Conference · ${EVENT_DATES}`, "Venue · IIT Bombay"]}
+      />
+
+      <section className="site-section is-tight">
+        <div className="site-shell">
+          <blockquote className="pull-quote">“{ABOUT_QUOTE}”</blockquote>
+          <div className="editorial" style={{ padding: 0 }}>
+            {ABOUT_SECTIONS.map((section) => (
+              <section key={section.heading}>
+                <h2>{section.heading}</h2>
+                <p>{section.body}</p>
+              </section>
+            ))}
+          </div>
+          <figure className="building-photo">
+            <Image
+              src="/assets/dsse-building.jpg"
+              alt="Desai Sethi School of Entrepreneurship building at IIT Bombay"
+              width={1600}
+              height={1067}
+              sizes="(max-width: 1180px) 100vw, 1140px"
+            />
+            <figcaption>DSSE Building · IIT Bombay</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section className="site-section is-navy" aria-labelledby="stack-heading">
+        <NavyGeometry />
+        <div className="site-shell" style={{ position: "relative" }}>
+          <p className="site-kicker is-green">The stack</p>
+          <h2 id="stack-heading">
+            From campus
+            <br />
+            to company
+          </h2>
+          <p className="lead">
+            IITB INV.ENT sits inside a pipeline that already runs: student clubs, research
+            labs, the school, the incubator, and the companies that come out of it.
+          </p>
+          <ol
+            className="pipeline"
+            aria-label="From campus to company"
+            style={{ color: "var(--paper)" }}
           >
-            dsse.iitb.ac.in
-          </a>
-          .
-        </p>
-      </main>
-    </PublicChrome>
+            {PIPELINE.map((step, i) => (
+              <li key={step}>
+                <span>{step}</span>
+                {i < PIPELINE.length - 1 ? (
+                  <span
+                    className="pipeline-arrow"
+                    aria-hidden="true"
+                    style={{ color: "var(--green)" }}
+                  >
+                    →
+                  </span>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+          <p className="site-kicker is-green" style={{ marginTop: 48 }}>
+            Some of our ventures
+          </p>
+          <ul className="venture-list" style={{ color: "var(--paper)" }}>
+            {VENTURES.map((venture) => (
+              <li key={venture}>{venture}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="site-section is-rule" aria-labelledby="next-heading">
+        <div className="site-shell">
+          <p className="site-kicker">Where to next</p>
+          <h2 id="next-heading">Read on</h2>
+          <ul className="theme-list">
+            <li>
+              <Link href="/research" style={{ color: "var(--blue)" }}>
+                Call for papers
+              </Link>
+            </li>
+            <li>
+              <Link href="/programme" style={{ color: "var(--blue)" }}>
+                2027 programme
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" style={{ color: "var(--blue)" }}>
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <a
+                href="https://www.dsse.iitb.ac.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--blue)" }}
+              >
+                dsse.iitb.ac.in
+              </a>
+            </li>
+            <li>
+              <Link href="/speakers" style={{ color: "var(--blue)" }}>
+                Speakers
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" style={{ color: "var(--blue)" }}>
+                Contact
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </SiteShell>
   );
 }
