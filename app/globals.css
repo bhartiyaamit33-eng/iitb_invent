@@ -2,8 +2,8 @@
 
 /*
   App chrome (dashboard/admin) keeps the teal paper tokens.
-  The public landing uses the INV.ENT poster system: ivory paper, serif
-  headlines, navy rules, DSSE green (#007E43).
+  The public site uses the editorial system in site.css: paper, serif
+  headlines, navy rules, blue ENT, green intersection dot.
 */
 
 :root {

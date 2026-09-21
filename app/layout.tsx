@@ -1,6 +1,6 @@
 import { ReticleDev } from './reticle-dev';
 import type { Metadata } from "next";
-import { Sora } from "next/font/google";
+import { Inter, Instrument_Serif, Sora } from "next/font/google";
 import { SiteAnalytics } from "@/components/SiteAnalytics";
 import {
   DEFAULT_DESCRIPTION,
@@ -14,6 +14,21 @@ const sora = Sora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-sora",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["400"],
+  variable: "--font-instrument",
   display: "swap",
 });
 
@@ -70,7 +85,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sora.variable} antialiased`}>
+      <body
+        className={`${sora.variable} ${inter.variable} ${instrument.variable} antialiased`}
+      >
         {process.env.NODE_ENV === "development" ? <ReticleDev /> : null}
         {children}
         <SiteAnalytics />

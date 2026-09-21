@@ -1,9 +1,17 @@
-import { LandingScreen } from "@/components/landing/LandingScreen";
-import type { HeroVariant } from "@/lib/landing";
+import { JsonLd } from "@/components/JsonLd";
+import { SiteLanding } from "@/components/site/SiteLanding";
+import { SiteShell } from "@/components/site/SiteShell";
+import { SiteLiveStrip } from "@/components/site/SiteLiveStrip";
+import { loadLandingData } from "@/lib/load-landing";
 import {
   DEFAULT_DESCRIPTION,
   SITE_NAME_LONG,
+  eventJsonLd,
+  faqPageJsonLd,
+  graphJsonLd,
+  organizationJsonLd,
   pageMetadata,
+  websiteJsonLd,
 } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -17,14 +25,26 @@ export const metadata = {
   }),
 };
 
-type SearchParams = Promise<{ hero?: string }>;
+export default async function HomePage() {
+  const data = await loadLandingData();
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const params = await searchParams;
-  const heroVariant: HeroVariant = params.hero === "plain" ? "plain" : "photo";
-  return <LandingScreen heroVariant={heroVariant} />;
+  return (
+    <SiteShell splash>
+      <JsonLd
+        data={graphJsonLd(
+          websiteJsonLd(),
+          organizationJsonLd(),
+          eventJsonLd(),
+          faqPageJsonLd(),
+        )}
+      />
+      {data.live ? <SiteLiveStrip live={data.live} /> : null}
+      <SiteLanding
+        signedInName={data.signedInName}
+        faqs={data.faqs}
+        stats={data.stats}
+        timeline={data.timeline}
+      />
+    </SiteShell>
+  );
 }

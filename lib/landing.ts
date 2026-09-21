@@ -32,12 +32,23 @@ export const TAGLINE = "Entrepreneurship Research and Venture Practice Conferenc
 export const TAGLINE_LEAD = "Entrepreneurship Research and Venture Practice";
 export const TAGLINE_REST = "Conference";
 
-export const SUBMIT_HREF = "/conference#submit";
-export const LOGIN_TO_SUBMIT_HREF = `/login?callbackUrl=${encodeURIComponent("/conference#submit")}`;
+/**
+ * The call for papers, the submission form, and attendee registration all live
+ * on the Research page. `/conference` and `/colloquium` redirect there, so old
+ * links and emails keep working.
+ */
+export const RESEARCH_HREF = "/research";
+export const SUBMIT_HREF = "/research#submit";
+export const LOGIN_TO_SUBMIT_HREF = `/login?callbackUrl=${encodeURIComponent(SUBMIT_HREF)}`;
 export const REGISTER_HREF = "/login";
 
 export function submitHrefFor(signedIn: boolean) {
   return signedIn ? SUBMIT_HREF : LOGIN_TO_SUBMIT_HREF;
+}
+
+/** Registering for the conference is the same desk as submitting. */
+export function registerHrefFor(signedIn: boolean) {
+  return submitHrefFor(signedIn);
 }
 
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
