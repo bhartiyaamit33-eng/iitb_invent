@@ -17,6 +17,7 @@ export function ApplicationPaymentPanel({
   paidAt,
   opReqId,
   opTransId,
+  opProvId,
 }: {
   id: string;
   paymentStatus: ApplicationPaymentStatus;
@@ -26,6 +27,7 @@ export function ApplicationPaymentPanel({
   paidAt?: string | null;
   opReqId?: string | null;
   opTransId?: string | null;
+  opProvId?: string | null;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -78,6 +80,9 @@ export function ApplicationPaymentPanel({
       ) : null}
       {opTransId ? (
         <p className="mt-1 text-xs text-mute">Online Pay transId: {opTransId}</p>
+      ) : null}
+      {opProvId ? (
+        <p className="mt-1 text-xs text-mute">Online Pay mode / PSP: {opProvId}</p>
       ) : null}
       {paidAt ? (
         <p className="mt-1 text-xs text-mute">Recorded {paidAt}</p>

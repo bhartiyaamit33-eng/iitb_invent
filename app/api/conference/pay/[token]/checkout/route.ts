@@ -53,7 +53,7 @@ function onlinePayHandoffHtml(opts: {
     ? `<p>IIT Bombay TEST Online Pay only loads on the IITB network. Do not paste the
         gateway URL into the address bar — OP rejects that with
         <strong>Requesting page referer not received</strong>.</p>
-       <p>This page will open the gateway so the Referer is INVENT.
+       <p>This page will open the gateway so the Referer is IITB INV.ENT.
        Paying as user id <code>${userId}</code>.</p>`
     : `<p>Opening IIT Bombay Online Pay…</p>`;
 

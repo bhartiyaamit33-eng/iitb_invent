@@ -196,6 +196,7 @@ export default async function AdminApplicationDetailPage({
           paidAt={application.paidAt ? istDate(application.paidAt) : null}
           opReqId={application.opReqId}
           opTransId={application.opTransId}
+          opProvId={application.opProvId}
         />
       </div>
 
