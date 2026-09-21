@@ -6,7 +6,7 @@ export const SITE_NAV = [
   { href: "/speakers", label: "Speakers", testId: "nav-speakers" },
   { href: "/research", label: "Research", testId: "nav-research" },
   { href: "/workshops", label: "Workshop", testId: "nav-workshop" },
-  { href: "/partners", label: "Partners", testId: "nav-partners" },
+  { href: "/partners", label: "Sponsors", testId: "nav-partners" },
   { href: "/accommodation", label: "Accommodation", testId: "nav-accommodation" },
   { href: "/contact", label: "Contact", testId: "nav-contact" },
 ] as const;
@@ -16,10 +16,18 @@ export const FOOTER_NAV = [
   { href: "/programme", label: "Programme" },
   { href: "/speakers", label: "Speakers" },
   { href: "/research", label: "Research" },
-  { href: "/partners", label: "Partners" },
+  { href: "/partners", label: "Sponsors" },
   { href: "/travel", label: "Venue" },
   { href: "/contact", label: "Contact" },
 ] as const;
+
+export function publicNav(showSponsors: boolean) {
+  return SITE_NAV.filter((item) => item.href !== "/partners" || showSponsors);
+}
+
+export function publicFooterNav(showSponsors: boolean) {
+  return FOOTER_NAV.filter((item) => item.href !== "/partners" || showSponsors);
+}
 
 export const FOOTER_META_NAV = [
   { href: "/conference", label: "Call for papers" },

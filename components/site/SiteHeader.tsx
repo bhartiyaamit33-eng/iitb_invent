@@ -4,15 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import {
-  SITE_NAV,
+  publicNav,
   accountHrefFor,
   registerHrefFor,
 } from "@/lib/site";
 
 export function SiteHeader({
   signedInName,
+  showSponsors = false,
 }: {
   signedInName?: string | null;
+  showSponsors?: boolean;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -22,6 +24,7 @@ export function SiteHeader({
   const registerLabel = signedIn ? "Dashboard" : "Register";
   const accountHref = accountHrefFor(signedIn);
   const accountLabel = signedInName ?? "Login";
+  const nav = publicNav(showSponsors);
 
   useEffect(() => {
     setOpen(false);
@@ -48,7 +51,7 @@ export function SiteHeader({
           aria-label="Primary"
           data-testid="nav"
         >
-          {SITE_NAV.map((item) => (
+          {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -96,7 +99,7 @@ export function SiteHeader({
         aria-label="Primary"
         hidden={!open}
       >
-        {SITE_NAV.map((item) => (
+        {nav.map((item) => (
           <Link
             key={item.href}
             href={item.href}

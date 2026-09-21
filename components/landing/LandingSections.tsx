@@ -19,12 +19,10 @@ import { NameLanes } from "./NameLanes";
 
 export function LandingSections({
   signedInName,
-  sponsors,
-  partners,
+  orgs,
 }: {
   signedInName: string | null;
-  sponsors: PublicOrg[];
-  partners: PublicOrg[];
+  orgs: PublicOrg[];
 }) {
   const registerHref = registerHrefFor(Boolean(signedInName));
 
@@ -150,30 +148,12 @@ export function LandingSections({
         </div>
       </section>
 
-      {sponsors.length > 0 || partners.length > 0 ? (
-        <section className="site-section is-rule" id="partners" data-testid="landing-partners">
+      {orgs.length > 0 ? (
+        <section className="sponsor-band" id="sponsors" data-testid="landing-sponsors">
           <div className="site-shell">
-            <Reveal>
-              <p className="site-kicker">Together</p>
-              <h2>
-                Partners
-                <br />
-                and sponsors.
-              </h2>
-              <p className="lead">
-                Hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay.
-                Confirmed names and logos appear here as they are added.
-              </p>
-            </Reveal>
+            <h2 data-testid="sponsors-heading">Sponsors</h2>
           </div>
-          <NameLanes sponsors={sponsors} partners={partners} />
-          <div className="site-shell">
-            <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-              <Link className="site-btn site-btn-ghost" href="/partners">
-                Partners &amp; sponsors →
-              </Link>
-            </div>
-          </div>
+          <NameLanes orgs={orgs} />
         </section>
       ) : null}
 

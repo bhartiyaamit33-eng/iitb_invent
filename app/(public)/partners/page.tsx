@@ -1,8 +1,9 @@
 import { JsonLd } from "@/components/JsonLd";
 import { PublicChrome } from "@/components/PublicChrome";
-import { PageHero } from "@/components/site/PageHero";
-import { getPublishedOrgs, type PublicOrg } from "@/lib/orgs-public";
+import { NameLanes } from "@/components/landing/NameLanes";
+import { getPublishedOrgs } from "@/lib/orgs-public";
 import {
+  HOME_TITLE,
   breadcrumbJsonLd,
   graphJsonLd,
   organizationJsonLd,
@@ -11,88 +12,50 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export const metadata = pageMetadata({
-  title: "Partners & Sponsors",
-  description:
-    "IITB INV.ENT 2027 is hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay. Sponsors and further institutional partners are named here when they are confirmed.",
-  path: "/partners",
-});
-
-function OrgList({ items }: { items: readonly PublicOrg[] }) {
-  if (items.length === 0) return null;
-  return (
-    <ul className="org-list">
-      {items.map((org) => (
-        <li className="org-card" key={org.id} data-testid={`org-${slug(org.name)}`}>
-          {org.websiteUrl ? (
-            <a href={org.websiteUrl} target="_blank" rel="noopener noreferrer">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="org-logo" src={org.logoUrl} alt="" />
-              <span>{org.name}</span>
-            </a>
-          ) : (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="org-logo" src={org.logoUrl} alt="" />
-              <span>{org.name}</span>
-            </>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function slug(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+export async function generateMetadata() {
+  const { sponsors, partners } = await getPublishedOrgs();
+  const has = sponsors.length + partners.length > 0;
+  return pageMetadata({
+    title: has ? "Sponsors" : HOME_TITLE,
+    description: has
+      ? "Sponsors of IITB INV.ENT 2027 at IIT Bombay."
+      : "IITB INV.ENT is an entrepreneurship research and practice conference at IIT Bombay.",
+    path: "/partners",
+    absoluteTitle: !has,
+  });
 }
 
 export default async function PartnersPage() {
   const { sponsors, partners } = await getPublishedOrgs();
-  const hasSponsors = sponsors.length > 0;
-  const hasPartners = partners.length > 0;
-  const hasAny = hasSponsors || hasPartners;
+  const orgs = [...sponsors, ...partners];
 
   return (
-    <PublicChrome crumbs={[{ href: "/partners", label: "Partners & Sponsors" }]}>
+    <PublicChrome
+      crumbs={
+        orgs.length > 0 ? [{ href: "/partners", label: "Sponsors" }] : undefined
+      }
+    >
       <JsonLd
         data={graphJsonLd(
           organizationJsonLd(),
-          breadcrumbJsonLd([
-            { name: "Home", path: "/" },
-            { name: "Partners & Sponsors", path: "/partners" },
-          ]),
+          breadcrumbJsonLd(
+            orgs.length > 0
+              ? [
+                  { name: "Home", path: "/" },
+                  { name: "Sponsors", path: "/partners" },
+                ]
+              : [{ name: "Home", path: "/" }],
+          ),
         )}
       />
       <main id="main">
-        <PageHero
-          kicker="Together"
-          title="Partners & Sponsors"
-          testId="partners-heading"
-          lede="Hosted by the Desai Sethi School of Entrepreneurship at IIT Bombay. Confirmed companies and institutions appear here with their logos — nothing is listed while an agreement is still unsigned."
-        />
-        {hasAny ? (
-          <div className="site-shell">
-            <div
-              className={hasSponsors && hasPartners ? "org-split" : "org-split is-single"}
-              data-testid="partners-split"
-            >
-              {hasSponsors ? (
-                <section id="sponsors" aria-labelledby="sponsors-heading">
-                  <p className="site-kicker is-blue">Sponsors</p>
-                  <h2 id="sponsors-heading">Companies</h2>
-                  <OrgList items={sponsors} />
-                </section>
-              ) : null}
-              {hasPartners ? (
-                <section id="institutions" aria-labelledby="institutions-heading">
-                  <p className="site-kicker">Partners</p>
-                  <h2 id="institutions-heading">Institutions</h2>
-                  <OrgList items={partners} />
-                </section>
-              ) : null}
+        {orgs.length > 0 ? (
+          <section className="sponsor-band" data-testid="partners-split">
+            <div className="site-shell">
+              <h1 data-testid="partners-heading">Sponsors</h1>
             </div>
-          </div>
+            <NameLanes orgs={orgs} />
+          </section>
         ) : null}
       </main>
     </PublicChrome>

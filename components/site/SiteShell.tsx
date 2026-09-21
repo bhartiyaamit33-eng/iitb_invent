@@ -1,11 +1,12 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { publicFontClass } from "@/app/landing-preview-fonts";
+import { getPublishedOrgs } from "@/lib/orgs-public";
 import { SiteFooter } from "./SiteFooter";
 import { SiteHeader } from "./SiteHeader";
 import { SiteTheme } from "./SiteTheme";
 
-export function SiteShell({
+export async function SiteShell({
   children,
   signedInName,
   crumbs,
@@ -14,13 +15,16 @@ export function SiteShell({
   signedInName?: string | null;
   crumbs?: { href: string; label: string }[];
 }) {
+  const { sponsors, partners } = await getPublishedOrgs();
+  const showSponsors = sponsors.length + partners.length > 0;
+
   return (
     <div className={`site ${publicFontClass}`}>
       <SiteTheme />
       <a href="#main" className="site-skip">
         Skip to content
       </a>
-      <SiteHeader signedInName={signedInName} />
+      <SiteHeader signedInName={signedInName} showSponsors={showSponsors} />
       {crumbs && crumbs.length > 0 ? (
         <nav aria-label="Breadcrumb" className="site-shell site-crumbs">
           <ol>
@@ -44,7 +48,7 @@ export function SiteShell({
         </nav>
       ) : null}
       {children}
-      <SiteFooter />
+      <SiteFooter showSponsors={showSponsors} />
     </div>
   );
 }

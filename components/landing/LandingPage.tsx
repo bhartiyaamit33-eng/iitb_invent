@@ -27,17 +27,19 @@ export function LandingPage({
         Skip to content
       </a>
       {live ? <LiveStrip live={live} /> : null}
-      <SiteHeader signedInName={signedInName} />
+      <SiteHeader
+        signedInName={signedInName}
+        showSponsors={sponsors.length + partners.length > 0}
+      />
       <main id="main">
         <LandingHero signedInName={signedInName} />
         <EventLanes />
         <LandingSections
           signedInName={signedInName}
-          sponsors={sponsors}
-          partners={partners}
+          orgs={[...sponsors, ...partners]}
         />
       </main>
-      <SiteFooter />
+      <SiteFooter showSponsors={sponsors.length + partners.length > 0} />
     </div>
   );
 }

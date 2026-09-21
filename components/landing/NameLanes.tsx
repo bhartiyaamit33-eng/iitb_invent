@@ -8,6 +8,19 @@ function pad(items: readonly PublicOrg[], min = 8): PublicOrg[] {
   return out;
 }
 
+function Logo({ item }: { item: PublicOrg }) {
+  const image = (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img className="name-lane-logo" src={item.logoUrl} alt={item.name} />
+  );
+  if (!item.websiteUrl) return image;
+  return (
+    <a href={item.websiteUrl} target="_blank" rel="noopener noreferrer">
+      {image}
+    </a>
+  );
+}
+
 function LaneSet({
   items,
   inert,
@@ -19,9 +32,7 @@ function LaneSet({
     <ul className="name-lane-set" aria-hidden={inert || undefined}>
       {items.map((item, i) => (
         <li key={`${inert ? "dup" : "src"}-${item.id}-${i}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="name-lane-logo" src={item.logoUrl} alt="" />
-          <span>{item.name}</span>
+          <Logo item={item} />
         </li>
       ))}
     </ul>
@@ -31,17 +42,13 @@ function LaneSet({
 function Lane({
   items,
   reverse,
-  label,
 }: {
   items: readonly PublicOrg[];
   reverse?: boolean;
-  label: string;
 }) {
-  if (items.length === 0) return null;
   const padded = pad(items);
   return (
     <div className={cx("name-lane", reverse && "is-reverse")}>
-      <p className="sr-only">{label}</p>
       <div className="name-lane-track">
         <LaneSet items={padded} />
         <LaneSet items={padded} inert />
@@ -50,18 +57,12 @@ function Lane({
   );
 }
 
-export function NameLanes({
-  sponsors,
-  partners,
-}: {
-  sponsors: readonly PublicOrg[];
-  partners: readonly PublicOrg[];
-}) {
-  if (sponsors.length === 0 && partners.length === 0) return null;
+export function NameLanes({ orgs }: { orgs: readonly PublicOrg[] }) {
+  if (orgs.length === 0) return null;
   return (
-    <div className="name-lanes" data-testid="partner-lanes">
-      <Lane items={sponsors} label="Sponsors" />
-      <Lane items={partners} reverse label="Partners" />
+    <div className="name-lanes" data-testid="sponsor-lanes" aria-label="Sponsors">
+      <Lane items={orgs} />
+      <Lane items={orgs} reverse />
     </div>
   );
 }

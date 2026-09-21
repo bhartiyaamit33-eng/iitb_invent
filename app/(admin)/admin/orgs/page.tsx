@@ -26,8 +26,8 @@ export default async function AdminOrgsPage() {
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
         Add a name and a logo. Published entries with both appear as a
-        crossing ticker on the landing page and on Partners &amp; Sponsors.
-        Until then those sections stay hidden.
+        logo carousel under “Sponsors” on the landing page and on /partners.
+        Until then that heading is not shown anywhere on the public site.
         {!s3Ready ? (
           <span className="block text-amber-800">
             Logo upload needs S3_BUCKET in the server env. You can still paste a

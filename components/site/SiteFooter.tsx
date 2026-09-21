@@ -2,10 +2,15 @@ import Link from "next/link";
 import {
   CONTACT_EMAIL,
   FOOTER_META_NAV,
-  FOOTER_NAV,
+  publicFooterNav,
 } from "@/lib/site";
 
-export function SiteFooter() {
+export function SiteFooter({
+  showSponsors = false,
+}: {
+  showSponsors?: boolean;
+}) {
+  const nav = publicFooterNav(showSponsors);
   return (
     <footer className="site-footer">
       <div className="site-shell site-footer-grid">
@@ -25,7 +30,7 @@ export function SiteFooter() {
         <nav aria-label="Footer">
           <p className="site-kicker">Navigate</p>
           <ul>
-            {FOOTER_NAV.map((item) => (
+            {nav.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>{item.label}</Link>
               </li>
