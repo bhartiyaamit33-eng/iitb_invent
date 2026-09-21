@@ -73,7 +73,7 @@ export default function AboutPage() {
         <p className="mt-10 text-[17px] leading-7 text-ink-soft">
           See the{" "}
           <Link href="/faq">FAQ</Link>, the{" "}
-          <Link href="/conference">call for papers</Link>, or the{" "}
+          <Link href="/research">call for papers</Link>, or the{" "}
           <Link href="/programme">2027 programme</Link>. School site:{" "}
           <a
             href="https://www.dsse.iitb.ac.in/"

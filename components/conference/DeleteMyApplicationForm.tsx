@@ -1,5 +1,6 @@
-import { deleteMyApplicationAction } from "@/app/(public)/conference/actions";
+import { deleteMyApplicationAction } from "@/app/(public)/research/actions";
 
+/** Dashboard-styled variant. The Research page has its own editorial version. */
 export function DeleteMyApplicationForm({
   id,
   name,

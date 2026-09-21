@@ -292,6 +292,6 @@ export async function processConferenceApplication(
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard");
-  revalidatePath("/conference");
+  revalidatePath("/research");
   return { ok: true, paymentToken: saved.paymentToken };
 }

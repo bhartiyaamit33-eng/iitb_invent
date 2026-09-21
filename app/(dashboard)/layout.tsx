@@ -36,7 +36,7 @@ export default async function DashboardLayout({
             <Link href="/dashboard/profile" className="text-ink-soft hover:text-teal-deep">
               Profile
             </Link>
-            <Link href="/conference" className="text-ink-soft hover:text-teal-deep">
+            <Link href="/research" className="text-ink-soft hover:text-teal-deep">
               Conference
             </Link>
             <Link href="/programme" className="text-ink-soft hover:text-teal-deep">

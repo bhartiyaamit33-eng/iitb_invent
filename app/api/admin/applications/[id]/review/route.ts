@@ -47,7 +47,7 @@ export async function POST(
     revalidatePath("/admin/applications");
     revalidatePath(`/admin/applications/${id}`);
     revalidatePath("/dashboard");
-    revalidatePath("/conference");
+    revalidatePath("/research");
     return NextResponse.json({ ok: true, ...result });
   } catch (err) {
     console.error("[application review]", err);

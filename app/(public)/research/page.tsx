@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
+import { SiteShell } from "@/components/site/SiteShell";
 import { getCurrentUser } from "@/lib/auth/session";
 import {
   CONFERENCE_TOKEN_COOKIE,
@@ -9,6 +10,7 @@ import {
   findMyConferenceApplication,
 } from "@/lib/conference-access";
 import { conferencePayPath } from "@/lib/conference-server";
+import { KEY_DATES, markTimeline } from "@/lib/landing";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -16,31 +18,29 @@ import {
   organizationJsonLd,
   pageMetadata,
 } from "@/lib/seo";
-import { ConferenceCall } from "./ConferenceCall";
+import { ResearchCall } from "./ResearchCall";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 export const revalidate = 0;
 
 export const metadata: Metadata = pageMetadata({
-  title: "Call for Papers · Entrepreneurship Research and Venture Practice Conference",
+  title: "Research · Call for Papers",
   description:
-    "IITB INV.ENT is an entrepreneurship research and practice conference at IIT Bombay, 30-31 January 2027. Abstract deadline 15 October 2026.",
-  path: "/conference",
+    "Research papers, poster presentations, and pre-conference workshops at IITB INV.ENT, IIT Bombay, 30-31 January 2027. Abstract deadline 15 October 2026. Top submissions are forwarded to partner journals.",
+  path: "/research",
 });
 
-export default async function ConferencePage({
+export default async function ResearchPage({
   searchParams,
 }: {
   searchParams: Promise<{ deleted?: string; error?: string }>;
 }) {
   const { deleted, error } = await searchParams;
   const user = await getCurrentUser();
-  const cookieToken =
-    (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
-  let application: Awaited<
-    ReturnType<typeof findMyConferenceApplication>
-  > = null;
+  const cookieToken = (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
+
+  let application: Awaited<ReturnType<typeof findMyConferenceApplication>> = null;
   try {
     application = await findMyConferenceApplication({
       userId: user?.id,
@@ -48,7 +48,7 @@ export default async function ConferencePage({
       cookieToken,
     });
   } catch (err) {
-    console.error("[conference] lookup", err);
+    console.error("[research] lookup", err);
   }
 
   if (application && applicationFeeDue(application)) {
@@ -56,23 +56,22 @@ export default async function ConferencePage({
   }
 
   return (
-    <>
+    <SiteShell crumbs={[{ href: "/research", label: "Research" }]}>
       <JsonLd
         data={graphJsonLd(
           organizationJsonLd(),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "Call for Papers", path: "/conference" },
+            { name: "Research", path: "/research" },
           ]),
           {
             "@type": "Event",
             name: "IITB INV.ENT Entrepreneurship Research and Venture Practice Conference",
             description:
               "A conference where people meet, network, attend sessions, workshops, and events, get exposure to entrepreneurship research, and hear talks on entrepreneurship in practice.",
-            url: absoluteUrl("/conference"),
+            url: absoluteUrl("/research"),
             eventStatus: "https://schema.org/EventScheduled",
-            eventAttendanceMode:
-              "https://schema.org/OfflineEventAttendanceMode",
+            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
             startDate: "2027-01-30",
             endDate: "2027-01-31",
             location: {
@@ -89,7 +88,7 @@ export default async function ConferencePage({
           },
         )}
       />
-      <ConferenceCall
+      <ResearchCall
         application={
           application
             ? {
@@ -110,7 +109,8 @@ export default async function ConferencePage({
         signedIn={Boolean(user)}
         deleted={Boolean(deleted)}
         error={error}
+        timeline={markTimeline(KEY_DATES)}
       />
-    </>
+    </SiteShell>
   );
 }

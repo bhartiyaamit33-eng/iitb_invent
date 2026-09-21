@@ -5,20 +5,21 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { deleteConferenceApplication } from "@/lib/conference-delete";
 import { prisma } from "@/lib/db";
+import { LOGIN_TO_SUBMIT_HREF } from "@/lib/landing";
 
 export async function deleteMyApplicationAction(formData: FormData) {
   const user = await getCurrentUser();
   if (!user) {
-    redirect(`/login?callbackUrl=${encodeURIComponent("/conference#submit")}`);
+    redirect(LOGIN_TO_SUBMIT_HREF);
   }
 
   const applicationId = String(formData.get("applicationId") ?? "");
   const confirm = String(formData.get("confirm") ?? "");
   if (!applicationId) {
-    redirect("/conference?error=missing#submit");
+    redirect("/research?error=missing#submit");
   }
   if (confirm !== "DELETE") {
-    redirect("/conference?error=confirm#submit");
+    redirect("/research?error=confirm#submit");
   }
 
   const email = user.email.trim().toLowerCase();
@@ -31,7 +32,7 @@ export async function deleteMyApplicationAction(formData: FormData) {
     select: { id: true },
   });
   if (!application) {
-    redirect("/conference?error=not_found#submit");
+    redirect("/research?error=not_found#submit");
   }
 
   const result = await deleteConferenceApplication({
@@ -39,12 +40,12 @@ export async function deleteMyApplicationAction(formData: FormData) {
     id: application.id,
   });
   if (!result.ok) {
-    redirect(`/conference?error=${encodeURIComponent(result.error)}#submit`);
+    redirect(`/research?error=${encodeURIComponent(result.error)}#submit`);
   }
 
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard");
-  revalidatePath("/conference");
-  redirect("/conference?deleted=1#submit");
+  revalidatePath("/research");
+  redirect("/research?deleted=1#submit");
 }

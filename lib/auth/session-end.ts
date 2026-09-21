@@ -15,7 +15,7 @@ export async function expireConferenceGuestCookie() {
 export async function endBrowserSession(redirectTo = "/") {
   await expireConferenceGuestCookie();
   revalidatePath("/", "layout");
-  revalidatePath("/conference");
+  revalidatePath("/research");
   revalidatePath("/conference/thanks");
   await signOut({ redirectTo });
 }

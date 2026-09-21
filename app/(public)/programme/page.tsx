@@ -87,7 +87,7 @@ export default async function ProgrammePage() {
           Dashboard
         </Link>
         {" · "}
-        <Link href="/conference" className="underline-offset-2 hover:underline">
+        <Link href="/research" className="underline-offset-2 hover:underline">
           Call for papers
         </Link>
         {live ? (

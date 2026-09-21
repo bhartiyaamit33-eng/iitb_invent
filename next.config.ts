@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/conference",
+        source: "/research",
         headers: [
           {
             key: "Cache-Control",
@@ -42,6 +42,12 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // The call for papers now lives on the Research tab. /conference keeps
+      // working because registrations are already open against those links —
+      // only the landing page of the old route moves. /conference/pay/* and
+      // /conference/thanks are untouched, so live payment links still resolve.
+      { source: "/conference", destination: "/research", permanent: false },
+      { source: "/colloquium", destination: "/research", permanent: true },
       {
         source: "/colloquium/:path*",
         destination: "/conference/:path*",
