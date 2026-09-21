@@ -1569,6 +1569,90 @@ html[data-site] body {
   margin-bottom: 0;
 }
 
+/* Auth (login / signup) */
+
+.site-auth {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 56px 20px;
+}
+
+.site-auth-card {
+  width: min(460px, 100%);
+}
+
+.site-auth-card h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  line-height: 1.05;
+  color: var(--navy);
+}
+
+.site-auth-mark {
+  display: inline-flex;
+  margin: 0 0 30px;
+}
+
+.site-auth-oauth {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.site-auth-oauth button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 18px;
+  border: 1px solid var(--rule-strong);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.site-auth-oauth button:hover {
+  border-color: var(--blue);
+}
+
+.site-auth-oauth button.is-linkedin {
+  background: #0a66c2;
+  border-color: #0a66c2;
+  color: #fff;
+}
+
+.site-auth-or {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.site-auth-form {
+  margin-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+
+.site-auth-foot {
+  margin: 28px 0 0;
+  font-size: 14px;
+  color: var(--mute);
+}
+
+.site-auth-foot a {
+  color: var(--blue);
+}
+
 /* Campus photo lanes — opposite directions, just below the hero */
 
 .site .event-lanes {
