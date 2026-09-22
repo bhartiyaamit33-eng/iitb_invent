@@ -96,46 +96,55 @@ ssh -i ~/.ssh/first_time.pem ec2-user@43.205.7.101
 | App | Node 22 · Next standalone · systemd `invent` on `:3000` |
 | DB | Docker Postgres 16 · `127.0.0.1:5433` only |
 | Proxy | nginx `:80` → `127.0.0.1:3000` |
-| Code | The directory the `invent` systemd unit runs from. It is **not** `/opt/invent` on the current box. |
+| Code | `/opt/invent` on the live instance `ip-172-31-11-65` (`ec2-user`). Confirmed by `systemctl show invent -p WorkingDirectory`. |
 
-Merging a pull request on GitHub does not rebuild or restart the process on EC2. Cloudflare is in front of nginx, and the HTML responses are `private, no-store`, so a stale site is the old Node process, not a cached page.
+The unit is `/etc/systemd/system/invent.service`. It runs `npx next start -H 127.0.0.1 -p 3000` with `WorkingDirectory=/opt/invent`. Postgres is the `invent-postgres` container on `127.0.0.1:5433`.
 
-Secrets live in that checkout's `.env` (gitignored). Leave `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` as `https://iitbinvent.com`. Do not set `SERVER_ACTION_ORIGINS` in production.
+Merging a pull request on GitHub does not rebuild this process. Cloudflare is in front of nginx, and the HTML responses are `private, no-store`, so a stale site means this Node process is still the old build.
 
-Find the checkout while logged in on the box (the shell there is `root`, not `ec2-user`):
+Another instance, `ip-172-31-35-247`, has no `/opt/invent`. Deploy only on `ip-172-31-11-65`.
 
-```bash
-systemctl show invent -p WorkingDirectory -p FragmentPath
-# if WorkingDirectory is empty, the Node process cwd is the checkout:
-for p in $(pgrep -f 'node|next'); do echo "$p  $(readlink -f /proc/$p/cwd)"; done
-docker ps --format '{{.Names}}\t{{.Image}}\t{{.Ports}}'
-```
+Secrets live in `/opt/invent/.env` (gitignored). Leave `AUTH_URL` and `NEXT_PUBLIC_SITE_URL` as `https://iitbinvent.com`. Do not set `SERVER_ACTION_ORIGINS` in production.
 
 ### Redeploy (after the redesign is on `main`)
 
-`cd` into the directory from the command above, then run the steps below. They dump the database first, apply only additive migrations, and rebuild the standalone server. Do **not** run `npm run db:seed`.
+Run this **from `/opt/invent`**. The same commands in `/home/ec2-user` fail (`fatal: not a git repository`, `npm ci` looking for `/home/ec2-user/package.json`) and, if `systemctl stop` already ran, `systemctl start` brings the previous build back.
+
+The GitHub repo is private. `git pull` over HTTPS asks for a password, and GitHub rejects account passwords (`Authentication failed`). The deploy script does not pull. If the pull failed, do not run the script: it rebuilds the commit already in the directory. That is what the 14:39 UTC rebuild did — the route list still contained `/conference` and had no `/research`, and Prisma reported no pending migrations. The database was left unchanged. Do **not** run `npm run db:seed`.
+
+A redesign build lists `ƒ /research` and applies migration `20260922112649_edition_speakers_published`.
+
+Fetch before stopping the service. Keep the server's local commit (main was 1 commit ahead of the last fetched `origin/main`); `git merge` keeps it. `docker-compose.override.yml` is untracked and stays put.
 
 ```bash
-mkdir -p ~/invent-backups
-docker exec invent-postgres pg_dump -U invent -d invent -Fc \
-  > ~/invent-backups/invent-$(date -u +%Y%m%dT%H%M%SZ).dump
-ls -lh ~/invent-backups/invent-*.dump   # must be non-empty before continuing
-
-sudo systemctl stop invent
-git pull origin main
-npm ci
-npm run db:deploy
-rm -rf .next
-npm run build
-sudo systemctl start invent
-sudo systemctl --no-pager --full status invent
+cd /opt/invent
+git log --oneline origin/main..HEAD
+ssh_out=$(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -T git@github.com 2>&1 || true)
+echo "$ssh_out"
+if echo "$ssh_out" | grep -q "successfully authenticated"; then
+  git remote set-url origin git@github.com:bhartiyaamit33-eng/iitb_invent.git
+  git fetch origin main
+  git log --oneline -5 origin/main
+  git merge origin/main && bash scripts/deploy-ec2-safe.sh
+else
+  echo "No GitHub SSH key on this box. Create a classic token (repo scope) at"
+  echo "https://github.com/settings/tokens/new then run the read -rs block below."
+  echo "Do not paste the token into chat."
+fi
 ```
 
-If the Postgres container name is not `invent-postgres`, use the name from `docker ps` in the `docker exec` line.
+```bash
+cd /opt/invent
+read -rs GH_TOKEN; echo
+git -c credential.helper= fetch "https://x-access-token:${GH_TOKEN}@github.com/bhartiyaamit33-eng/iitb_invent.git" "+main:refs/remotes/origin/main"
+unset GH_TOKEN
+git log --oneline -5 origin/main
+git merge origin/main && bash scripts/deploy-ec2-safe.sh
+```
 
-`scripts/deploy-ec2-safe.sh` does the same sequence from whatever directory the script lives in (`APP_DIR` overrides it; `PG_CONTAINER` overrides the container name). The copy of that script that used to start with `cd /opt/invent` fails on this box — use the steps above, or pull a `main` that contains the path-independent script and then run `bash scripts/deploy-ec2-safe.sh`.
+The script dumps Postgres to `~/invent-backups` first and refuses to continue if that dump is missing or empty. It then stops `invent`, runs `npm ci`, `npm run db:deploy`, and `npm run build`, and starts the unit again. `npm run db:deploy` refuses pending SQL containing `DELETE`, `TRUNCATE`, data `UPDATE`, or `DROP`. Never run `prisma db seed` in production.
 
-The script (and `npm run db:deploy`) refuse pending SQL containing `DELETE`, `TRUNCATE`, data `UPDATE`, or `DROP`. Never run `prisma db seed` in production; the seed also has a production and explicit-confirmation guard.
+`APP_DIR` overrides the checkout and `PG_CONTAINER` overrides the container name (default `invent-postgres`). On this box the defaults are already correct, including a script that begins with `cd /opt/invent`.
 
 Do **not** run `cp -r public .next/standalone/public` after build — that nests `public/public` and breaks `/assets/*`. Use `npm run prepare:standalone` (or the post-build step above).
 
@@ -157,7 +166,7 @@ a deploy is never the thing that loses data. Take an **on-demand** backup before
 anything else risky (a schema change, a bulk admin edit, an edition rollover):
 
 ```bash
-# On the server, in the invent checkout — reads DATABASE_URL from .env
+# On the server, in /opt/invent — reads DATABASE_URL from .env
 npm run db:backup                      # → backups/invent-<utc>.dump
 npm run db:backup -- --out /mnt/x.dump # explicit destination
 npm run db:backup -- --plain           # plain SQL instead of custom format
