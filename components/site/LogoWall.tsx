@@ -45,20 +45,28 @@ function Plate({ org }: { org: SiteOrg }) {
  * Sponsor and partner plates. A plate with a `logo` renders the artwork; one
  * without renders the name as a serif wordmark, so adding a logo later is a
  * one-line change in lib/site-content.ts and never leaves a hole in the grid.
+ *
+ * An empty roster renders a "coming soon" plate instead of collapsing, so a
+ * heading is never left hanging over blank space while MoUs are unsigned.
  */
 export function LogoWall({
   orgs,
   testId,
+  emptyLabel = "Coming soon",
 }: {
   orgs: SiteOrg[];
   testId?: string;
+  emptyLabel?: string;
 }) {
-  if (orgs.length === 0) return null;
   return (
     <div className="logo-wall" data-testid={testId}>
-      {orgs.map((org) => (
-        <Plate key={org.id} org={org} />
-      ))}
+      {orgs.length === 0 ? (
+        <p className="logo-plate is-empty" data-testid={`${testId ?? "logo-wall"}-empty`}>
+          <span className="logo-role">{emptyLabel}</span>
+        </p>
+      ) : (
+        orgs.map((org) => <Plate key={org.id} org={org} />)
+      )}
     </div>
   );
 }

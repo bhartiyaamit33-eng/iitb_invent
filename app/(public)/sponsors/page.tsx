@@ -24,7 +24,7 @@ import {
 export const metadata = pageMetadata({
   title: "Sponsors & partners",
   description:
-    "Sponsors and partners of IITB INV.ENT 2027 at IIT Bombay, including Grey Labs AI, Service Setu Academics, IIT Kanpur and IIT Kharagpur.",
+    "Sponsors and partners of IITB INV.ENT 2027 at IIT Bombay, hosted by the Desai Sethi School of Entrepreneurship. Academic partner: ServiceSetu Academics.",
   path: "/sponsors",
 });
 

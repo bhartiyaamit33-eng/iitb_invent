@@ -57,36 +57,21 @@ export type SiteOrg = {
 };
 
 /**
- * Logos drop in by adding `logo: "/assets/partners/<file>.png"`. Until then a
- * plate renders the name as a serif wordmark, so the band never shows a gap.
+ * Only list an organisation here once its MoU is signed. An empty list renders
+ * a "coming soon" plate rather than a gap, so nothing is announced early.
+ *
+ * Logos drop in by adding `logo: "/assets/partners/<file>.png"`; a plate with
+ * no logo falls back to the name set in serif.
  */
-export const SPONSORS: SiteOrg[] = [
-  {
-    id: "grey-labs-ai",
-    name: "Grey Labs AI",
-    role: "Sponsor",
-    tier: "sponsor",
-  },
-];
+export const SPONSORS: SiteOrg[] = [];
 
 export const PARTNERS: SiteOrg[] = [
   {
     id: "service-setu-academics",
-    name: "Service Setu Academics",
+    name: "ServiceSetu Academics",
     role: "Academic partner",
     tier: "partner",
-  },
-  {
-    id: "iit-kanpur",
-    name: "IIT Kanpur",
-    role: "Institutional partner",
-    tier: "partner",
-  },
-  {
-    id: "iit-kharagpur",
-    name: "IIT Kharagpur",
-    role: "Institutional partner",
-    tier: "partner",
+    logo: "/assets/partners/servicesetu-academics.png",
   },
 ];
 

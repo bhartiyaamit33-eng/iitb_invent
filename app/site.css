@@ -951,6 +951,43 @@ html[data-site] body {
   color: var(--mute);
 }
 
+.building-photo.is-wide {
+  margin-top: 44px;
+}
+
+/* Same figure on a navy section: the rule and caption have to invert. */
+.site-section.is-navy .building-photo {
+  border-color: rgba(247, 247, 242, 0.22);
+}
+
+.site-section.is-navy .building-photo figcaption {
+  color: rgba(247, 247, 242, 0.7);
+}
+
+.site-section.is-navy .building-photo img {
+  filter: saturate(0.9) contrast(1.04) brightness(0.92);
+}
+
+/* Support / queries block: team photo beside the inbox. */
+.support-split {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+.support-split .building-photo {
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .support-split {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
 /* Research / partners / speakers */
 
 .theme-list,
@@ -1267,11 +1304,24 @@ html[data-site] body {
   color: inherit;
 }
 
+/* Logos arrive wide or stacked; bound both axes and let the artwork decide. */
 .logo-plate img {
-  height: 46px;
+  height: auto;
   width: auto;
+  max-height: 78px;
   max-width: 100%;
   object-fit: contain;
+}
+
+.logo-plate.is-empty {
+  margin: 0;
+  align-items: flex-start;
+  justify-content: flex-end;
+  background: transparent;
+}
+
+.logo-plate.is-empty .logo-role {
+  color: var(--mute);
 }
 
 .logo-plate .logo-type {
