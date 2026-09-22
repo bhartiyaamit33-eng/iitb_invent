@@ -6,6 +6,12 @@ set -euo pipefail
 app_dir="${APP_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 cd "$app_dir"
 echo "Deploying from: $app_dir"
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Git revision: $(git rev-parse --short HEAD) — $(git log -1 --format=%s)"
+else
+  echo "This directory is not a git checkout. Refusing to deploy." >&2
+  exit 1
+fi
 
 pg_container="${PG_CONTAINER:-invent-postgres}"
 backup_dir="${BACKUP_DIR:-$HOME/invent-backups}"

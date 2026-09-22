@@ -110,13 +110,36 @@ Secrets live in `/opt/invent/.env` (gitignored). Leave `AUTH_URL` and `NEXT_PUBL
 
 Run this **from `/opt/invent`**. The same commands in `/home/ec2-user` fail (`fatal: not a git repository`, `npm ci` looking for `/home/ec2-user/package.json`) and, if `systemctl stop` already ran, `systemctl start` brings the previous build back.
 
-`git pull` happens before the service stops. Do **not** run `npm run db:seed`.
+The GitHub repo is private. `git pull` over HTTPS asks for a password, and GitHub rejects account passwords (`Authentication failed`). The deploy script does not pull. If the pull failed, do not run the script: it rebuilds the commit already in the directory. That is what the 14:39 UTC rebuild did — the route list still contained `/conference` and had no `/research`, and Prisma reported no pending migrations. The database was left unchanged. Do **not** run `npm run db:seed`.
+
+A redesign build lists `ƒ /research` and applies migration `20260922112649_edition_speakers_published`.
+
+Fetch before stopping the service. Keep the server's local commit (main was 1 commit ahead of the last fetched `origin/main`); `git merge` keeps it. `docker-compose.override.yml` is untracked and stays put.
 
 ```bash
 cd /opt/invent
-git status
-git pull origin main
-bash scripts/deploy-ec2-safe.sh
+git log --oneline origin/main..HEAD
+ssh_out=$(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -T git@github.com 2>&1 || true)
+echo "$ssh_out"
+if echo "$ssh_out" | grep -q "successfully authenticated"; then
+  git remote set-url origin git@github.com:bhartiyaamit33-eng/iitb_invent.git
+  git fetch origin main
+  git log --oneline -5 origin/main
+  git merge origin/main && bash scripts/deploy-ec2-safe.sh
+else
+  echo "No GitHub SSH key on this box. Create a classic token (repo scope) at"
+  echo "https://github.com/settings/tokens/new then run the read -rs block below."
+  echo "Do not paste the token into chat."
+fi
+```
+
+```bash
+cd /opt/invent
+read -rs GH_TOKEN; echo
+git -c credential.helper= fetch "https://x-access-token:${GH_TOKEN}@github.com/bhartiyaamit33-eng/iitb_invent.git" "+main:refs/remotes/origin/main"
+unset GH_TOKEN
+git log --oneline -5 origin/main
+git merge origin/main && bash scripts/deploy-ec2-safe.sh
 ```
 
 The script dumps Postgres to `~/invent-backups` first and refuses to continue if that dump is missing or empty. It then stops `invent`, runs `npm ci`, `npm run db:deploy`, and `npm run build`, and starts the unit again. `npm run db:deploy` refuses pending SQL containing `DELETE`, `TRUNCATE`, data `UPDATE`, or `DROP`. Never run `prisma db seed` in production.
