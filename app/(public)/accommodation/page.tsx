@@ -20,7 +20,7 @@ import {
 export const metadata = pageMetadata({
   title: "Accommodation",
   description:
-    "Where to stay for IITB INV.ENT 2027: shared rooms at the IIT Bombay guest house, campus options, and hotels in Powai. 30-31 January 2027.",
+    "Where to stay for IITB INV.ENT 2027: shared rooms at the IIT Bombay guest house, campus options, and partner rates at Anantha Hotels in Bhandup West. 30-31 January 2027.",
   path: "/accommodation",
 });
 
@@ -48,6 +48,14 @@ export default function AccommodationPage() {
         <div className="site-shell">
           <p className="site-kicker is-blue">Options</p>
           <h2 id="options-heading">Three ways to stay</h2>
+          <p className="lead">
+            Off campus, Anantha Hotels in Bhandup West is the partner hotel. Address,
+            contact and room rates are on the{" "}
+            <Link href="/travel#anantha" style={{ color: "var(--blue)" }}>
+              travel page
+            </Link>
+            .
+          </p>
           <table className="site-table" data-testid="accommodation-options">
             <thead>
               <tr>
