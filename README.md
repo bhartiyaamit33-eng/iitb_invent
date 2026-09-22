@@ -128,6 +128,46 @@ Do **not** run `cp -r public .next/standalone/public` after build — that nests
 
 ---
 
+## Backups
+
+`scripts/deploy-ec2-safe.sh` already dumps the database before every deploy, so
+a deploy is never the thing that loses data. Take an **on-demand** backup before
+anything else risky (a schema change, a bulk admin edit, an edition rollover):
+
+```bash
+# On the server, in /opt/invent — reads DATABASE_URL from .env
+npm run db:backup                      # → backups/invent-<utc>.dump
+npm run db:backup -- --out /mnt/x.dump # explicit destination
+npm run db:backup -- --plain           # plain SQL instead of custom format
+```
+
+It is read-only — `pg_dump` and nothing else — so it is safe while the site is
+serving. A failed dump is deleted rather than left as a 0-byte file that looks
+like a backup. `backups/` is gitignored; never commit a dump.
+
+If Postgres runs in the compose container and `pg_dump` is not on the host:
+
+```bash
+docker exec invent-postgres pg_dump -U invent -d invent -Fc > invent-$(date -u +%Y%m%dT%H%M%SZ).dump
+```
+
+**A backup you have not restored is not a backup.** Verify into a throwaway
+database, never over the live one:
+
+```bash
+createdb invent_restored
+pg_restore --dbname invent_restored --no-owner --no-privileges backups/invent-<utc>.dump
+psql --dbname invent_restored -c 'SELECT count(*) FROM "ColloquiumApplication";'
+dropdb invent_restored
+```
+
+Registration data can also be pulled as CSV from the admin UI at any time
+(`/admin/applications` → Export, `/admin/users` → Export). That is a useful
+belt-and-braces copy of the rows that matter most, but it is not a substitute
+for a full dump.
+
+---
+
 ## Admin access
 
 `ADMIN_EMAILS` (default **`admin@iitbinvent.com`**) bootstraps the first administrator. Admin and reviewer access is then managed from `/admin/users` and stored in the database.

@@ -2,6 +2,7 @@ import { EditionStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   setEditionCurrentAction,
+  setEditionSpeakersPublishedAction,
   setEditionStatusAction,
 } from "../actions";
 
@@ -33,6 +34,12 @@ export default async function AdminEditionsPage() {
         Set status to <strong>LIVE</strong> to enable Happening now /{" "}
         <code>/now</code> lobby screen. Flip current edition for the public site.
       </p>
+      <p className="mt-2 max-w-2xl text-sm text-ink-soft">
+        <strong>Speaker line-up</strong> controls whether speaker names appear on{" "}
+        <code>/speakers</code> and the programme. It is off until you publish, so a
+        line-up carried over from a previous edition is never shown as this year&apos;s.
+        Toggling it never edits or deletes a speaker.
+      </p>
 
       <div className="mt-8 space-y-4">
         {editions.map((e) => (
@@ -51,6 +58,14 @@ export default async function AdminEditionsPage() {
                 <p className="mt-2 text-xs text-mute">
                   {e._count.sessions} sessions · {e._count.speakers} speakers ·{" "}
                   {e._count.registrations} registrations · {e._count.pages} pages
+                </p>
+                <p className="mt-1 text-xs font-semibold text-mute">
+                  Speaker line-up:{" "}
+                  {e.speakersPublished ? (
+                    <span className="text-ent">published</span>
+                  ) : (
+                    <span className="text-amber-800">hidden (shows “coming soon”)</span>
+                  )}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -72,6 +87,20 @@ export default async function AdminEditionsPage() {
                     className="rounded-md border border-teal px-3 py-2 text-sm font-semibold text-teal-deep"
                   >
                     Set status
+                  </button>
+                </form>
+                <form action={setEditionSpeakersPublishedAction}>
+                  <input type="hidden" name="id" value={e.id} />
+                  <input
+                    type="hidden"
+                    name="speakersPublished"
+                    value={e.speakersPublished ? "false" : "true"}
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-md border border-line px-3 py-2 text-sm font-semibold text-ink-soft hover:border-teal"
+                  >
+                    {e.speakersPublished ? "Hide speakers" : "Publish speakers"}
                   </button>
                 </form>
                 {!e.isCurrent ? (

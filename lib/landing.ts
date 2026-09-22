@@ -32,36 +32,52 @@ export const TAGLINE = "Entrepreneurship Research and Venture Practice Conferenc
 export const TAGLINE_LEAD = "Entrepreneurship Research and Venture Practice";
 export const TAGLINE_REST = "Conference";
 
-export const SUBMIT_HREF = "/conference#submit";
-export const LOGIN_TO_SUBMIT_HREF = `/login?callbackUrl=${encodeURIComponent("/conference#submit")}`;
+/**
+ * The call for papers, the submission form, and attendee registration all live
+ * on the Research page. `/conference` and `/colloquium` redirect there, so old
+ * links and emails keep working.
+ */
+export const RESEARCH_HREF = "/research";
+export const SUBMIT_HREF = "/research#submit";
+export const LOGIN_TO_SUBMIT_HREF = `/login?callbackUrl=${encodeURIComponent(SUBMIT_HREF)}`;
 export const REGISTER_HREF = "/login";
 
 export function submitHrefFor(signedIn: boolean) {
   return signedIn ? SUBMIT_HREF : LOGIN_TO_SUBMIT_HREF;
 }
 
+/** Registering for the conference is the same desk as submitting. */
+export function registerHrefFor(signedIn: boolean) {
+  return submitHrefFor(signedIn);
+}
+
+/**
+ * The four milestones from the Call for Papers artwork, which is the source of
+ * truth for dates. One list, used by the landing page and the Research page, so
+ * the two can never drift apart.
+ */
 export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
-    id: "open",
-    kicker: "Submissions open",
-    date: "10 Sep 2026",
-    at: "2026-09-10",
-  },
-  {
-    id: "deadline",
-    kicker: "Submission deadline",
+    id: "abstract",
+    kicker: "Abstract submission deadline",
     date: "15 Oct 2026",
     at: "2026-10-15",
   },
   {
     id: "accept",
-    kicker: "Acceptance",
-    date: "31 Dec 2026",
-    at: "2026-12-31",
+    kicker: "Acceptance announcement",
+    date: "15 Nov 2026",
+    at: "2026-11-15",
+  },
+  {
+    id: "final",
+    kicker: "Final paper submissions",
+    date: "1 Jan 2027",
+    at: "2027-01-01",
   },
   {
     id: "conference",
-    kicker: "Conference",
+    kicker: "Conference and workshops",
     date: "30-31 Jan 2027",
     at: "2027-01-30",
   },

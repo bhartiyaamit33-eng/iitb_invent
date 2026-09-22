@@ -12,6 +12,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "node scripts/check-safe-migrations.mjs && prisma migrate deploy",
     "db:seed": "prisma db seed",
+    "db:backup": "node --env-file-if-exists=.env scripts/backup-db.mjs",
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "prepare:standalone": "node scripts/prepare-standalone.mjs",
@@ -40,8 +41,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@reticlehq/next": "^2.13.1",
-    "@reticlehq/react": "^2.13.1",
+    "@reticlehq/next": "^3.1.0",
+    "@reticlehq/react": "^3.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.20.1",
     "@types/qrcode": "^1.5.6",

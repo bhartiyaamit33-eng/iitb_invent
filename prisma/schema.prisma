@@ -219,6 +219,11 @@ model Edition {
   status    EditionStatus @default(DRAFT)
   isCurrent Boolean       @default(false)
 
+  /// Publish the speaker line-up. Off by default so an unconfirmed or
+  /// carried-over line-up is never shown: the public pages say "coming soon"
+  /// until organisers flip this, and the Speaker rows are untouched either way.
+  speakersPublished Boolean @default(false)
+
   registrationOpensAt  DateTime?
   registrationClosesAt DateTime?
 

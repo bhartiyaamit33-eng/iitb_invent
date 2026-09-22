@@ -1,5 +1,6 @@
-import { Prose } from "@/components/Prose";
-import { PublicChrome } from "@/components/PublicChrome";
+import { PageHero } from "@/components/site/PageHero";
+import { SiteProse } from "@/components/site/SiteProse";
+import { SiteShell } from "@/components/site/SiteShell";
 import { getPublishedPage } from "@/lib/pages";
 import { CONDUCT_FALLBACK } from "@/lib/seo-content";
 import { pageMetadata } from "@/lib/seo";
@@ -14,17 +15,13 @@ export const metadata = pageMetadata({
 export default async function CodeOfConductPage() {
   const cms = await getPublishedPage("code-of-conduct");
   return (
-    <PublicChrome
-      crumbs={[{ href: "/code-of-conduct", label: "Code of conduct" }]}
-    >
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-        <h1 className="font-display text-4xl tracking-wide text-teal-deep">
-          {cms?.title || "Code of conduct"}
-        </h1>
-        <div className="mt-8">
-          <Prose text={cms?.body?.trim() || CONDUCT_FALLBACK} />
+    <SiteShell crumbs={[{ href: "/code-of-conduct", label: "Code of conduct" }]}>
+      <PageHero kicker="Policy" title={cms?.title || "Code of conduct"} />
+      <section className="site-section is-tight">
+        <div className="site-shell">
+          <SiteProse text={cms?.body?.trim() || CONDUCT_FALLBACK} />
         </div>
-      </main>
-    </PublicChrome>
+      </section>
+    </SiteShell>
   );
 }

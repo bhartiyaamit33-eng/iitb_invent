@@ -32,3 +32,6 @@ invent-next-tmp/
 
 # Reticle: generated landing SDK bundle (rebuild with esbuild)
 .reticle/landing-sdk.js
+
+# Database backups (never commit real data)
+backups/

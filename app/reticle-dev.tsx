@@ -29,17 +29,47 @@ export function ReticleDev() {
         // No state library detected. If you add one, register it here — see node_modules/@reticlehq/server/docs/usage.md.
         registerCapabilities({
           testids: [
-            "conference-hero",
-            "conference-overview",
-            "cfp-submit-cta",
+            // Chrome, present on every public page.
+            "site-shell",
+            "site-header",
+            "site-footer",
+            "nav",
+            "nav-register",
+            "nav-account",
+            "nav-toggle",
+            "nav-mobile",
+            // Landing.
+            "hero",
+            "hero-register",
+            "landing-research",
+            "landing-research-cta",
+            "partner-journals",
+            "landing-sponsors",
+            "sponsor-wall",
+            "partner-wall",
+            "landing-stats",
+            "site-splash",
+            // Research: the call for papers and the submission desk.
+            "page-hero",
+            "research-tracks",
+            "research-journals",
+            "conference-fee-bands",
             "conference-submit",
+            "submit-login-gate",
+            "submit-login-cta",
             "conference-form",
             "submit-application",
-            "brand-mark",
-            "cfp-iitb",
-            "nav",
+            "conference-status-card",
+            // Auth.
+            "login-email",
+            "login-password",
+            "login-submit",
+            "signup-submit",
           ],
           signals: [],
+          // No client state library in this app: pages are server-rendered and
+          // read Prisma directly, so there is no store to register and
+          // reticle_state is empty by design rather than by omission.
           stores: [],
         });
       },

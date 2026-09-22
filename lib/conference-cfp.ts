@@ -1,58 +1,16 @@
-/** Final Call for Papers copy for /conference. Poster / Figma desktop wins where drafts disagree. */
+/**
+ * Call for Papers copy, shown on /research. The Call for Papers artwork wins
+ * where drafts disagree. Dates live in KEY_DATES (lib/landing.ts) so the
+ * landing page and this page cannot drift apart.
+ */
 
 export const CFP_OVERVIEW =
   "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice. Emerging scholars are invited to submit work for presentation. Conference dates: 30-31 January 2027.";
 
-export const CFP_META = [
-  { label: "Conference dates", value: "30-31 January 2027" },
-  { label: "Venue", value: "IIT Bombay, Mumbai" },
-  { label: "Abstract deadline", value: "15 October 2026" },
-] as const;
-
-export const CFP_TRACKS = [
-  { id: "paper", label: "Research Paper", icon: "/assets/cfp/icon-paper.svg" },
-  { id: "poster", label: "Poster Presentation", icon: "/assets/cfp/icon-poster.svg" },
-] as const;
-
 export const CFP_APPLICANTS = [
-  {
-    id: "phd",
-    label: "PhD Scholars",
-    icon: "/assets/cfp/icon-scholar.svg",
-  },
-  {
-    id: "postdoc",
-    label: "Postdoctoral Scholars",
-    icon: "/assets/cfp/icon-postdoc.svg",
-  },
-  {
-    id: "faculty",
-    label: "Early-Career Faculty / Professors",
-    icon: "/assets/cfp/icon-faculty.svg",
-  },
-] as const;
-
-export const CFP_TIMELINE = [
-  {
-    id: "abstract",
-    kicker: "Abstract submission deadline",
-    date: "15 Oct 2026",
-  },
-  {
-    id: "accept",
-    kicker: "Acceptance announcement",
-    date: "15 Nov 2026",
-  },
-  {
-    id: "final",
-    kicker: "Final paper submissions",
-    date: "1 Jan 2027",
-  },
-  {
-    id: "conference",
-    kicker: "Conference and workshops",
-    date: "30-31 Jan 2027",
-  },
+  { id: "phd", label: "PhD Scholars" },
+  { id: "postdoc", label: "Postdoctoral Scholars" },
+  { id: "faculty", label: "Early-Career Faculty / Professors" },
 ] as const;
 
 export const CFP_GUIDELINE_POINTS = [
@@ -94,6 +52,3 @@ export const CFP_SELECTION = [
     body: "Based on quality, relevance, originality, and potential contribution to the field.",
   },
 ] as const;
-
-export const CFP_STAY =
-  "Shared, limited accommodation is available at the IIT Bombay guest house, first-come first-served. Costs are borne by participants.";

@@ -114,6 +114,6 @@ export async function deleteApplicationAction(formData: FormData) {
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/reviews");
-  revalidatePath("/conference");
+  revalidatePath("/research");
   redirect("/admin/applications?deleted=1");
 }

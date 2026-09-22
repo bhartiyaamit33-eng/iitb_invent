@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export async function POST() {
   await expireConferenceGuestCookie();
   revalidatePath("/", "layout");
-  revalidatePath("/conference");
+  revalidatePath("/research");
   revalidatePath("/conference/thanks");
   await signOut({ redirect: false });
 

@@ -9,7 +9,10 @@ import { isAdminEmail } from "@/lib/auth/roles";
 import { attendeeHome } from "@/lib/auth/attendee";
 import { sendSignupThankYouForUser } from "@/lib/email/transactions";
 import { IconGoogle } from "@/components/icons";
+import { InventMark } from "@/components/site/InventMark";
+import { SiteTheme } from "@/components/site/SiteTheme";
 import { pageMetadata } from "@/lib/seo";
+import "@/app/site.css";
 
 export const metadata = pageMetadata({
   title: "Create an account",
@@ -113,97 +116,99 @@ export default async function SignupPage({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16">
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        Inv.ent · Create account
-      </p>
-      <h1 className="mt-3 font-display text-4xl tracking-wide text-teal-deep">
-        Sign up
-      </h1>
-      <p className="mt-3 text-ink-soft">
-        Name and email only. Profile details come after, never a gate.
-      </p>
-
-      {params.error === "exists" ? (
-        <p className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
-          That email is already registered.{" "}
-          <Link href="/login" className="underline">
-            Sign in
+    <div className="site">
+      <SiteTheme />
+      <main className="site-auth">
+        <div className="site-auth-card">
+          <Link href="/" className="site-auth-mark" aria-label="IITB INV.ENT home">
+            <InventMark style={{ fontSize: 34 }} />
           </Link>
-          .
-        </p>
-      ) : null}
-      {params.error === "invalid" ? (
-        <p className="mt-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
-          Use a name, valid email, and password of at least 8 characters.
-        </p>
-      ) : null}
-
-      <div className="mt-8 space-y-3">
-        {oauth.google ? (
-          <form action={googleAction}>
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center gap-2.5 rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm hover:border-teal"
-            >
-              <IconGoogle className="h-5 w-5 shrink-0" />
-              Continue with Google
-            </button>
-          </form>
-        ) : null}
-        {oauth.google ? (
-          <p className="text-center text-xs uppercase tracking-[0.14em] text-mute">
-            or email
+          <p className="site-kicker is-blue">IITB INV.ENT · Create account</p>
+          <h1>Sign up</h1>
+          <p className="lead" style={{ marginTop: 18 }}>
+            Name and email only. Profile details come after, never a gate.
           </p>
-        ) : null}
-      </div>
 
-      <form action={signupAction} className="mt-4 space-y-5">
-        <input type="hidden" name="callbackUrl" value={callbackUrl} />
-        <label className="block">
-          <span className="text-sm font-medium text-ink">Name</span>
-          <input
-            name="name"
-            required
-            autoComplete="name"
-            className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 outline-none focus:border-teal"
-          />
-        </label>
-        <label className="block">
-          <span className="text-sm font-medium text-ink">Email</span>
-          <input
-            type="email"
-            name="email"
-            required
-            autoComplete="email"
-            className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 outline-none focus:border-teal"
-          />
-        </label>
-        <label className="block">
-          <span className="text-sm font-medium text-ink">Password</span>
-          <input
-            type="password"
-            name="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 outline-none focus:border-teal"
-          />
-        </label>
-        <button
-          type="submit"
-          className="w-full rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.12em] text-white hover:bg-teal"
-        >
-          Create account
-        </button>
-      </form>
+          {params.error === "exists" ? (
+            <p className="site-alert is-error" style={{ marginTop: 24 }} role="alert">
+              That email is already registered. <Link href="/login">Sign in</Link>.
+            </p>
+          ) : null}
+          {params.error === "invalid" ? (
+            <p className="site-alert is-error" style={{ marginTop: 24 }} role="alert">
+              Use a name, valid email, and password of at least 8 characters.
+            </p>
+          ) : null}
 
-      <p className="mt-8 text-sm text-mute">
-        Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-teal-deep underline-offset-2 hover:underline">
-          Sign in
-        </Link>
-      </p>
-    </main>
+          {oauth.google ? (
+            <>
+              <div className="site-auth-oauth">
+                <form action={googleAction}>
+                  <button type="submit">
+                    <IconGoogle className="h-5 w-5 shrink-0" />
+                    Continue with Google
+                  </button>
+                </form>
+              </div>
+              <p className="site-auth-or">or email</p>
+            </>
+          ) : null}
+
+          <form action={signupAction} className="site-auth-form">
+            <input type="hidden" name="callbackUrl" value={callbackUrl} />
+            <label className="site-field">
+              <span className="label">Name</span>
+              <input
+                name="name"
+                required
+                autoComplete="name"
+                className="site-input"
+                data-testid="signup-name"
+              />
+            </label>
+            <label className="site-field">
+              <span className="label">Email</span>
+              <input
+                type="email"
+                name="email"
+                required
+                autoComplete="email"
+                className="site-input"
+                data-testid="signup-email"
+              />
+            </label>
+            <label className="site-field">
+              <span className="label">Password</span>
+              <input
+                type="password"
+                name="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="site-input"
+                data-testid="signup-password"
+              />
+              <span className="hint">At least 8 characters.</span>
+            </label>
+            <div className="site-form-foot">
+              <button
+                type="submit"
+                className="site-btn"
+                style={{ width: "100%" }}
+                data-testid="signup-submit"
+              >
+                Create account
+              </button>
+            </div>
+          </form>
+
+          <p className="site-auth-foot">
+            Already have an account? <Link href="/login">Sign in</Link>
+            {" · "}
+            <Link href="/">← Back to IITB INV.ENT</Link>
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }

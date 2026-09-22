@@ -4,7 +4,10 @@ import { AuthError } from "next-auth";
 import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { attendeeHome } from "@/lib/auth/attendee";
 import { IconGoogle } from "@/components/icons";
+import { InventMark } from "@/components/site/InventMark";
+import { SiteTheme } from "@/components/site/SiteTheme";
 import { pageMetadata } from "@/lib/seo";
+import "@/app/site.css";
 
 export const metadata = pageMetadata({
   title: "Log in",
@@ -40,16 +43,10 @@ export default async function LoginPage({
       .toLowerCase();
     const password = String(formData.get("password") ?? "");
     const requested = safeCallback(String(formData.get("callbackUrl") ?? "/dashboard"));
-    const next = requested.startsWith("/admin")
-      ? requested
-      : attendeeHome(requested);
+    const next = requested.startsWith("/admin") ? requested : attendeeHome(requested);
 
     try {
-      await signIn("credentials", {
-        email,
-        password,
-        redirectTo: next,
-      });
+      await signIn("credentials", { email, password, redirectTo: next });
     } catch (err) {
       if (err instanceof AuthError) {
         redirect(
@@ -71,110 +68,103 @@ export default async function LoginPage({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16">
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-        IITB INV.ENT · Sign in
-      </p>
-      <h1 className="mt-3 font-display text-4xl tracking-wide text-teal-deep">
-        Login
-      </h1>
-      <p className="mt-3 text-ink-soft">
-        Sign in to submit a paper or poster abstract and manage your profile.
-        An account is not a ticket to the event.
-      </p>
-
-      {params.error ? (
-        <p
-          className="mt-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
-          role="alert"
-        >
-          Invalid email or password. Try again.
-        </p>
-      ) : null}
-
-      <div className="mt-8 space-y-3">
-        {oauth.google ? (
-          <form action={googleAction}>
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center gap-2.5 rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-sm hover:border-teal"
-            >
-              <IconGoogle className="h-5 w-5 shrink-0" />
-              Continue with Google
-            </button>
-          </form>
-        ) : null}
-        {oauth.linkedin ? (
-          <form action={linkedInAction}>
-            <button
-              type="submit"
-              className="w-full rounded-md border border-line bg-[#0A66C2] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-95"
-            >
-              Continue with LinkedIn
-            </button>
-          </form>
-        ) : null}
-        {(oauth.google || oauth.linkedin) && (
-          <p className="text-center text-xs uppercase tracking-[0.14em] text-mute">
-            or email
+    <div className="site">
+      <SiteTheme />
+      <main className="site-auth">
+        <div className="site-auth-card">
+          <Link href="/" className="site-auth-mark" aria-label="IITB INV.ENT home">
+            <InventMark style={{ fontSize: 34 }} />
+          </Link>
+          <p className="site-kicker is-blue">IITB INV.ENT · Sign in</p>
+          <h1>Login</h1>
+          <p className="lead" style={{ marginTop: 18 }}>
+            Sign in to submit a paper or poster abstract, register as an attendee, and
+            manage your profile. An account is not a ticket to the event.
           </p>
-        )}
-      </div>
 
-      <form action={loginAction} className="mt-4 space-y-5">
-        <input type="hidden" name="callbackUrl" value={callbackUrl} />
-        <label className="block">
-          <span className="text-sm font-medium text-ink">Email</span>
-          <input
-            type="email"
-            name="email"
-            required
-            autoComplete="email"
-            className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 text-ink outline-none focus:border-teal"
-            placeholder="you@example.com"
-            data-testid="login-email"
-          />
-        </label>
-        <label className="block">
-          <span className="text-sm font-medium text-ink">Password</span>
-          <input
-            type="password"
-            name="password"
-            required
-            autoComplete="current-password"
-            className="mt-1.5 w-full rounded-md border border-line bg-white px-3 py-2.5 text-ink outline-none focus:border-teal"
-            data-testid="login-password"
-          />
-        </label>
-        <button
-          type="submit"
-          className="w-full rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-teal"
-          data-testid="login-submit"
-        >
-          Sign in
-        </button>
-      </form>
+          {params.error ? (
+            <p className="site-alert is-error" style={{ marginTop: 24 }} role="alert">
+              Invalid email or password. Try again.
+            </p>
+          ) : null}
 
-      {!oauth.google && !oauth.linkedin ? (
-        <p className="mt-4 text-xs text-mute">
-          Google / LinkedIn buttons appear once OAuth client IDs are set in env (
-          <code>AUTH_GOOGLE_*</code>, <code>AUTH_LINKEDIN_*</code>).
-        </p>
-      ) : null}
+          {oauth.google || oauth.linkedin ? (
+            <>
+              <div className="site-auth-oauth">
+                {oauth.google ? (
+                  <form action={googleAction}>
+                    <button type="submit">
+                      <IconGoogle className="h-5 w-5 shrink-0" />
+                      Continue with Google
+                    </button>
+                  </form>
+                ) : null}
+                {oauth.linkedin ? (
+                  <form action={linkedInAction}>
+                    <button type="submit" className="is-linkedin">
+                      Continue with LinkedIn
+                    </button>
+                  </form>
+                ) : null}
+              </div>
+              <p className="site-auth-or">or email</p>
+            </>
+          ) : null}
 
-      <p className="mt-8 text-sm text-mute">
-        No account yet?{" "}
-        <Link
-          href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-          className="font-semibold text-teal-deep underline-offset-2 hover:underline"
-        >
-          Sign up
-        </Link>
-        {" · "}
-        <Link href="/" className="text-teal-deep underline-offset-2 hover:underline">
-          ← Back to IITB INV.ENT
-        </Link>
-      </p>
-    </main>
+          <form action={loginAction} className="site-auth-form">
+            <input type="hidden" name="callbackUrl" value={callbackUrl} />
+            <label className="site-field">
+              <span className="label">Email</span>
+              <input
+                type="email"
+                name="email"
+                required
+                autoComplete="email"
+                className="site-input"
+                placeholder="you@example.com"
+                data-testid="login-email"
+              />
+            </label>
+            <label className="site-field">
+              <span className="label">Password</span>
+              <input
+                type="password"
+                name="password"
+                required
+                autoComplete="current-password"
+                className="site-input"
+                data-testid="login-password"
+              />
+            </label>
+            <div className="site-form-foot">
+              <button
+                type="submit"
+                className="site-btn"
+                style={{ width: "100%" }}
+                data-testid="login-submit"
+              >
+                Sign in
+              </button>
+            </div>
+          </form>
+
+          {!oauth.google && !oauth.linkedin ? (
+            <p className="site-auth-foot" style={{ fontSize: 12 }}>
+              Google / LinkedIn buttons appear once OAuth client IDs are set in env (
+              <code>AUTH_GOOGLE_*</code>, <code>AUTH_LINKEDIN_*</code>).
+            </p>
+          ) : null}
+
+          <p className="site-auth-foot">
+            No account yet?{" "}
+            <Link href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}>
+              Sign up
+            </Link>
+            {" · "}
+            <Link href="/">← Back to IITB INV.ENT</Link>
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }

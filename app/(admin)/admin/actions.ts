@@ -349,6 +349,28 @@ export async function setEditionCurrentAction(formData: FormData) {
   revalidatePath("/now");
 }
 
+/**
+ * Publish or unpublish the speaker line-up. Reversible and non-destructive:
+ * Speaker rows are never touched, only whether the public pages show them.
+ */
+export async function setEditionSpeakersPublishedAction(formData: FormData) {
+  const user = await actor();
+  const id = String(formData.get("id") ?? "");
+  const speakersPublished = String(formData.get("speakersPublished") ?? "") === "true";
+  await prisma.edition.update({ where: { id }, data: { speakersPublished } });
+  await writeAuditLog({
+    actorId: user.id,
+    action: "edition.set_speakers_published",
+    entityType: "Edition",
+    entityId: id,
+    after: { speakersPublished },
+  });
+  revalidatePath("/admin/editions");
+  revalidatePath("/speakers");
+  revalidatePath("/programme");
+  revalidatePath("/");
+}
+
 export async function setEditionStatusAction(formData: FormData) {
   const user = await actor();
   const id = String(formData.get("id") ?? "");
