@@ -12,6 +12,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "node scripts/check-safe-migrations.mjs && prisma migrate deploy",
     "db:seed": "prisma db seed",
+    "db:backup": "node --env-file-if-exists=.env scripts/backup-db.mjs",
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "prepare:standalone": "node scripts/prepare-standalone.mjs",
