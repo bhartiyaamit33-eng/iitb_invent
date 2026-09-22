@@ -40,7 +40,9 @@ export default async function SpeakersPage() {
 
   try {
     const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
-    if (edition) {
+    // Names stay hidden until organisers publish the line-up, so a line-up
+    // carried over from a previous edition is never shown as this year's.
+    if (edition?.speakersPublished) {
       speakers = await prisma.speaker.findMany({
         where: { editionId: edition.id, isPublished: true, deletedAt: null },
         orderBy: [{ isKeynote: "desc" }, { sortOrder: "asc" }, { name: "asc" }],

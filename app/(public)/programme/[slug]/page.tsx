@@ -175,7 +175,17 @@ export default async function SessionDetailPage({
         <div className="site-shell">
           <p className="site-kicker">On this session</p>
           <h2 id="speakers-heading">Speakers &amp; presenters</h2>
-          {session.speakers.length === 0 ? (
+          {!edition.speakersPublished ? (
+            <>
+              <p className="lead">
+                The line-up for this session is being confirmed and is published here as
+                soon as it is.
+              </p>
+              <p className="coming-card" data-testid="session-speakers-coming-soon">
+                Coming soon
+              </p>
+            </>
+          ) : session.speakers.length === 0 ? (
             <p className="lead">
               Presenters appear here once organisers add them to this session.
             </p>

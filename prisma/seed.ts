@@ -434,6 +434,9 @@ async function main() {
       timezone: "Asia/Kolkata",
       status: EditionStatus.ANNOUNCED,
       isCurrent: true,
+      // The seeded line-up is carried over from previous organiser artwork, so
+      // it stays hidden until organisers confirm and publish it in admin.
+      speakersPublished: false,
       connectNoteTemplate:
         "Hi {firstName}, I'm {senderName}, attending IITB INV.ENT on {eventDateShort}. Nice to connect.",
     },

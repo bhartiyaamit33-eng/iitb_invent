@@ -63,6 +63,8 @@ export default async function ProgrammePage() {
 
   const live = isLiveStatus(edition.status);
   const now = new Date();
+  // Presenter names stay off the grid until the line-up is published.
+  const showSpeakers = edition.speakersPublished;
   const canRsvp = user ? await userHasLiveEventTicket(user.id, edition.id) : false;
   const [sessions, happening, upNext, myRsvps] = await Promise.all([
     prisma.session_.findMany({
@@ -226,7 +228,7 @@ export default async function ProgrammePage() {
                           ? ` · ${going}/${session.capacity} going`
                           : ` · ${going} going`}
                       </p>
-                      {session.speakers.length > 0 ? (
+                      {showSpeakers && session.speakers.length > 0 ? (
                         <ul
                           style={{
                             margin: "14px 0 0",
@@ -247,6 +249,10 @@ export default async function ProgrammePage() {
                             </li>
                           ))}
                         </ul>
+                      ) : session.speakers.length > 0 ? (
+                        <p className="site-kicker" style={{ margin: "14px 0 0" }}>
+                          Speakers — coming soon
+                        </p>
                       ) : null}
 
                       <div style={{ marginTop: 18 }}>
