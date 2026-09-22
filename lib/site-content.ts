@@ -260,8 +260,8 @@ export const CONTACT_ROUTES = [
 
 /* ── Landing copy ────────────────────────────────────────────────────────── */
 
-export const HERO_HEADLINE_LEAD = "Where Entrepreneurship Research Meets ";
-export const HERO_HEADLINE_ACCENT = "Venture Practice";
+export const HERO_HEADLINE_LEAD = "Entrepreneurship Research and Venture Practice ";
+export const HERO_HEADLINE_ACCENT = "Conference";
 
 export const ABOUT_QUOTE =
   "Entrepreneurship is studied, and entrepreneurship is practised, and the two almost never sit in the same room.";
