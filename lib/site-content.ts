@@ -216,12 +216,38 @@ export const ACCOMMODATION_OPTIONS = [
     note: "Released only if the institute has spare capacity on the conference dates.",
   },
   {
-    id: "powai-hotels",
-    name: "Hotels in Powai and Andheri East",
-    detail: "10–30 minutes from the IIT Bombay Main Gate",
-    note: "Booked directly by delegates. The conference does not hold a block rate.",
+    id: "anantha",
+    name: "Anantha Hotels",
+    detail: "Partner hotel, off campus in Bhandup West",
+    note: "Book directly with the hotel and ask for the IITB INV.ENT rate. Address, contact and rates are on the travel page.",
   },
 ] as const;
+
+/** Off-campus partner hotel. Rates are the discounted "Your Rate" from Anantha, single / double. */
+export const ANANTHA_HOTEL = {
+  name: "Anantha Hotels",
+  property: "Hotel Anantha Executive Suites",
+  website: "https://www.ananthahotels.com/",
+  websiteLabel: "ananthahotels.com",
+  address: [
+    "Near 'S' Ward, BMC Office",
+    "LBS Marg",
+    "Bhandup West, Mumbai 400078",
+  ],
+  mapsQuery:
+    "Hotel Anantha Executive Suites, LBS Marg, Bhandup West, Mumbai 400078",
+  contactName: "Anupama Dalvi",
+  phones: [
+    { display: "+91 7506333242", tel: "+917506333242" },
+    { display: "+91 7506333244", tel: "+917506333244" },
+  ],
+  email: "bookings@ananthahotels.com",
+  rates: [
+    { id: "executive", room: "Executive", tariff: "₹5,000", single: "₹4,000", double: "₹4,500" },
+    { id: "deluxe", room: "Deluxe", tariff: "₹6,000", single: "₹5,000", double: "₹5,500" },
+    { id: "anantha-deluxe", room: "Anantha Deluxe", tariff: "₹7,000", single: "₹6,000", double: "₹6,500" },
+  ],
+} as const;
 
 export const ACCOMMODATION_STEPS = [
   {
