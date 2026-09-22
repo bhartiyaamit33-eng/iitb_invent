@@ -3,6 +3,7 @@ import Link from "next/link";
 import { KeyDates } from "./KeyDates";
 import { LogoWall } from "./LogoWall";
 import { PhotoLanes } from "./PhotoLanes";
+import { SitePhoto } from "./SitePhoto";
 import { InventMark } from "./InventMark";
 import { CtaOrbits, IntersectField, LineIcon, NavyGeometry } from "./decor";
 import {
@@ -31,6 +32,7 @@ import {
   SPONSOR_PITCH,
   SUPPORT_EMAIL,
   VENTURES,
+  VENUE_LINES,
 } from "@/lib/site-content";
 
 const HIGHLIGHT_ICONS = ["award", "journal", "network", "workshop"] as const;
@@ -312,6 +314,15 @@ export function SiteLanding({
               </div>
             ))}
           </div>
+          <SitePhoto
+            className="is-wide"
+            src="/assets/dsse-building.jpg"
+            alt="The Desai Sethi School of Entrepreneurship building at IIT Bombay"
+            caption="DSSE Building · IIT Bombay"
+            width={1600}
+            height={900}
+            testId="landing-dsse-building"
+          />
         </div>
       </section>
 
@@ -394,6 +405,47 @@ export function SiteLanding({
             <Link className="site-btn site-btn-ghost" href="/contact">
               Contact
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Support ──────────────────────────────────────────────────── */}
+      <section className="site-section is-rule" id="support" data-testid="landing-support">
+        <div className="site-shell">
+          <p className="site-kicker">Support</p>
+          <h2>Queries</h2>
+          <div className="support-split">
+            <div>
+              <p className="lead">
+                Press, partners, speakers, volunteers, campus access, submissions, or “I
+                have a company and a problem.” One inbox, read by the DSSE team.
+              </p>
+              <p style={{ margin: "0 0 20px" }}>
+                <a className="contact-mail" href={`mailto:${SUPPORT_EMAIL}`}>
+                  {SUPPORT_EMAIL}
+                </a>
+              </p>
+              <p className="lead">
+                {VENUE_LINES.join(" · ")}
+              </p>
+              <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+                <Link className="site-btn site-btn-ghost" href="/contact">
+                  Contact →
+                </Link>
+                <Link className="site-btn site-btn-ghost" href="/accommodation">
+                  Accommodation
+                </Link>
+              </div>
+            </div>
+            <SitePhoto
+              src="/assets/landing/symposium-group.jpg"
+              alt="The DSSE team on stage at the Entrepreneurship Research Symposium, IIT Bombay"
+              caption="DSSE team · IIT Bombay"
+              width={1600}
+              height={1067}
+              sizes="(max-width: 860px) 100vw, 540px"
+              testId="landing-dsse-team"
+            />
           </div>
         </div>
       </section>

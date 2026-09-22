@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/site/PageHero";
+import { SitePhoto } from "@/components/site/SitePhoto";
 import { SiteShell } from "@/components/site/SiteShell";
 import { NavyGeometry } from "@/components/site/decor";
 import { ABOUT_SECTIONS, INVENT_DEFINITION } from "@/lib/seo-content";
@@ -74,19 +74,28 @@ export default function AboutPage() {
               <section key={section.heading}>
                 <h2>{section.heading}</h2>
                 <p>{section.body}</p>
+                {/* The building belongs with the paragraph about the school. */}
+                {section.heading === "The school" ? (
+                  <SitePhoto
+                    src="/assets/dsse-building.jpg"
+                    alt="The Desai Sethi School of Entrepreneurship building at IIT Bombay"
+                    caption="DSSE Building · IIT Bombay"
+                    width={1600}
+                    height={900}
+                    testId="about-dsse-building"
+                  />
+                ) : null}
               </section>
             ))}
           </div>
-          <figure className="building-photo">
-            <Image
-              src="/assets/dsse-building.jpg"
-              alt="Desai Sethi School of Entrepreneurship building at IIT Bombay"
-              width={1600}
-              height={1067}
-              sizes="(max-width: 1180px) 100vw, 1140px"
-            />
-            <figcaption>DSSE Building · IIT Bombay</figcaption>
-          </figure>
+          <SitePhoto
+            src="/assets/landing/symposium-group.jpg"
+            alt="The DSSE team on stage at the Entrepreneurship Research Symposium, IIT Bombay"
+            caption="DSSE team · IIT Bombay"
+            width={1600}
+            height={1067}
+            testId="about-dsse-team"
+          />
         </div>
       </section>
 
