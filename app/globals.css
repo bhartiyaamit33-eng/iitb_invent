@@ -2,8 +2,8 @@
 
 /*
   App chrome (dashboard/admin) keeps the teal paper tokens.
-  The public site uses the editorial system in site.css: paper, serif
-  headlines, navy rules, blue ENT, green intersection dot.
+  The public site uses the editorial system in site.css: paper, Mona Sans,
+  navy rules, blue ENT, green intersection dot.
 */
 
 :root {
@@ -67,8 +67,8 @@
   --color-frost: var(--frost);
   --color-mist: var(--mist);
   --color-haze: var(--haze);
-  --font-sans: "Sora", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-mona), "Mona Sans", sans-serif;
+  --font-display: var(--font-mona), "Mona Sans", sans-serif;
 }
 
 @layer base {
@@ -81,6 +81,10 @@
     background: var(--paper);
     color: var(--ink);
     font-family: var(--font-sans);
+    font-weight: 400;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 95;
+    letter-spacing: 0;
   }
 
   a {
@@ -116,8 +120,8 @@ html[data-landing] body {
 }
 
 .landing {
-  --font-serif: var(--font-playfair), "Palatino Linotype", Palatino, Georgia, serif;
-  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-mona), "Mona Sans", sans-serif;
+  --font-body: var(--font-mona), "Mona Sans", sans-serif;
   --midnight: #f6f3ec;
   --navy: #f3efe6;
   --frost: #1b1a17;
@@ -184,7 +188,7 @@ html[data-landing] body {
 .landing h2 {
   margin: 0 0 18px;
   font-family: var(--font-serif);
-  font-weight: 500;
+  font-weight: 650;
   font-size: clamp(36px, 5.4vw, 64px);
   line-height: 1.06;
   letter-spacing: -0.02em;
@@ -920,7 +924,7 @@ section > .orbit-field {
   --spark-glow: 0, 126, 67;
   --rule: rgba(12, 58, 107, 0.22);
   --rule-strong: #0c3a6b;
-  --font-serif: var(--font-source-serif), "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-serif: var(--font-mona), "Mona Sans", sans-serif;
   background: var(--midnight);
   color: var(--frost);
 }
@@ -1128,4 +1132,20 @@ section > .orbit-field {
 
 .landing[data-theme="light"] .image-panel .veil {
   background: linear-gradient(180deg, transparent 36%, rgba(12, 22, 38, 0.84) 100%);
+}
+
+/* Beat Tailwind preflight so Mona Sans is the document font, not the system stack. */
+html body {
+  font-family: var(--font-mona), "Mona Sans", sans-serif;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 95;
+  letter-spacing: 0;
+}
+
+/* Display headings used Bebas Neue with open tracking. Mona Sans takes the same role at 700 with tight tracking. */
+.font-display {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-optical-sizing: auto;
 }

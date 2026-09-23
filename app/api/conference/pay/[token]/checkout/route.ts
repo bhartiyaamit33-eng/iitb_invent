@@ -64,11 +64,14 @@ function onlinePayHandoffHtml(opts: {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="referrer" content="origin" />
   <title>IIT Bombay Online Pay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wdth,wght@95,400..700&amp;display=swap" rel="stylesheet" />
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 36rem; margin: 3rem auto; padding: 0 1.25rem; color: #17333a; line-height: 1.5; }
-    a.btn { display: inline-block; margin-top: 1rem; background: #1a6b6b; color: #fff; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; }
+    body { font-family: "Mona Sans", sans-serif; font-optical-sizing: auto; font-variation-settings: "wdth" 95; font-weight: 400; max-width: 36rem; margin: 3rem auto; padding: 0 1.25rem; color: #17333a; line-height: 1.5; }
+    a.btn { display: inline-block; margin-top: 1rem; background: #1a6b6b; color: #fff; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 650; letter-spacing: -0.01em; }
     .back { display: inline-block; margin-top: 1.25rem; color: #1a6b6b; }
-    code { font-size: 0.9em; }
+    code { font-family: ui-monospace, monospace; font-size: 0.9em; }
   </style>
 </head>
 <body>
