@@ -18,8 +18,8 @@ html[data-site] body {
   --mute: #5c6b7a;
   --rule: rgba(11, 37, 69, 0.14);
   --rule-strong: rgba(11, 37, 69, 0.28);
-  --font-serif: var(--font-instrument), "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-mona), "Mona Sans", sans-serif;
+  --font-body: var(--font-mona), "Mona Sans", sans-serif;
   position: relative;
   min-height: 100svh;
   overflow-x: clip;
@@ -29,6 +29,10 @@ html[data-site] body {
     var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 95;
+  letter-spacing: 0;
 }
 
 .site a {
@@ -99,8 +103,8 @@ html[data-site] body {
   margin: 0 0 12px;
   color: var(--navy);
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -116,7 +120,7 @@ html[data-site] body {
 .site h2,
 .site .site-serif {
   font-family: var(--font-serif);
-  font-weight: 400;
+  font-weight: 650;
   letter-spacing: -0.03em;
 }
 
@@ -145,8 +149,8 @@ html[data-site] body {
   background: var(--blue);
   color: #fff;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-weight: 650;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -222,7 +226,7 @@ html[data-site] body {
 .site-wordmark {
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--navy);
 }
@@ -236,8 +240,8 @@ html[data-site] body {
 
 .site-nav-link {
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink-soft);
   padding: 8px 0;
@@ -261,8 +265,8 @@ html[data-site] body {
   flex-direction: column;
   align-items: flex-end;
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--mute);
   line-height: 1.35;
@@ -323,8 +327,8 @@ html[data-site] body {
   padding: 12px 0;
   border-bottom: 1px solid var(--rule);
   font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
@@ -394,8 +398,8 @@ html[data-site] body {
   align-self: center;
   font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: lowercase;
   color: var(--ink-soft);
 }
@@ -408,20 +412,19 @@ html[data-site] body {
 }
 
 /* The INV.ENT mark — one definition, scaled by font-size wherever it appears.
-   Serif for scholarly authority; navy INV = research, blue ENT = venture,
-   green dot = the point where the two meet. */
+   Navy INV = research, blue ENT = venture, green dot = where the two meet. */
 .invent-mark {
   display: inline-flex;
   align-items: baseline;
   font-family: var(--font-serif);
-  font-weight: 400;
+  font-weight: 700;
   line-height: 0.92;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.03em;
   white-space: nowrap;
 }
 
 .invent-mark b {
-  font-weight: 400;
+  font-weight: 700;
   color: var(--navy);
 }
 
@@ -451,8 +454,10 @@ html[data-site] body {
   margin: 0;
   max-width: 30ch;
   font-size: clamp(2rem, 4.2vw, 3.5rem);
-  letter-spacing: -0.012em;
-  line-height: 1.18;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-align: center;
   text-wrap: balance;
   color: var(--navy);
 }
@@ -470,8 +475,8 @@ html[data-site] body {
   min-width: 0;
   overflow-wrap: break-word;
   font-size: clamp(9px, 0.9vw, 11px);
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   line-height: 1.5;
   text-transform: uppercase;
   color: var(--mute);
@@ -499,8 +504,8 @@ html[data-site] body {
 .hero-meta {
   margin: 22px 0 0;
   font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
@@ -508,8 +513,8 @@ html[data-site] body {
 .hero-axes {
   margin: 16px 0 0;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -579,6 +584,8 @@ html[data-site] body {
   margin: 0;
   font-family: var(--font-serif);
   font-size: clamp(1.6rem, 3vw, 2.35rem);
+  font-weight: 650;
+  letter-spacing: -0.02em;
   line-height: 1.25;
   color: var(--navy);
 }
@@ -586,7 +593,8 @@ html[data-site] body {
 .quote-split .attr {
   margin-top: 24px;
   font-size: 12px;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -626,7 +634,7 @@ html[data-site] body {
   margin: 8px 0 0;
   font-family: var(--font-serif);
   font-size: 1.4rem;
-  font-weight: 400;
+  font-weight: 650;
   letter-spacing: -0.02em;
 }
 
@@ -671,8 +679,8 @@ html[data-site] body {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -729,7 +737,7 @@ html[data-site] body {
   display: block;
   font-family: var(--font-serif);
   font-size: clamp(2.4rem, 4.4vw, 3.8rem);
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: -0.03em;
 }
@@ -825,6 +833,8 @@ html[data-site] body {
   margin: 0;
   max-width: 18ch;
   font-size: clamp(2.4rem, 6vw, 4.6rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
   line-height: 1.04;
   color: var(--navy);
 }
@@ -845,8 +855,8 @@ html[data-site] body {
   padding: 0;
   list-style: none;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -885,7 +895,7 @@ html[data-site] body {
   margin: 28px 0 8px;
   font-family: var(--font-serif);
   font-size: 1.5rem;
-  font-weight: 400;
+  font-weight: 650;
   letter-spacing: -0.02em;
   color: var(--navy);
 }
@@ -896,6 +906,8 @@ html[data-site] body {
   border-left: 1px solid var(--blue);
   font-family: var(--font-serif);
   font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   line-height: 1.35;
   color: var(--navy);
 }
@@ -927,7 +939,7 @@ html[data-site] body {
   display: block;
   font-family: var(--font-serif);
   font-size: 1.4rem;
-  font-weight: 400;
+  font-weight: 650;
   color: var(--navy);
 }
 
@@ -1017,7 +1029,8 @@ html[data-site] body {
 .coming-card {
   color: var(--mute);
   font-size: 13px;
-  letter-spacing: 0.14em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -1025,7 +1038,7 @@ html[data-site] body {
   display: block;
   font-family: var(--font-serif);
   font-size: 1.35rem;
-  font-weight: 400;
+  font-weight: 650;
 }
 
 .speaker-card span {
@@ -1072,7 +1085,7 @@ html[data-site] body {
   margin: 0 0 6px;
   font-family: var(--font-serif);
   font-size: 1.4rem;
-  font-weight: 400;
+  font-weight: 650;
   letter-spacing: -0.02em;
   color: var(--navy);
 }
@@ -1108,7 +1121,7 @@ html[data-site] body {
   margin: 16px 0 10px;
   font-family: var(--font-serif);
   font-size: 1.55rem;
-  font-weight: 400;
+  font-weight: 650;
   letter-spacing: -0.02em;
   color: var(--navy);
 }
@@ -1178,8 +1191,8 @@ html[data-site] body {
 .site-timeline .kicker {
   display: block;
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -1334,8 +1347,8 @@ html[data-site] body {
 
 .logo-plate .logo-role {
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -1371,14 +1384,15 @@ html[data-site] body {
 .journal-list b {
   font-family: var(--font-serif);
   font-size: 1.25rem;
-  font-weight: 400;
+  font-weight: 650;
   letter-spacing: -0.02em;
   color: var(--navy);
 }
 
 .journal-list span {
   font-size: 12px;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -1403,8 +1417,8 @@ html[data-site] body {
 
 .site-table th {
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -1432,7 +1446,7 @@ html[data-site] body {
   margin: 0;
   font-family: var(--font-serif);
   font-size: 1.45rem;
-  font-weight: 400;
+  font-weight: 650;
   color: var(--navy);
 }
 
@@ -1468,8 +1482,8 @@ html[data-site] body {
 .site-fieldset > legend {
   display: block;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--navy);
 }
@@ -1568,8 +1582,8 @@ html[data-site] body {
   background: transparent;
   color: var(--navy);
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-weight: 650;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
 }
@@ -1663,7 +1677,7 @@ html[data-site] body {
   color: var(--ink);
   font: inherit;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 650;
   cursor: pointer;
   transition: border-color 0.2s ease;
 }
@@ -1682,8 +1696,8 @@ html[data-site] body {
   margin: 20px 0 0;
   text-align: center;
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--mute);
 }
@@ -1937,8 +1951,8 @@ html[data-site] body {
 .site-splash-date {
   margin: 26px 0 0;
   font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #3a4d66;
 }
@@ -1960,8 +1974,8 @@ html[data-site] body {
 .site-splash-status {
   margin: 14px 0 0;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #5c6b7a;
 }
