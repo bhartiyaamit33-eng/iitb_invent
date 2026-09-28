@@ -24,7 +24,7 @@ import {
 export const metadata = pageMetadata({
   title: "Sponsors & partners",
   description:
-    "Sponsors and partners of IITB INV.ENT 2027 at IIT Bombay, hosted by the Desai Sethi School of Entrepreneurship. Academic partner: ServiceSetu Academics.",
+    "Sponsors and partners of IITB INV.ENT 2027 at IIT Bombay, hosted by the Desai Sethi School of Entrepreneurship. Partners include ServiceSetu Academics, SINE, and the National Entrepreneurship Network.",
   path: "/sponsors",
 });
 

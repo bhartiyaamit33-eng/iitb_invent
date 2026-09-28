@@ -73,6 +73,22 @@ export const PARTNERS: SiteOrg[] = [
     tier: "partner",
     logo: "/assets/partners/servicesetu-academics.png",
   },
+  {
+    id: "sine",
+    name: "SINE, IIT Bombay",
+    role: "Campus partner",
+    tier: "partner",
+    logo: "/assets/partners/sine-iitb.png",
+    href: "https://www.sineiitb.org/",
+  },
+  {
+    id: "nen",
+    name: "National Entrepreneurship Network",
+    role: "Network partner",
+    tier: "partner",
+    logo: "/assets/partners/nen.png",
+    href: "https://nen.org/",
+  },
 ];
 
 export const HOSTS: SiteOrg[] = [
