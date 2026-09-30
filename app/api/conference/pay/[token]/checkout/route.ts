@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { isPayUReady, buildPayUCheckout } from "@/lib/conference-payu";
 import { startConferenceOnlinePay } from "@/lib/conference-onlinepay";
-import { isOnlinePayConfigured } from "@/lib/onlinepay";
+import { isOnlinePayConfigured, isOnlinePayTest } from "@/lib/onlinepay";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import {
   CONFERENCE_TOKEN_COOKIE,
@@ -31,7 +31,7 @@ function sanitizeLdap(raw: string): string {
 
 function redirectToPay(
   token: string,
-  outcome: "unavailable" | "not-due" | "already",
+  outcome: "unavailable" | "not-due" | "already" | "need-id",
 ) {
   const url = new URL(conferencePaymentUrl(token));
   url.searchParams.set("payu", outcome);
@@ -50,11 +50,10 @@ function onlinePayHandoffHtml(opts: {
   const backUrl = escapeAttr(opts.backUrl);
   const userId = escapeHtml(opts.userId);
   const testCopy = opts.test
-    ? `<p>IIT Bombay TEST Online Pay only loads on the IITB network. Do not paste the
-        gateway URL into the address bar — OP rejects that with
-        <strong>Requesting page referer not received</strong>.</p>
-       <p>This page will open the gateway so the Referer is INVENT.
-       Paying as user id <code>${userId}</code>.</p>`
+    ? `<p>This is the IIT Bombay TEST gateway (Canara Bank Auto Debit) for application 10172.
+       It loads on the IITB network. Open it with the button on this page so Online Pay
+       receives the INVENT referer.</p>
+       <p>Paying as user id <code>${userId}</code>.</p>`
     : `<p>Opening IIT Bombay Online Pay…</p>`;
 
   return `<!DOCTYPE html>
@@ -111,6 +110,13 @@ async function startCheckout(
     try {
       const form = await req.formData().catch(() => null);
       const ldap = sanitizeLdap(String(form?.get("ldap") ?? ""));
+      if (
+        isOnlinePayTest() &&
+        !ldap &&
+        !(process.env.ONLINEPAY_PAYER_USER_ID || "").trim()
+      ) {
+        return redirectToPay(token, "need-id");
+      }
       const handoff = await startConferenceOnlinePay(application, {
         payerUserId: ldap || null,
       });
@@ -135,6 +141,9 @@ async function startCheckout(
       );
       return res;
     } catch (err) {
+      if (err instanceof Error && err.message === "TEST_USER_ID_REQUIRED") {
+        return redirectToPay(token, "need-id");
+      }
       console.error("[onlinepay] checkout", err);
       return redirectToPay(token, "unavailable");
     }

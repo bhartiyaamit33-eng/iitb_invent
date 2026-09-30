@@ -14,10 +14,10 @@ export default async function ConferencePayPage({
   searchParams,
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ payu?: string; start?: string }>;
+  searchParams: Promise<{ payu?: string; start?: string; ack?: string }>;
 }) {
   const { token } = await params;
-  const { payu, start } = await searchParams;
+  const { payu, start, ack } = await searchParams;
   const application = await prisma.conferenceApplication.findUnique({
     where: { paymentToken: token },
     include: { edition: { select: { name: true } } },
@@ -49,6 +49,7 @@ export default async function ConferencePayPage({
         campusOnly={isOnlinePayTest()}
         autoStart={start === "1" && !payu && !isOnlinePayTest()}
         paymentVisible={applicationPaymentVisible(application)}
+        ackPending={ack === "pending"}
       />
       <p className="mt-6 text-sm text-mute">
         Questions:{" "}

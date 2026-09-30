@@ -538,6 +538,7 @@ model ConferenceApplication {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reviews   ApplicationReview[]
+  onlinePayAcks OnlinePayAck[]
 
   @@unique([editionId, email])
   @@index([editionId, status])
@@ -545,6 +546,23 @@ model ConferenceApplication {
   @@index([createdAt])
   @@index([opTransId])
   @@map("ColloquiumApplication")
+}
+
+/// One Online Pay notice (immediate, reconciliation, or refund) still owed an ACK,
+/// or already acknowledged. OP retries until ACK, and the test host is only
+/// reachable from the IITB network.
+model OnlinePayAck {
+  id            String    @id @default(cuid())
+  applicationId String
+  application   ConferenceApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  transId       String
+  requestType   String
+  ackedAt       DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@unique([transId, requestType])
+  @@index([ackedAt])
+  @@map("OnlinePayAck")
 }
 
 /// One programme-committee review assignment for a colloquium submission.

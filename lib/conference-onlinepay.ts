@@ -6,6 +6,7 @@ import { issueEventTicketForApplication } from "@/lib/conference-access";
 import {
   acknowledgeOnlinePay,
   isOnlinePayConfigured,
+  onlinePayAckUrl,
   onlinePayConfig,
   parseSMsg,
   paymentRequestUrl,
@@ -39,17 +40,6 @@ export function newOpReqId(): string {
   );
 }
 
-export function opPayerUserId(
-  application: { id: string; email: string },
-  override?: string | null,
-): string {
-  const fromForm = (override || "").trim();
-  if (fromForm) return fromForm;
-  const forced = (process.env.ONLINEPAY_PAYER_USER_ID || "").trim();
-  if (forced) return forced;
-  return application.id;
-}
-
 export async function startConferenceOnlinePay(
   application: {
     id: string;
@@ -57,16 +47,27 @@ export async function startConferenceOnlinePay(
     email: string;
     paymentToken: string;
     paymentAmountPaise: number;
+    paymentStatus?: string | null;
     opReqId?: string | null;
     opUserId?: string | null;
+    opTransId?: string | null;
   },
   opts?: { payerUserId?: string | null },
 ): Promise<{ url: string; test: boolean; userId: string }> {
   const cfg = onlinePayConfig();
   if (!cfg) throw new Error("ONLINEPAY_APP_ID is not set");
 
-  const userId = opPayerUserId(application, opts?.payerUserId);
-  const reqId = application.opReqId || newOpReqId();
+  const explicit = (opts?.payerUserId || "").trim();
+  const forced = (process.env.ONLINEPAY_PAYER_USER_ID || "").trim();
+  if (cfg.env === "test" && !explicit && !forced) {
+    throw new Error("TEST_USER_ID_REQUIRED");
+  }
+
+  const userId = explicit || forced || application.id;
+  const previousFailed =
+    application.paymentStatus === "UNPAID" && Boolean(application.opTransId);
+  const reqId =
+    !previousFailed && application.opReqId ? application.opReqId : newOpReqId();
   if (application.opReqId !== reqId || application.opUserId !== userId) {
     await prisma.conferenceApplication.update({
       where: { id: application.id },
@@ -110,7 +111,10 @@ export async function validateOnlinePayRequest(
   if (!statusRequiresPayment(application.status)) {
     return "INVALID";
   }
-  if (application.opUserId && application.opUserId !== input.userId) {
+  if (
+    application.opUserId &&
+    application.opUserId.toLowerCase() !== input.userId.toLowerCase()
+  ) {
     return "INVALID";
   }
   if (!amountsMatchPaise(application.paymentAmountPaise, input.amount)) {
@@ -122,8 +126,106 @@ export async function validateOnlinePayRequest(
 export type OpCallbackResult = {
   requestType: string | null;
   paymentToken: string | null;
+  transId: string | null;
+  ackUrl: string | null;
+  ackOk: boolean;
   outcome: "success" | "failed" | "ok";
 };
+
+async function recordOnlinePayNotice(
+  applicationId: string,
+  transId: string,
+  requestType: "I" | "R" | "D",
+): Promise<void> {
+  await prisma.onlinePayAck.upsert({
+    where: { transId_requestType: { transId, requestType } },
+    create: { applicationId, transId, requestType },
+    update: {},
+  });
+}
+
+async function ackNotice(
+  transId: string,
+  requestType: "I" | "R" | "D",
+): Promise<boolean> {
+  const ack = await acknowledgeOnlinePay({ transId, requestType });
+  if (!ack.ok) {
+    console.error(`[onlinepay] ACK ${requestType} failed`, ack.error, transId);
+    await prisma.onlinePayAck.update({
+      where: { transId_requestType: { transId, requestType } },
+      data: { ackedAt: null },
+    });
+    return false;
+  }
+  await prisma.onlinePayAck.update({
+    where: { transId_requestType: { transId, requestType } },
+    data: { ackedAt: new Date() },
+  });
+  return true;
+}
+
+export async function completeOnlinePayAck(
+  transId: string,
+  requestType: string,
+): Promise<boolean> {
+  const type = requestType.trim().toUpperCase().charAt(0);
+  if (!transId || (type !== "I" && type !== "R" && type !== "D")) return false;
+  const row = await prisma.onlinePayAck.findUnique({
+    where: { transId_requestType: { transId, requestType: type } },
+  });
+  if (!row) return false;
+  if (!row.ackedAt) {
+    await prisma.onlinePayAck.update({
+      where: { id: row.id },
+      data: { ackedAt: new Date() },
+    });
+  }
+  return true;
+}
+
+export async function listPendingOnlinePayAcks(): Promise<
+  { name: string; transId: string; requestType: string; ackUrl: string }[]
+> {
+  const rows = await prisma.onlinePayAck.findMany({
+    where: { ackedAt: null },
+    orderBy: { createdAt: "asc" },
+    take: 40,
+    include: { application: { select: { name: true } } },
+  });
+  const items: {
+    name: string;
+    transId: string;
+    requestType: string;
+    ackUrl: string;
+  }[] = [];
+  for (const row of rows) {
+    const type = row.requestType;
+    if (type !== "I" && type !== "R" && type !== "D") continue;
+    const ackUrl = onlinePayAckUrl(row.transId, type);
+    if (!ackUrl) continue;
+    items.push({
+      name: row.application.name,
+      transId: row.transId,
+      requestType: type,
+      ackUrl,
+    });
+  }
+  return items;
+}
+
+function emptyCallback(
+  requestType: string | null,
+  paymentToken: string | null,
+): OpCallbackResult {
+  return {
+    requestType,
+    paymentToken,
+    transId: null,
+    ackUrl: null,
+    ackOk: false,
+    outcome: "failed",
+  };
+}
 
 export async function applyConferenceOnlinePayCallback(
   rawSMsg: string,
@@ -133,21 +235,20 @@ export async function applyConferenceOnlinePayCallback(
   const reqId = params.reqId ?? params.sReqId ?? "";
   const transId = params.transId ?? "";
 
-  const application = reqId
-    ? await prisma.conferenceApplication.findUnique({ where: { opReqId: reqId } })
-    : transId
-      ? await prisma.conferenceApplication.findFirst({
-          where: { opTransId: transId },
-          orderBy: { updatedAt: "desc" },
-        })
-      : null;
+  const application = await findApplicationForNotice(reqId, transId);
 
   if (
     !application ||
     (requestType !== "I" && requestType !== "R" && requestType !== "D")
   ) {
-    return { requestType: requestType || null, paymentToken: application?.paymentToken ?? null, outcome: "failed" };
+    return emptyCallback(requestType || null, application?.paymentToken ?? null);
   }
+
+  const gatewayIds = {
+    opTransId: transId || application.opTransId,
+    opRefNo: params.refNo || application.opRefNo,
+    opProvId: params.provId || params.modeOfPayment || application.opProvId,
+  };
 
   if (requestType === "I") {
     const statusFlag = (params.status ?? params.sStatus ?? "").toUpperCase();
@@ -159,21 +260,22 @@ export async function applyConferenceOnlinePayCallback(
           paymentStatus: "PAID",
           paymentRef: transId || params.refNo || application.paymentRef,
           paidAt: application.paidAt ?? new Date(),
-          opTransId: transId || application.opTransId,
-          opRefNo: params.refNo || application.opRefNo,
-          opProvId: params.provId || application.opProvId,
+          ...gatewayIds,
         },
       });
       await issueEventTicketForApplication(application.id, { notify: true });
+    } else if (transId || params.refNo || params.provId) {
+      await prisma.conferenceApplication.update({
+        where: { id: application.id },
+        data: gatewayIds,
+      });
     }
-    if (transId) {
-      const ack = await acknowledgeOnlinePay({ transId, requestType: "I" });
-      if (!ack.ok) console.error("[onlinepay] ACK I failed", ack.error, transId);
-    }
+    const ack = await finishAck(application.id, transId, "I");
     return {
       requestType: "I",
       paymentToken: application.paymentToken,
       outcome: success ? "success" : "failed",
+      ...ack,
     };
   }
 
@@ -185,42 +287,72 @@ export async function applyConferenceOnlinePayCallback(
           application.paymentStatus === "WAIVED" ? "WAIVED" : "PAID",
         paymentRef: transId || application.paymentRef,
         paidAt: application.paidAt ?? new Date(),
-        opTransId: transId || application.opTransId,
-        opRefNo: params.refNo || application.opRefNo,
-        opProvId: params.provId || application.opProvId,
+        ...gatewayIds,
       },
     });
-    if (transId) {
-      const ack = await acknowledgeOnlinePay({ transId, requestType: "R" });
-      if (!ack.ok) console.error("[onlinepay] ACK R failed", ack.error, transId);
+    if (application.paymentStatus !== "WAIVED") {
+      await issueEventTicketForApplication(application.id, { notify: true });
     }
+    const ack = await finishAck(application.id, transId, "R");
     return {
       requestType: "R",
       paymentToken: application.paymentToken,
       outcome: "ok",
+      ...ack,
     };
   }
 
-  // Refund / chargeback — keep the original paid row, record OP ids.
   await prisma.conferenceApplication.update({
     where: { id: application.id },
     data: {
-      opTransId: transId || application.opTransId,
-      opRefNo: params.refNo || application.opRefNo,
-      adminNotes: [application.adminNotes, `OP refund/chargeback transId=${transId} amt=${params.totalAmt ?? ""}`]
+      ...gatewayIds,
+      adminNotes: [
+        application.adminNotes,
+        `OP refund/chargeback transId=${transId} amt=${params.totalAmt ?? ""}`,
+      ]
         .filter(Boolean)
         .join("\n"),
     },
   });
-  if (transId) {
-    const ack = await acknowledgeOnlinePay({ transId, requestType: "D" });
-    if (!ack.ok) console.error("[onlinepay] ACK D failed", ack.error, transId);
-  }
+  const ack = await finishAck(application.id, transId, "D");
   return {
     requestType: "D",
     paymentToken: application.paymentToken,
     outcome: "ok",
+    ...ack,
   };
+}
+
+async function findApplicationForNotice(reqId: string, transId: string) {
+  if (reqId) {
+    const byReq = await prisma.conferenceApplication.findUnique({
+      where: { opReqId: reqId },
+    });
+    if (byReq) return byReq;
+  }
+  if (!transId) return null;
+  const byTrans = await prisma.conferenceApplication.findFirst({
+    where: { opTransId: transId },
+    orderBy: { updatedAt: "desc" },
+  });
+  if (byTrans) return byTrans;
+  const notice = await prisma.onlinePayAck.findFirst({
+    where: { transId },
+    orderBy: { createdAt: "desc" },
+    include: { application: true },
+  });
+  return notice?.application ?? null;
+}
+
+async function finishAck(
+  applicationId: string,
+  transId: string,
+  requestType: "I" | "R" | "D",
+): Promise<{ transId: string | null; ackUrl: string | null; ackOk: boolean }> {
+  if (!transId) return { transId: null, ackUrl: null, ackOk: false };
+  await recordOnlinePayNotice(applicationId, transId, requestType);
+  const ackOk = await ackNotice(transId, requestType);
+  return { transId, ackUrl: onlinePayAckUrl(transId, requestType), ackOk };
 }
 
 export function conferencePayReturnUrl(token: string, outcome: string): string {

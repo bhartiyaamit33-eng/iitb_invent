@@ -19,6 +19,8 @@ const OUTCOME_COPY: Record<string, string> = {
     "IIT Bombay Online Pay is not configured on this site yet (application id missing).",
   "not-due": "No registration fee is due on this application.",
   already: "This application is already marked paid or waived.",
+  "need-id":
+    "Enter the IITB user id that the Online Pay team enabled for Canara Bank Auto Debit, then pay again.",
 };
 
 export function ConferencePayPanel({
@@ -32,6 +34,7 @@ export function ConferencePayPanel({
   autoStart,
   campusOnly,
   paymentVisible,
+  ackPending,
 }: {
   token: string;
   name: string;
@@ -43,6 +46,7 @@ export function ConferencePayPanel({
   autoStart?: boolean;
   campusOnly?: boolean;
   paymentVisible: boolean;
+  ackPending?: boolean;
 }) {
   const amount = formatInrFromPaise(amountPaise);
   const settled = paymentStatus === "PAID" || paymentStatus === "WAIVED";
@@ -99,6 +103,14 @@ export function ConferencePayPanel({
           data-testid="payu-outcome"
         >
           {notice}
+          {ackPending ? (
+            <>
+              {" "}
+              The acknowledgement to Online Pay still needs a browser on the
+              IITB network. Stay on campus or VPN with this page open, or ask
+              an organiser to open the admin desk from there.
+            </>
+          ) : null}
         </p>
       ) : null}
 
@@ -122,9 +134,9 @@ export function ConferencePayPanel({
               className="rounded-md bg-paper px-3 py-2 text-sm text-ink"
               data-testid="onlinepay-campus-only"
             >
-              TEST checkout must be finished on the IITB network or VPN.
-              Clicking Pay will keep you on IITB INV.ENT and give you a gateway
-              link. Do not wait for a new tab that never loads.
+              TEST checkout uses Canara Bank Auto Debit and must be finished
+              on the IITB network or VPN. Use the user id the Online Pay team
+              enabled for application 10172.
             </p>
           ) : null}
           {gatewayReady ? (
@@ -139,8 +151,9 @@ export function ConferencePayPanel({
                   <input
                     name="ldap"
                     type="text"
+                    required
                     autoComplete="username"
-                    placeholder="LDAP id OP enabled for Canara Auto Debit"
+                    placeholder="LDAP or roll number enabled for this test"
                     className="mt-1 w-full rounded-md border border-line px-3 py-2 text-sm"
                     data-testid="onlinepay-ldap"
                   />

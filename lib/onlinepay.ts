@@ -19,7 +19,7 @@ const LIVE_ACCESS =
   "https://portal.iitb.ac.in/onlinepay/commJsp/v2_accessPoint.jsp";
 const TEST_ACK =
   "https://newtestasc.iitb.ac.in/onlinepay_test/OnlinePayAckServlet";
-const LIVE_ACK = "https://onlinepay.iitb.ac.in/OnlinePayAckServlet";
+const LIVE_ACK = "https://portal.iitb.ac.in/onlinepay/OnlinePayAckServlet";
 
 function env(name: string): string {
   return (process.env[name] || "").trim();
@@ -32,7 +32,9 @@ export function onlinePayConfig(): OnlinePayConfig | null {
   const testEnv: OnlinePayEnv = raw === "live" ? "live" : "test";
   const purpose =
     env("ONLINEPAY_PURPOSE") ||
-    (testEnv === "live" ? "IITB INV.ENT conference registration" : "testing");
+    (testEnv === "live"
+      ? "IITB INV.ENT conference registration"
+      : "DSSE INV.ENT Test");
   return {
     env: testEnv,
     appId,
@@ -89,7 +91,7 @@ export function paymentRequestUrl(opts: {
     sReqId: opts.reqId,
     sCurrency: "INR",
   });
-  return `${cfg.accessPoint}?sMsg=${sMsg}`;
+  return `${cfg.accessPoint}?sMsg=${sMsg.replace(/ /g, "%20")}`;
 }
 
 export function parseSMsg(raw: string | null | undefined): Record<string, string> {
@@ -133,10 +135,19 @@ export function parseValidationPayload(body: unknown): ValidationInput | null {
   if (!body || typeof body !== "object") return null;
   const root = body as Record<string, unknown>;
   const records = root.Records ?? root.records;
-  const inner =
-    records && typeof records === "object"
-      ? (records as Record<string, unknown>)
-      : root;
+  let inner: Record<string, unknown> = root;
+  if (typeof records === "string") {
+    try {
+      const parsed = JSON.parse(records) as unknown;
+      if (parsed && typeof parsed === "object") {
+        inner = parsed as Record<string, unknown>;
+      }
+    } catch {
+      return null;
+    }
+  } else if (records && typeof records === "object") {
+    inner = records as Record<string, unknown>;
+  }
   const appId = String(
     inner.input_APPID ?? inner.appId ?? inner.sAppId ?? "",
   ).trim();
@@ -168,22 +179,42 @@ export function validationResponse(
   };
 }
 
+export function onlinePayAckUrl(
+  transId: string,
+  requestType: "I" | "R" | "D",
+): string | null {
+  const cfg = onlinePayConfig();
+  if (!cfg || !transId) return null;
+  return `${cfg.ackUrl}?transId=${encodeURIComponent(transId)}&requestType=${requestType}`;
+}
+
+/**
+ * OP's test and live hosts publish private IITB addresses. This succeeds only
+ * from a network that can route there (campus or VPN), including this server
+ * when it can. Callers must treat failure as "ack still owed".
+ */
 export async function acknowledgeOnlinePay(opts: {
   transId: string;
   requestType: "I" | "R" | "D";
 }): Promise<{ ok: boolean; error?: string }> {
-  const cfg = onlinePayConfig();
-  if (!cfg) return { ok: false, error: "not configured" };
-  if (!opts.transId) return { ok: false, error: "missing transId" };
+  const url = onlinePayAckUrl(opts.transId, opts.requestType);
+  if (!url) {
+    return {
+      ok: false,
+      error: opts.transId ? "not configured" : "missing transId",
+    };
+  }
 
-  const url = `${cfg.ackUrl}?transId=${encodeURIComponent(opts.transId)}&requestType=${opts.requestType}`;
   try {
     const res = await fetch(url, {
       method: "GET",
       redirect: "follow",
       cache: "no-store",
+      signal: AbortSignal.timeout(4000),
     });
     if (!res.ok) return { ok: false, error: `ACK HTTP ${res.status}` };
+    const body = (await res.text()).trim().toUpperCase();
+    if (body.startsWith("FAIL")) return { ok: false, error: "ACK FAIL" };
     return { ok: true };
   } catch (err) {
     return {
