@@ -32,6 +32,7 @@ export function ConferencePayPanel({
   autoStart,
   campusOnly,
   paymentVisible,
+  ackPending,
 }: {
   token: string;
   name: string;
@@ -43,6 +44,7 @@ export function ConferencePayPanel({
   autoStart?: boolean;
   campusOnly?: boolean;
   paymentVisible: boolean;
+  ackPending?: boolean;
 }) {
   const amount = formatInrFromPaise(amountPaise);
   const settled = paymentStatus === "PAID" || paymentStatus === "WAIVED";
@@ -99,6 +101,14 @@ export function ConferencePayPanel({
           data-testid="payu-outcome"
         >
           {notice}
+          {ackPending ? (
+            <>
+              {" "}
+              The acknowledgement to Online Pay still needs a browser on the
+              IITB network. Stay on campus or VPN and use Send acknowledgement,
+              or open the admin desk from there.
+            </>
+          ) : null}
         </p>
       ) : null}
 

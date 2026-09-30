@@ -6,6 +6,7 @@ import { AuthError, requireRole } from "@/lib/auth/roles";
 import { Role } from "@prisma/client";
 import { SignOutForm } from "@/components/SignOutForm";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { OnlinePayAckFlush } from "@/components/admin/OnlinePayAckFlush";
 import { noIndex } from "@/lib/seo";
 
 export const metadata: Metadata = noIndex;
@@ -59,6 +60,7 @@ export default async function AdminLayout({
         </div>
       </div>
       <AdminNav />
+      <OnlinePayAckFlush />
       <div className="mx-auto max-w-6xl">{children}</div>
     </div>
   );
