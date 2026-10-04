@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { isPayUReady, buildPayUCheckout } from "@/lib/conference-payu";
 import { startConferenceOnlinePay } from "@/lib/conference-onlinepay";
-import { isOnlinePayConfigured } from "@/lib/onlinepay";
+import { isOnlinePayConfigured, isOnlinePayTest } from "@/lib/onlinepay";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import {
   CONFERENCE_TOKEN_COOKIE,
@@ -26,12 +26,15 @@ function escapeHtml(value: string): string {
 }
 
 function sanitizeLdap(raw: string): string {
-  return raw.replace(/[^A-Za-z0-9._-]/g, "").slice(0, 32);
+  const value = raw.trim();
+  if (value && !/^[A-Za-z0-9.@_+-]{1,80}$/.test(value))
+    throw new Error("TEST_USER_ID_REQUIRED");
+  return value;
 }
 
 function redirectToPay(
   token: string,
-  outcome: "unavailable" | "not-due" | "already",
+  outcome: "unavailable" | "not-due" | "already" | "need-id" | "request-conflict",
 ) {
   const url = new URL(conferencePaymentUrl(token));
   url.searchParams.set("payu", outcome);
@@ -50,11 +53,10 @@ function onlinePayHandoffHtml(opts: {
   const backUrl = escapeAttr(opts.backUrl);
   const userId = escapeHtml(opts.userId);
   const testCopy = opts.test
-    ? `<p>IIT Bombay TEST Online Pay only loads on the IITB network. Do not paste the
-        gateway URL into the address bar — OP rejects that with
-        <strong>Requesting page referer not received</strong>.</p>
-       <p>This page will open the gateway so the Referer is IITB INV.ENT.
-       Paying as user id <code>${userId}</code>.</p>`
+    ? `<p>This is the IIT Bombay TEST gateway (Canara Bank Auto Debit) for application 10172.
+       It loads on the IITB network. Open it with the button on this page so Online Pay
+       receives the INVENT referer.</p>
+       <p>Paying as user id <code>${userId}</code>.</p>`
     : `<p>Opening IIT Bombay Online Pay…</p>`;
 
   return `<!DOCTYPE html>
@@ -64,14 +66,11 @@ function onlinePayHandoffHtml(opts: {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="referrer" content="origin" />
   <title>IIT Bombay Online Pay</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wdth,wght@95,400..700&amp;display=swap" rel="stylesheet" />
   <style>
-    body { font-family: "Mona Sans", sans-serif; font-optical-sizing: auto; font-variation-settings: "wdth" 95; font-weight: 400; max-width: 36rem; margin: 3rem auto; padding: 0 1.25rem; color: #17333a; line-height: 1.5; }
-    a.btn { display: inline-block; margin-top: 1rem; background: #1a6b6b; color: #fff; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 650; letter-spacing: -0.01em; }
+    body { font-family: system-ui, sans-serif; max-width: 36rem; margin: 3rem auto; padding: 0 1.25rem; color: #17333a; line-height: 1.5; }
+    a.btn { display: inline-block; margin-top: 1rem; background: #1a6b6b; color: #fff; padding: 0.75rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; }
     .back { display: inline-block; margin-top: 1.25rem; color: #1a6b6b; }
-    code { font-family: ui-monospace, monospace; font-size: 0.9em; }
+    code { font-size: 0.9em; }
   </style>
 </head>
 <body>
@@ -80,11 +79,15 @@ function onlinePayHandoffHtml(opts: {
   ${testCopy}
   <p><a class="btn" href="${opUrl}" referrerpolicy="origin" data-testid="onlinepay-handoff">Continue to IIT Bombay Online Pay</a></p>
   <p><a class="back" href="${backUrl}">← Back to the IITB INV.ENT payment page</a></p>
-  <script>
+${
+  opts.test
+    ? ""
+    : `<script>
     window.setTimeout(function () {
       window.location.assign(${JSON.stringify(opts.opUrl)});
     }, 400);
-  </script>
+  </script>`
+}
 </body>
 </html>`;
 }
@@ -114,6 +117,13 @@ async function startCheckout(
     try {
       const form = await req.formData().catch(() => null);
       const ldap = sanitizeLdap(String(form?.get("ldap") ?? ""));
+      if (
+        isOnlinePayTest() &&
+        !ldap &&
+        !(process.env.ONLINEPAY_PAYER_USER_ID || "").trim()
+      ) {
+        return redirectToPay(token, "need-id");
+      }
       const handoff = await startConferenceOnlinePay(application, {
         payerUserId: ldap || null,
       });
@@ -138,6 +148,12 @@ async function startCheckout(
       );
       return res;
     } catch (err) {
+      if (err instanceof Error && err.message === "PAYMENT_PENDING") {
+        return redirectToPay(token, "request-conflict");
+      }
+      if (err instanceof Error && err.message === "TEST_USER_ID_REQUIRED") {
+        return redirectToPay(token, "need-id");
+      }
       console.error("[onlinepay] checkout", err);
       return redirectToPay(token, "unavailable");
     }

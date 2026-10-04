@@ -1,3 +1,4 @@
+import { ensurePaymentReceipt } from "@/lib/payment-management";
 import type {
   ApplicationPaymentStatus,
   ApplicationStatus,
@@ -14,7 +15,10 @@ import {
   conferencePaymentUrl,
   newConferenceToken,
 } from "@/lib/conference-server";
-import { notifyApplicationStatus, issueEventTicketForApplication } from "@/lib/conference-access";
+import {
+  notifyApplicationStatus,
+  issueEventTicketForApplication,
+} from "@/lib/conference-access";
 import { sendConferenceStatusUpdate } from "@/lib/email/transactions";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { siteOrigin } from "@/lib/ticket";
@@ -59,7 +63,8 @@ export async function reviewConferenceApplication(opts: {
       paymentAmountPaise: selected
         ? keepPaid
           ? before.paymentAmountPaise
-          : conferenceFeePaiseFor(before.professionalCategory)
+          : conferenceFeePaiseFor(before.professionalCategory) -
+            before.discountPaise
         : before.paymentAmountPaise,
       paymentToken: before.paymentToken || newConferenceToken(),
     },
@@ -155,6 +160,7 @@ export async function setApplicationPayment(opts: {
     after,
   });
 
+  if (opts.paymentStatus === "PAID") await ensurePaymentReceipt(after.id);
   if (paidNow) {
     await issueEventTicketForApplication(after.id, { notify: true });
   }

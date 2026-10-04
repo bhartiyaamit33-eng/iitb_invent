@@ -72,6 +72,7 @@ enum VentureKind {
 }
 
 enum ProfessionalCategory {
+  STUDENT
   PHD_SCHOLAR
   POSTDOC
   PROFESSOR
@@ -218,10 +219,6 @@ model Edition {
 
   status    EditionStatus @default(DRAFT)
   isCurrent Boolean       @default(false)
-
-  /// Publish the speaker line-up. Off by default so an unconfirmed or
-  /// carried-over line-up is never shown: the public pages say "coming soon"
-  /// until organisers flip this, and the Speaker rows are untouched either way.
   speakersPublished Boolean @default(false)
 
   registrationOpensAt  DateTime?
@@ -539,6 +536,17 @@ model ConferenceApplication {
   opTransId  String?
   opRefNo    String?
   opProvId   String?
+  discountPaise Int @default(0)
+  couponId String?
+  coupon PaymentCoupon? @relation(fields: [couponId], references: [id])
+  billingName String?
+  billingAddress String? @db.Text
+  billingGstin String?
+  gstInvoiceRef String?
+  gstInvoiceUrl String?
+  paymentAttempts PaymentAttempt[]
+  paymentEvents PaymentEvent[]
+  receipt PaymentReceipt?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -639,3 +647,54 @@ model UserNotification {
 //   comment   String?  @db.Text
 //   createdAt DateTime @default(now())
 // }
+
+model PaymentCoupon {
+  id String @id @default(cuid())
+  code String @unique
+  kind String
+  value Int
+  active Boolean @default(true)
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  applications ConferenceApplication[]
+}
+model PaymentAttempt {
+  id String @id @default(cuid())
+  applicationId String
+  application ConferenceApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  requestId String @unique
+  appId String
+  userId String
+  amountPaise Int
+  environment String
+  status String @default("INITIATED")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  events PaymentEvent[]
+  @@index([applicationId, createdAt])
+}
+model PaymentEvent {
+  id String @id @default(cuid())
+  applicationId String?
+  application ConferenceApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  attemptId String?
+  attempt PaymentAttempt? @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+  kind String
+  outcome String
+  requestId String?
+  transId String?
+  amount String?
+  reason String?
+  payload Json
+  createdAt DateTime @default(now())
+  @@index([applicationId, createdAt])
+}
+model PaymentReceipt {
+  id String @id @default(cuid())
+  applicationId String @unique
+  application ConferenceApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  number String @unique
+  amountPaise Int
+  snapshot Json
+  issuedAt DateTime @default(now())
+}

@@ -105,8 +105,15 @@ export async function issueEventTicketForApplication(
   });
   const registration =
     existing ??
-    (await prisma.registration.create({
-      data: {
+    (await prisma.registration.upsert({
+      where: {
+        userId_editionId: {
+          userId: application.userId,
+          editionId: application.editionId,
+        },
+      },
+      update: {},
+      create: {
         userId: application.userId,
         editionId: application.editionId,
         status: "CONFIRMED",
@@ -157,9 +164,7 @@ export async function findMyConferenceApplication(opts: {
 }) {
   const email = opts.email?.trim().toLowerCase() || null;
   const or: Array<
-    | { userId: string }
-    | { email: string }
-    | { paymentToken: string }
+    { userId: string } | { email: string } | { paymentToken: string }
   > = [];
   if (opts.userId) or.push({ userId: opts.userId });
   if (email) or.push({ email });
@@ -284,7 +289,8 @@ export async function notifyApplicationStatus(opts: {
   }
   if (!userId) return;
 
-  const href = opts.paymentDue && opts.paymentPath ? opts.paymentPath : "/dashboard";
+  const href =
+    opts.paymentDue && opts.paymentPath ? opts.paymentPath : "/dashboard";
   const title = opts.paymentDue
     ? "You're selected. Pay the registration fee"
     : `Application update: ${opts.statusLabel}`;

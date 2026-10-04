@@ -22,6 +22,7 @@ export const PROFESSIONAL_OPTIONS: {
   value: ProfessionalCategory;
   label: string;
 }[] = [
+  { value: "STUDENT", label: "UG / PG Student" },
   { value: "PHD_SCHOLAR", label: "PhD Scholar" },
   { value: "POSTDOC", label: "Post-doctoral Researcher" },
   { value: "PROFESSOR", label: "Professor" },
@@ -82,7 +83,7 @@ export const PAYMENT_STATUS_OPTIONS: {
   { value: "WAIVED", label: "Waived" },
 ];
 
-/** Same fee for paper, poster, or attendee — band is who they are, not what they applied as. */
+/** GST-inclusive totals; the professional category determines the fee band. */
 export const CONFERENCE_FEE_PAISE = {
   student: 500_000,
   faculty: 1_000_000,
@@ -95,6 +96,7 @@ export function feeBandForProfessional(
   category: ProfessionalCategory,
 ): ConferenceFeeBand {
   switch (category) {
+    case "STUDENT":
     case "PHD_SCHOLAR":
     case "POSTDOC":
       return "student";

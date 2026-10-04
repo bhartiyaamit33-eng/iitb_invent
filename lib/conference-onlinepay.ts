@@ -1,3 +1,4 @@
+import { ensurePaymentReceipt } from "@/lib/payment-management";
 import { randomBytes } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { siteOrigin } from "@/lib/ticket";
@@ -5,11 +6,12 @@ import { statusRequiresPayment } from "@/lib/conference";
 import { issueEventTicketForApplication } from "@/lib/conference-access";
 import {
   acknowledgeOnlinePay,
-  firstField,
-  onlinePayAckUrl,
-  inferOnlinePayRequestType,
   isOnlinePayConfigured,
+  onlinePayAckUrl,
   onlinePayConfig,
+  parseSMsg,
+  inferOnlinePayRequestType,
+  firstField,
   paymentRequestUrl,
   type ValidationInput,
 } from "@/lib/onlinepay";
@@ -27,11 +29,15 @@ export function rupeesFromPaise(paise: number): number {
   return paise / 100;
 }
 
-export function amountsMatchPaise(storedPaise: number, incoming: string): boolean {
+export function amountsMatchPaise(
+  storedPaise: number,
+  incoming: string,
+): boolean {
   const a = storedPaise / 100;
   const b = Number(incoming);
   if (!Number.isFinite(a) || !Number.isFinite(b)) return false;
-  return Math.abs(a - b) < 0.005;
+  if (!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(incoming.trim())) return false;
+  return Math.round(b * 100) === storedPaise;
 }
 
 export function newOpReqId(): string {
@@ -41,17 +47,6 @@ export function newOpReqId(): string {
   );
 }
 
-export function opPayerUserId(
-  application: { id: string; email: string },
-  override?: string | null,
-): string {
-  const fromForm = (override || "").trim();
-  if (fromForm) return fromForm;
-  const forced = (process.env.ONLINEPAY_PAYER_USER_ID || "").trim();
-  if (forced) return forced;
-  return application.id;
-}
-
 export async function startConferenceOnlinePay(
   application: {
     id: string;
@@ -59,29 +54,83 @@ export async function startConferenceOnlinePay(
     email: string;
     paymentToken: string;
     paymentAmountPaise: number;
+    paymentStatus?: string | null;
     opReqId?: string | null;
     opUserId?: string | null;
+    opTransId?: string | null;
   },
   opts?: { payerUserId?: string | null },
 ): Promise<{ url: string; test: boolean; userId: string }> {
   const cfg = onlinePayConfig();
   if (!cfg) throw new Error("ONLINEPAY_APP_ID is not set");
 
-  const userId = opPayerUserId(application, opts?.payerUserId);
-  const reqId = application.opReqId || newOpReqId();
-  if (application.opReqId !== reqId || application.opUserId !== userId) {
-    await prisma.conferenceApplication.update({
-      where: { id: application.id },
-      data: { opReqId: reqId, opUserId: userId },
-    });
+  const explicit = (opts?.payerUserId || "").trim();
+  const forced = (process.env.ONLINEPAY_PAYER_USER_ID || "").trim();
+  if (cfg.env === "test" && !explicit && !forced) {
+    throw new Error("TEST_USER_ID_REQUIRED");
   }
+
+  const userId = explicit || forced || application.id;
+  const attempt = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "ColloquiumApplication" WHERE id = ${application.id} FOR UPDATE`;
+    const current = await tx.conferenceApplication.findUniqueOrThrow({
+      where: { id: application.id },
+    });
+    if (
+      current.paymentStatus !== "UNPAID" ||
+      !statusRequiresPayment(current.status)
+    )
+      throw new Error("PAYMENT_NOT_DUE");
+    const existing = await tx.paymentAttempt.findFirst({
+      where: {
+        applicationId: current.id,
+        status: { in: ["INITIATED", "VALID", "PENDING"] },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (existing) {
+      if (
+        existing.userId !== userId ||
+        existing.amountPaise !== current.paymentAmountPaise ||
+        existing.appId !== cfg.appId
+      )
+        throw new Error("PAYMENT_PENDING");
+      return existing;
+    }
+    if (
+      current.opReqId &&
+      current.opUserId &&
+      current.opUserId !== userId &&
+      !current.opTransId
+    )
+      throw new Error("PAYMENT_PENDING");
+    const row = await tx.paymentAttempt.create({
+      data: {
+        applicationId: current.id,
+        requestId:
+          current.opReqId && !current.opTransId
+            ? current.opReqId
+            : newOpReqId(),
+        userId,
+        appId: cfg.appId,
+        amountPaise: current.paymentAmountPaise,
+        environment: cfg.env,
+      },
+    });
+    await tx.conferenceApplication.update({
+      where: { id: current.id },
+      data: { opReqId: row.requestId, opUserId: userId },
+    });
+    return row;
+  });
+  const reqId = attempt.requestId;
 
   return {
     url: paymentRequestUrl({
       appId: cfg.appId,
       userId,
       userName: application.name.slice(0, 80),
-      amountDue: rupeesFromPaise(application.paymentAmountPaise),
+      amountDue: rupeesFromPaise(attempt.amountPaise),
       purpose: cfg.purpose,
       reqId,
     }),
@@ -94,49 +143,55 @@ export async function validateOnlinePayRequest(
   input: ValidationInput,
 ): Promise<"VALID" | "INVALID"> {
   const cfg = onlinePayConfig();
-  if (!cfg || input.appId !== cfg.appId) {
-    console.warn("[onlinepay] validate INVALID appId", input.appId);
-    return "INVALID";
-  }
 
-  const application = await prisma.conferenceApplication.findUnique({
-    where: { opReqId: input.requestId },
+  const attempt = await prisma.paymentAttempt.findUnique({
+    where: { requestId: input.requestId },
+    include: { application: true },
   });
-  if (!application) {
-    console.warn("[onlinepay] validate INVALID unknown reqId", input.requestId);
-    return "INVALID";
-  }
-  if (application.paymentStatus === "PAID" || application.paymentStatus === "WAIVED") {
-    console.warn("[onlinepay] validate INVALID already settled", input.requestId);
-    return "INVALID";
-  }
-  if (
-    application.paymentStatus !== "UNPAID" &&
-    application.paymentStatus !== "REPORTED"
-  ) {
-    return "INVALID";
-  }
-  if (!statusRequiresPayment(application.status)) {
-    return "INVALID";
-  }
-  if (
-    application.opUserId &&
-    application.opUserId.toLowerCase() !== input.userId.toLowerCase()
-  ) {
-    console.warn("[onlinepay] validate INVALID userId", {
-      expected: application.opUserId,
-      got: input.userId,
+  const application =
+    attempt?.application ??
+    (await prisma.conferenceApplication.findUnique({
+      where: { opReqId: input.requestId },
+    }));
+  const reason =
+    !cfg || input.appId !== cfg.appId
+      ? "App ID mismatch"
+      : !application
+        ? "Unknown request"
+        : !["UNPAID", "REPORTED"].includes(application.paymentStatus)
+          ? "Payment is not unpaid"
+          : !statusRequiresPayment(application.status)
+            ? "Application is not selected"
+            : (attempt?.userId ?? application.opUserId) !== input.userId
+              ? "Payer ID mismatch"
+              : !amountsMatchPaise(
+                    attempt?.amountPaise ?? application.paymentAmountPaise,
+                    input.amount,
+                  )
+                ? "Amount mismatch"
+                : attempt &&
+                    !["INITIATED", "VALID", "PENDING"].includes(attempt.status)
+                  ? "Attempt is closed"
+                  : null;
+  const status = reason ? "INVALID" : "VALID";
+  await prisma.paymentEvent.create({
+    data: {
+      applicationId: application?.id,
+      attemptId: attempt?.id,
+      kind: "VALIDATION",
+      outcome: status,
+      requestId: input.requestId,
+      amount: input.amount,
+      reason,
+      payload: input,
+    },
+  });
+  if (attempt && status === "VALID")
+    await prisma.paymentAttempt.update({
+      where: { id: attempt.id },
+      data: { status: "VALID" },
     });
-    return "INVALID";
-  }
-  if (!amountsMatchPaise(application.paymentAmountPaise, input.amount)) {
-    console.warn("[onlinepay] validate INVALID amount", {
-      expectedPaise: application.paymentAmountPaise,
-      got: input.amount,
-    });
-    return "INVALID";
-  }
-  return "VALID";
+  return status;
 }
 
 export type OpCallbackResult = {
@@ -147,18 +202,6 @@ export type OpCallbackResult = {
   ackOk: boolean;
   outcome: "success" | "failed" | "ok";
 };
-
-async function recordOnlinePayNotice(
-  applicationId: string,
-  transId: string,
-  requestType: "I" | "R" | "D",
-): Promise<void> {
-  await prisma.onlinePayAck.upsert({
-    where: { transId_requestType: { transId, requestType } },
-    create: { applicationId, transId, requestType },
-    update: {},
-  });
-}
 
 async function ackNotice(
   transId: string,
@@ -190,13 +233,7 @@ export async function completeOnlinePayAck(
     where: { transId_requestType: { transId, requestType: type } },
   });
   if (!row) return false;
-  if (!row.ackedAt) {
-    await prisma.onlinePayAck.update({
-      where: { id: row.id },
-      data: { ackedAt: new Date() },
-    });
-  }
-  return true;
+  return ackNotice(transId, type);
 }
 
 export async function listPendingOnlinePayAcks(): Promise<
@@ -229,6 +266,198 @@ export async function listPendingOnlinePayAcks(): Promise<
   return items;
 }
 
+function emptyCallback(
+  requestType: string | null,
+  paymentToken: string | null,
+): OpCallbackResult {
+  return {
+    requestType,
+    paymentToken,
+    transId: null,
+    ackUrl: null,
+    ackOk: false,
+    outcome: "failed",
+  };
+}
+
+export async function applyConferenceOnlinePayCallback(
+  rawSMsg: string,
+): Promise<OpCallbackResult> {
+  const params = parseSMsg(rawSMsg);
+  const requestType = inferOnlinePayRequestType(params) ?? "";
+  params.appId = firstField(params, ["appId", "sAppId", "APPID"]);
+  params.userId = firstField(params, ["userId", "sUserId"]);
+  params.reqId = firstField(params, ["reqId", "sReqId", "requestId"]);
+  params.totalAmt = firstField(params, ["totalAmt", "sAmountDue", "amount"]);
+  params.status = firstField(params, ["status", "sStatus"]).toUpperCase();
+  const reqId = params.reqId ?? params.sReqId ?? "";
+  const transId = params.transId ?? "";
+  const cfg = onlinePayConfig();
+  const found = reqId
+    ? await prisma.paymentAttempt.findUnique({ where: { requestId: reqId } })
+    : null;
+  const candidate = found
+    ? await prisma.conferenceApplication.findUnique({
+        where: { id: found.applicationId },
+      })
+    : await findApplicationForNotice(reqId, transId);
+  const result = await prisma.$transaction(async (tx) => {
+    if (candidate)
+      await tx.$queryRaw`SELECT id FROM "ColloquiumApplication" WHERE id = ${candidate.id} FOR UPDATE`;
+    const application = candidate
+      ? await tx.conferenceApplication.findUnique({
+          where: { id: candidate.id },
+        })
+      : null;
+    const attempt = found
+      ? await tx.paymentAttempt.findUnique({ where: { id: found.id } })
+      : null;
+    const amount = params.totalAmt ?? "";
+    const expected =
+      attempt?.amountPaise ?? application?.paymentAmountPaise ?? 0;
+    const bound = transId
+      ? await tx.onlinePayAck.findFirst({ where: { transId } })
+      : null;
+    const priorTransaction = transId
+      ? await tx.paymentEvent.findFirst({
+          where: {
+            transId,
+            kind: { in: ["I", "R", "D"] },
+            outcome: { not: "REJECTED" },
+          },
+          select: { requestId: true },
+        })
+      : null;
+    const reason = !application
+      ? "Unknown request"
+      : !["I", "R", "D"].includes(requestType)
+        ? "Unknown notice type"
+        : !transId || !reqId
+          ? "Missing request or transaction ID"
+          : !cfg || params.appId !== (attempt?.appId ?? cfg.appId)
+            ? "App ID mismatch"
+            : params.userId !== (attempt?.userId ?? application.opUserId)
+              ? "Payer ID mismatch"
+              : bound && bound.applicationId !== application.id
+                ? "Transaction belongs to another registration"
+                : priorTransaction?.requestId &&
+                    priorTransaction.requestId !== reqId
+                  ? "Transaction belongs to another payment request"
+                  : requestType === "D"
+                    ? !/^-[0-9]+(?:\.[0-9]{1,2})?$/.test(amount) ||
+                      Math.abs(Number(amount) * 100) > expected
+                      ? "Invalid refund amount"
+                      : null
+                    : !amountsMatchPaise(expected, amount)
+                      ? "Amount mismatch"
+                      : requestType === "I" &&
+                          !["S", "F"].includes(params.status ?? "")
+                        ? "Invalid immediate status"
+                        : null;
+    await tx.paymentEvent.create({
+      data: {
+        applicationId: application?.id,
+        attemptId: attempt?.id,
+        kind: requestType || "CALLBACK",
+        outcome: reason
+          ? "REJECTED"
+          : requestType === "I"
+            ? params.status === "S"
+              ? "SUCCESS"
+              : "FAILED"
+            : requestType === "R"
+              ? "SETTLED"
+              : "REFUND",
+        requestId: reqId,
+        transId,
+        amount,
+        reason,
+        payload: params,
+      },
+    });
+    if (reason || !application) return null;
+    if (attempt) {
+      const final = ["SUCCESS", "SETTLED", "REFUND"].includes(attempt.status);
+      const status =
+        requestType === "D"
+          ? "REFUND"
+          : requestType === "R"
+            ? attempt.status === "REFUND"
+              ? "REFUND"
+              : "SETTLED"
+            : final
+              ? attempt.status
+              : params.status === "S"
+                ? "SUCCESS"
+                : "FAILED";
+      await tx.paymentAttempt.update({
+        where: { id: attempt.id },
+        data: { status },
+      });
+    }
+    const paid =
+      requestType === "R" || (requestType === "I" && params.status === "S");
+    await tx.conferenceApplication.update({
+      where: { id: application.id },
+      data: {
+        ...(paid && application.paymentStatus !== "WAIVED"
+          ? {
+              paymentStatus: "PAID",
+              paymentRef:
+                application.paymentStatus === "PAID"
+                  ? application.paymentRef || transId
+                  : transId,
+              paidAt: application.paidAt ?? new Date(),
+            }
+          : {}),
+        opTransId:
+          paid && application.paymentStatus !== "PAID"
+            ? transId
+            : application.opTransId || transId,
+        opRefNo:
+          paid && application.paymentStatus !== "PAID"
+            ? params.refNo || null
+            : application.opRefNo || params.refNo || null,
+        opProvId:
+          paid && application.paymentStatus !== "PAID"
+            ? params.provId || params.modeOfPayment || null
+            : application.opProvId ||
+              params.provId ||
+              params.modeOfPayment ||
+              null,
+      },
+    });
+    await tx.onlinePayAck.upsert({
+      where: { transId_requestType: { transId, requestType } },
+      create: { applicationId: application.id, transId, requestType },
+      update: {},
+    });
+    return { application, paid };
+  });
+  if (!result) return emptyCallback(requestType || null, null);
+  if (result.paid && result.application.paymentStatus !== "WAIVED") {
+    await ensurePaymentReceipt(result.application.id);
+    await issueEventTicketForApplication(result.application.id, {
+      notify: true,
+    });
+  }
+  const type = requestType as "I" | "R" | "D";
+  const ackOk = await ackNotice(transId, type);
+  return {
+    requestType,
+    paymentToken: result.application.paymentToken,
+    transId,
+    ackUrl: onlinePayAckUrl(transId, type),
+    ackOk,
+    outcome:
+      requestType === "I"
+        ? params.status === "S"
+          ? "success"
+          : "failed"
+        : "ok",
+  };
+}
+
 async function findApplicationForNotice(reqId: string, transId: string) {
   if (reqId) {
     const byReq = await prisma.conferenceApplication.findUnique({
@@ -236,7 +465,7 @@ async function findApplicationForNotice(reqId: string, transId: string) {
     });
     if (byReq) return byReq;
   }
-  if (!transId) return null;
+  if (reqId || !transId) return null;
   const byTrans = await prisma.conferenceApplication.findFirst({
     where: { opTransId: transId },
     orderBy: { updatedAt: "desc" },
@@ -248,134 +477,6 @@ async function findApplicationForNotice(reqId: string, transId: string) {
     include: { application: true },
   });
   return notice?.application ?? null;
-}
-
-async function finishAck(
-  applicationId: string,
-  transId: string,
-  requestType: "I" | "R" | "D",
-): Promise<{ transId: string | null; ackUrl: string | null; ackOk: boolean }> {
-  if (!transId) return { transId: null, ackUrl: null, ackOk: false };
-  await recordOnlinePayNotice(applicationId, transId, requestType);
-  const ackOk = await ackNotice(transId, requestType);
-  return { transId, ackUrl: onlinePayAckUrl(transId, requestType), ackOk };
-}
-
-export async function applyConferenceOnlinePayCallback(
-  params: Record<string, string>,
-): Promise<OpCallbackResult> {
-  const requestType = inferOnlinePayRequestType(params);
-  const reqId = firstField(params, ["reqId", "sReqId", "input_RequestID"]);
-  const transId = firstField(params, ["transId"]);
-  const refNo = firstField(params, ["refNo"]);
-  const provId = firstField(params, ["provId"]);
-  const modeOfPayment = firstField(params, ["modeOfPayment"]);
-  const statusFlag = firstField(params, ["status", "sStatus"]).toUpperCase();
-  const psp = [provId, modeOfPayment].filter(Boolean).join(" / ");
-
-  console.info("[onlinepay] callback", {
-    requestType,
-    reqId,
-    transId,
-    status: statusFlag || null,
-    modeOfPayment: modeOfPayment || null,
-    reconDate: firstField(params, ["reconDate"]) || null,
-  });
-
-  const application = await findApplicationForNotice(reqId, transId);
-
-  if (!application || !requestType) {
-    return {
-      requestType: requestType,
-      paymentToken: application?.paymentToken ?? null,
-      transId: null,
-      ackUrl: null,
-      ackOk: false,
-      outcome: "failed",
-    };
-  }
-
-  if (requestType === "I") {
-    const success = statusFlag === "S";
-    if (success && application.paymentStatus !== "WAIVED") {
-      await prisma.conferenceApplication.update({
-        where: { id: application.id },
-        data: {
-          paymentStatus: "PAID",
-          paymentRef: transId || refNo || application.paymentRef,
-          paidAt: application.paidAt ?? new Date(),
-          opTransId: transId || application.opTransId,
-          opRefNo: refNo || application.opRefNo,
-          opProvId: psp || application.opProvId,
-        },
-      });
-      await issueEventTicketForApplication(application.id, { notify: true });
-    } else if (transId || refNo || provId) {
-      await prisma.conferenceApplication.update({
-        where: { id: application.id },
-        data: {
-          opTransId: transId || application.opTransId,
-          opRefNo: refNo || application.opRefNo,
-          opProvId: psp || application.opProvId,
-        },
-      });
-    }
-    const ack = await finishAck(application.id, transId, "I");
-    return {
-      requestType: "I",
-      paymentToken: application.paymentToken,
-      outcome: success ? "success" : "failed",
-      ...ack,
-    };
-  }
-
-  if (requestType === "R") {
-    await prisma.conferenceApplication.update({
-      where: { id: application.id },
-      data: {
-        paymentStatus:
-          application.paymentStatus === "WAIVED" ? "WAIVED" : "PAID",
-        paymentRef: transId || refNo || application.paymentRef,
-        paidAt: application.paidAt ?? new Date(),
-        opTransId: transId || application.opTransId,
-        opRefNo: refNo || application.opRefNo,
-        opProvId: psp || application.opProvId,
-      },
-    });
-    if (application.paymentStatus !== "WAIVED") {
-      await issueEventTicketForApplication(application.id, { notify: true });
-    }
-    const ack = await finishAck(application.id, transId, "R");
-    return {
-      requestType: "R",
-      paymentToken: application.paymentToken,
-      outcome: "ok",
-      ...ack,
-    };
-  }
-
-  // Refund / chargeback — keep the original paid row, record OP ids.
-  await prisma.conferenceApplication.update({
-    where: { id: application.id },
-    data: {
-      opTransId: transId || application.opTransId,
-      opRefNo: refNo || application.opRefNo,
-      opProvId: psp || application.opProvId,
-      adminNotes: [
-        application.adminNotes,
-        `OP refund/chargeback transId=${transId} amt=${firstField(params, ["totalAmt"])} mode=${modeOfPayment}`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
-    },
-  });
-  const ack = await finishAck(application.id, transId, "D");
-  return {
-    requestType: "D",
-    paymentToken: application.paymentToken,
-    outcome: "ok",
-    ...ack,
-  };
 }
 
 export function conferencePayReturnUrl(token: string, outcome: string): string {

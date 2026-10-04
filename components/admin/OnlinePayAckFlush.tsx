@@ -35,37 +35,9 @@ export function OnlinePayAckFlush() {
       const data = (await res.json()) as { items?: PendingAck[] };
       const items = data.items ?? [];
       if (items.length === 0 || cancelled) return;
-      const stillPending: PendingAck[] = [];
-      for (const item of items) {
-        try {
-          await fetch(item.ackUrl, {
-            mode: "no-cors",
-            cache: "no-store",
-            credentials: "omit",
-            signal: AbortSignal.timeout(5000),
-          });
-          await fetch("/api/admin/onlinepay/acks", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "same-origin",
-            body: JSON.stringify({
-              transId: item.transId,
-              requestType: item.requestType,
-            }),
-          });
-        } catch {
-          stillPending.push(item);
-        }
-      }
-      if (cancelled) return;
-      if (stillPending.length === 0) {
-        setNote("IIT Bombay Online Pay acknowledgements were sent from this browser.");
-        setPending([]);
-        return;
-      }
-      setPending(stillPending);
+      setPending(items);
       setNote(
-        "Open each acknowledgement on the IITB network. A background request from this public site cannot reach Online Pay.",
+        "Online Pay acknowledgements remain unconfirmed. Open the acknowledgement on campus / VPN, then retry server confirmation. Opening a link alone does not confirm delivery.",
       );
     }
     void flush().catch(() => undefined);
@@ -75,7 +47,7 @@ export function OnlinePayAckFlush() {
   }, []);
 
   async function markSent(item: PendingAck) {
-    await fetch("/api/admin/onlinepay/acks", {
+    const result = await fetch("/api/admin/onlinepay/acks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
@@ -84,10 +56,19 @@ export function OnlinePayAckFlush() {
         requestType: item.requestType,
       }),
     });
+    const body = await result.json();
+    if (!result.ok || !body.ok) {
+      setNote(
+        "The server could not confirm acknowledgement delivery. It remains pending; ask ASC to confirm receipt.",
+      );
+      return;
+    }
     setPending((current) =>
       (current ?? []).filter(
         (row) =>
-          !(row.transId === item.transId && row.requestType === item.requestType),
+          !(
+            row.transId === item.transId && row.requestType === item.requestType
+          ),
       ),
     );
   }
@@ -105,11 +86,17 @@ export function OnlinePayAckFlush() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-teal-deep underline-offset-2 hover:underline"
+              >
+                Acknowledge {TYPE_LABEL[item.requestType] ?? item.requestType}{" "}
+                for {item.name}
+              </a>{" "}
+              <button
+                type="button"
+                className="ml-3 underline"
                 onClick={() => void markSent(item)}
               >
-                Acknowledge {TYPE_LABEL[item.requestType] ?? item.requestType} for{" "}
-                {item.name}
-              </a>
+                Retry server confirmation
+              </button>
             </li>
           ))}
         </ul>

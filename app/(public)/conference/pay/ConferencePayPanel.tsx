@@ -16,9 +16,11 @@ const OUTCOME_COPY: Record<string, string> = {
   invalid:
     "The payment response could not be verified. If you were charged, write to support@iitbinvent.com with the Online Pay transaction id.",
   unavailable:
-    "IIT Bombay Online Pay is not configured on this site yet (application id missing).",
+    "IIT Bombay Online Pay is temporarily unavailable. If you were charged, contact support before retrying.",
   "not-due": "No registration fee is due on this application.",
   already: "This application is already marked paid or waived.",
+  "need-id": "Enter your exact IITB LDAP / IDP user id, then continue.",
+  "request-conflict": "An existing payment request uses a different payer ID or amount. Use the original payer ID shown below. If that ID is incorrect, ask the organiser to reconcile the existing request with ASC before starting another. Do not retry if money was debited.",
 };
 
 export function ConferencePayPanel({
@@ -33,6 +35,7 @@ export function ConferencePayPanel({
   campusOnly,
   paymentVisible,
   ackPending,
+  payerUserId,
 }: {
   token: string;
   name: string;
@@ -45,6 +48,7 @@ export function ConferencePayPanel({
   campusOnly?: boolean;
   paymentVisible: boolean;
   ackPending?: boolean;
+  payerUserId?: string | null;
 }) {
   const amount = formatInrFromPaise(amountPaise);
   const settled = paymentStatus === "PAID" || paymentStatus === "WAIVED";
@@ -55,14 +59,23 @@ export function ConferencePayPanel({
   useEffect(() => {
     void fetch("/api/conference/remember", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       credentials: "same-origin",
       body: JSON.stringify({ token }),
     });
   }, [token]);
 
   useEffect(() => {
-    if (!autoStart || !gatewayReady || settled || !paymentVisible || started.current)
+    if (
+      !autoStart ||
+      !gatewayReady ||
+      settled ||
+      !paymentVisible ||
+      started.current
+    )
       return;
     started.current = true;
     formRef.current?.requestSubmit();
@@ -74,10 +87,13 @@ export function ConferencePayPanel({
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
           Registration fee
         </p>
-        <p className="mt-3 text-sm text-ink-soft" data-testid="pay-awaiting-decision">
+        <p
+          className="mt-3 text-sm text-ink-soft"
+          data-testid="pay-awaiting-decision"
+        >
           Hi {name}. Organisers still need to select you for a paper, a poster,
-          or as an attendee. The fee for your category and the IIT Bombay
-          Online Pay link will appear here after that decision.
+          or as an attendee. The fee for your category and the IIT Bombay Online
+          Pay link will appear here after that decision.
         </p>
       </section>
     );
@@ -91,7 +107,9 @@ export function ConferencePayPanel({
       <p className="mt-1 font-display text-4xl text-teal-deep">{amount}</p>
       <p className="mt-2 text-sm text-ink-soft">
         Hi {name}. Status:{" "}
-        <strong className="text-ink">{paymentStatusLabel(paymentStatus)}</strong>
+        <strong className="text-ink">
+          {paymentStatusLabel(paymentStatus)}
+        </strong>
         {paymentRef ? ` · Online Pay ref ${paymentRef}` : null}
       </p>
 
@@ -105,8 +123,8 @@ export function ConferencePayPanel({
             <>
               {" "}
               The acknowledgement to Online Pay still needs a browser on the
-              IITB network. Stay on campus or VPN and use Send acknowledgement,
-              or open the admin desk from there.
+              IITB network. Stay on campus or VPN with this page open, or ask an
+              organiser to open the admin desk from there.
             </>
           ) : null}
         </p>
@@ -132,10 +150,10 @@ export function ConferencePayPanel({
               className="rounded-md bg-paper px-3 py-2 text-sm text-ink"
               data-testid="onlinepay-campus-only"
             >
-              TEST Online Pay only opens on the IITB network or VPN. On the
-              IITB page you can pay with Canara Auto Debit, Canara Net
-              Banking, PayU, SBIEPAY, or SBI Internet Banking. Do not paste
-              the gateway URL into the address bar.
+              TEST checkout uses Canara Bank Auto Debit and must be finished on
+              the IITB network or VPN. Enter your exact IITB LDAP / IDP user id.
+              ASC confirmed that individual IDs no longer need advance
+              enablement.
             </p>
           ) : null}
           {gatewayReady ? (
@@ -146,12 +164,14 @@ export function ConferencePayPanel({
             >
               {campusOnly ? (
                 <label className="mb-3 block text-sm text-ink">
-                  IITB LDAP (optional — Canara Auto Debit only)
+                  IITB LDAP / IDP user id (TEST)
                   <input
                     name="ldap"
+                    defaultValue={payerUserId ?? ""}
                     type="text"
+                    required
                     autoComplete="username"
-                    placeholder="Leave blank for PayU / net banking"
+                    placeholder="Exact LDAP / IDP user id"
                     className="mt-1 w-full rounded-md border border-line px-3 py-2 text-sm"
                     data-testid="onlinepay-ldap"
                   />

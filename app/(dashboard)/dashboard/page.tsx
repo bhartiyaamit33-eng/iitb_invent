@@ -90,7 +90,7 @@ export default async function DashboardPage({
             category. Only after that do you receive a ticket.
           </p>
           <Link
-            href="/research#submit"
+            href="/conference#submit"
             className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
           >
             Submit your abstract →
@@ -134,6 +134,7 @@ export default async function DashboardPage({
           title: n.title,
           body: n.body,
           href: n.href,
+          paymentHistory: /^\/(?:conference|colloquium)\/pay\//.test(n.href ?? ""),
           readAt: n.readAt ? n.readAt.toISOString() : null,
           createdAt: n.createdAt.toISOString(),
         }))}
@@ -183,7 +184,7 @@ export default async function DashboardPage({
                 pay the fee for your category to receive your event ticket.
               </p>
               <Link
-                href="/research#submit"
+                href="/conference#submit"
                 className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
               >
                 Submit abstract →
@@ -270,7 +271,7 @@ export default async function DashboardPage({
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
-          href="/research#submit"
+          href="/conference#submit"
           className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
         >
           {application ? "View application" : "Submit abstract"}

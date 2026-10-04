@@ -11,6 +11,7 @@ export type DashboardNotice = {
   href: string | null;
   readAt: string | null;
   createdAt: string;
+  paymentHistory?: boolean;
 };
 
 export function NotificationsPanel({
@@ -70,8 +71,14 @@ export function NotificationsPanel({
             <p className="mt-1 whitespace-pre-line text-sm text-ink-soft">
               {n.body}
             </p>
+            {n.paymentHistory ? (
+              <p className="mt-2 text-xs text-mute" data-testid="payment-notice-history">
+                Payment notice history. Use your current registration card below
+                for the payable fee and payment link.
+              </p>
+            ) : null}
             <div className="mt-2 flex flex-wrap gap-3">
-              {n.href ? (
+              {n.href && !n.paymentHistory ? (
                 <Link
                   href={n.href}
                   onClick={() => {

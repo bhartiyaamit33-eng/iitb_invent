@@ -1,7 +1,6 @@
 /**
  * IIT Bombay Online Pay — TEST/LIVE access points.
- * PayU is a mode on OP (Lisa app 10172 DSSE INV.ENT Test), not a separate
- * merchant checkout. Money settles to IITB_MAIN.
+ * PayU is a mode on OP, not a separate merchant checkout.
  */
 
 export type OnlinePayEnv = "test" | "live";
@@ -42,7 +41,8 @@ export function onlinePayConfig(): OnlinePayConfig | null {
     accessPoint:
       env("ONLINEPAY_ACCESS_POINT") ||
       (testEnv === "live" ? LIVE_ACCESS : TEST_ACCESS),
-    ackUrl: env("ONLINEPAY_ACK_URL") || (testEnv === "live" ? LIVE_ACK : TEST_ACK),
+    ackUrl:
+      env("ONLINEPAY_ACK_URL") || (testEnv === "live" ? LIVE_ACK : TEST_ACK),
     purpose,
   };
 }
@@ -63,14 +63,18 @@ function sanitizeSMsgValue(value: string): string {
 /** OP joins fields with %26 instead of encoding '='. */
 export function buildSMsg(fields: Record<string, string>): string {
   return Object.entries(fields)
-    .map(([key, value]) => `${key}=${sanitizeSMsgValue(value)}`)
+    .map(
+      ([key, value]) =>
+        `${key}=${encodeURIComponent(sanitizeSMsgValue(value))}`,
+    )
     .join("%26");
 }
 
 export function formatAmountDue(amount: number | string): string {
   const n = Number(amount);
-  if (!Number.isFinite(n)) return "0.0";
-  return n.toFixed(1);
+
+  if (!Number.isFinite(n) || n <= 0) throw new Error("Invalid payment amount");
+  return n.toFixed(2);
 }
 
 export function paymentRequestUrl(opts: {
@@ -92,10 +96,12 @@ export function paymentRequestUrl(opts: {
     sReqId: opts.reqId,
     sCurrency: "INR",
   });
-  return `${cfg.accessPoint}?sMsg=${sMsg}`;
+  return `${cfg.accessPoint}?sMsg=${sMsg.replace(/ /g, "%20")}`;
 }
 
-export function parseSMsg(raw: string | null | undefined): Record<string, string> {
+export function parseSMsg(
+  raw: string | null | undefined,
+): Record<string, string> {
   if (!raw) return {};
   let input = raw.trim();
   if (input.includes("%26") && !input.includes("&")) {
@@ -154,7 +160,10 @@ export function flattenOnlinePayObject(body: unknown): Record<string, string> {
     return parseSMsg(trimmed);
   }
   if (!isPlainRecord(body)) return {};
-  const records = body.Records ?? body.records;
+  let records = body.Records ?? body.records;
+  if (typeof records === "string") {
+    try { records = JSON.parse(records); } catch { return {}; }
+  }
   const inner = isPlainRecord(records) ? { ...body, ...records } : body;
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(inner)) {
@@ -194,7 +203,8 @@ export async function readOnlinePayRequest(
     text.trim().startsWith("[")
   ) {
     try {
-      return { ...base, ...flattenOnlinePayObject(JSON.parse(text)) };
+      const fields = flattenOnlinePayObject(JSON.parse(text));
+      return { ...base, ...fields, ...(fields.sMsg ? parseSMsg(fields.sMsg) : {}) };
     } catch {
       /* fall through */
     }
@@ -219,12 +229,11 @@ export function inferOnlinePayRequestType(
     "RequestType",
     "requesttype",
     "request_type",
-  ])
-    .charAt(0)
-    .toUpperCase();
+  ]).toUpperCase();
   if (explicit === "I" || explicit === "R" || explicit === "D") return explicit;
+  if (explicit) return null;
   if (
-    firstField(params, ["reconDate", "reconTime", "netReconAmt", "grossAmt"])
+    firstField(params, ["reconDate", "reconTime", "netReconAmt"])
   ) {
     return "R";
   }
@@ -296,7 +305,11 @@ export function onlinePayAckUrl(
   return `${cfg.ackUrl}?transId=${encodeURIComponent(transId)}&requestType=${requestType}`;
 }
 
-/** Succeeds only from a network that can route to IITB's private Online Pay host. */
+/**
+ * OP's test and live hosts publish private IITB addresses. This succeeds only
+ * from a network that can route there (campus or VPN), including this server
+ * when it can. Callers must treat failure as "ack still owed".
+ */
 export async function acknowledgeOnlinePay(opts: {
   transId: string;
   requestType: "I" | "R" | "D";
@@ -318,7 +331,15 @@ export async function acknowledgeOnlinePay(opts: {
     });
     if (!res.ok) return { ok: false, error: `ACK HTTP ${res.status}` };
     const body = (await res.text()).trim().toUpperCase();
-    if (body.startsWith("FAIL")) return { ok: false, error: "ACK FAIL" };
+    if (
+      /\b(?:FAIL(?:ED|URE)?|ERROR|INVALID|EXCEPTION|UNAUTHORIZED)\b/.test(body)
+    )
+      return { ok: false, error: "ACK reported failure" };
+    if (body.includes("<HTML") || body.includes("<!DOCTYPE"))
+      return {
+        ok: false,
+        error: "ACK returned an HTML page; delivery is unconfirmed",
+      };
     return { ok: true };
   } catch (err) {
     return {
