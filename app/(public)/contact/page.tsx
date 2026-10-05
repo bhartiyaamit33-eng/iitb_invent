@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StudentsSection } from "@/components/StudentsSection";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/site/PageHero";
 import { SitePhoto } from "@/components/site/SitePhoto";
@@ -73,6 +74,7 @@ export default async function ContactPage() {
             height={1067}
             testId="contact-dsse-team"
           />
+          <StudentsSection />
         </div>
       </section>
 
