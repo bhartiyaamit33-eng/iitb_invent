@@ -85,15 +85,15 @@ export default async function DashboardPage({
         >
           <p className="font-semibold text-teal-deep">Account created</p>
           <p className="mt-1 text-sm text-ink-soft">
-            Logging in is not a ticket to INV.ENT. Submit a paper or poster
-            abstract next. Organisers review it, then you pay the fee for your
-            category. Only after that do you receive a ticket.
+            Logging in is not a ticket to INV.ENT. Complete your registration
+            next: attendees pay right away, presenters pay once organisers
+            shortlist their abstract. The ticket follows payment.
           </p>
           <Link
-            href="/conference#submit"
+            href="/register"
             className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
           >
-            Submit your abstract →
+            Complete registration →
           </Link>
         </div>
       ) : null}
@@ -180,14 +180,15 @@ export default async function DashboardPage({
           ) : (
             <>
               <p className="mt-2 text-sm text-ink-soft">
-                Submit a paper or poster abstract. After organisers select you,
-                pay the fee for your category to receive your event ticket.
+                Register as an attendee and pay right away, or as a presenter
+                with an abstract that organisers review. Your ticket follows
+                payment.
               </p>
               <Link
-                href="/conference#submit"
+                href="/register"
                 className="mt-3 inline-block text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
               >
-                Submit abstract →
+                Complete registration →
               </Link>
             </>
           )}
@@ -271,10 +272,10 @@ export default async function DashboardPage({
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
-          href="/conference#submit"
+          href="/register"
           className="rounded-md bg-teal-deep px-4 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal"
         >
-          {application ? "View application" : "Submit abstract"}
+          {application ? "View registration" : "Complete registration"}
         </Link>
         <Link
           href="/programme"

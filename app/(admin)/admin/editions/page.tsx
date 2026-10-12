@@ -1,5 +1,7 @@
 import { EditionStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { istDate } from "@/lib/admin/format";
+import { Badge, PageHeader } from "@/components/admin/ui";
 import {
   setEditionCurrentAction,
   setEditionSpeakersPublishedAction,
@@ -8,117 +10,100 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const STATUSES = Object.values(EditionStatus);
+const STATUS_LABEL: Record<EditionStatus, string> = {
+  DRAFT: "Draft",
+  ANNOUNCED: "Announced",
+  REGISTRATION_OPEN: "Registration open",
+  LIVE: "Live (event day)",
+  ARCHIVED: "Archived",
+};
 
 export default async function AdminEditionsPage() {
   const editions = await prisma.edition.findMany({
     orderBy: { year: "desc" },
-    include: {
-      _count: {
-        select: {
-          sessions: true,
-          speakers: true,
-          registrations: true,
-          pages: true,
-        },
-      },
-    },
+    include: { _count: { select: { sessions: true, speakers: true, registrations: true, pages: true } } },
   });
 
   return (
-    <main className="px-6 py-10">
-      <h1 className="font-display text-4xl tracking-wide text-teal-deep">
-        Editions
-      </h1>
-      <p className="mt-2 text-sm text-ink-soft">
-        Set status to <strong>LIVE</strong> to enable Happening now /{" "}
-        <code>/now</code> lobby screen. Flip current edition for the public site.
-      </p>
-      <p className="mt-2 max-w-2xl text-sm text-ink-soft">
-        <strong>Speaker line-up</strong> controls whether speaker names appear on{" "}
-        <code>/speakers</code> and the programme. It is off until you publish, so a
-        line-up carried over from a previous edition is never shown as this year&apos;s.
-        Toggling it never edits or deletes a speaker.
-      </p>
-
-      <div className="mt-8 space-y-4">
+    <div className="adm-page is-narrow" style={{ maxWidth: 1000 }}>
+      <PageHeader
+        title="Editions"
+        description="Each year of the conference is an edition. The current edition is the one the public site and this portal show."
+      />
+      <div className="adm-stack">
         {editions.map((e) => (
-          <div key={e.id} className="rounded-xl border border-line bg-white p-5">
-            <div className="flex flex-wrap items-start justify-between gap-4">
+          <section key={e.id} className="adm-panel">
+            <div className="adm-panel-head">
               <div>
-                <h2 className="text-xl font-semibold text-ink">
-                  {e.name}{" "}
-                  {e.isCurrent ? (
-                    <span className="ml-2 rounded-full bg-ent/15 px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.1em] text-ent">
-                      Current
-                    </span>
-                  ) : null}
+                <h2 className="adm-panel-title" style={{ fontSize: 18 }}>
+                  {e.name}
                 </h2>
-                <p className="mt-1 text-sm text-ink-soft">{e.venueName}</p>
-                <p className="mt-2 text-xs text-mute">
-                  {e._count.sessions} sessions · {e._count.speakers} speakers ·{" "}
-                  {e._count.registrations} registrations · {e._count.pages} pages
-                </p>
-                <p className="mt-1 text-xs font-semibold text-mute">
-                  Speaker line-up:{" "}
-                  {e.speakersPublished ? (
-                    <span className="text-ent">published</span>
-                  ) : (
-                    <span className="text-amber-800">hidden (shows “coming soon”)</span>
-                  )}
+                <p className="adm-panel-note">
+                  {istDate(e.startsAt)} to {istDate(e.endsAt)}, {e.venueName}
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <form action={setEditionStatusAction} className="flex gap-2">
-                  <input type="hidden" name="id" value={e.id} />
-                  <select
-                    name="status"
-                    defaultValue={e.status}
-                    className="rounded-md border border-line px-3 py-2 text-sm"
-                  >
-                    {STATUSES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="submit"
-                    className="rounded-md border border-teal px-3 py-2 text-sm font-semibold text-teal-deep"
-                  >
-                    Set status
-                  </button>
-                </form>
-                <form action={setEditionSpeakersPublishedAction}>
-                  <input type="hidden" name="id" value={e.id} />
-                  <input
-                    type="hidden"
-                    name="speakersPublished"
-                    value={e.speakersPublished ? "false" : "true"}
-                  />
-                  <button
-                    type="submit"
-                    className="rounded-md border border-line px-3 py-2 text-sm font-semibold text-ink-soft hover:border-teal"
-                  >
-                    {e.speakersPublished ? "Hide speakers" : "Publish speakers"}
-                  </button>
-                </form>
-                {!e.isCurrent ? (
-                  <form action={setEditionCurrentAction}>
-                    <input type="hidden" name="id" value={e.id} />
-                    <button
-                      type="submit"
-                      className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      Set current
-                    </button>
-                  </form>
-                ) : null}
+              <div className="adm-actions">
+                {e.isCurrent ? <Badge tone="info">Current edition</Badge> : null}
+                <Badge tone={e.status === "LIVE" ? "good" : "neutral"}>{STATUS_LABEL[e.status]}</Badge>
               </div>
             </div>
-          </div>
+            <div className="adm-panel-body">
+              <dl className="adm-dl">
+                <div>
+                  <dt>Content</dt>
+                  <dd>
+                    {e._count.sessions} sessions, {e._count.speakers} speakers, {e._count.pages} pages,{" "}
+                    {e._count.registrations} tickets
+                  </dd>
+                </div>
+                <div>
+                  <dt>Stage</dt>
+                  <dd>
+                    <form action={setEditionStatusAction} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <input type="hidden" name="id" value={e.id} />
+                      <select name="status" defaultValue={e.status} className="adm-select is-small" style={{ width: "auto" }} aria-label={`Stage of ${e.name}`}>
+                        {Object.values(EditionStatus).map((s) => (
+                          <option key={s} value={s}>
+                            {STATUS_LABEL[s]}
+                          </option>
+                        ))}
+                      </select>
+                      <button type="submit" className="adm-btn is-small">
+                        Save stage
+                      </button>
+                    </form>
+                    <span className="adm-sub">Live turns on the &ldquo;Happening now&rdquo; strip and the /now lobby screen.</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Speaker line-up</dt>
+                  <dd>
+                    <form action={setEditionSpeakersPublishedAction} style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                      <input type="hidden" name="id" value={e.id} />
+                      <input type="hidden" name="speakersPublished" value={e.speakersPublished ? "false" : "true"} />
+                      <Badge tone={e.speakersPublished ? "good" : "warn"}>
+                        {e.speakersPublished ? "Public" : "Hidden, the site says “coming soon”"}
+                      </Badge>
+                      <button type="submit" className="adm-btn is-small">
+                        {e.speakersPublished ? "Hide line-up" : "Publish line-up"}
+                      </button>
+                    </form>
+                    <span className="adm-sub">Hiding or publishing never edits or deletes a speaker.</span>
+                  </dd>
+                </div>
+              </dl>
+              {!e.isCurrent ? (
+                <form action={setEditionCurrentAction} style={{ marginTop: 14 }}>
+                  <input type="hidden" name="id" value={e.id} />
+                  <button type="submit" className="adm-btn is-primary">
+                    Make {e.name} the current edition
+                  </button>
+                </form>
+              ) : null}
+            </div>
+          </section>
         ))}
       </div>
-    </main>
+    </div>
   );
 }

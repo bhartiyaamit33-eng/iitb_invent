@@ -72,7 +72,7 @@ export const noIndex: Metadata = {
 };
 
 export function originForSeo(): string {
-  const raw = process.env.NEXT_PUBLIC_SITE_URL || "https://iitbinvent.com";
+  const raw = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://iitbinvent.com";
   try {
     const url = new URL(raw);
     const host = url.hostname;

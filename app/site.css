@@ -1620,6 +1620,159 @@ html[data-site] body {
   color: var(--mute);
 }
 
+/* Multi-step registration form */
+
+.site-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 0;
+  padding: 20px 0 18px;
+  list-style: none;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-steps li {
+  padding: 0;
+  border: 0;
+}
+
+.site-steps li,
+.site-steps .step,
+.site-steps button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.site-steps button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.site-steps button:hover {
+  color: var(--blue);
+}
+
+.site-steps .num {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 50%;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.site-steps li[aria-current="step"],
+.site-steps li[aria-current="step"] .step {
+  color: var(--navy);
+}
+
+.site-steps li[aria-current="step"] .num {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.site-steps li.is-done .num {
+  border-color: var(--green);
+  background: var(--green);
+  color: #fff;
+}
+
+.site-step-head {
+  margin: 24px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  outline: none;
+}
+
+.site-step-note {
+  max-width: 62ch;
+  margin: 14px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--mute);
+}
+
+.site-step-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 26px 0 0;
+}
+
+.site-review {
+  margin: 0;
+}
+
+.site-review > div {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 4px 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-review dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.site-review dd {
+  margin: 0;
+  font-size: 15px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.site-fee-panel {
+  margin-top: 24px;
+}
+
+.site-fee-amount {
+  margin: 8px 0 12px;
+  font-size: 28px;
+  font-weight: 650;
+  color: var(--navy);
+}
+
+.site-fee-amount span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mute);
+}
+
+.site-form-fine {
+  max-width: 66ch;
+  margin: 20px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--mute);
+}
+
+@media (max-width: 560px) {
+  .site-review > div {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Login gate / status panel */
 
 .site-panel {

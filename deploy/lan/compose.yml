@@ -1,0 +1,46 @@
+# INV.ENT LAN instance. From the repo root:
+#   docker compose -f deploy/lan/compose.yml up -d --build
+# Settings and secrets: .env.lan.local in the repo root (gitignored; see deploy/lan/README.md).
+name: invent-lan
+services:
+  db:
+    image: postgres:16
+    container_name: invent-lan-db
+    env_file: ../../.env.lan.local
+    volumes:
+      - invent-lan-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/lan/Dockerfile
+      args:
+        NEXT_PUBLIC_BASE_PATH: /invent
+        NEXT_PUBLIC_SITE_URL: https://www.som.iitb.ac.in/invent
+    image: invent-lan-web:latest
+    container_name: invent-lan-web
+    env_file: ../../.env.lan.local
+    depends_on:
+      db:
+        condition: service_healthy
+    # Only Apache on this host talks to it: http://127.0.0.1:3040/invent
+    ports:
+      - "127.0.0.1:3040:3000"
+    volumes:
+      - invent-lan-abstracts:/app/data
+    # A static file, so health checks never show up in the payment log.
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/invent/robots.txt >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 40s
+      retries: 3
+    restart: unless-stopped
+volumes:
+  invent-lan-pgdata:
+  invent-lan-abstracts:

@@ -31,12 +31,7 @@ export const metadata: Metadata = pageMetadata({
   path: "/research",
 });
 
-export default async function ResearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ deleted?: string; error?: string }>;
-}) {
-  const { deleted, error } = await searchParams;
+export default async function ResearchPage() {
   const user = await getCurrentUser();
   const cookieToken = (await cookies()).get(CONFERENCE_TOKEN_COOKIE)?.value ?? null;
 
@@ -104,11 +99,7 @@ export default async function ResearchPage({
               }
             : null
         }
-        defaultName={user?.name ?? ""}
-        defaultEmail={user?.email ?? ""}
         signedIn={Boolean(user)}
-        deleted={Boolean(deleted)}
-        error={error}
         timeline={markTimeline(KEY_DATES)}
       />
     </SiteShell>

@@ -1,12 +1,17 @@
-import { handleOnlinePayCallback } from "@/lib/onlinepay-http";
+import { handleGatewayCallback } from "@/lib/onlinepay-callback";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-async function handle(
-  req: Request,
-  context: { params: Promise<{ secret: string }> },
-) {
-  const { secret } = await context.params;
-  return handleOnlinePayCallback(req, secret);
+
+/**
+ * Older return URLs (/api/onlinepay/callback/<anything>, e.g. the one still
+ * registered for the TEST app). The path segment is ignored; same handler as
+ * /api/onlinepay/payack.
+ */
+export async function GET(req: Request) {
+  return handleGatewayCallback(req);
 }
-export const GET = handle;
-export const POST = handle;
+
+export async function POST(req: Request) {
+  return handleGatewayCallback(req);
+}

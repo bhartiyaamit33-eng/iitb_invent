@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { ApplicationPanel, type ResearchApplication } from "./ApplicationPanel";
-import { SubmissionForm } from "./SubmissionForm";
 import { KeyDates } from "@/components/site/KeyDates";
 import { PageHero } from "@/components/site/PageHero";
-import { ScrollToId } from "@/components/ScrollToId";
 import { LineIcon, type LineIconName } from "@/components/site/decor";
 import {
   CFP_AI_CALLOUT,
@@ -19,7 +17,7 @@ import {
   formatInrFromPaise,
   type ConferenceFeeBand,
 } from "@/lib/conference";
-import { submitHrefFor, type TimelineItem } from "@/lib/landing";
+import { SUBMIT_HREF, submitHrefFor, type TimelineItem } from "@/lib/landing";
 import {
   ACCOMMODATION_INTRO,
   CONFERENCE_EMAIL,
@@ -39,27 +37,13 @@ const TRACK_ICONS: Record<string, LineIconName> = {
 const APPLICANT_ICONS: LineIconName[] = ["paper", "journal", "person"];
 const FEE_BANDS: ConferenceFeeBand[] = ["student", "faculty", "industry"];
 
-function errorMessage(error: string) {
-  if (error === "not_found") return "That submission was not found.";
-  if (error === "missing") return "Missing application.";
-  return error;
-}
-
 export function ResearchCall({
   application,
-  defaultName,
-  defaultEmail,
   signedIn,
-  deleted,
-  error,
   timeline,
 }: {
   application: ResearchApplication | null;
-  defaultName: string;
-  defaultEmail: string;
   signedIn: boolean;
-  deleted?: boolean;
-  error?: string;
   timeline: TimelineItem[];
 }) {
   const submitHref = submitHrefFor(signedIn);
@@ -78,7 +62,7 @@ export function ResearchCall({
       >
         <div className="cta-row" style={{ justifyContent: "flex-start" }}>
           <Link className="site-btn" href={submitHref} data-testid="hero-submit-cta">
-            Submit your abstract →
+            Complete registration →
           </Link>
           <a className="site-btn site-btn-ghost" href="#tracks">
             See the tracks
@@ -314,56 +298,35 @@ export function ResearchCall({
         data-testid="conference-submit"
       >
         <div className="site-shell">
-          <p className="site-kicker is-blue">Submission form</p>
-          <h2 id="submit-heading">Submit your abstract</h2>
+          <p className="site-kicker is-blue">Registration</p>
+          <h2 id="submit-heading">Complete registration</h2>
           <p className="lead">
-            Log in first so the application is tied to your account. Paper and poster
-            applicants upload an extended abstract as a PDF (max 10 MB). Attendees use the
-            same form and leave the upload empty.
+            A few short steps, tied to your account. Attendees pay when they register and
+            receive a proforma invoice by email. Paper, poster and other presenters add an
+            extended abstract (PDF, max 10 MB) and pay once organisers shortlist it.
           </p>
-
-          {deleted || error ? <ScrollToId id="submit" /> : null}
-          {deleted ? (
-            <p className="site-alert is-ok" role="status" data-testid="application-deleted">
-              Submission deleted. You can submit a new abstract below. The submitted time
-              will be now.
-            </p>
-          ) : null}
-          {error === "confirm" ? (
-            <p className="site-alert is-error" role="alert">
-              Type DELETE in the confirm field to remove this submission.
-            </p>
-          ) : null}
-          {error && error !== "confirm" ? (
-            <p className="site-alert is-error" role="alert">
-              {errorMessage(error)}
-            </p>
-          ) : null}
 
           {application ? (
             <ApplicationPanel application={application} signedIn={signedIn} />
-          ) : signedIn ? (
-            <SubmissionForm defaultName={defaultName} defaultEmail={defaultEmail} />
           ) : (
             <div className="site-panel" data-testid="submit-login-gate">
               <p className="lead">
-                Log in to submit your paper or poster abstract, or to register as an
-                attendee. Creating an account is not a ticket to the event.
+                {signedIn
+                  ? "Register as an attendee or presenter in a few short steps."
+                  : "Log in to complete your registration as an attendee or presenter. Creating an account is not a ticket to the event."}
               </p>
               <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-                <Link
-                  className="site-btn"
-                  href={submitHref}
-                  data-testid="submit-login-cta"
-                >
-                  Log in to submit →
+                <Link className="site-btn" href={submitHref} data-testid="submit-login-cta">
+                  {signedIn ? "Complete registration →" : "Log in to register →"}
                 </Link>
-                <Link
-                  className="site-btn site-btn-ghost"
-                  href={`/signup?callbackUrl=${encodeURIComponent("/research#submit")}`}
-                >
-                  Create an account
-                </Link>
+                {signedIn ? null : (
+                  <Link
+                    className="site-btn site-btn-ghost"
+                    href={`/signup?callbackUrl=${encodeURIComponent(SUBMIT_HREF)}`}
+                  >
+                    Create an account
+                  </Link>
+                )}
               </div>
             </div>
           )}
@@ -379,7 +342,7 @@ export function ResearchCall({
             Contribute.
           </h2>
           <p className="lead">
-            Submit your abstract by 15 October 2026. For any queries, write to{" "}
+            Abstracts are due by 15 October 2026. For any queries, write to{" "}
             <a href={`mailto:${CONFERENCE_EMAIL}`} style={{ color: "#fff" }}>
               {CONFERENCE_EMAIL}
             </a>
@@ -391,7 +354,7 @@ export function ResearchCall({
               href={submitHref}
               data-testid="cfp-submit-cta"
             >
-              Submit your abstract →
+              Complete registration →
             </Link>
           </div>
         </div>

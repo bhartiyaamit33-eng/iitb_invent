@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/db";
+import { plural } from "@/lib/admin/format";
+import { Badge, Empty, PageHeader } from "@/components/admin/ui";
 import { updatePageAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -6,32 +8,58 @@ export const dynamic = "force-dynamic";
 export default async function AdminPagesPage() {
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
   const pages = edition
-    ? await prisma.page.findMany({
-        where: { editionId: edition.id },
-        orderBy: { slug: "asc" },
-      })
+    ? await prisma.page.findMany({ where: { editionId: edition.id }, orderBy: { slug: "asc" } })
     : [];
 
   return (
-    <main className="px-6 py-10">
-      <h1 className="font-display text-4xl tracking-wide text-teal-deep">Pages</h1>
-      <p className="mt-2 text-sm text-ink-soft">Markdown body - about, travel, privacy, code of conduct.</p>
-      <div className="mt-8 space-y-4">
-        {pages.map((p) => (
-          <form key={p.id} action={updatePageAction} className="rounded-xl border border-line bg-white p-5">
-            <input type="hidden" name="id" value={p.id} />
-            <p className="text-xs uppercase tracking-[0.12em] text-mute">/{p.slug}</p>
-            <input name="title" defaultValue={p.title} className="mt-2 w-full rounded-md border border-line px-3 py-2 font-semibold" />
-            <textarea name="body" defaultValue={p.body} rows={8} className="mt-3 w-full rounded-md border border-line px-3 py-2 font-mono text-sm" />
-            <label className="mt-3 flex items-center gap-2 text-sm">
-              <input type="checkbox" name="isPublished" defaultChecked={p.isPublished} /> Published
-            </label>
-            <button type="submit" className="mt-4 rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white">
-              Save
-            </button>
-          </form>
-        ))}
-      </div>
-    </main>
+    <div className="adm-page" style={{ maxWidth: 1000 }}>
+      <PageHeader
+        title="Pages"
+        description={`${plural(pages.length, "page")} of long-form copy, such as travel, privacy and the code of conduct. Bodies are written in Markdown.`}
+      />
+      <section className="adm-panel is-flush">
+        <div className="adm-panel-body" style={{ paddingTop: 0 }}>
+          {pages.length === 0 ? (
+            <Empty title="No pages for this edition" />
+          ) : (
+            pages.map((p) => (
+              <details key={p.id} className="adm-row">
+                <summary>
+                  <span>
+                    <span className="adm-row-title">{p.title}</span>
+                    <span className="adm-sub">/{p.slug}</span>
+                  </span>
+                  <span className="adm-row-meta">
+                    <Badge tone={p.isPublished ? "good" : "neutral"}>{p.isPublished ? "Published" : "Draft"}</Badge>
+                    <span className="adm-row-edit">Edit</span>
+                  </span>
+                </summary>
+                <div className="adm-row-body">
+                  <form action={updatePageAction} className="adm-form">
+                    <input type="hidden" name="id" value={p.id} />
+                    <label className="adm-field">
+                      <span className="adm-label">Title</span>
+                      <input name="title" defaultValue={p.title} className="adm-input" />
+                    </label>
+                    <label className="adm-field">
+                      <span className="adm-label">Body (Markdown)</span>
+                      <textarea name="body" defaultValue={p.body} rows={14} className="adm-textarea is-code" />
+                    </label>
+                    <div className="adm-form-foot">
+                      <label className="adm-check">
+                        <input type="checkbox" name="isPublished" defaultChecked={p.isPublished} /> Published
+                      </label>
+                      <button type="submit" className="adm-btn is-primary" style={{ marginLeft: "auto" }}>
+                        Save page
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </details>
+            ))
+          )}
+        </div>
+      </section>
+    </div>
   );
 }

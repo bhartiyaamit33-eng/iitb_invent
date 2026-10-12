@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
-        { ok: false, error: "Please log in to submit an abstract." },
+        { ok: false, error: "Please log in to complete registration." },
         { status: 401 },
       );
     }
@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     const res = NextResponse.json({
       ok: true,
       paymentToken: result.paymentToken,
+      feeDue: result.feeDue,
     });
     return res;
   } catch (err) {
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Could not submit the application. Please try again.",
+        error: "Could not complete your registration. Please try again.",
       },
       { status: 500 },
     );

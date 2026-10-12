@@ -9,6 +9,7 @@ import { Role } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { ensureAttendeeReady } from "@/lib/auth/attendee";
 import { sendSignupThankYouForUser } from "@/lib/email/transactions";
+import { withBasePath } from "@/lib/base-path";
 
 const providers: Provider[] = [
   Credentials({
@@ -77,10 +78,13 @@ if (process.env.AUTH_LINKEDIN_ID && process.env.AUTH_LINKEDIN_SECRET) {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
+  // Next strips its basePath before the route handler sees the request, so
+  // Auth.js keeps /api/auth; only links it builds itself need the prefix.
+  basePath: "/api/auth",
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: {
-    signIn: "/login",
+    signIn: withBasePath("/login"),
   },
   providers,
   callbacks: {

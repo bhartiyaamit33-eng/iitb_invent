@@ -8,6 +8,8 @@ import {
   conferenceStatusUpdateEmail,
   connectionRequestEmail,
   magicLinkEmail,
+  paymentReceiptEmail,
+  proformaInvoiceEmail,
   profileConfirmationEmail,
   registrationConfirmedEmail,
 } from "@/emails/templates";
@@ -50,7 +52,7 @@ export async function sendSignupThankYouForUser(userId: string) {
     to: user.email,
     name: user.name?.trim() || "there",
     dashboardUrl: `${origin}/dashboard`,
-    applyUrl: `${origin}/research#submit`,
+    applyUrl: `${origin}/register`,
     userId: user.id,
   });
 }
@@ -218,5 +220,54 @@ export async function sendConferenceStatusUpdate(opts: {
     actorId: opts.userId ?? null,
     entityType: "ConferenceApplication",
     entityId: opts.applicationId ?? null,
+  });
+}
+
+export async function sendPaymentReceipt(opts: {
+  to: string;
+  name: string;
+  payerId: string;
+  amountLabel: string;
+  transId: string;
+  bankRef: string;
+  paidOn: string;
+  payUrl: string;
+  userId?: string | null;
+}) {
+  const tpl = paymentReceiptEmail(opts);
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.payment_receipt",
+    actorId: opts.userId ?? null,
+    entityType: "GatewayPayment",
+    entityId: opts.transId,
+  });
+}
+
+export async function sendProformaInvoiceEmail(opts: {
+  to: string;
+  name: string;
+  payerId: string;
+  category: string;
+  participation: string;
+  amountLabel: string;
+  payUrl: string;
+  message?: string;
+  userId?: string | null;
+  applicationId: string;
+}) {
+  const tpl = proformaInvoiceEmail(opts);
+  return sendEmail({
+    to: opts.to,
+    subject: tpl.subject,
+    html: tpl.html,
+    text: tpl.text,
+    action: "email.proforma_invoice",
+    actorId: opts.userId ?? null,
+    entityType: "ConferenceApplication",
+    entityId: opts.applicationId,
   });
 }

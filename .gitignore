@@ -1,37 +1,63 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
 node_modules/
-.wrangler/
-dist/
-.dev.vars
-.DS_Store
-*.log
+.pnp
+.pnp.*
 
-# next.js
+# ── Build output ──────────────────────────────────────────────────────────────
 /.next/
+/.next-*/
 /out/
+/build/
+dist/
 *.tsbuildinfo
 next-env.d.ts
+invent-next-tmp/
+.vercel
+.wrangler/
+.dev.vars
 
-# env
+# ── Secrets: never commit ─────────────────────────────────────────────────────
+# Environment files. Only the template is tracked.
 .env
-.env.local
-.env*.local
+.env.*
 !.env.example
+# Private keys and certificates (e.g. the SSH key kept in the project folder).
+/raj-invent
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+# Server-local Compose overrides (database password).
+docker-compose.override.yml
 
-# prisma local
+# ── Local data ────────────────────────────────────────────────────────────────
+# Uploaded abstracts when S3 is not configured.
+/data/
+# Database dumps (never commit real data).
+backups/
+*.dump
+*.sql.gz
 /prisma/*.db
 /prisma/*.db-journal
 
-# misc
-.vercel
-*.pem
-
-invent-next-tmp/
-
-# Conference extended abstracts (local fallback when S3 is unset)
-/data/abstracts/
-
+# ── Tests and tooling ─────────────────────────────────────────────────────────
+coverage/
+test-results/
+playwright-report/
 # Reticle: generated landing SDK bundle (rebuild with esbuild)
 .reticle/landing-sdk.js
 
-# Database backups (never commit real data)
-backups/
+# ── Logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ── OS and editors ────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp

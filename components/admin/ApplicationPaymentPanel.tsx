@@ -7,7 +7,18 @@ import {
   paymentStatusLabel,
   type ApplicationPaymentStatus,
 } from "@/lib/conference";
+import { withBasePath } from "@/lib/base-path";
+import type { Tone } from "@/lib/admin/format";
 
+const TONE: Record<ApplicationPaymentStatus, Tone> = {
+  PAID: "good",
+  WAIVED: "good",
+  UNPAID: "warn",
+  REPORTED: "warn",
+  NOT_REQUIRED: "neutral",
+};
+
+/** Fee status for one registration: gateway transactions plus manual overrides for offline payments. */
 export function ApplicationPaymentPanel({
   id,
   paymentStatus,
@@ -15,9 +26,8 @@ export function ApplicationPaymentPanel({
   paymentUrl,
   paymentRef,
   paidAt,
-  opReqId,
-  opTransId,
-  opProvId,
+  payerId,
+  transactions,
 }: {
   id: string;
   paymentStatus: ApplicationPaymentStatus;
@@ -25,9 +35,8 @@ export function ApplicationPaymentPanel({
   paymentUrl: string;
   paymentRef?: string | null;
   paidAt?: string | null;
-  opReqId?: string | null;
-  opTransId?: string | null;
-  opProvId?: string | null;
+  payerId?: string | null;
+  transactions: { transId: string; amount: string; label: string; tone: Tone; verified: boolean }[];
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -37,102 +46,117 @@ export function ApplicationPaymentPanel({
     setPending(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/applications/${id}/payment`, {
+      const res = await fetch(withBasePath(`/api/admin/applications/${id}/payment`), {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         credentials: "same-origin",
         body: JSON.stringify({ paymentStatus: next }),
       });
-      const data = (await res.json().catch(() => null)) as {
-        ok?: boolean;
-        error?: string;
-      } | null;
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
       if (!res.ok || !data?.ok) {
-        setError(data?.error || "Could not update payment.");
+        setError(data?.error || "The fee status was not saved. Try again.");
         return;
       }
       router.refresh();
     } catch {
-      setError("Could not reach the server.");
+      setError("Could not reach the server. Check your connection and try again.");
     } finally {
       setPending(false);
     }
   }
 
+  const confirmed = transactions.filter((t) => t.verified).length;
+
   return (
-    <div
-      className="rounded-xl border border-line bg-white px-5 py-4"
-      data-testid="payment-panel"
-    >
-      <p className="text-xs font-semibold uppercase tracking-[0.1em] text-mute">
-        Payment
-      </p>
-      <p className="mt-2 text-sm text-ink">
-        <strong>{paymentStatusLabel(paymentStatus)}</strong>
-        {" · "}
-        {formatInrFromPaise(paymentAmountPaise)}
-      </p>
-      {paymentRef ? (
-        <p className="mt-1 text-xs text-mute">Reference: {paymentRef}</p>
-      ) : null}
-      {opReqId ? (
-        <p className="mt-1 text-xs text-mute">Online Pay request id: {opReqId}</p>
-      ) : null}
-      {opTransId ? (
-        <p className="mt-1 text-xs text-mute">Online Pay transId: {opTransId}</p>
-      ) : null}
-      {opProvId ? (
-        <p className="mt-1 text-xs text-mute">Online Pay mode / PSP: {opProvId}</p>
-      ) : null}
-      {paidAt ? (
-        <p className="mt-1 text-xs text-mute">Recorded {paidAt}</p>
-      ) : null}
-      <p className="mt-2 text-xs text-ink-soft">
-        Applicants pay via IIT Bombay Online Pay. Mark paid only for an
-        offline receipt or while TEST/LIVE checkout is still pending.
-      </p>
-      <p className="mt-2 break-all text-xs">
-        <a
-          href={paymentUrl}
-          className="font-semibold text-teal-deep underline-offset-2 hover:underline"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Applicant payment page
-        </a>
-      </p>
-      {error ? (
-        <p className="mt-2 text-sm text-red-700" role="alert">
-          {error}
-        </p>
-      ) : null}
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => void setStatus("PAID")}
-          className="rounded-md bg-teal-deep px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
-          data-testid="mark-paid"
-        >
-          Mark paid
-        </button>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => void setStatus("WAIVED")}
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-teal-deep"
-        >
-          Waive
-        </button>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => void setStatus("UNPAID")}
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink"
-        >
-          Mark unpaid
-        </button>
+    <section className="adm-panel" data-testid="payment-panel">
+      <div className="adm-panel-head">
+        <h2 className="adm-panel-title">Fee</h2>
+        <span className={`adm-badge is-${TONE[paymentStatus]}`}>{paymentStatusLabel(paymentStatus)}</span>
       </div>
-    </div>
+      <div className="adm-panel-body">
+        <p style={{ margin: 0, fontSize: 26, fontWeight: 680, fontVariationSettings: '"wdth" 112' }}>
+          {formatInrFromPaise(paymentAmountPaise)}
+        </p>
+        <p className="adm-hint" style={{ margin: "2px 0 0" }}>
+          Inclusive of GST{paidAt ? `. Recorded ${paidAt}` : ""}
+          {paymentRef ? `, reference ${paymentRef}` : ""}.
+        </p>
+
+        <dl className="adm-dl" style={{ marginTop: 12 }}>
+          <div>
+            <dt>Registration ID</dt>
+            <dd>{payerId ? <span className="adm-mono">{payerId}</span> : "Not issued yet"}</dd>
+          </div>
+          <div>
+            <dt>Payment page</dt>
+            <dd>
+              <a className="adm-link" href={paymentUrl} target="_blank" rel="noreferrer">
+                Open the applicant&apos;s page
+              </a>
+            </dd>
+          </div>
+        </dl>
+
+        {transactions.length > 0 ? (
+          <ul className="adm-list" style={{ margin: "8px -20px 0", borderTop: "1px solid var(--adm-rule)" }}>
+            {transactions.map((t) => (
+              <li key={t.transId}>
+                <span>
+                  <span className="adm-mono">{t.transId}</span>
+                  <span className="adm-sub">₹{t.amount}</span>
+                </span>
+                <span className={`adm-badge is-${t.tone}`}>{t.label}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="adm-hint" style={{ marginTop: 10 }}>
+            No online payment attempts yet.
+          </p>
+        )}
+        {confirmed > 1 ? (
+          <p className="adm-notice is-bad" style={{ margin: "12px 0 0" }} role="alert">
+            Paid {confirmed} times online. Arrange a refund of the extra payment.
+          </p>
+        ) : null}
+
+        <p className="adm-hint" style={{ marginTop: 16 }}>
+          Online payments mark this paid automatically once the gateway confirms them.
+          Use these only for payments made another way.
+        </p>
+        {error ? (
+          <p className="adm-notice is-bad" style={{ margin: "8px 0 0" }} role="alert">
+            {error}
+          </p>
+        ) : null}
+        <div className="adm-form-foot" style={{ marginTop: 8 }}>
+          <button
+            type="button"
+            disabled={pending || paymentStatus === "PAID"}
+            onClick={() => void setStatus("PAID")}
+            className="adm-btn is-small"
+            data-testid="mark-paid"
+          >
+            Mark paid
+          </button>
+          <button
+            type="button"
+            disabled={pending || paymentStatus === "WAIVED"}
+            onClick={() => void setStatus("WAIVED")}
+            className="adm-btn is-small"
+          >
+            Waive fee
+          </button>
+          <button
+            type="button"
+            disabled={pending || paymentStatus === "UNPAID"}
+            onClick={() => void setStatus("UNPAID")}
+            className="adm-btn is-small"
+          >
+            Mark unpaid
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }

@@ -171,12 +171,17 @@ export function applicationStatusLabel(value: ApplicationStatus): string {
   return APPLICATION_STATUS_OPTIONS.find((o) => o.value === value)?.label ?? value;
 }
 
+/** Everyone except attendee-only registrants sends abstract details. */
 export function needsAbstract(cat: ParticipationCategory): boolean {
-  return (
-    cat === "PAPER_ONLY" ||
-    cat === "PAPER_OR_POSTER" ||
-    cat === "POSTER_ONLY"
-  );
+  return cat !== "ATTENDEE";
+}
+
+/**
+ * Attendee-only registrants owe the fee as soon as they register, and are
+ * emailed a proforma invoice. Everyone else pays once organisers shortlist them.
+ */
+export function payableAtRegistration(cat: ParticipationCategory): boolean {
+  return cat === "ATTENDEE";
 }
 
 const PROFESSIONAL = new Set<ProfessionalCategory>(

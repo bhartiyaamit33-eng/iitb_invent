@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { withBasePath } from "@/lib/base-path";
 
 export function SignOutForm({
   className,
@@ -10,7 +11,7 @@ export function SignOutForm({
   children?: ReactNode;
 }) {
   return (
-    <form action="/logout" method="post" className={className}>
+    <form action={withBasePath("/logout")} method="post" className={className}>
       <button type="submit" className={buttonClassName} data-testid="sign-out">
         {children}
       </button>

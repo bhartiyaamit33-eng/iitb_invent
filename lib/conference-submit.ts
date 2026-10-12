@@ -15,11 +15,13 @@ import {
   parsePostdoc,
   parseProfessional,
   participationLabel,
+  payableAtRegistration,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
 } from "@/lib/conference";
 import { newConferenceToken } from "@/lib/conference-server";
+import { ensurePayerId, sendProformaInvoice } from "@/lib/conference-payment";
 import {
   sendConferenceApplicationCopy,
   sendConferenceOrganiserNotify,
@@ -28,7 +30,8 @@ import { getEmailFromAddress } from "@/lib/email/ses";
 import { siteOrigin } from "@/lib/ticket";
 
 export type ConferenceSubmitResult =
-  | { ok: true; paymentToken: string }
+  /** feeDue: an attendee registration, payable now (proforma emailed). */
+  | { ok: true; paymentToken: string; feeDue: boolean }
   | { error: string };
 
 function str(formData: FormData, key: string): string {
@@ -74,7 +77,7 @@ export async function processConferenceApplication(
 ): Promise<ConferenceSubmitResult> {
   const sessionUser = await getCurrentUser();
   if (!sessionUser) {
-    return { error: "Please log in to submit an abstract." };
+    return { error: "Please log in to complete registration." };
   }
   const email = sessionUser.email.trim().toLowerCase();
   const name = str(formData, "name") || sessionUser.name.trim();
@@ -122,9 +125,10 @@ export async function processConferenceApplication(
   }
 
   const abstractRequired = needsAbstract(participation);
+  const payNow = payableAtRegistration(participation);
   if (abstractRequired && !paperTitle) {
     return {
-      error: "Please enter the proposed title of the paper or poster.",
+      error: "Please enter the proposed title of your paper or poster.",
     };
   }
 
@@ -184,11 +188,12 @@ export async function processConferenceApplication(
       seekingPostdoc,
       participationCategory: participation,
       participationOther: participation === "OTHER" ? participationOther : null,
-      paperTitle: paperTitle || null,
+      paperTitle: payNow ? null : paperTitle || null,
       sendCopy: true,
       abstractViewToken: newConferenceToken(),
       paymentToken: newConferenceToken(),
       paymentAmountPaise: feePaise,
+      ...(payNow ? { status: "ATTENDEE", paymentStatus: "UNPAID" } : {}),
     },
     update: {
       userId: linkedUser?.id ?? null,
@@ -201,15 +206,15 @@ export async function processConferenceApplication(
       seekingPostdoc,
       participationCategory: participation,
       participationOther: participation === "OTHER" ? participationOther : null,
-      paperTitle: paperTitle || null,
+      paperTitle: payNow ? null : paperTitle || null,
       sendCopy: true,
       createdAt: new Date(),
       ...(lockFee
         ? {}
         : {
             paymentAmountPaise: feePaise,
-            status: "RECEIVED",
-            paymentStatus: "NOT_REQUIRED",
+            status: payNow ? "ATTENDEE" : "RECEIVED",
+            paymentStatus: payNow ? "UNPAID" : "NOT_REQUIRED",
           }),
     },
   });
@@ -270,12 +275,19 @@ export async function processConferenceApplication(
     participationCategory: saved.participationCategory,
   };
 
-  void sendConferenceApplicationCopy({
-    ...payload,
-    to: saved.email,
-    userId: saved.userId,
-    applicationId: saved.id,
-  }).catch(() => undefined);
+  const feeDue = payNow && !lockFee;
+  if (feeDue) {
+    // Mint the registration ID now so the email and the pay page agree on it.
+    await ensurePayerId(saved, edition.year);
+    void sendProformaInvoice(saved.id);
+  } else {
+    void sendConferenceApplicationCopy({
+      ...payload,
+      to: saved.email,
+      userId: saved.userId,
+      applicationId: saved.id,
+    }).catch(() => undefined);
+  }
 
   void sendConferenceOrganiserNotify({
     to: getEmailFromAddress(),
@@ -293,5 +305,6 @@ export async function processConferenceApplication(
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard");
   revalidatePath("/research");
-  return { ok: true, paymentToken: saved.paymentToken };
+  revalidatePath("/register");
+  return { ok: true, paymentToken: saved.paymentToken, feeDue };
 }

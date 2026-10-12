@@ -31,6 +31,8 @@ export async function POST() {
     res.cookies.set(name, "", {
       ...clear,
       httpOnly: true,
+      // A __Secure- cookie can only be set (or cleared) with Secure.
+      secure: name.startsWith("__Secure-") || clear.secure,
     });
   }
   res.headers.set(

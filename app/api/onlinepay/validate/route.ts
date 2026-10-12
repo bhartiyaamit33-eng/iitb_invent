@@ -1,54 +1,25 @@
 import { NextResponse } from "next/server";
-import {
-  parseValidationPayload,
-  readOnlinePayRequest,
-  validationResponse,
-} from "@/lib/onlinepay";
-import { validateOnlinePayRequest } from "@/lib/conference-onlinepay";
+import { parseValidationRequest, validationResponse } from "@/lib/onlinepay";
+import { validatePaymentRequest } from "@/lib/conference-payment";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * IIT Bombay Online Pay (Lisa app 10172) — MANDATORY payment-request
- * validation. OP may POST JSON `{ Records: { input_* } }`, form fields, or
- * query params. Must answer VALID/INVALID or OP will not take money.
+ * IIT Bombay OnlinePay request validation (registered with ASC). Every reply
+ * is the JSON Records envelope; anything else reads as a failed validation.
  */
 async function handle(req: Request) {
-  const params = await readOnlinePayRequest(req);
-  const parsed = parseValidationPayload(params);
-
-  if (!parsed) {
-    if (req.method === "GET" && Object.keys(params).length === 0) {
-      return NextResponse.json({ ok: true, service: "onlinepay-validate" });
-    }
-    console.warn("[onlinepay] validate: unreadable payload", {
-      method: req.method,
-      keys: Object.keys(params),
-    });
-    return NextResponse.json(
-      validationResponse(
-        { appId: "", requestId: "", userId: "", amount: "" },
-        "INVALID",
-      ),
-    );
-  }
-
-  const status = await validateOnlinePayRequest(parsed);
-  console.info("[onlinepay] validate", {
-    appId: parsed.appId,
-    requestId: parsed.requestId,
-    userId: parsed.userId,
-    amount: parsed.amount,
-    status,
+  const body = await req.json().catch(() => null);
+  const request = parseValidationRequest(body);
+  const status = await validatePaymentRequest(request).catch((err) => {
+    console.error("[onlinepay] validate failed", err);
+    return "INVALID" as const;
   });
-  return NextResponse.json(validationResponse(parsed, status));
+  return NextResponse.json(validationResponse(request, status), {
+    headers: { "Cache-Control": "no-store" },
+  });
 }
 
-export async function POST(req: Request) {
-  return handle(req);
-}
-
-export async function GET(req: Request) {
-  return handle(req);
-}
+export const POST = handle;
+export const GET = handle;

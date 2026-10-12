@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { attendeeHome } from "@/lib/auth/attendee";
+import { SUBMIT_HREF } from "@/lib/landing";
+import { withBasePath } from "@/lib/base-path";
 import { IconGoogle } from "@/components/icons";
 import { InventMark } from "@/components/site/InventMark";
 import { SiteTheme } from "@/components/site/SiteTheme";
@@ -18,7 +20,7 @@ export const metadata = pageMetadata({
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 
 function safeCallback(raw: string | undefined): string {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/dashboard";
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return SUBMIT_HREF;
   return raw;
 }
 
@@ -42,11 +44,11 @@ export default async function LoginPage({
       .trim()
       .toLowerCase();
     const password = String(formData.get("password") ?? "");
-    const requested = safeCallback(String(formData.get("callbackUrl") ?? "/dashboard"));
+    const requested = safeCallback(String(formData.get("callbackUrl") ?? SUBMIT_HREF));
     const next = requested.startsWith("/admin") ? requested : attendeeHome(requested);
 
     try {
-      await signIn("credentials", { email, password, redirectTo: next });
+      await signIn("credentials", { email, password, redirectTo: withBasePath(next) });
     } catch (err) {
       if (err instanceof AuthError) {
         redirect(
@@ -59,12 +61,12 @@ export default async function LoginPage({
 
   async function googleAction() {
     "use server";
-    await signIn("google", { redirectTo: callbackUrl });
+    await signIn("google", { redirectTo: withBasePath(callbackUrl) });
   }
 
   async function linkedInAction() {
     "use server";
-    await signIn("linkedin", { redirectTo: callbackUrl });
+    await signIn("linkedin", { redirectTo: withBasePath(callbackUrl) });
   }
 
   return (

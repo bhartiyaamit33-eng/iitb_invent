@@ -10,13 +10,24 @@ import { sendRegistrationConfirmed } from "@/lib/email/transactions";
 
 export const CONFERENCE_TOKEN_COOKIE = "invent_conference_token";
 
+/**
+ * Secure cookies only where the site is actually served over HTTPS. Browsers
+ * ignore a Secure cookie set over plain HTTP, so on the http LAN copy a Secure
+ * "clear" would leave the old cookie (and the login session) in place.
+ */
+export function secureCookiesEnabled(): boolean {
+  const url = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.AUTH_URL || "";
+  if (url) return url.startsWith("https://");
+  return process.env.NODE_ENV === "production";
+}
+
 export function conferenceCookieOptions() {
   return {
     httpOnly: true,
     sameSite: "lax" as const,
     path: "/",
     maxAge: 60 * 60 * 24 * 400,
-    secure: process.env.NODE_ENV === "production",
+    secure: secureCookiesEnabled(),
   };
 }
 
@@ -28,7 +39,7 @@ export function conferenceCookieClearOptions() {
     path: "/",
     maxAge: 0,
     expires: new Date(0),
-    secure: process.env.NODE_ENV === "production",
+    secure: secureCookiesEnabled(),
   };
 }
 

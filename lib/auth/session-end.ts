@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { signOut } from "@/auth";
+import { withBasePath } from "@/lib/base-path";
 import {
   CONFERENCE_TOKEN_COOKIE,
   conferenceCookieClearOptions,
@@ -17,5 +18,5 @@ export async function endBrowserSession(redirectTo = "/") {
   revalidatePath("/", "layout");
   revalidatePath("/research");
   revalidatePath("/conference/thanks");
-  await signOut({ redirectTo });
+  await signOut({ redirectTo: withBasePath(redirectTo) });
 }

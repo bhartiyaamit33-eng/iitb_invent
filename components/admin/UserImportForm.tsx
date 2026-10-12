@@ -1,61 +1,48 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import {
-  importUsersCsvAction,
-  type ImportUsersResult,
-} from "@/app/(admin)/admin/users/actions";
+import { importUsersCsvAction, type ImportUsersResult } from "@/app/(admin)/admin/users/actions";
 
+/** Bulk-create accounts from a CSV, tucked behind a disclosure because it is rarely used. */
 export function UserImportForm() {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<ImportUsersResult | null>(null);
 
   return (
-    <div className="rounded-xl border border-line bg-white p-4">
-      <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-mute">
-        Import users (CSV)
-      </h2>
-      <p className="mt-1 text-xs text-ink-soft">
-        Columns: email, name, role (optional). Duplicates are skipped. Temp
-        passwords are hashed; users reset via sign-in / OAuth.
-      </p>
-      <form
-        className="mt-3 flex flex-wrap items-end gap-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const fd = new FormData(e.currentTarget);
-          startTransition(async () => {
-            const res = await importUsersCsvAction(fd);
-            setResult(res);
-          });
-        }}
-      >
-        <label className="block text-sm">
-          <span className="sr-only">CSV file</span>
-          <input
-            type="file"
-            name="file"
-            accept=".csv,text/csv"
-            required
-            className="block w-full max-w-xs text-sm"
-          />
-        </label>
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold uppercase tracking-[0.1em] text-white hover:bg-teal disabled:opacity-60"
+    <details className="adm-panel">
+      <summary className="adm-panel-head" style={{ cursor: "pointer", paddingBottom: 16, listStyle: "none" }}>
+        <div>
+          <h2 className="adm-panel-title">Import accounts from a CSV file</h2>
+          <p className="adm-panel-note">Columns: email, name, and optionally role. Existing emails are skipped.</p>
+        </div>
+        <span className="adm-link">Show</span>
+      </summary>
+      <div className="adm-panel-body" style={{ borderTop: "1px solid var(--adm-rule)" }}>
+        <form
+          className="adm-form-foot"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            startTransition(async () => {
+              setResult(await importUsersCsvAction(fd));
+            });
+          }}
         >
-          {pending ? "Importing…" : "Import"}
-        </button>
-      </form>
-      {result ? (
-        <p className="mt-3 text-sm text-ink-soft" role="status">
-          Created {result.created}, skipped {result.skipped}
-          {result.errors.length
-            ? ` · ${result.errors.length} issue(s): ${result.errors.join("; ")}`
-            : ""}
+          <input type="file" name="file" accept=".csv,text/csv" required aria-label="CSV file" />
+          <button type="submit" disabled={pending} className="adm-btn is-primary">
+            {pending ? "Importing…" : "Import accounts"}
+          </button>
+        </form>
+        <p className="adm-hint" style={{ marginTop: 10 }}>
+          Each new account gets a random password that is never shown; people sign in with Google or LinkedIn where those are enabled.
         </p>
-      ) : null}
-    </div>
+        {result ? (
+          <p className={`adm-notice${result.errors.length ? " is-warn" : " is-good"}`} style={{ margin: "12px 0 0" }} role="status">
+            Created {result.created}, skipped {result.skipped}.
+            {result.errors.length ? ` ${result.errors.length} row(s) had problems: ${result.errors.join("; ")}` : ""}
+          </p>
+        ) : null}
+      </div>
+    </details>
   );
 }

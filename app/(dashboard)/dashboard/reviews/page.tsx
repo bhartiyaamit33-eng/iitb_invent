@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { participationLabel } from "@/lib/conference";
 import { saveAssignedReviewAction } from "./actions";
+import { withBasePath } from "@/lib/base-path";
 
 export const dynamic = "force-dynamic";
 
@@ -89,7 +90,7 @@ export default async function AssignedReviewsPage() {
 
                 {application.abstractStorageKey ? (
                   <a
-                    href={`/api/conference/abstract/${application.abstractViewToken}`}
+                    href={withBasePath(`/api/conference/abstract/${application.abstractViewToken}`)}
                     target="_blank"
                     rel="noreferrer"
                     className="mt-4 inline-block rounded-md border border-line px-4 py-2 text-sm font-semibold text-teal-deep"

@@ -1,350 +1,277 @@
 /**
- * IIT Bombay Online Pay — TEST/LIVE access points.
- * PayU is a mode on OP, not a separate merchant checkout.
+ * IIT Bombay OnlinePay — the wire protocol, and nothing about INV.ENT itself.
+ *
+ *   1. Hand-off   GET {gateway}commJsp/v2_accessPoint.jsp?sMsg=sAppId=…%26sUserId=…
+ *   2. Validation the gateway POSTs { Records: { input_* } } to our validator and
+ *                 expects the same envelope back with output_Validation_Status.
+ *   3. Notice     the gateway calls our callback with ?sMsg=requestType=I|R|D&transId=…
+ *   4. ACK        we GET {gateway}OnlinePayAckServlet?transId=…&requestType=…; the
+ *                 servlet answers FAIL for a transaction it does not know.
+ *
+ * The LIVE gateway is the default. The TEST host (newtestasc) resolves on the
+ * IITB LAN only, so it is usable from a server on the campus network (the LAN
+ * dev copy at 10.127.1.23) with a TEST app id such as 10172:
+ *   ONLINEPAY_GATEWAY_URL=https://newtestasc.iitb.ac.in/onlinepay_test/
+ * ONLINEPAY_GATEWAY_URL also points local development at a mock gateway.
  */
+import http from "node:http";
+import https from "node:https";
+import { randomBytes } from "node:crypto";
 
-export type OnlinePayEnv = "test" | "live";
+export type NoticeType = "I" | "R" | "D";
 
 export type OnlinePayConfig = {
-  env: OnlinePayEnv;
   appId: string;
-  accessPoint: string;
-  ackUrl: string;
+  gatewayUrl: string;
   purpose: string;
 };
 
-const TEST_ACCESS =
-  "https://newtestasc.iitb.ac.in/onlinepay_test/commJsp/v2_accessPoint.jsp";
-const LIVE_ACCESS =
-  "https://portal.iitb.ac.in/onlinepay/commJsp/v2_accessPoint.jsp";
-const TEST_ACK =
-  "https://newtestasc.iitb.ac.in/onlinepay_test/OnlinePayAckServlet";
-const LIVE_ACK = "https://portal.iitb.ac.in/onlinepay/OnlinePayAckServlet";
+const LIVE_GATEWAY_URL = "https://portal.iitb.ac.in/onlinepay/";
+const LIVE_HOST = "portal.iitb.ac.in";
+const TEST_HOST = "newtestasc.iitb.ac.in";
+
+/**
+ * App ids ASC issued for the TEST host. Sending one to the LIVE gateway would
+ * at best fail and at worst settle fees into whichever live app owns that number.
+ */
+const TEST_ONLY_APP_IDS = new Set(["10172"]);
+
+function gatewayHost(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return "";
+  }
+}
+
+const DEFAULT_PURPOSE = "IITB INV.ENT conference registration";
 
 function env(name: string): string {
   return (process.env[name] || "").trim();
 }
 
+/** Null while no usable app id is configured; the pay page then offers no checkout. */
 export function onlinePayConfig(): OnlinePayConfig | null {
   const appId = env("ONLINEPAY_APP_ID");
   if (!appId) return null;
-  const raw = env("ONLINEPAY_ENV").toLowerCase();
-  const testEnv: OnlinePayEnv = raw === "live" ? "live" : "test";
-  const purpose =
-    env("ONLINEPAY_PURPOSE") ||
-    (testEnv === "live"
-      ? "IITB INV.ENT conference registration"
-      : "DSSE INV.ENT Test");
+  const url = gatewayUrl();
+  const host = gatewayHost(url);
+  if (TEST_ONLY_APP_IDS.has(appId) && host === LIVE_HOST) {
+    console.error(
+      `[onlinepay] ONLINEPAY_APP_ID ${appId} is a TEST app id; set ONLINEPAY_GATEWAY_URL to the TEST host (https://${TEST_HOST}/onlinepay_test/) to use it`,
+    );
+    return null;
+  }
   return {
-    env: testEnv,
     appId,
-    accessPoint:
-      env("ONLINEPAY_ACCESS_POINT") ||
-      (testEnv === "live" ? LIVE_ACCESS : TEST_ACCESS),
-    ackUrl:
-      env("ONLINEPAY_ACK_URL") || (testEnv === "live" ? LIVE_ACK : TEST_ACK),
-    purpose,
+    gatewayUrl: url,
+    purpose: env("ONLINEPAY_PURPOSE") || DEFAULT_PURPOSE,
   };
 }
 
-export function isOnlinePayConfigured(): boolean {
-  return onlinePayConfig() !== null;
+/** Base URL ending in "/". The ACK servlet lives here too, so it never needs an app id. */
+export function gatewayUrl(): string {
+  return (env("ONLINEPAY_GATEWAY_URL") || LIVE_GATEWAY_URL).replace(/\/*$/, "/");
 }
 
-/** TEST access point is on IITB DNS only (campus / VPN). */
-export function isOnlinePayTest(): boolean {
-  return onlinePayConfig()?.env === "test";
+/** PHP rawurlencode: like encodeURIComponent but also escapes ! ' ( ) *. */
+function rawurlencode(value: string): string {
+  return encodeURIComponent(value).replace(
+    /[!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
 }
 
-function sanitizeSMsgValue(value: string): string {
-  return value.replace(/[&]/g, " ").replace(/\s+/g, " ").trim();
+/**
+ * sMsg fields are separated by %26, which the gateway decodes once into "&".
+ * A literal "&" in a value would therefore split the field, so it is removed.
+ */
+function field(value: string): string {
+  return rawurlencode(value.replace(/&/g, " ").replace(/\s+/g, " ").trim());
 }
 
-/** OP joins fields with %26 instead of encoding '='. */
-export function buildSMsg(fields: Record<string, string>): string {
-  return Object.entries(fields)
-    .map(
-      ([key, value]) =>
-        `${key}=${encodeURIComponent(sanitizeSMsgValue(value))}`,
-    )
-    .join("%26");
-}
-
-export function formatAmountDue(amount: number | string): string {
-  const n = Number(amount);
-
-  if (!Number.isFinite(n) || n <= 0) throw new Error("Invalid payment amount");
-  return n.toFixed(2);
-}
-
-export function paymentRequestUrl(opts: {
-  appId: string;
-  userId: string;
-  userName: string;
-  amountDue: number | string;
-  purpose: string;
-  reqId: string;
-}): string {
-  const cfg = onlinePayConfig();
-  if (!cfg) throw new Error("ONLINEPAY_APP_ID is not set");
-  const sMsg = buildSMsg({
-    sAppId: opts.appId,
-    sUserId: opts.userId,
-    sUserName: opts.userName,
-    sAmountDue: formatAmountDue(opts.amountDue),
-    sPurpose: opts.purpose.slice(0, 120),
-    sReqId: opts.reqId,
-    sCurrency: "INR",
-  });
-  return `${cfg.accessPoint}?sMsg=${sMsg.replace(/ /g, "%20")}`;
-}
-
-export function parseSMsg(
-  raw: string | null | undefined,
-): Record<string, string> {
-  if (!raw) return {};
-  let input = raw.trim();
-  if (input.includes("%26") && !input.includes("&")) {
-    input = input.replace(/%26/gi, "&");
+/** Rupees as the gateway echoes them back: "5000", or "5000.50" when there are paise. */
+export function formatRupees(paise: number): string {
+  if (!Number.isSafeInteger(paise) || paise <= 0) {
+    throw new Error("Invalid payment amount");
   }
-  try {
-    if (/%3D/i.test(input) && !input.includes("=")) {
-      input = decodeURIComponent(input);
-    }
-  } catch {
-    /* keep */
-  }
-
-  const out: Record<string, string> = {};
-  for (const part of input.split("&")) {
-    const idx = part.indexOf("=");
-    if (idx < 0) continue;
-    const key = part.slice(0, idx).trim();
-    const value = part.slice(idx + 1).trim();
-    if (!key) continue;
-    try {
-      out[key] = decodeURIComponent(value.replace(/\+/g, " "));
-    } catch {
-      out[key] = value;
-    }
-  }
-  return out;
+  return paise % 100 === 0 ? String(paise / 100) : (paise / 100).toFixed(2);
 }
 
-function isPlainRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
+/** Fresh per page load and never stored, as in the reference flow; echoed back by the gateway. */
+export function newRequestId(): string {
+  return randomBytes(12).toString("hex");
 }
 
-export function firstField(
-  params: Record<string, string>,
-  keys: string[],
+export function paymentRequestUrl(
+  cfg: OnlinePayConfig,
+  opts: { payerId: string; payerName: string; amountPaise: number; reqId: string },
 ): string {
-  for (const key of keys) {
-    const value = (params[key] || "").trim();
-    if (value) return value;
-  }
-  return "";
+  const parts = [
+    `sAppId=${field(cfg.appId)}`,
+    `sUserId=${field(opts.payerId)}`,
+    `sUserName=${field(opts.payerName.slice(0, 80))}`,
+    `sAmountDue=${field(formatRupees(opts.amountPaise))}`,
+    `sPurpose=${field(cfg.purpose.slice(0, 120))}`,
+    `sReqId=${field(opts.reqId)}`,
+    "sCurrency=INR",
+  ];
+  return `${cfg.gatewayUrl}commJsp/v2_accessPoint.jsp?sMsg=${parts.join("%26")}`;
 }
 
-/** Flatten Lisa JSON (`Records: { … }`) or a flat object into string fields. */
-export function flattenOnlinePayObject(body: unknown): Record<string, string> {
-  if (typeof body === "string") {
-    const trimmed = body.trim();
-    if (trimmed.startsWith("{")) {
-      try {
-        return flattenOnlinePayObject(JSON.parse(trimmed));
-      } catch {
-        return parseSMsg(trimmed);
-      }
-    }
-    return parseSMsg(trimmed);
-  }
-  if (!isPlainRecord(body)) return {};
-  let records = body.Records ?? body.records;
-  if (typeof records === "string") {
-    try { records = JSON.parse(records); } catch { return {}; }
-  }
-  const inner = isPlainRecord(records) ? { ...body, ...records } : body;
-  const out: Record<string, string> = {};
-  for (const [key, value] of Object.entries(inner)) {
-    if (key === "Records" || key === "records") continue;
-    if (value == null || typeof value === "object") continue;
-    const text = String(value).trim();
-    if (text) out[key] = text;
-  }
-  return out;
+/** True when `incoming` (rupees, as sent by the gateway) is exactly `paise`. */
+export function amountEqualsPaise(incoming: string, paise: number): boolean {
+  const text = incoming.trim();
+  if (!/^\d+(?:\.\d{1,2})?$/.test(text)) return false;
+  return Math.round(Number(text) * 100) === paise;
 }
 
-/**
- * Read an OP validate/callback HTTP call. Lisa may send sMsg, JSON Records,
- * or the flat payment/settlement fields listed on the application (reqId,
- * transId, status, reconDate, …).
- */
-export async function readOnlinePayRequest(
-  req: Request,
-): Promise<Record<string, string>> {
-  const url = new URL(req.url);
-  const fromQuery = Object.fromEntries(url.searchParams.entries());
-  const sMsgQuery = fromQuery.sMsg;
-  const fromSMsg = sMsgQuery ? parseSMsg(sMsgQuery) : {};
-  const base = { ...fromQuery, ...fromSMsg };
-
-  if (req.method === "GET" || req.method === "HEAD") {
-    return base;
-  }
-
-  const text = await req.text();
-  if (!text) return base;
-
-  const contentType = req.headers.get("content-type") ?? "";
-  if (
-    contentType.includes("json") ||
-    text.trim().startsWith("{") ||
-    text.trim().startsWith("[")
-  ) {
-    try {
-      const fields = flattenOnlinePayObject(JSON.parse(text));
-      return { ...base, ...fields, ...(fields.sMsg ? parseSMsg(fields.sMsg) : {}) };
-    } catch {
-      /* fall through */
-    }
-  }
-  if (text.includes("=")) {
-    const form = Object.fromEntries(new URLSearchParams(text));
-    const nested = form.sMsg ? parseSMsg(form.sMsg) : {};
-    return { ...base, ...form, ...nested };
-  }
-  return { ...base, ...parseSMsg(text) };
+/** Rupees string → paise, or null when it is not a plain non-negative amount. */
+export function rupeesToPaise(incoming: string): number | null {
+  const text = incoming.trim();
+  if (!/^\d+(?:\.\d{1,2})?$/.test(text)) return null;
+  return Math.round(Number(text) * 100);
 }
 
-/**
- * Lisa lists payment vs settlement fields, not always `requestType`.
- * I = payment notification (status S/F). R = settlement (reconDate). D = refund.
- */
-export function inferOnlinePayRequestType(
-  params: Record<string, string>,
-): "I" | "R" | "D" | null {
-  const explicit = firstField(params, [
-    "requestType",
-    "RequestType",
-    "requesttype",
-    "request_type",
-  ]).toUpperCase();
-  if (explicit === "I" || explicit === "R" || explicit === "D") return explicit;
-  if (explicit) return null;
-  if (
-    firstField(params, ["reconDate", "reconTime", "netReconAmt"])
-  ) {
-    return "R";
-  }
-  if (
-    firstField(params, ["status", "sStatus", "transDate", "transTime"])
-  ) {
-    return "I";
-  }
-  return null;
-}
+// ─── Validation ──────────────────────────────────────────────────────────────
 
-export type ValidationInput = {
+export type ValidationRequest = {
   appId: string;
   requestId: string;
   userId: string;
   amount: string;
 };
 
-export function parseValidationPayload(body: unknown): ValidationInput | null {
-  const inner = flattenOnlinePayObject(body);
-  const appId = firstField(inner, [
-    "input_APPID",
-    "appId",
-    "sAppId",
-    "APPID",
-  ]);
-  const requestId = firstField(inner, [
-    "input_RequestID",
-    "requestId",
-    "sReqId",
-    "reqId",
-  ]);
-  const userId = firstField(inner, [
-    "input_UserID",
-    "userId",
-    "sUserId",
-  ]);
-  const amount = firstField(inner, [
-    "input_Amount",
-    "amount",
-    "sAmountDue",
-    "totalAmt",
-  ]);
-  if (!appId || !requestId || !userId || !amount) return null;
-  return { appId, requestId, userId, amount };
+/** Read the { Records: { input_* } } envelope. Missing fields come back as "". */
+export function parseValidationRequest(body: unknown): ValidationRequest {
+  const envelope =
+    body && typeof body === "object" && !Array.isArray(body)
+      ? (body as Record<string, unknown>)
+      : {};
+  const records =
+    envelope.Records && typeof envelope.Records === "object"
+      ? (envelope.Records as Record<string, unknown>)
+      : {};
+  const text = (key: string) =>
+    records[key] == null ? "" : String(records[key]).trim();
+  return {
+    appId: text("input_APPID"),
+    requestId: text("input_RequestID"),
+    userId: text("input_UserID"),
+    amount: text("input_Amount"),
+  };
 }
 
 export function validationResponse(
-  input: ValidationInput,
+  req: ValidationRequest,
   status: "VALID" | "INVALID",
-): Record<string, unknown> {
+) {
   return {
     Records: {
-      input_APPID: input.appId,
-      input_RequestID: input.requestId,
-      input_UserID: input.userId,
-      input_Amount: input.amount,
+      input_APPID: req.appId,
+      input_RequestID: req.requestId,
+      input_UserID: req.userId,
+      input_Amount: req.amount,
       output_Validation_Status: status,
     },
   };
 }
 
-export function onlinePayAckUrl(
-  transId: string,
-  requestType: "I" | "R" | "D",
-): string | null {
-  const cfg = onlinePayConfig();
-  if (!cfg || !transId) return null;
-  return `${cfg.ackUrl}?transId=${encodeURIComponent(transId)}&requestType=${requestType}`;
+// ─── Notices (immediate / reconciliation / D) ────────────────────────────────
+
+export type GatewayNotice = {
+  requestType: string;
+  userId: string;
+  provId: string;
+  reqId: string;
+  totalAmt: string;
+  refNo: string;
+  transId: string;
+  status: string;
+  transDate: string;
+  transTime: string;
+  reconDate: string;
+  reconTime: string;
+  msg: string;
+};
+
+/** sMsg as delivered (already URL-decoded once): "requestType=I&transId=…". */
+export function parseNotice(sMsg: string): GatewayNotice {
+  const params = new URLSearchParams(sMsg);
+  const get = (key: string) => (params.get(key) ?? "").trim();
+  return {
+    requestType: get("requestType").toUpperCase(),
+    userId: get("userId"),
+    provId: get("provId"),
+    reqId: get("reqId"),
+    totalAmt: get("totalAmt"),
+    refNo: get("refNo"),
+    transId: get("transId"),
+    status: get("status").toUpperCase(),
+    transDate: get("transDate"),
+    transTime: get("transTime"),
+    reconDate: get("reconDate"),
+    reconTime: get("reconTime"),
+    msg: get("msg"),
+  };
 }
 
-/**
- * OP's test and live hosts publish private IITB addresses. This succeeds only
- * from a network that can route there (campus or VPN), including this server
- * when it can. Callers must treat failure as "ack still owed".
- */
-export async function acknowledgeOnlinePay(opts: {
-  transId: string;
-  requestType: "I" | "R" | "D";
-}): Promise<{ ok: boolean; error?: string }> {
-  const url = onlinePayAckUrl(opts.transId, opts.requestType);
-  if (!url) {
-    return {
-      ok: false,
-      error: opts.transId ? "not configured" : "missing transId",
-    };
-  }
+export function isNoticeType(value: string): value is NoticeType {
+  return value === "I" || value === "R" || value === "D";
+}
 
-  try {
-    const res = await fetch(url, {
-      method: "GET",
-      redirect: "follow",
-      cache: "no-store",
-      signal: AbortSignal.timeout(4000),
-    });
-    if (!res.ok) return { ok: false, error: `ACK HTTP ${res.status}` };
-    const body = (await res.text()).trim().toUpperCase();
-    if (
-      /\b(?:FAIL(?:ED|URE)?|ERROR|INVALID|EXCEPTION|UNAUTHORIZED)\b/.test(body)
-    )
-      return { ok: false, error: "ACK reported failure" };
-    if (body.includes("<HTML") || body.includes("<!DOCTYPE"))
-      return {
-        ok: false,
-        error: "ACK returned an HTML page; delivery is unconfirmed",
-      };
-    return { ok: true };
-  } catch (err) {
-    return {
-      ok: false,
-      error: err instanceof Error ? err.message : String(err),
+// ─── Acknowledgement ─────────────────────────────────────────────────────────
+
+/**
+ * Tell the gateway we received a notice, and keep its answer for the record:
+ * "<type>_ACK_<reply>" or "Err <reason>". The servlet replies FAIL for a
+ * transaction it never issued, which is what makes a forged notice harmless.
+ */
+export function acknowledgeNotice(
+  transId: string,
+  requestType: NoticeType,
+): Promise<string> {
+  const url = new URL(`${gatewayUrl()}OnlinePayAckServlet`);
+  url.searchParams.set("transId", transId);
+  url.searchParams.set("requestType", requestType);
+  const client = url.protocol === "http:" ? http : https;
+
+  return new Promise((resolve) => {
+    const done = (result: string) => {
+      const line = result.replace(/\s+/g, " ").trim().slice(0, 255);
+      console.info(`[onlinepay] ACK ${requestType} ${transId} -> ${line}`);
+      resolve(line);
     };
-  }
+    const req = client.get(
+      url,
+      {
+        timeout: 20_000,
+        // IITB's gateway hosts still negotiate ciphers OpenSSL 3 rejects by default.
+        ...(url.protocol === "https:" ? { ciphers: "DEFAULT@SECLEVEL=1" } : {}),
+      },
+      (res) => {
+        let body = "";
+        res.setEncoding("utf8");
+        res.on("data", (chunk: string) => {
+          if (body.length < 2000) body += chunk;
+        });
+        res.on("end", () => {
+          const status = res.statusCode ?? 0;
+          done(
+            status >= 200 && status < 300
+              ? `${requestType}_ACK_${body.trim()}`
+              : `Err HTTP ${status}`,
+          );
+        });
+      },
+    );
+    req.on("timeout", () => req.destroy(new Error("timed out")));
+    req.on("error", (err) => done(`Err ${err.message}`));
+  });
+}
+
+/** Whether a stored ACK reply confirms the transaction. */
+export function ackConfirmed(ack: string | null | undefined): boolean {
+  if (!ack) return false;
+  return !ack.startsWith("Err") && !/FAIL/i.test(ack);
 }

@@ -2,15 +2,21 @@ const PUBLIC_FALLBACK = "https://iitbinvent.com";
 
 /** Resolve public site origin for QR / absolute links. */
 export function siteOrigin(): string {
+  // SITE_URL is read at runtime, so a deployment can change its public address
+  // without a rebuild; NEXT_PUBLIC_SITE_URL is fixed at build time.
   const raw =
+    process.env.SITE_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.AUTH_URL ||
     PUBLIC_FALLBACK;
   const cleaned = raw.replace(/\/$/, "");
-  // Never encode preview IPs (e.g. old 15.206.*) in badge QR URLs.
+  // Never encode preview IPs (e.g. old 15.206.*) in badge QR URLs — unless this
+  // instance is deliberately a LAN one (http://10.127.1.23/invent), whose links
+  // must come back to it rather than to the live site.
   try {
     const host = new URL(cleaned).hostname;
-    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host === "localhost") {
+    const privateHost = /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host === "localhost";
+    if (privateHost && process.env.ALLOW_PRIVATE_SITE_URL !== "true") {
       return PUBLIC_FALLBACK;
     }
   } catch {

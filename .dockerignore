@@ -1,0 +1,16 @@
+# Never send secrets, keys, data or local build output into an image.
+.git
+.env
+.env.*
+*.pem
+raj-invent
+node_modules
+.next
+.next-*
+data
+backups
+.wrangler
+.reticle
+test-results
+tsconfig.tsbuildinfo
+docker-compose.override.yml

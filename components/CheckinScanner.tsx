@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { extractQrToken } from "@/lib/ticket";
+import { withBasePath } from "@/lib/base-path";
 
 type ScanResult = {
   ok: boolean;
@@ -59,7 +60,7 @@ export function CheckinScanner({
     lastScanRef.current = { token: trimmed, at: now };
 
     try {
-      const res = await fetch("/api/checkin", {
+      const res = await fetch(withBasePath("/api/checkin"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -162,40 +163,20 @@ export function CheckinScanner({
   }, [stopCamera]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setMode("gate")}
-          className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.1em] ${
-            mode === "gate"
-              ? "bg-teal-deep text-white"
-              : "border border-line bg-white text-mute"
-          }`}
-        >
-          Gate check-in
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div className="adm-tabs" role="group" aria-label="What to record">
+        <button type="button" aria-pressed={mode === "gate"} onClick={() => setMode("gate")}>
+          Entry at the gate
         </button>
-        <button
-          type="button"
-          onClick={() => setMode("session")}
-          className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.1em] ${
-            mode === "session"
-              ? "bg-teal-deep text-white"
-              : "border border-line bg-white text-mute"
-          }`}
-        >
+        <button type="button" aria-pressed={mode === "session"} onClick={() => setMode("session")}>
           Session attendance
         </button>
       </div>
 
       {mode === "session" ? (
-        <label className="block text-sm">
-          <span className="font-medium">Session</span>
-          <select
-            value={sessionId}
-            onChange={(e) => setSessionId(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-line px-3 py-2"
-          >
+        <label className="adm-field">
+          <span className="adm-label">Session</span>
+          <select value={sessionId} onChange={(e) => setSessionId(e.target.value)} className="adm-select">
             {sessions.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.title}
@@ -207,44 +188,39 @@ export function CheckinScanner({
 
       <div
         id={REGION_ID}
-        className={`min-h-[12rem] overflow-hidden rounded-xl border border-line ${
-          cameraOn ? "bg-black" : "bg-paper"
-        }`}
+        style={{
+          minHeight: "12rem",
+          overflow: "hidden",
+          borderRadius: 8,
+          border: "1px solid var(--adm-rule)",
+          background: cameraOn ? "#000" : "var(--adm-canvas)",
+        }}
       />
 
-      <div className="flex flex-wrap gap-2">
+      <div className="adm-form-foot">
         {!cameraOn ? (
-          <button
-            type="button"
-            disabled={cameraBusy}
-            onClick={() => void startCamera()}
-            className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-          >
-            {cameraBusy ? "Starting camera…" : "Start camera"}
+          <button type="button" disabled={cameraBusy} onClick={() => void startCamera()} className="adm-btn is-primary">
+            {cameraBusy ? "Starting camera…" : "Scan with camera"}
           </button>
         ) : (
-          <button
-            type="button"
-            onClick={() => void stopCamera()}
-            className="rounded-md border border-line px-4 py-2 text-sm font-semibold text-ink"
-          >
+          <button type="button" onClick={() => void stopCamera()} className="adm-btn">
             Stop camera
           </button>
         )}
       </div>
 
       {cameraError ? (
-        <p className="text-sm text-amber-900" role="status">
+        <p className="adm-notice is-warn" style={{ margin: 0 }} role="status">
           {cameraError}
         </p>
       ) : (
-        <p className="text-sm text-mute">
-          Or paste the ticket QR token below (works without a camera).
+        <p className="adm-hint" style={{ margin: 0 }}>
+          No camera? Paste the ticket link or code instead.
         </p>
       )}
 
       <form
-        className="flex flex-wrap gap-2"
+        className="adm-form-foot"
         onSubmit={(e) => {
           e.preventDefault();
           void submitToken(manual);
@@ -253,30 +229,22 @@ export function CheckinScanner({
         <input
           value={manual}
           onChange={(e) => setManual(e.target.value)}
-          placeholder="Paste badge URL or qrToken"
-          className="min-w-[16rem] flex-1 rounded-md border border-line px-3 py-2 font-mono text-sm"
+          placeholder="Ticket link or QR code"
+          aria-label="Ticket link or QR code"
+          className="adm-input adm-mono"
+          style={{ flex: 1, minWidth: "14rem" }}
         />
-        <button
-          type="submit"
-          className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
-        >
+        <button type="submit" className="adm-btn is-primary">
           Check in
         </button>
       </form>
 
       {result ? (
-        <div
-          className={`rounded-xl border px-4 py-3 ${
-            result.ok
-              ? "border-ent/40 bg-white text-ink"
-              : "border-red-200 bg-red-50 text-red-900"
-          }`}
-          role="status"
-        >
-          <p className="font-semibold">
-            {result.name ?? (result.ok ? "OK" : "Failed")}
-          </p>
-          <p className="mt-1 text-sm">{result.message}</p>
+        <div className={`adm-notice ${result.ok ? "is-good" : "is-bad"}`} style={{ margin: 0 }} role="status">
+          <strong style={{ display: "block", color: "var(--adm-ink)" }}>
+            {result.name ?? (result.ok ? "Checked in" : "Not checked in")}
+          </strong>
+          {result.message}
         </div>
       ) : null}
     </div>

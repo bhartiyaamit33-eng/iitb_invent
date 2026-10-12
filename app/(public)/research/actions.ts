@@ -16,10 +16,10 @@ export async function deleteMyApplicationAction(formData: FormData) {
   const applicationId = String(formData.get("applicationId") ?? "");
   const confirm = String(formData.get("confirm") ?? "");
   if (!applicationId) {
-    redirect("/research?error=missing#submit");
+    redirect("/register?error=missing");
   }
   if (confirm !== "DELETE") {
-    redirect("/research?error=confirm#submit");
+    redirect("/register?error=confirm");
   }
 
   const email = user.email.trim().toLowerCase();
@@ -32,7 +32,7 @@ export async function deleteMyApplicationAction(formData: FormData) {
     select: { id: true },
   });
   if (!application) {
-    redirect("/research?error=not_found#submit");
+    redirect("/register?error=not_found");
   }
 
   const result = await deleteConferenceApplication({
@@ -40,12 +40,13 @@ export async function deleteMyApplicationAction(formData: FormData) {
     id: application.id,
   });
   if (!result.ok) {
-    redirect(`/research?error=${encodeURIComponent(result.error)}#submit`);
+    redirect(`/register?error=${encodeURIComponent(result.error)}`);
   }
 
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard");
   revalidatePath("/research");
-  redirect("/research?deleted=1#submit");
+  revalidatePath("/register");
+  redirect("/register?deleted=1");
 }

@@ -1,4 +1,3 @@
-import { ensurePaymentReceipt } from "@/lib/payment-management";
 import type {
   ApplicationPaymentStatus,
   ApplicationStatus,
@@ -20,6 +19,7 @@ import {
   issueEventTicketForApplication,
 } from "@/lib/conference-access";
 import { sendConferenceStatusUpdate } from "@/lib/email/transactions";
+import { sendProformaInvoice } from "@/lib/conference-payment";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { siteOrigin } from "@/lib/ticket";
 
@@ -105,6 +105,15 @@ export async function reviewConferenceApplication(opts: {
     return { emailSent: false, paymentUrl };
   }
 
+  // Selected and owing the fee: the email is the proforma invoice, carrying
+  // the organisers' message, so the applicant has one thing to act on.
+  if (paymentDue) {
+    const proforma = await sendProformaInvoice(after.id, { message });
+    return proforma.ok
+      ? { emailSent: true, paymentUrl }
+      : { emailSent: false, emailError: proforma.error, paymentUrl };
+  }
+
   const mail = await sendConferenceStatusUpdate({
     to: after.email,
     name: after.name,
@@ -160,7 +169,6 @@ export async function setApplicationPayment(opts: {
     after,
   });
 
-  if (opts.paymentStatus === "PAID") await ensurePaymentReceipt(after.id);
   if (paidNow) {
     await issueEventTicketForApplication(after.id, { notify: true });
   }

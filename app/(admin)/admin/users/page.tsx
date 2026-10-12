@@ -1,173 +1,227 @@
+import Link from "next/link";
+import { Role, type Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
-import { Role } from "@prisma/client";
-import { adminDeleteUserAction, updateUserRoleAction } from "./actions";
+import { withBasePath } from "@/lib/base-path";
+import { getCurrentUser } from "@/lib/auth/session";
+import { istDate, plural, type Tone } from "@/lib/admin/format";
 import { UserImportForm } from "@/components/admin/UserImportForm";
+import { Badge, Empty, Notice, PageHeader } from "@/components/admin/ui";
+import { adminDeleteUserAction, updateUserRoleAction } from "./actions";
 
 export const dynamic = "force-dynamic";
+
+const ROLE_LABEL: Record<Role, string> = {
+  ADMIN: "Admin",
+  ORGANISER: "Organiser",
+  REVIEWER: "Reviewer",
+  SPEAKER: "Speaker",
+  VOLUNTEER: "Volunteer",
+  ATTENDEE: "Attendee",
+};
+
+const ROLE_TONE: Partial<Record<Role, Tone>> = { ADMIN: "info", REVIEWER: "good", ORGANISER: "info" };
+
+const TABS: { key: string; label: string; where: Prisma.UserWhereInput }[] = [
+  { key: "all", label: "All", where: {} },
+  { key: "admin", label: "Admins", where: { role: "ADMIN" } },
+  { key: "reviewer", label: "Reviewers", where: { role: "REVIEWER" } },
+  { key: "organiser", label: "Organisers", where: { role: "ORGANISER" } },
+  { key: "attendee", label: "Attendees", where: { role: "ATTENDEE" } },
+];
 
 export default async function AdminUsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; deleted?: string; error?: string }>;
+  searchParams: Promise<{ q?: string; role?: string; deleted?: string; error?: string }>;
 }) {
-  const { q, deleted, error } = await searchParams;
+  const { q, role, deleted, error } = await searchParams;
   const query = q?.trim() ?? "";
+  const current = TABS.find((t) => t.key === role) ?? TABS[0]!;
+  const me = await getCurrentUser();
+  const base: Prisma.UserWhereInput = {
+    deletedAt: null,
+    ...(query
+      ? {
+          OR: [
+            { email: { contains: query, mode: "insensitive" } },
+            { name: { contains: query, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  };
 
-  const users = await prisma.user.findMany({
-    where: {
-      deletedAt: null,
-      ...(query
-        ? {
-            OR: [
-              { email: { contains: query, mode: "insensitive" } },
-              { name: { contains: query, mode: "insensitive" } },
-            ],
-          }
-        : {}),
-    },
-    orderBy: { createdAt: "desc" },
-    take: 200,
-    include: {
-      profile: true,
-      registrations: {
-        include: { edition: { select: { year: true, name: true } } },
+  const [users, counts] = await Promise.all([
+    prisma.user.findMany({
+      where: { AND: [base, current.where] },
+      orderBy: { createdAt: "desc" },
+      take: 300,
+      include: {
+        profile: { select: { completeness: true, personaType: true } },
+        registrations: { include: { edition: { select: { year: true } } } },
       },
-    },
-  });
+    }),
+    Promise.all(TABS.map((t) => prisma.user.count({ where: { AND: [base, t.where] } }))),
+  ]);
+
+  const tabHref = (key: string) => {
+    const params = new URLSearchParams();
+    if (key !== "all") params.set("role", key);
+    if (query) params.set("q", query);
+    const s = params.toString();
+    return `/admin/users${s ? `?${s}` : ""}`;
+  };
 
   return (
-    <main className="px-6 py-10">
-      <h1 className="font-display text-4xl tracking-wide text-teal-deep">Users</h1>
-      <p className="mt-2 text-sm text-ink-soft">
-        Grant reviewer or admin access by user ID, and manage platform accounts.
-      </p>
+    <div className="adm-page">
+      <PageHeader
+        title="Users"
+        description={`${plural(counts[0] ?? 0, "account")}. Choose who can review submissions and who can use this admin portal; changes apply on their next page load.`}
+        actions={
+          <a className="adm-btn" href={withBasePath("/api/admin/users/export")}>
+            Export CSV
+          </a>
+        }
+      />
 
-      {deleted ? (
-        <p
-          className="mt-4 rounded-md border border-teal/30 bg-teal/5 px-4 py-3 text-sm text-teal-deep"
-          role="status"
-        >
-          User deleted.
-        </p>
-      ) : null}
-      {error === "confirm" ? (
-        <p
-          className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
-          role="alert"
-        >
-          Type DELETE in the confirm field to remove a user.
-        </p>
-      ) : null}
-      {error && error !== "confirm" ? (
-        <p
-          className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
-          role="alert"
-        >
-          {error}
-        </p>
+      {deleted ? <Notice tone="good">Account deleted.</Notice> : null}
+      {error ? (
+        <Notice tone="bad">{error === "confirm" ? "Type DELETE in the confirm field to delete an account." : error}</Notice>
       ) : null}
 
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <a
-          href="/api/admin/users/export"
-          className="rounded-md border border-line bg-white px-4 py-2 text-sm font-semibold text-teal-deep hover:border-teal"
-        >
-          Export CSV
-        </a>
-      </div>
-
-      <div className="mt-4">
+      <div className="adm-stack">
         <UserImportForm />
-      </div>
 
-      <form className="mt-6">
-        <input
-          name="q"
-          defaultValue={query}
-          placeholder="Search name or email"
-          className="w-full max-w-md rounded-md border border-line bg-white px-3 py-2.5 outline-none focus:border-teal"
-        />
-      </form>
+        <section className="adm-panel is-flush">
+          <div className="adm-panel-body" style={{ paddingTop: 14 }}>
+            <div className="adm-toolbar">
+              <nav className="adm-tabs" aria-label="Filter by role">
+                {TABS.map((t, i) => (
+                  <Link key={t.key} href={tabHref(t.key)} aria-current={t.key === current.key ? "true" : undefined}>
+                    {t.label} <span className="count">{counts[i]}</span>
+                  </Link>
+                ))}
+              </nav>
+              <form className="adm-search" role="search">
+                {current.key !== "all" ? <input type="hidden" name="role" value={current.key} /> : null}
+                <input
+                  className="adm-input"
+                  name="q"
+                  defaultValue={query}
+                  placeholder="Name or email"
+                  aria-label="Search users"
+                />
+                <button type="submit" className="adm-btn">
+                  Search
+                </button>
+              </form>
+            </div>
 
-      <div className="mt-6 overflow-x-auto rounded-xl border border-line bg-white">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-line bg-paper text-xs uppercase tracking-[0.1em] text-mute">
-            <tr>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Role</th>
-              <th className="px-4 py-3">Persona</th>
-              <th className="px-4 py-3">Profile %</th>
-              <th className="px-4 py-3">Directory</th>
-              <th className="px-4 py-3">Registrations</th>
-              <th className="px-4 py-3">Created</th>
-              <th className="px-4 py-3">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id} className="border-b border-line last:border-0">
-                <td className="px-4 py-3 font-medium">{u.name}</td>
-                <td className="px-4 py-3 text-ink-soft">{u.email}</td>
-                <td className="px-4 py-3">
-                  <form action={updateUserRoleAction} className="flex min-w-40 gap-2">
-                    <input type="hidden" name="userId" value={u.id} />
-                    <select
-                      name="role"
-                      defaultValue={u.role}
-                      aria-label={`Role for ${u.email}`}
-                      className="rounded border border-line px-2 py-1 text-xs"
-                    >
-                      {Object.values(Role).map((role) => (
-                        <option key={role} value={role}>
-                          {role}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="submit"
-                      className="text-xs font-semibold text-teal-deep hover:underline"
-                    >
-                      Save
-                    </button>
-                  </form>
-                  <code className="mt-1 block text-[10px] text-mute">{u.id}</code>
-                </td>
-                <td className="px-4 py-3">{u.profile?.personaType ?? "-"}</td>
-                <td className="px-4 py-3">{u.profile?.completeness ?? 0}</td>
-                <td className="px-4 py-3">
-                  {u.profile?.directoryOptIn ? "on" : "off"}
-                </td>
-                <td className="px-4 py-3 text-ink-soft">
-                  {u.registrations
-                    .map((r) => `${r.edition.year} (${r.status})`)
-                    .join(", ") || "-"}
-                </td>
-                <td className="px-4 py-3 text-xs text-mute">
-                  {u.createdAt.toISOString().slice(0, 10)}
-                </td>
-                <td className="px-4 py-3">
-                  <form action={adminDeleteUserAction} className="flex flex-col gap-1">
-                    <input type="hidden" name="userId" value={u.id} />
-                    <input
-                      name="confirm"
-                      placeholder="DELETE"
-                      aria-label={`Confirm delete ${u.email}`}
-                      className="w-24 rounded border border-line px-2 py-1 text-xs"
-                    />
-                    <button
-                      type="submit"
-                      className="text-left text-xs font-semibold text-red-700 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </form>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            {users.length === 0 ? (
+              <Empty title="No accounts in this view">Try another tab or clear the search.</Empty>
+            ) : (
+              <div className="adm-table-wrap">
+                <table className="adm-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Access</th>
+                      <th>Profile</th>
+                      <th>Tickets</th>
+                      <th>Joined</th>
+                      <th>
+                        <span className="sr-only">Delete</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((u) => (
+                      <tr key={u.id}>
+                        <td>
+                          <span style={{ fontWeight: 620 }}>{u.name}</span>
+                          {u.id === me?.id ? <span className="adm-hint"> (you)</span> : null}
+                          <span className="adm-sub">{u.email}</span>
+                        </td>
+                        <td style={{ minWidth: 210 }}>
+                          <Badge tone={ROLE_TONE[u.role] ?? "neutral"}>{ROLE_LABEL[u.role]}</Badge>
+                          {u.id === me?.id ? null : (
+                            <details style={{ display: "inline-block", marginLeft: 6 }}>
+                              <summary className="adm-btn is-quiet is-small" style={{ listStyle: "none", display: "inline-flex" }}>
+                                Change
+                              </summary>
+                            <form action={updateUserRoleAction} style={{ display: "flex", gap: 6, marginTop: 8 }}>
+                              <input type="hidden" name="userId" value={u.id} />
+                              <select
+                                name="role"
+                                defaultValue={u.role}
+                                aria-label={`Access for ${u.email}`}
+                                className="adm-select is-small"
+                              >
+                                {Object.values(Role).map((r) => (
+                                  <option key={r} value={r}>
+                                    {ROLE_LABEL[r]}
+                                  </option>
+                                ))}
+                              </select>
+                              <button type="submit" className="adm-btn is-small">
+                                Save
+                              </button>
+                            </form>
+                            </details>
+                          )}
+                        </td>
+                        <td>
+                          {u.profile ? `${u.profile.completeness}% complete` : "No profile"}
+                          {u.profile?.personaType ? (
+                            <span className="adm-sub">
+                              {u.profile.personaType.charAt(0) + u.profile.personaType.slice(1).toLowerCase()}
+                            </span>
+                          ) : null}
+                        </td>
+                        <td>
+                          {u.registrations.length
+                            ? u.registrations.map((r) => (
+                                <span key={r.id} className="adm-sub" style={{ marginTop: 0 }}>
+                                  {r.edition.year}, {r.status.toLowerCase()}
+                                </span>
+                              ))
+                            : <span className="adm-sub" style={{ marginTop: 0 }}>None</span>}
+                        </td>
+                        <td style={{ whiteSpace: "nowrap" }}>{istDate(u.createdAt)}</td>
+                        <td className="num">
+                          {u.id === me?.id ? null : (
+                            <details>
+                              <summary className="adm-btn is-quiet is-bad is-small" style={{ listStyle: "none" }}>
+                                Delete…
+                              </summary>
+                              <form
+                                action={adminDeleteUserAction}
+                                style={{ display: "flex", gap: 6, marginTop: 6, justifyContent: "flex-end" }}
+                              >
+                                <input type="hidden" name="userId" value={u.id} />
+                                <input
+                                  name="confirm"
+                                  placeholder="DELETE"
+                                  autoComplete="off"
+                                  aria-label={`Type DELETE to delete ${u.email}`}
+                                  className="adm-input is-small"
+                                  style={{ width: 96 }}
+                                />
+                                <button type="submit" className="adm-btn is-danger is-small">
+                                  Delete
+                                </button>
+                              </form>
+                            </details>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
-    </main>
+    </div>
   );
 }

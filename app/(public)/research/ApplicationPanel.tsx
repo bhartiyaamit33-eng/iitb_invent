@@ -111,16 +111,15 @@ export function ApplicationPanel({
       {feeDue ? (
         <div style={{ marginTop: 24 }}>
           <p className="lead" style={{ marginBottom: 20 }}>
-            You are selected. Pay the registration fee through IIT Bombay Online Pay. You
-            do not fill the application form again.
+            Your registration fee is due. Pay it through IIT Bombay OnlinePay; your
+            proforma invoice is also in your email. You do not fill the form again.
           </p>
           <Link
             href={payPath}
             className="site-btn"
             data-testid="conference-pay-cta"
           >
-            Pay {formatInrFromPaise(application.paymentAmountPaise)} with IIT Bombay
-            Online Pay
+            Pay {formatInrFromPaise(application.paymentAmountPaise)}
           </Link>
         </div>
       ) : application.paymentStatus === "PAID" ||
@@ -132,8 +131,8 @@ export function ApplicationPanel({
         </p>
       ) : (
         <p className="lead" style={{ marginTop: 20, marginBottom: 0 }}>
-          Organisers will post the decision here and by email. The registration fee and
-          payment link appear only after you are selected.
+          Organisers are reviewing your abstract and will post the decision here and by
+          email. If it is shortlisted, your proforma invoice and payment link follow.
         </p>
       )}
 

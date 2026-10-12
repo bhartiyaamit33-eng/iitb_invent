@@ -7,6 +7,8 @@ import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isAdminEmail } from "@/lib/auth/roles";
 import { attendeeHome } from "@/lib/auth/attendee";
+import { SUBMIT_HREF } from "@/lib/landing";
+import { withBasePath } from "@/lib/base-path";
 import { sendSignupThankYouForUser } from "@/lib/email/transactions";
 import { IconGoogle } from "@/components/icons";
 import { InventMark } from "@/components/site/InventMark";
@@ -17,14 +19,14 @@ import "@/app/site.css";
 export const metadata = pageMetadata({
   title: "Create an account",
   description:
-    "Create a free IITB INV.ENT account, then submit a paper or poster abstract. An account is not an event ticket.",
+    "Create a free IITB INV.ENT account, then complete your conference registration. An account is not an event ticket.",
   path: "/signup",
 });
 
 type SearchParams = Promise<{ callbackUrl?: string; error?: string }>;
 
 function safeCallback(raw: string | undefined): string {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/dashboard";
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return SUBMIT_HREF;
   return raw;
 }
 
@@ -45,7 +47,7 @@ export default async function SignupPage({
 
   async function googleAction() {
     "use server";
-    await signIn("google", { redirectTo: attendeeHome(callbackUrl) });
+    await signIn("google", { redirectTo: withBasePath(attendeeHome(callbackUrl)) });
   }
 
   async function signupAction(formData: FormData) {
@@ -55,7 +57,7 @@ export default async function SignupPage({
       .trim()
       .toLowerCase();
     const password = String(formData.get("password") ?? "");
-    const requested = safeCallback(String(formData.get("callbackUrl") ?? "/dashboard"));
+    const requested = safeCallback(String(formData.get("callbackUrl") ?? SUBMIT_HREF));
 
     if (!name || !email || password.length < 8) {
       redirect(
@@ -94,7 +96,7 @@ export default async function SignupPage({
     const next = isAdminEmail(email)
       ? "/dashboard"
       : requested === "/"
-        ? "/dashboard?welcome=1"
+        ? SUBMIT_HREF
         : requested.includes("welcome")
           ? requested
           : requested === "/dashboard"
@@ -105,7 +107,7 @@ export default async function SignupPage({
       await signIn("credentials", {
         email,
         password,
-        redirectTo: next,
+        redirectTo: withBasePath(next),
       });
     } catch (err) {
       if (err instanceof AuthError) {

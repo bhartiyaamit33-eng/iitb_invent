@@ -67,6 +67,14 @@ export const SPONSORS: SiteOrg[] = [];
 
 export const PARTNERS: SiteOrg[] = [
   {
+    id: "sbertc",
+    name: "SBERTC, IIT Kanpur",
+    role: "Conference partner",
+    tier: "partner",
+    logo: "/assets/partners/sbertc.png",
+    href: "https://sbertc.iitk.ac.in/",
+  },
+  {
     id: "service-setu-academics",
     name: "ServiceSetu Academics",
     role: "Academic partner",

@@ -228,7 +228,7 @@ export function SiteLanding({
               Read the call for papers →
             </Link>
             <Link className="site-btn site-btn-ghost" href={submitHref}>
-              Submit your abstract
+              Complete registration
             </Link>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { withBasePath } from "@/lib/base-path";
 
 export type DashboardNotice = {
   id: string;
@@ -26,7 +27,7 @@ export function NotificationsPanel({
   async function markRead(id?: string) {
     setPending(true);
     try {
-      await fetch("/api/notifications/read", {
+      await fetch(withBasePath("/api/notifications/read"), {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         credentials: "same-origin",

@@ -530,7 +530,13 @@ model ConferenceApplication {
   paymentRef         String?
   paidAt             DateTime?
 
-  /// IIT Bombay Online Pay (sReqId / sUserId / transId from OP).
+  /// Registration ID sent to IIT Bombay OnlinePay as sUserId, e.g. AB_inv27_483920.
+  /// Minted the first time the payment page offers checkout.
+  payerId         String?          @unique
+  gatewayPayments GatewayPayment[]
+
+  /// LEGACY (payment flow before October 2026). No longer written; the columns
+  /// and tables they point to stay so migrations remain additive.
   opReqId    String? @unique
   opUserId   String?
   opTransId  String?
@@ -647,6 +653,49 @@ model UserNotification {
 //   comment   String?  @db.Text
 //   createdAt DateTime @default(now())
 // }
+
+/// One IIT Bombay OnlinePay transaction, keyed by the gateway's transId.
+/// Written by /api/onlinepay/callback for I (immediate) and R (reconciliation)
+/// notices. A transaction counts as paid only when the gateway's ACK servlet
+/// confirmed it (`verified`), so a hand-typed callback URL cannot mark anyone paid.
+model GatewayPayment {
+  transId       String                 @id
+  applicationId String?
+  application   ConferenceApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  payerId       String
+  reqId         String?
+  amount        String
+  refNo         String?
+  provId        String?
+
+  /// Immediate notice: S | F, or DIRECT_RECON when only a reconciliation arrived.
+  imtStatus String?
+  imtDate   String?
+  imtTime   String?
+  imtAck    String?
+  imtRaw    String? @db.Text
+
+  /// Reconciliation notice: RECONCILED once one arrives.
+  reconStatus String?
+  reconStamp  String?
+  reconAck    String?
+  reconRaw    String? @db.Text
+
+  /// D notice: acknowledged and kept for the record; never changes paid state.
+  dAck String?
+  dRaw String? @db.Text
+
+  verified        Boolean   @default(false)
+  receiptMailedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([applicationId])
+  @@index([payerId])
+  @@index([createdAt])
+}
+
+// ─── LEGACY payment tables (flow before October 2026; no longer written) ─────
 
 model PaymentCoupon {
   id String @id @default(cuid())

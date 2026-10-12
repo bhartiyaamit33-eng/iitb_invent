@@ -1,32 +1,42 @@
+/**
+ * Transactional emails for IITB INV.ENT.
+ *
+ * One shell for every message: a navy masthead with the wordmark and event
+ * dates, a white card, and a footer with the venue and support address. Built
+ * from tables with inline styles, which is what renders the same in Gmail,
+ * Outlook, Apple Mail and phone clients. No images, so nothing breaks when a
+ * client blocks them.
+ */
+import { siteOrigin } from "@/lib/ticket";
+
+const BRAND = "IITB INV.ENT";
 const EMAIL_BRAND = "IIT Bombay INV.ENT";
-const EMAIL_DATES = "30-31 Jan 2027";
+const CONFERENCE_NAME = "Entrepreneurship Research and Venture Practice Conference";
+const EVENT_DATES = "30–31 January 2027";
+const VENUE = "Desai Sethi School of Entrepreneurship, IIT Bombay, Powai, Mumbai 400076";
+const SUPPORT = "support@iitbinvent.com";
 
-function layout(title: string, bodyHtml: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${escapeHtml(title)}</title>
-</head>
-<body style="margin:0;padding:24px;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#222222;">
-  <div style="max-width:600px;">
-    <p style="margin:0 0 2px;font-size:14px;color:#222222;">${escapeHtml(EMAIL_BRAND)}</p>
-    <p style="margin:0 0 20px;font-size:13px;color:#555555;">${escapeHtml(EMAIL_DATES)}</p>
-    <p style="margin:0 0 16px;font-size:18px;font-weight:bold;color:#222222;">${escapeHtml(title)}</p>
-    <div style="font-size:15px;line-height:1.6;color:#222222;">${bodyHtml}</div>
-    <p style="margin:28px 0 0;padding-top:12px;border-top:1px solid #dddddd;font-size:12px;line-height:1.5;color:#555555;">
-      Venue: DSSE Building, IIT Bombay, Powai<br/>
-      Sent by conference@iitbinvent.com. Please do not reply to this automated message.
-    </p>
-  </div>
-</body>
-</html>`;
-}
+const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif";
+const C = {
+  navy: "#14213d",
+  ink: "#14213d",
+  text: "#3b4a63",
+  mute: "#5f6b82",
+  rule: "#dce1e8",
+  canvas: "#f3f5f8",
+  blue: "#145bef",
+  blueInk: "#0e45bb",
+};
 
-function mailLink(href: string, label: string): string {
-  return `<a href="${escapeHtml(href)}" style="color:#1155cc;">${escapeHtml(label)}</a>`;
-}
+type Tone = "good" | "warn" | "info" | "neutral";
+const TONES: Record<Tone, { fg: string; bg: string }> = {
+  good: { fg: "#1c7341", bg: "#e5f3ea" },
+  warn: { fg: "#8a5300", bg: "#fcf0da" },
+  info: { fg: "#0e45bb", bg: "#eaf0fe" },
+  neutral: { fg: "#4f5b70", bg: "#edf0f4" },
+};
+
+type Email = { subject: string; html: string; text: string };
 
 function escapeHtml(s: string): string {
   return s
@@ -40,105 +50,153 @@ function blank(value: string): string {
   return value.trim() ? value : "Not provided";
 }
 
+// ─── Building blocks ─────────────────────────────────────────────────────────
+
+function para(html: string, extra = ""): string {
+  return `<p style="margin:0 0 16px;font-family:${FONT};font-size:15px;line-height:1.65;color:${C.text};${extra}">${html}</p>`;
+}
+
+function paragraphs(text: string): string {
+  return text
+    .trim()
+    .split(/\n{2,}/)
+    .map((p) => para(escapeHtml(p).replace(/\n/g, "<br/>")))
+    .join("");
+}
+
+function heading(text: string): string {
+  return `<h1 style="margin:0 0 14px;font-family:${FONT};font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-0.01em;color:${C.ink};">${escapeHtml(text)}</h1>`;
+}
+
+function label(text: string, tone: Tone): string {
+  const t = TONES[tone];
+  return `<p style="margin:0 0 14px;"><span style="display:inline-block;padding:4px 10px;border-radius:999px;background:${t.bg};color:${t.fg};font-family:${FONT};font-size:12px;font-weight:700;letter-spacing:0.02em;">${escapeHtml(text)}</span></p>`;
+}
+
+/** Label/value rows; `strong` rows render the value larger, e.g. an amount. */
+function details(rows: { label: string; value: string; strong?: boolean; html?: boolean }[]): string {
+  const body = rows
+    .map((r, i) => {
+      const border = i === 0 ? "" : `border-top:1px solid ${C.rule};`;
+      const value = r.html ? r.value : escapeHtml(r.value);
+      return `<tr>
+        <td valign="top" style="${border}padding:11px 16px 11px 0;width:38%;font-family:${FONT};font-size:13px;line-height:1.5;color:${C.mute};">${escapeHtml(r.label)}</td>
+        <td valign="top" style="${border}padding:11px 0;font-family:${FONT};font-size:${r.strong ? "20px" : "14px"};line-height:1.5;font-weight:${r.strong ? 700 : 500};color:${C.ink};word-break:break-word;">${value}</td>
+      </tr>`;
+    })
+    .join("");
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:4px 0 22px;border-top:1px solid ${C.rule};border-bottom:1px solid ${C.rule};">${body}</table>`;
+}
+
+/** A button that holds its shape in Outlook too, optionally with the raw link underneath. */
+function button(href: string, text: string, withFallback = true): string {
+  const safe = escapeHtml(href);
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 ${withFallback ? "12px" : "22px"};">
+    <tr><td align="center" bgcolor="${C.blue}" style="border-radius:8px;">
+      <a href="${safe}" target="_blank" style="display:inline-block;padding:13px 24px;font-family:${FONT};font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:8px;">${escapeHtml(text)}</a>
+    </td></tr>
+  </table>${
+    withFallback
+      ? `<p style="margin:0 0 22px;font-family:${FONT};font-size:12px;line-height:1.6;color:${C.mute};word-break:break-all;">If the button does not work, open this link:<br/><a href="${safe}" style="color:${C.blueInk};">${safe}</a></p>`
+      : ""
+  }`;
+}
+
+function note(title: string, html: string, tone: Tone = "neutral"): string {
+  const accent =
+    tone === "warn" ? "#c98a1b" : tone === "good" ? TONES.good.fg : tone === "info" ? C.blue : C.rule;
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 20px;">
+    <tr><td style="padding:14px 16px;background:${C.canvas};border-left:3px solid ${accent};border-radius:4px;font-family:${FONT};font-size:13.5px;line-height:1.6;color:${C.text};">
+      <strong style="display:block;margin-bottom:4px;color:${C.ink};">${escapeHtml(title)}</strong>${html}
+    </td></tr>
+  </table>`;
+}
+
+function link(href: string, text: string): string {
+  return `<a href="${escapeHtml(href)}" style="color:${C.blueInk};font-weight:600;">${escapeHtml(text)}</a>`;
+}
+
+/** The shell around every email. `preheader` is the grey preview line in the inbox. */
+function layout(preheader: string, body: string): string {
+  const site = siteOrigin();
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="x-apple-disable-message-reformatting" />
+<meta name="color-scheme" content="light only" />
+<meta name="supported-color-schemes" content="light" />
+<title>${escapeHtml(BRAND)}</title>
+</head>
+<body style="margin:0;padding:0;width:100%;background:${C.canvas};">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:${C.canvas};">${escapeHtml(preheader)}</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:${C.canvas};">
+  <tr><td align="center" style="padding:28px 12px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;">
+      <tr><td style="padding:22px 28px;background:${C.navy};border-radius:12px 12px 0 0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+          <td style="font-family:${FONT};font-size:22px;font-weight:800;letter-spacing:-0.01em;color:#ffffff;">INV<span style="color:#5e8bff;">.</span>ENT</td>
+          <td align="right" style="font-family:${FONT};font-size:12px;line-height:1.5;color:#c9d3e6;">IIT Bombay<br/>${escapeHtml(EVENT_DATES)}</td>
+        </tr></table>
+        <div style="margin-top:6px;font-family:${FONT};font-size:12.5px;line-height:1.5;color:#c9d3e6;">${escapeHtml(CONFERENCE_NAME)}</div>
+      </td></tr>
+      <tr><td style="padding:32px 28px 12px;background:#ffffff;border-left:1px solid ${C.rule};border-right:1px solid ${C.rule};">
+        ${body}
+      </td></tr>
+      <tr><td style="padding:18px 28px 22px;background:#ffffff;border:1px solid ${C.rule};border-radius:0 0 12px 12px;font-family:${FONT};font-size:12px;line-height:1.7;color:${C.mute};">
+        <strong style="color:${C.ink};">${escapeHtml(EMAIL_BRAND)}</strong><br/>
+        ${escapeHtml(VENUE)}<br/>
+        Questions? Write to ${link(`mailto:${SUPPORT}`, SUPPORT)}. This is an automated message.<br/>
+        <a href="${escapeHtml(site)}" style="color:${C.mute};">${escapeHtml(site.replace(/^https?:\/\//, ""))}</a>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
+function textFooter(): string {
+  return `--\n${EMAIL_BRAND}\n${VENUE}\nQuestions: ${SUPPORT}`;
+}
+
 const CONFERENCE_PHRASE =
   "an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay";
 
-function submissionLead(participation: string): {
-  title: string;
-  subject: string;
-  thanks: string;
-} {
+function submissionLead(participation: string): { title: string; subject: string; thanks: string } {
   switch (participation) {
     case "PAPER_ONLY":
     case "Paper Presentation Only":
       return {
-        title: "Thank you for submitting",
-        subject: `Thank you for submitting your paper · ${EMAIL_BRAND}`,
-        thanks: `Thank you for submitting your paper for presentation at <strong>${escapeHtml(EMAIL_BRAND)}</strong>, ${CONFERENCE_PHRASE}.`,
+        title: "Your paper is with the committee",
+        subject: `We have your paper submission · ${EMAIL_BRAND}`,
+        thanks: `Thank you for submitting your paper for presentation at ${EMAIL_BRAND}, ${CONFERENCE_PHRASE}.`,
       };
     case "POSTER_ONLY":
     case "Poster Presentation only":
       return {
-        title: "Thank you for submitting",
-        subject: `Thank you for submitting your poster · ${EMAIL_BRAND}`,
-        thanks: `Thank you for submitting your poster for presentation at <strong>${escapeHtml(EMAIL_BRAND)}</strong>, ${CONFERENCE_PHRASE}.`,
+        title: "Your poster is with the committee",
+        subject: `We have your poster submission · ${EMAIL_BRAND}`,
+        thanks: `Thank you for submitting your poster for presentation at ${EMAIL_BRAND}, ${CONFERENCE_PHRASE}.`,
       };
     case "PAPER_OR_POSTER":
     case "Paper or Poster Presentations":
       return {
-        title: "Thank you for submitting",
-        subject: `Thank you for submitting · ${EMAIL_BRAND}`,
-        thanks: `Thank you for sending in your work to present a paper or a poster at <strong>${escapeHtml(EMAIL_BRAND)}</strong>, ${CONFERENCE_PHRASE}.`,
-      };
-    case "ATTENDEE":
-    case "Attendee":
-      return {
-        title: "Thank you for applying",
-        subject: `Thank you for applying · ${EMAIL_BRAND}`,
-        thanks: `Thank you for applying to attend <strong>${escapeHtml(EMAIL_BRAND)}</strong>, ${CONFERENCE_PHRASE}.`,
+        title: "Your submission is with the committee",
+        subject: `We have your submission · ${EMAIL_BRAND}`,
+        thanks: `Thank you for sending in your work to present as a paper or a poster at ${EMAIL_BRAND}, ${CONFERENCE_PHRASE}.`,
       };
     default:
       return {
-        title: "Thank you for applying",
-        subject: `Thank you for applying · ${EMAIL_BRAND}`,
-        thanks: `Thank you for applying to <strong>${escapeHtml(EMAIL_BRAND)}</strong>, ${CONFERENCE_PHRASE}.`,
+        title: "Your registration is with the committee",
+        subject: `We have your registration · ${EMAIL_BRAND}`,
+        thanks: `Thank you for registering for ${EMAIL_BRAND}, ${CONFERENCE_PHRASE}.`,
       };
   }
 }
 
-const FEE_NOTE =
-  "Organisers will review this and write to this email if you are selected. The registration fee and payment link are sent only after that decision. The fee is the same whether you present a paper, a poster, or attend.";
-
-export function registrationConfirmedEmail(opts: {
-  name: string;
-  editionName: string;
-  ticketCode: string;
-  eventDate: string;
-}): { subject: string; html: string; text: string } {
-  const subject = `Registration confirmed · ${EMAIL_BRAND}`;
-  const html = layout(
-    "You're registered",
-    `<p style="margin:0 0 14px;">Hi ${escapeHtml(opts.name)},</p>
-     <p style="margin:0 0 14px;">Your registration for <strong>${escapeHtml(EMAIL_BRAND)}</strong> (${escapeHtml(opts.eventDate)}) is confirmed.</p>
-     <p style="margin:0 0 14px;">Ticket code: <strong style="letter-spacing:0.06em;">${escapeHtml(opts.ticketCode)}</strong></p>
-     <p style="margin:0;">We will email updates from conference@iitbinvent.com as the programme firms up.</p>`,
-  );
-  const text = `Hi ${opts.name},
-
-Your registration for ${EMAIL_BRAND} (${opts.eventDate}) is confirmed.
-Ticket code: ${opts.ticketCode}
-
-${EMAIL_BRAND} · DSSE Building, IIT Bombay`;
-  return { subject, html, text };
-}
-
-export function profileConfirmationEmail(opts: {
-  name: string;
-  isFirstSave: boolean;
-}): { subject: string; html: string; text: string } {
-  const subject = opts.isFirstSave
-    ? `Your ${EMAIL_BRAND} profile is ready`
-    : `Your ${EMAIL_BRAND} profile was updated`;
-  const html = layout(
-    opts.isFirstSave ? "Profile created" : "Profile updated",
-    `<p style="margin:0 0 14px;">Hi ${escapeHtml(opts.name)},</p>
-     <p style="margin:0;">${
-       opts.isFirstSave
-         ? `Thanks for creating your ${escapeHtml(EMAIL_BRAND)} profile. You can update it any time from your dashboard.`
-         : `We saved the changes to your ${escapeHtml(EMAIL_BRAND)} profile.`
-     }</p>`,
-  );
-  const text = `Hi ${opts.name},
-
-${
-  opts.isFirstSave
-    ? `Your ${EMAIL_BRAND} profile is ready.`
-    : `Your ${EMAIL_BRAND} profile was updated.`
-}
-
-${EMAIL_BRAND} · conference@iitbinvent.com`;
-  return { subject, html, text };
-}
+// ─── Account ─────────────────────────────────────────────────────────────────
 
 export function accountCreatedEmail(opts: {
   name: string;
@@ -147,57 +205,79 @@ export function accountCreatedEmail(opts: {
   applyUrl?: string;
   ticketCode?: string | null;
   eventDate?: string | null;
-}): { subject: string; html: string; text: string } {
+}): Email {
   const subject = `Your account is ready · ${EMAIL_BRAND}`;
   const applyUrl = opts.applyUrl || opts.dashboardUrl;
   const html = layout(
-    "Your account is ready",
-    `<p style="margin:0 0 14px;">Hi ${escapeHtml(opts.name)},</p>
-     <p style="margin:0 0 14px;">Thank you. You have successfully created an account on <strong>iitbinvent.com</strong>.</p>
-     <p style="margin:0 0 14px;">This is not a confirmed place at <strong>${escapeHtml(EMAIL_BRAND)}</strong> yet. Log in, then submit a paper or poster abstract. An account is not a ticket.</p>
-     <p style="margin:0 0 14px;">The organising team reviews every application. If you are selected, you will receive an invitation with the registration fee and a payment link. Paying that fee confirms your place at the conference.</p>
-     <p style="margin:0 0 8px;">${mailLink(applyUrl, "Apply on the conference page")}</p>
-     <p style="margin:0 0 14px;">${mailLink(opts.dashboardUrl, "Open your dashboard")}</p>
-     <p style="margin:0;">Sign in anytime with this email.</p>`,
+    "Next, complete your registration for the conference.",
+    `${heading("Your account is ready")}
+     ${para(`Hi ${escapeHtml(opts.name)},`)}
+     ${para(`Welcome to ${escapeHtml(EMAIL_BRAND)}. An account is not yet a place at the conference: the next step is to complete your registration.`)}
+     ${button(applyUrl, "Complete registration", false)}
+     ${note(
+       "How registration works",
+       "Attendees receive a proforma invoice by email and pay right away.<br/>Paper and poster presenters add an extended abstract; once the committee shortlists it, the proforma invoice follows.<br/>Your ticket is issued as soon as the fee is paid.",
+       "info",
+     )}
+     ${para(`You can return to your registration any time from your ${link(opts.dashboardUrl, "dashboard")}.`, "font-size:14px;")}`,
   );
   const text = `Hi ${opts.name},
 
-Thank you. You have successfully created an account on iitbinvent.com.
+Welcome to ${EMAIL_BRAND}. An account is not yet a place at the conference: the next step is to complete your registration.
 
-This is not a confirmed place at ${EMAIL_BRAND} yet. Log in, then submit a paper or poster abstract. An account is not a ticket.
+Complete registration: ${applyUrl}
 
-The organising team reviews every application. If you are selected, you will receive an invitation with the registration fee and a payment link. Paying that fee confirms your place at the conference.
+How registration works:
+- Attendees receive a proforma invoice by email and pay right away.
+- Paper and poster presenters add an extended abstract; once the committee shortlists it, the proforma invoice follows.
+- Your ticket is issued as soon as the fee is paid.
 
-Apply: ${applyUrl}
 Dashboard: ${opts.dashboardUrl}
 
-Sign in anytime with this email.
-
-${EMAIL_BRAND} · DSSE Building, IIT Bombay`;
+${textFooter()}`;
   return { subject, html, text };
 }
 
-export function magicLinkEmail(opts: {
-  name?: string;
-  url: string;
-}): { subject: string; html: string; text: string } {
-  const subject = `Your ${EMAIL_BRAND} sign-in link`;
-  const greet = opts.name ? `Hi ${escapeHtml(opts.name)},` : "Hi,";
+export function profileConfirmationEmail(opts: { name: string; isFirstSave: boolean }): Email {
+  const subject = opts.isFirstSave
+    ? `Your ${EMAIL_BRAND} profile is ready`
+    : `Your ${EMAIL_BRAND} profile was updated`;
+  const lead = opts.isFirstSave
+    ? `Thanks for setting up your ${EMAIL_BRAND} profile. You can change it any time from your dashboard.`
+    : `We saved the changes to your ${EMAIL_BRAND} profile.`;
   const html = layout(
-    `Sign in to ${EMAIL_BRAND}`,
-    `<p style="margin:0 0 14px;">${greet}</p>
-     <p style="margin:0 0 14px;">Use this one-time link to sign in (expires soon):</p>
-     <p style="margin:0 0 14px;">${mailLink(opts.url, "Sign in")}</p>
-     <p style="margin:0 0 14px;font-size:13px;word-break:break-all;color:#555555;">${escapeHtml(opts.url)}</p>
-     <p style="margin:0;">If you did not request this, you can ignore this email.</p>`,
+    lead,
+    `${heading(opts.isFirstSave ? "Your profile is ready" : "Profile updated")}
+     ${para(`Hi ${escapeHtml(opts.name)},`)}
+     ${para(escapeHtml(lead))}
+     ${button(`${siteOrigin()}/dashboard/profile`, "View your profile", false)}`,
   );
-  const text = `${opts.name ? `Hi ${opts.name},` : "Hi,"}
+  const text = `Hi ${opts.name},
 
-Sign in to ${EMAIL_BRAND}:
+${lead}
+
+${textFooter()}`;
+  return { subject, html, text };
+}
+
+export function magicLinkEmail(opts: { name?: string; url: string }): Email {
+  const subject = `Your ${EMAIL_BRAND} sign-in link`;
+  const html = layout(
+    "Your one-time sign-in link.",
+    `${heading("Sign in")}
+     ${para(opts.name ? `Hi ${escapeHtml(opts.name)},` : "Hello,")}
+     ${para("Use this one-time link to sign in. It expires soon.")}
+     ${button(opts.url, "Sign in to INV.ENT")}
+     ${para("If you did not ask for this, you can ignore this email.", `font-size:13px;color:${C.mute};`)}`,
+  );
+  const text = `${opts.name ? `Hi ${opts.name},` : "Hello,"}
+
+Use this one-time link to sign in to ${EMAIL_BRAND}. It expires soon:
 ${opts.url}
 
-If you did not request this, ignore this email.
-`;
+If you did not ask for this, ignore this email.
+
+${textFooter()}`;
   return { subject, html, text };
 }
 
@@ -210,41 +290,41 @@ export function connectionRequestEmail(opts: {
   fromHeadline?: string | null;
   message: string;
   editionName: string;
-}): { subject: string; html: string; text: string } {
-  const subject = `${opts.fromName} wants to connect at ${EMAIL_BRAND}`;
-  const contactBits = [
-    `Email: ${escapeHtml(opts.fromEmail)}`,
-    opts.fromPhone ? `Phone: ${escapeHtml(opts.fromPhone)}` : null,
-    opts.fromLinkedIn
-      ? `LinkedIn: ${mailLink(opts.fromLinkedIn, opts.fromLinkedIn)}`
-      : null,
-    opts.fromHeadline ? `About: ${escapeHtml(opts.fromHeadline)}` : null,
-  ]
-    .filter(Boolean)
-    .join("<br/>");
-
+}): Email {
+  const subject = `${opts.fromName} would like to connect at ${EMAIL_BRAND}`;
+  const rows = [
+    { label: "Email", value: link(`mailto:${opts.fromEmail}`, opts.fromEmail), html: true },
+    ...(opts.fromPhone ? [{ label: "Phone", value: opts.fromPhone }] : []),
+    ...(opts.fromLinkedIn ? [{ label: "LinkedIn", value: link(opts.fromLinkedIn, "View profile"), html: true }] : []),
+    ...(opts.fromHeadline ? [{ label: "About", value: opts.fromHeadline }] : []),
+  ];
   const html = layout(
-    "Connection request",
-    `<p style="margin:0 0 14px;">Hi ${escapeHtml(opts.toName)},</p>
-     <p style="margin:0 0 14px;"><strong>${escapeHtml(opts.fromName)}</strong> (attending ${escapeHtml(EMAIL_BRAND)}) asked us to introduce them. They are not CC'd on this email.</p>
-     <p style="margin:0 0 14px;padding:8px 0;border-top:1px solid #dddddd;border-bottom:1px solid #dddddd;">${escapeHtml(opts.message).replace(/\n/g, "<br/>")}</p>
-     <p style="margin:0 0 14px;padding-top:4px;">${contactBits}</p>
-     <p style="margin:0;">Reply directly to them if you'd like to connect.</p>`,
+    `${opts.fromName} asked us to introduce you.`,
+    `${heading("An introduction")}
+     ${para(`Hi ${escapeHtml(opts.toName)},`)}
+     ${para(`<strong style="color:${C.ink};">${escapeHtml(opts.fromName)}</strong>, who is attending ${escapeHtml(EMAIL_BRAND)}, asked us to introduce you. They are not copied on this email.`)}
+     ${note("Their message", escapeHtml(opts.message).replace(/\n/g, "<br/>"))}
+     ${details(rows)}
+     ${para("If you would like to connect, reply to them directly.")}`,
   );
   const text = `Hi ${opts.toName},
 
-${opts.fromName} (attending ${EMAIL_BRAND}) asked us to introduce them.
+${opts.fromName}, who is attending ${EMAIL_BRAND}, asked us to introduce you. They are not copied on this email.
 
-Message:
+Their message:
 ${opts.message}
 
-Contact:
 Email: ${opts.fromEmail}
 ${opts.fromPhone ? `Phone: ${opts.fromPhone}\n` : ""}${opts.fromLinkedIn ? `LinkedIn: ${opts.fromLinkedIn}\n` : ""}${opts.fromHeadline ? `About: ${opts.fromHeadline}\n` : ""}
-${EMAIL_BRAND} · conference@iitbinvent.com`;
+If you would like to connect, reply to them directly.
+
+${textFooter()}`;
   return { subject, html, text };
 }
 
+// ─── Registration ────────────────────────────────────────────────────────────
+
+/** Sent to paper, poster and other presenters when they register; attendees get the proforma instead. */
 export function conferenceApplicationCopyEmail(opts: {
   name: string;
   email: string;
@@ -259,48 +339,48 @@ export function conferenceApplicationCopyEmail(opts: {
   eventName: string;
   isPaperOrPoster?: boolean;
   participationCategory?: string;
-}): { subject: string; html: string; text: string } {
-  const rows: [string, string][] = [
-    ["Name", opts.name],
-    ["Email", opts.email],
-    ["Phone", opts.phone],
-    ["Institution", opts.institution],
-    ["Professional category", opts.professional],
-    ["PhD year", blank(opts.phdYear === "-" ? "" : opts.phdYear)],
-    ["Seeking post-doctoral opportunities", blank(opts.seekingPostdoc === "-" ? "" : opts.seekingPostdoc)],
-    ["Participation", opts.participation],
-    ["Proposed title", blank(opts.paperTitle)],
-    ["Extended abstract", opts.abstractFileName || "Not uploaded"],
-  ];
-  const htmlRows = rows
-    .map(
-      ([k, v]) =>
-        `<tr><td style="padding:4px 12px 4px 0;color:#555555;width:42%;vertical-align:top;">${escapeHtml(k)}</td><td style="padding:4px 0;color:#222222;">${escapeHtml(v)}</td></tr>`,
-    )
-    .join("");
+}): Email {
   const copy = submissionLead(opts.participationCategory || opts.participation);
+  const rows = [
+    { label: "Name", value: opts.name },
+    { label: "Email", value: opts.email },
+    { label: "Phone", value: opts.phone },
+    { label: "Institution", value: opts.institution },
+    { label: "Position", value: opts.professional },
+    ...(opts.phdYear && opts.phdYear !== "-" && opts.phdYear !== "Not provided"
+      ? [{ label: "PhD year", value: opts.phdYear }]
+      : []),
+    { label: "Participation", value: opts.participation },
+    { label: "Proposed title", value: blank(opts.paperTitle) },
+    { label: "Extended abstract", value: opts.abstractFileName || "Not uploaded" },
+  ];
   const html = layout(
-    copy.title,
-    `<p style="margin:0 0 14px;">Hi ${escapeHtml(opts.name)},</p>
-     <p style="margin:0 0 14px;">${copy.thanks}</p>
-     <p style="margin:0 0 14px;">${FEE_NOTE}</p>
-     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;border-top:1px solid #d5e4e6;">${htmlRows}</table>
-     <p style="margin:16px 0 0;">Questions: support@iitbinvent.com</p>`,
+    "The programme committee will review it and write to you.",
+    `${label("Under review", "info")}
+     ${heading(copy.title)}
+     ${para(`Hi ${escapeHtml(opts.name)},`)}
+     ${para(escapeHtml(copy.thanks))}
+     ${note(
+       "What happens next",
+       "The programme committee reviews every submission. If yours is shortlisted, we email your proforma invoice with the registration fee and a payment link. Your ticket is issued once the fee is paid.",
+       "info",
+     )}
+     ${details(rows)}
+     ${button(`${siteOrigin()}/register`, "View your registration", false)}`,
   );
-  const thanksText = copy.thanks.replace(/<[^>]+>/g, "");
   const text = `Hi ${opts.name},
 
-${thanksText}
+${copy.thanks}
 
-${FEE_NOTE}
+What happens next: the programme committee reviews every submission. If yours is shortlisted, we email your proforma invoice with the registration fee and a payment link. Your ticket is issued once the fee is paid.
 
-${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}
+${rows.map((r) => `${r.label}: ${r.value}`).join("\n")}
 
-Questions: support@iitbinvent.com
-${EMAIL_BRAND} · DSSE, IIT Bombay`;
+${textFooter()}`;
   return { subject: copy.subject, html, text };
 }
 
+/** Internal: tells organisers a registration arrived. */
 export function conferenceOrganiserNotifyEmail(opts: {
   name: string;
   email: string;
@@ -309,24 +389,28 @@ export function conferenceOrganiserNotifyEmail(opts: {
   paperTitle: string;
   eventName: string;
   adminUrl: string;
-}): { subject: string; html: string; text: string } {
-  const subject = `New conference application · ${opts.name}`;
+}): Email {
+  const subject = `New registration: ${opts.name}`;
   const html = layout(
-    "New conference application",
-    `<p style="margin:0 0 14px;"><strong>${escapeHtml(opts.name)}</strong> (${escapeHtml(opts.email)}) applied from ${escapeHtml(opts.institution)}.</p>
-     <p style="margin:0 0 14px;">Participation: ${escapeHtml(opts.participation)}</p>
-     <p style="margin:0 0 14px;">Title: ${escapeHtml(blank(opts.paperTitle))}</p>
-     <p style="margin:16px 0 0;">${mailLink(opts.adminUrl, "Open in admin")}</p>`,
+    `${opts.name} registered as ${opts.participation}.`,
+    `${label("New registration", "neutral")}
+     ${heading(opts.name)}
+     ${details([
+       { label: "Email", value: link(`mailto:${opts.email}`, opts.email), html: true },
+       { label: "Institution", value: opts.institution },
+       { label: "Participation", value: opts.participation },
+       { label: "Proposed title", value: blank(opts.paperTitle) },
+     ])}
+     ${button(opts.adminUrl, "Open in admin", false)}`,
   );
-  const text = `New application for ${EMAIL_BRAND}
+  const text = `New registration for ${EMAIL_BRAND}
 
 ${opts.name} <${opts.email}>
 ${opts.institution}
 ${opts.participation}
 ${blank(opts.paperTitle)}
 
-${opts.adminUrl}
-`;
+Open in admin: ${opts.adminUrl}`;
   return { subject, html, text };
 }
 
@@ -339,33 +423,161 @@ export function conferenceStatusUpdateEmail(opts: {
   paymentUrl: string;
   dashboardUrl: string;
   eventName: string;
-}): { subject: string; html: string; text: string } {
-  const subject = `Application update · ${EMAIL_BRAND}`;
-  const paymentHtml = opts.includePayment
-    ? `<p style="margin:0 0 14px;">Registration fee: <strong>${escapeHtml(opts.amountLabel)}</strong>.</p>
-       <p style="margin:0 0 14px;">Pay through IIT Bombay Online Pay using this personal link. It opens checkout. You do not fill the application form again.</p>
-       <p style="margin:0 0 14px;">${mailLink(opts.paymentUrl, `Pay ${opts.amountLabel}`)}</p>
-       <p style="margin:0 0 14px;font-size:13px;color:#555555;word-break:break-all;">${escapeHtml(opts.paymentUrl)}</p>
-       <p style="margin:0 0 14px;">The same pay link is on your ${mailLink(opts.dashboardUrl, "IITB INV.ENT dashboard")}.</p>`
-    : "";
+}): Email {
+  const subject = `Update on your registration · ${EMAIL_BRAND}`;
   const html = layout(
-    opts.statusLabel,
-    `<p style="margin:0 0 14px;">Hi ${escapeHtml(opts.name)},</p>
-     <p style="margin:0 0 14px;">${escapeHtml(opts.message).replace(/\n/g, "<br/>")}</p>
-     <p style="margin:0 0 14px;">Current status: <strong>${escapeHtml(opts.statusLabel)}</strong>.</p>
-     ${paymentHtml}
-     <p style="margin:0;">Questions: support@iitbinvent.com</p>`,
+    `Your registration status: ${opts.statusLabel}.`,
+    `${label(opts.statusLabel, opts.includePayment ? "warn" : "info")}
+     ${heading("An update on your registration")}
+     ${para(`Hi ${escapeHtml(opts.name)},`)}
+     ${paragraphs(opts.message)}
+     ${
+       opts.includePayment
+         ? `${details([{ label: "Registration fee", value: `${opts.amountLabel} (inclusive of GST)`, strong: true }])}
+            ${button(opts.paymentUrl, "Pay registration fee")}`
+         : button(opts.dashboardUrl, "Open your dashboard", false)
+     }`,
   );
-  const paymentText = opts.includePayment
-    ? `\nRegistration fee: ${opts.amountLabel}\nPay via IIT Bombay Online Pay: ${opts.paymentUrl}\nOr open your dashboard: ${opts.dashboardUrl}\n`
-    : "";
   const text = `Hi ${opts.name},
 
 ${opts.message}
 
-Current status: ${opts.statusLabel}
-${paymentText}
-Questions: support@iitbinvent.com
-${EMAIL_BRAND} · DSSE, IIT Bombay`;
+Status: ${opts.statusLabel}
+${opts.includePayment ? `Registration fee: ${opts.amountLabel} (inclusive of GST)\nPay: ${opts.paymentUrl}\n` : `Dashboard: ${opts.dashboardUrl}\n`}
+${textFooter()}`;
+  return { subject, html, text };
+}
+
+// ─── Payment ─────────────────────────────────────────────────────────────────
+
+export function proformaInvoiceEmail(opts: {
+  name: string;
+  payerId: string;
+  category: string;
+  participation: string;
+  amountLabel: string;
+  payUrl: string;
+  /** Organiser's note when a shortlisted presenter is asked to pay. */
+  message?: string;
+}): Email {
+  const subject = `Proforma invoice: complete your registration · ${EMAIL_BRAND}`;
+  const rows = [
+    { label: "Billed to", value: opts.name },
+    { label: "Registration ID", value: opts.payerId },
+    { label: "Category", value: opts.category },
+    { label: "Participation", value: opts.participation },
+    { label: "Particulars", value: `Registration fee, ${EMAIL_BRAND} (${EVENT_DATES})` },
+    { label: "Amount payable", value: opts.amountLabel, strong: true },
+  ];
+  const html = layout(
+    `Registration fee ${opts.amountLabel}. Pay to confirm your place.`,
+    `${label("Payment pending", "warn")}
+     ${heading("Proforma invoice")}
+     ${para(`Hi ${escapeHtml(opts.name)},`)}
+     ${opts.message?.trim() ? paragraphs(opts.message) : ""}
+     ${para(`Thank you for registering for ${escapeHtml(EMAIL_BRAND)}, ${escapeHtml(CONFERENCE_PHRASE)}. Pay the registration fee below to confirm your place.`)}
+     ${details(rows)}
+     ${para("The amount is inclusive of GST.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
+     ${button(opts.payUrl, "Pay registration fee")}
+     ${note(
+       "Before you pay",
+       `Choose your mode of payment on the IIT Bombay OnlinePay screen, and keep the tab open until you are returned to the conference site.<br/>
+        If money is debited but the payment is not confirmed, do not pay again: write to ${link(`mailto:${SUPPORT}`, SUPPORT)} quoting your registration ID.<br/>
+        A receipt is emailed as soon as the payment is confirmed. This proforma is not a tax invoice.`,
+       "warn",
+     )}`,
+  );
+  const text = `Hi ${opts.name},
+${opts.message?.trim() ? `\n${opts.message.trim()}\n` : ""}
+Thank you for registering for ${EMAIL_BRAND}. This is your proforma invoice. Pay the registration fee to confirm your place.
+
+${rows.map((r) => `${r.label}: ${r.value}`).join("\n")} (inclusive of GST)
+
+Pay the registration fee: ${opts.payUrl}
+
+Before you pay:
+- Choose your mode of payment on the IIT Bombay OnlinePay screen, and keep the tab open until you are returned to the conference site.
+- If money is debited but the payment is not confirmed, do not pay again: write to ${SUPPORT} quoting your registration ID.
+- A receipt is emailed as soon as the payment is confirmed. This proforma is not a tax invoice.
+
+${textFooter()}`;
+  return { subject, html, text };
+}
+
+export function paymentReceiptEmail(opts: {
+  name: string;
+  payerId: string;
+  amountLabel: string;
+  transId: string;
+  bankRef: string;
+  paidOn: string;
+  payUrl: string;
+}): Email {
+  const subject = `Payment received · ${EMAIL_BRAND}`;
+  const rows = [
+    { label: "Received from", value: opts.name },
+    { label: "Registration ID", value: opts.payerId },
+    { label: "Amount paid", value: opts.amountLabel, strong: true },
+    { label: "Transaction ID", value: opts.transId },
+    { label: "Bank reference", value: blank(opts.bankRef) },
+    { label: "Paid on", value: blank(opts.paidOn) },
+  ];
+  const html = layout(
+    `We received ${opts.amountLabel}. Your place is confirmed.`,
+    `${label("Paid", "good")}
+     ${heading("Payment received")}
+     ${para(`Hi ${escapeHtml(opts.name)},`)}
+     ${para(`We have received your registration fee for ${escapeHtml(EMAIL_BRAND)} through IIT Bombay OnlinePay. Keep this email as your payment receipt.`)}
+     ${details(rows)}
+     ${para("The amount is inclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
+     ${button(`${siteOrigin()}/dashboard`, "View your ticket", false)}
+     ${para(`Your payment details are also on your ${link(opts.payUrl, "payment page")}.`, "font-size:14px;")}`,
+  );
+  const text = `Hi ${opts.name},
+
+We have received your registration fee for ${EMAIL_BRAND} through IIT Bombay OnlinePay. Keep this email as your payment receipt.
+
+${rows.map((r) => `${r.label}: ${r.value}`).join("\n")}
+(inclusive of GST; this is a payment receipt, not a tax invoice)
+
+Your ticket: ${siteOrigin()}/dashboard
+Payment page: ${opts.payUrl}
+
+${textFooter()}`;
+  return { subject, html, text };
+}
+
+export function registrationConfirmedEmail(opts: {
+  name: string;
+  editionName: string;
+  ticketCode: string;
+  eventDate: string;
+}): Email {
+  const subject = `You're registered · ${EMAIL_BRAND}`;
+  const html = layout(
+    `Your ticket code is ${opts.ticketCode}.`,
+    `${label("Confirmed", "good")}
+     ${heading("You're registered")}
+     ${para(`Hi ${escapeHtml(opts.name)},`)}
+     ${para(`Your place at ${escapeHtml(EMAIL_BRAND)} is confirmed. Show the QR code on your dashboard at the entrance.`)}
+     ${details([
+       { label: "Ticket code", value: opts.ticketCode, strong: true },
+       { label: "Dates", value: EVENT_DATES },
+       { label: "Venue", value: VENUE },
+     ])}
+     ${button(`${siteOrigin()}/dashboard`, "View your ticket", false)}
+     ${para("We will write with the final programme and travel details closer to the conference.", "font-size:14px;")}`,
+  );
+  const text = `Hi ${opts.name},
+
+Your place at ${EMAIL_BRAND} is confirmed. Show the QR code on your dashboard at the entrance.
+
+Ticket code: ${opts.ticketCode}
+Dates: ${EVENT_DATES}
+Venue: ${VENUE}
+
+Your ticket: ${siteOrigin()}/dashboard
+
+${textFooter()}`;
   return { subject, html, text };
 }

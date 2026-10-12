@@ -1,27 +1,24 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Role } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth/session";
 import { AuthError, requireRole } from "@/lib/auth/roles";
-import { Role } from "@prisma/client";
-import { SignOutForm } from "@/components/SignOutForm";
-import { AdminNav } from "@/components/admin/AdminNav";
-import { OnlinePayAckFlush } from "@/components/admin/OnlinePayAckFlush";
+import { prisma } from "@/lib/db";
 import { noIndex } from "@/lib/seo";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { SignOutForm } from "@/components/SignOutForm";
+import "@/app/admin.css";
 
-export const metadata: Metadata = noIndex;
+export const metadata: Metadata = { ...noIndex, title: "Admin" };
 
 /**
  * Server-side lock for all `/admin/*` routes.
  * ADMIN grants are stored in the database and checked on every request.
  */
-export default async function AdminLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default async function AdminLayout({ children }: { children: ReactNode }) {
   const user = await getCurrentUser();
-
   if (!user) {
     redirect(`/login?callbackUrl=${encodeURIComponent("/admin")}`);
   }
@@ -29,39 +26,55 @@ export default async function AdminLayout({
   try {
     requireRole(user, Role.ADMIN);
   } catch (err) {
-    const status = err instanceof AuthError ? err.status : 403;
-    const message =
-      err instanceof AuthError ? err.message : "Admin access denied";
+    const message = err instanceof AuthError ? err.message : "Admin access denied";
     return (
-      <main className="mx-auto max-w-lg px-6 py-24 text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.14em] text-mute">
-          {status}
-        </p>
-        <h1 className="mt-3 font-display text-3xl text-teal-deep">
-          Access denied
-        </h1>
-        <p className="mt-4 text-ink-soft">{message}</p>
-        <SignOutForm
-          className="mt-8"
-          buttonClassName="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline"
-        />
+      <main className="adm-denied">
+        <div>
+          <h1 className="adm-title" style={{ fontSize: 26 }}>
+            This area is for organisers
+          </h1>
+          <p className="adm-desc" style={{ margin: "10px auto 0" }}>
+            {message}. You are signed in as {user.email}. Ask an administrator to
+            grant your account access, or sign in with a different account.
+          </p>
+          <div className="adm-actions" style={{ justifyContent: "center", marginTop: 20 }}>
+            <Link href="/dashboard" className="adm-btn">
+              Go to your dashboard
+            </Link>
+            <SignOutForm buttonClassName="adm-btn is-quiet">Sign out</SignOutForm>
+          </div>
+        </div>
       </main>
     );
   }
 
+  const edition = await prisma.edition.findFirst({
+    where: { isCurrent: true },
+    select: { id: true, name: true },
+  });
+  const [awaitingDecision, unconfirmedPayments] = await Promise.all([
+    edition
+      ? prisma.conferenceApplication.count({
+          where: { editionId: edition.id, status: "RECEIVED" },
+        })
+      : 0,
+    prisma.gatewayPayment.count({
+      where: { verified: false, imtStatus: { in: ["S", "DIRECT_RECON"] } },
+    }),
+  ]);
+
   return (
-    <div className="min-h-screen bg-paper">
-      <div className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <p className="text-sm text-mute">
-            CMS · <span className="font-medium text-ink">{user.email}</span>
-          </p>
-          <SignOutForm buttonClassName="text-sm font-semibold text-teal-deep underline-offset-2 hover:underline" />
-        </div>
-      </div>
-      <AdminNav />
-      <OnlinePayAckFlush />
-      <div className="mx-auto max-w-6xl">{children}</div>
+    <div className="adm">
+      <AdminSidebar
+        editionName={edition?.name ?? null}
+        userName={user.name}
+        userEmail={user.email}
+        awaitingDecision={awaitingDecision}
+        unconfirmedPayments={unconfirmedPayments}
+      />
+      <main className="adm-main" id="main">
+        {children}
+      </main>
     </div>
   );
 }

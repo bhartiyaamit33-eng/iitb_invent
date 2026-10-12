@@ -11,11 +11,20 @@ const extraServerActionOrigins = (process.env.SERVER_ACTION_ORIGINS ?? "")
   .map((host) => host.trim())
   .filter(Boolean);
 
+/**
+ * Sub-path deployments (the LAN host serves this at /invent) set
+ * NEXT_PUBLIC_BASE_PATH at build time. iitbinvent.com builds leave it unset.
+ */
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/+$/, "");
+
 const nextConfig: NextConfig = {
+  ...(basePath ? { basePath } : {}),
   // Static landing assets live in /public (hero must remain visually unchanged).
   poweredByHeader: false,
   images: {
     qualities: [72, 75, 90, 100],
+    // next/image does not prefix basePath onto sources; this loader does.
+    ...(basePath ? { loader: "custom" as const, loaderFile: "./lib/image-loader.ts" } : {}),
   },
   // Smaller runtime footprint for t3.micro EC2 deploys.
   output: "standalone",
@@ -84,6 +93,7 @@ const nextConfig: NextConfig = {
     "@aws-sdk/client-s3",
     "@aws-sdk/s3-request-presigner",
     "sharp",
+    "nodemailer",
   ],
   experimental: {
     // Extended abstracts are PDFs up to 10 MB.

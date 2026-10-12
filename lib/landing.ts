@@ -38,7 +38,8 @@ export const TAGLINE_REST = "Conference";
  * links and emails keep working.
  */
 export const RESEARCH_HREF = "/research";
-export const SUBMIT_HREF = "/research#submit";
+/** The registration form; where people land after logging in. */
+export const SUBMIT_HREF = "/register";
 export const LOGIN_TO_SUBMIT_HREF = `/login?callbackUrl=${encodeURIComponent(SUBMIT_HREF)}`;
 export const REGISTER_HREF = "/login";
 
@@ -119,14 +120,14 @@ export const FALLBACK_FAQS: LandingFaq[] = [
       "Desai Sethi School of Entrepreneurship · DSSE Building · IIT Bombay · Powai, Mumbai 400076.",
   },
   {
-    question: "How do I submit an abstract?",
+    question: "How do I register?",
     answer:
-      "Log in (or create an account), then submit your paper or poster abstract on the conference page. Organisers review submissions and email a payment link if you are selected. An account is not a ticket.",
+      "Log in (or create an account) and complete the registration form on the Research page. Attendees are emailed a proforma invoice and pay right away. Paper and poster presenters add an extended abstract; organisers review it and email the proforma invoice if it is shortlisted. An account is not a ticket.",
   },
   {
     question: "How do I get a ticket?",
     answer:
-      "Submit an abstract, wait for organisers to select you, then pay the fee for your category. The ticket appears on your dashboard and in email only after that payment.",
+      "Pay the registration fee for your category through IIT Bombay OnlinePay, straight after registering as an attendee, or once organisers shortlist your abstract as a presenter. The ticket appears on your dashboard and in email after that payment.",
   },
 ];
 

@@ -28,6 +28,13 @@ export async function GET() {
     ? await prisma.conferenceApplication.findMany({
         where: { editionId: edition.id },
         orderBy: { createdAt: "desc" },
+        include: {
+          gatewayPayments: {
+            where: { verified: true },
+            orderBy: { createdAt: "asc" },
+            select: { transId: true, refNo: true },
+          },
+        },
       })
     : [];
 
@@ -37,10 +44,9 @@ export async function GET() {
     "paymentStatus",
     "paymentAmountInr",
     "paymentRef",
-    "opReqId",
-    "opTransId",
-    "opRefNo",
-    "opProvId",
+    "registrationId",
+    "gatewayTransIds",
+    "bankRefs",
     "paidAt",
     "paymentPageUrl",
     "name",
@@ -64,10 +70,9 @@ export async function GET() {
       paymentStatusLabel(a.paymentStatus),
       (a.paymentAmountPaise / 100).toFixed(0),
       a.paymentRef ?? "",
-      a.opReqId ?? "",
-      a.opTransId ?? "",
-      a.opRefNo ?? "",
-      a.opProvId ?? "",
+      a.payerId ?? "",
+      a.gatewayPayments.map((p) => p.transId).join(" "),
+      a.gatewayPayments.map((p) => p.refNo ?? "").join(" "),
       a.paidAt ? a.paidAt.toISOString() : "",
       conferencePaymentUrl(a.paymentToken),
       a.name,

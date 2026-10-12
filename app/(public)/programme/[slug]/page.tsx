@@ -12,6 +12,7 @@ import { SiteShell } from "@/components/site/SiteShell";
 import { cancelRsvpAction, rsvpAction } from "../actions";
 import { pageMetadata } from "@/lib/seo";
 import { userHasLiveEventTicket } from "@/lib/conference-access";
+import { withBasePath } from "@/lib/base-path";
 
 export const dynamic = "force-dynamic";
 
@@ -121,7 +122,7 @@ export default async function SessionDetailPage({
           </a>
           <a
             className="site-btn site-btn-ghost site-btn-sm"
-            href={`/api/calendar/${session.slug}.ics`}
+            href={withBasePath(`/api/calendar/${session.slug}.ics`)}
           >
             Download .ics
           </a>

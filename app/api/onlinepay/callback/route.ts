@@ -1,9 +1,13 @@
-import { handleOnlinePayCallback } from "@/lib/onlinepay-http";
+import { handleGatewayCallback } from "@/lib/onlinepay-callback";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export async function POST(req: Request) {
-  return handleOnlinePayCallback(req);
-}
+
+/** Older return URL; same handler as /api/onlinepay/payack. */
 export async function GET(req: Request) {
-  return handleOnlinePayCallback(req);
+  return handleGatewayCallback(req);
+}
+
+export async function POST(req: Request) {
+  return handleGatewayCallback(req);
 }
