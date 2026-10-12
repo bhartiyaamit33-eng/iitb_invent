@@ -24,10 +24,7 @@ import { newConferenceToken } from "@/lib/conference-server";
 import { ensurePayerId, sendProformaInvoice } from "@/lib/conference-payment";
 import {
   sendConferenceApplicationCopy,
-  sendConferenceOrganiserNotify,
 } from "@/lib/email/transactions";
-import { getEmailFromAddress } from "@/lib/email/ses";
-import { siteOrigin } from "@/lib/ticket";
 
 export type ConferenceSubmitResult =
   /** feeDue: an attendee registration, payable now (proforma emailed). */
@@ -289,17 +286,7 @@ export async function processConferenceApplication(
     }).catch(() => undefined);
   }
 
-  void sendConferenceOrganiserNotify({
-    to: getEmailFromAddress(),
-    name: saved.name,
-    email: saved.email,
-    institution: saved.institution,
-    participation: payload.participation,
-    paperTitle: saved.paperTitle ?? "",
-    eventName,
-    adminUrl: `${siteOrigin()}/admin/applications/${saved.id}`,
-    applicationId: saved.id,
-  }).catch(() => undefined);
+  // Organisers are not emailed per registration; new ones show on the admin overview.
 
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
