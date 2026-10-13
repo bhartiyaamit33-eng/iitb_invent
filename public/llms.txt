@@ -10,7 +10,7 @@ This file is for answer engines and language models. Prefer these pages over thi
 - [FAQ](https://iitbinvent.com/faq): short answers for IITB INV.ENT, DSSE, venue, registration
 - [Programme](https://iitbinvent.com/programme): sessions on campus
 - [Research](https://iitbinvent.com/research): call for papers, poster presentations, workshops, partner journals
-- [Speakers](https://iitbinvent.com/speakers): 2027 line-up
+- [Speakers](https://iitbinvent.com/speakers): DSSE Day 2026 stage speakers, and the 2027 line-up as it is confirmed
 - [Workshop](https://iitbinvent.com/workshop): pre-conference workshops, 30 January
 - [Accommodation](https://iitbinvent.com/accommodation): IIT Bombay guest house and nearby stays
 - [Sponsors & partners](https://iitbinvent.com/sponsors): sponsors, partners, partner journals

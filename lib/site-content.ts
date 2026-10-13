@@ -481,12 +481,107 @@ export const VENTURES = [
   "CareMother",
 ] as const;
 
-export const SPEAKER_GROUPS = [
-  "Researchers",
-  "Founders",
-  "Investors",
-  "Incubators & Ecosystem",
-] as const;
+export type PastSpeaker = {
+  name: string;
+  title: string;
+  organisation: string;
+  photo: string;
+  /** CSS object-position so a 4:5 crop keeps the face. */
+  focus: string;
+};
+
+/**
+ * Stage speakers at the Entrepreneurship Research Symposium & DSSE Day,
+ * 31 January 2026, ordered for a visitor: benefactors and public names,
+ * then the Director and Head, then the rest of the faculty.
+ * Paper and poster presenters are not listed here.
+ */
+export const PAST_SPEAKERS: PastSpeaker[] = [
+  {
+    name: "Shri Bharat Desai",
+    title: "Co-founder, Syntel",
+    organisation: "DS Advisors",
+    photo: "/assets/speakers/bharat-desai-portrait.jpg",
+    focus: "center center",
+  },
+  {
+    name: "Mr. Kishore Biyani",
+    title: "Mentor, The Foundery",
+    organisation: "Future Group",
+    photo: "/assets/speakers/kishore-biyani.png",
+    focus: "center 18%",
+  },
+  {
+    name: "Mr. Parthasarathy N.S.",
+    title: "Managing Partner",
+    organisation: "Mela Ventures",
+    photo: "/assets/speakers/parthasarathy-ns.jpg",
+    focus: "center 22%",
+  },
+  {
+    name: "Prof. Shireesh Kedare",
+    title: "Director",
+    organisation: "IIT Bombay",
+    photo: "/assets/speakers/shireesh-kedare.jpg",
+    focus: "center 30%",
+  },
+  {
+    name: "Prof. Trupti Mishra",
+    title: "Head, DSSE",
+    organisation: "IIT Bombay",
+    photo: "/assets/team/trupti-mishra.jpg",
+    focus: "center 16%",
+  },
+  {
+    name: "Prof. Milind Atrey",
+    title: "Deputy Director (ART)",
+    organisation: "IIT Bombay",
+    photo: "/assets/team/milind-atrey.png",
+    focus: "42% 20%",
+  },
+  {
+    name: "Prof. Poyni Bhatt",
+    title: "Chairperson",
+    organisation: "SEDEMAC",
+    photo: "/assets/team/poyni-bhatt.jpg",
+    focus: "center 22%",
+  },
+  {
+    name: "Prof. Sankalp Pratap",
+    title: "Faculty, DSSE",
+    organisation: "IIT Bombay",
+    photo: "/assets/team/sankalp-pratap.png",
+    focus: "center 30%",
+  },
+  {
+    name: "Prof. Anuradha Narasimhan",
+    title: "Faculty, DSSE",
+    organisation: "IIT Bombay",
+    photo: "/assets/team/anuradha-narasimhan.png",
+    focus: "center 35%",
+  },
+  {
+    name: "Prof. Suresh Bhagavatula",
+    title: "Faculty",
+    organisation: "IIM Bangalore",
+    photo: "/assets/speakers/suresh-bhagavatula.jpg",
+    focus: "center 35%",
+  },
+  {
+    name: "Prof. Basab Chakraborty",
+    title: "Faculty",
+    organisation: "IIT Kharagpur",
+    photo: "/assets/speakers/basab-chakraborty.jpg",
+    focus: "center 30%",
+  },
+  {
+    name: "Prof. B. V. Phani",
+    title: "Faculty",
+    organisation: "IIT Kanpur",
+    photo: "/assets/speakers/bv-phani.jpg",
+    focus: "center 42%",
+  },
+];
 
 export const AUDIENCE = [
   { id: "researchers", label: "Researchers", icon: "paper" },

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/site/PageHero";
 import { SiteShell } from "@/components/site/SiteShell";
-import { LineIcon } from "@/components/site/decor";
 import { prisma } from "@/lib/db";
 import {
   breadcrumbJsonLd,
@@ -13,7 +12,7 @@ import {
 } from "@/lib/seo";
 import {
   EVENT_DATES,
-  SPEAKER_GROUPS,
+  PAST_SPEAKERS,
   SUPPORT_EMAIL,
 } from "@/lib/site-content";
 
@@ -22,11 +21,9 @@ export const dynamic = "force-dynamic";
 export const metadata = pageMetadata({
   title: "Speakers",
   description:
-    "Researchers, founders, investors and operators speaking at IITB INV.ENT 2027, 30-31 January at IIT Bombay. The line-up is published as names are confirmed.",
+    "Stage speakers from DSSE Day 2026, and the IITB INV.ENT 2027 line-up as names are confirmed. 30-31 January at IIT Bombay.",
   path: "/speakers",
 });
-
-const GROUP_ICONS = ["paper", "person", "chart", "building"] as const;
 
 export default async function SpeakersPage() {
   let speakers: {
@@ -82,18 +79,36 @@ export default async function SpeakersPage() {
         meta={[`Conference · ${EVENT_DATES}`, "Venue · IIT Bombay"]}
       />
 
-      <section className="site-section is-tight" aria-labelledby="who-heading">
+      <section className="site-section is-tight" aria-labelledby="past-heading">
         <div className="site-shell">
-          <p className="site-kicker">Who speaks</p>
-          <h2 id="who-heading">Four kinds of voice</h2>
-          <div className="room-grid">
-            {SPEAKER_GROUPS.map((group, i) => (
-              <div className="room-item" key={group}>
-                <LineIcon name={GROUP_ICONS[i] ?? "person"} />
-                <p>{group}</p>
-              </div>
+          <p className="site-kicker">DSSE Day 2026</p>
+          <h2 id="past-heading">Past speakers</h2>
+          <p className="lead">
+            The stage at the Entrepreneurship Research Symposium and DSSE Day, 31 January
+            2026.
+          </p>
+          <ul className="team-grid" data-testid="past-speakers">
+            {PAST_SPEAKERS.map((speaker) => (
+              <li key={speaker.name}>
+                <article className="team-card" data-testid="past-speaker-card">
+                  <div className="team-photo">
+                    <Image
+                      src={speaker.photo}
+                      alt=""
+                      fill
+                      sizes="(max-width: 900px) 50vw, 360px"
+                      className="team-portrait"
+                      style={{ objectPosition: speaker.focus }}
+                    />
+                  </div>
+                  <h3>{speaker.name}</h3>
+                  <p>
+                    {[speaker.title, speaker.organisation].filter(Boolean).join(" · ")}
+                  </p>
+                </article>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
