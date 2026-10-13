@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   formatInrFromPaise,
   paymentStatusLabel,
   type ApplicationPaymentStatus,
 } from "@/lib/conference";
 import { withBasePath } from "@/lib/base-path";
-import type { Tone } from "@/lib/admin/format";
+import { times, type Tone } from "@/lib/admin/format";
 
 const TONE: Record<ApplicationPaymentStatus, Tone> = {
   PAID: "good",
@@ -28,6 +28,8 @@ export function ApplicationPaymentPanel({
   paidAt,
   payerId,
   transactions,
+  proforma,
+  proformaAction,
 }: {
   id: string;
   paymentStatus: ApplicationPaymentStatus;
@@ -37,6 +39,10 @@ export function ApplicationPaymentPanel({
   paidAt?: string | null;
   payerId?: string | null;
   transactions: { transId: string; amount: string; label: string; tone: Tone; verified: boolean }[];
+  /** Proforma invoices emailed so far, and when the last one went out. */
+  proforma: { count: number; lastSent: string | null };
+  /** The resend control, rendered by the page when a fee is due. */
+  proformaAction?: ReactNode;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -88,6 +94,14 @@ export function ApplicationPaymentPanel({
             <dd>{payerId ? <span className="adm-mono">{payerId}</span> : "Not issued yet"}</dd>
           </div>
           <div>
+            <dt>Proforma invoice</dt>
+            <dd data-testid="proforma-sent">
+              {proforma.count === 0
+                ? "Not sent yet"
+                : `Sent ${times(proforma.count)}${proforma.lastSent ? `, last on ${proforma.lastSent}` : ""}`}
+            </dd>
+          </div>
+          <div>
             <dt>Payment page</dt>
             <dd>
               <a className="adm-link" href={paymentUrl} target="_blank" rel="noreferrer">
@@ -96,6 +110,7 @@ export function ApplicationPaymentPanel({
             </dd>
           </div>
         </dl>
+        {proformaAction ? <div style={{ margin: "4px 0 12px" }}>{proformaAction}</div> : null}
 
         {transactions.length > 0 ? (
           <ul className="adm-list" style={{ margin: "8px -20px 0", borderTop: "1px solid var(--adm-rule)" }}>

@@ -69,3 +69,10 @@ export function istDayHeading(d: Date): string {
 export function plural(n: number, one: string, many = `${one}s`): string {
   return `${n.toLocaleString("en-IN")} ${n === 1 ? one : many}`;
 }
+
+/** "once", "twice", "3 times". */
+export function times(n: number): string {
+  if (n === 1) return "once";
+  if (n === 2) return "twice";
+  return `${n.toLocaleString("en-IN")} times`;
+}

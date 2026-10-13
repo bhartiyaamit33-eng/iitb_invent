@@ -11,10 +11,14 @@ import {
   professionalLabel,
   reviewFeePaise,
 } from "@/lib/conference";
+import { applicationFeeDue } from "@/lib/conference-access";
+import { proformaResendQueue, proformaSendStats } from "@/lib/conference-payment";
 import { withBasePath } from "@/lib/base-path";
-import { applicationTone, istDate, paymentTone, plural } from "@/lib/admin/format";
+import { applicationTone, istDate, istDateTime, paymentTone, plural, times } from "@/lib/admin/format";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
+import { ConfirmActionForm } from "@/components/admin/ConfirmActionForm";
 import { Badge, Empty, Notice, PageHeader } from "@/components/admin/ui";
+import { resendAllProformasAction, resendProformaAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +80,7 @@ export default async function AdminApplicationsPage({
       : {}),
   };
 
-  const [applications, counts] = await Promise.all([
+  const [applications, counts, resend] = await Promise.all([
     prisma.conferenceApplication.findMany({
       where: { AND: [base, current.where, statusFilter ? { status: statusFilter } : {}] },
       include: { reviews: { select: { status: true, score: true } } },
@@ -84,7 +88,9 @@ export default async function AdminApplicationsPage({
       take: 500,
     }),
     Promise.all(VIEWS.map((v) => prisma.conferenceApplication.count({ where: { AND: [base, v.where] } }))),
+    edition ? proformaResendQueue(edition.id) : Promise.resolve({ due: 0, queue: [] as string[] }),
   ]);
+  const proformas = await proformaSendStats(applications.map((a) => a.id));
 
   const total = counts[0] ?? 0;
   const tabHref = (key: string) => {
@@ -95,6 +101,8 @@ export default async function AdminApplicationsPage({
     const s = params.toString();
     return `/admin/applications${s ? `?${s}` : ""}`;
   };
+  const here = tabHref(current.key);
+  const recentlySent = resend.due - resend.queue.length;
 
   return (
     <div className="adm-page">
@@ -106,9 +114,33 @@ export default async function AdminApplicationsPage({
             : "There is no current edition."
         }
         actions={
-          <a className="adm-btn" href={withBasePath("/api/admin/applications/export")}>
-            Export CSV
-          </a>
+          <>
+            {resend.due > 0 ? (
+              <ConfirmActionForm
+                action={resendAllProformasAction}
+                fields={{ returnTo: here }}
+                label={`Resend proforma invoices (${resend.queue.length})`}
+                disabled={resend.queue.length === 0}
+                title={
+                  resend.queue.length === 0
+                    ? "Everyone with a fee due was emailed a proforma invoice in the last hour."
+                    : undefined
+                }
+                prompt={
+                  <>
+                    Email the proforma invoice to {plural(resend.queue.length, "person", "people")} whose fee is due?
+                    {recentlySent > 0 ? ` ${plural(recentlySent, "person", "people")} emailed in the last hour will be skipped.` : ""}
+                  </>
+                }
+                confirmLabel={`Send ${resend.queue.length}`}
+                pendingLabel="Sending…"
+                testId="resend-all-proformas"
+              />
+            ) : null}
+            <a className="adm-btn" href={withBasePath("/api/admin/applications/export")}>
+              Export CSV
+            </a>
+          </>
         }
       />
 
@@ -189,6 +221,8 @@ export default async function AdminApplicationsPage({
                     const avg = scored.length
                       ? scored.reduce((sum, r) => sum + (r.score ?? 0), 0) / scored.length
                       : null;
+                    const proforma = proformas.get(a.id);
+                    const feeDue = applicationFeeDue(a);
                     return (
                       <tr key={a.id}>
                         <td>
@@ -236,6 +270,33 @@ export default async function AdminApplicationsPage({
                           <Badge tone={paymentTone(a.paymentStatus)}>{paymentStatusLabel(a.paymentStatus)}</Badge>
                           {a.paymentStatus !== "NOT_REQUIRED" ? (
                             <span className="adm-sub">{formatInrFromPaise(a.paymentAmountPaise)}</span>
+                          ) : null}
+                          {proforma ? (
+                            <span
+                              className="adm-sub"
+                              title={proforma.lastSentAt ? `Last sent ${istDateTime(proforma.lastSentAt)}` : undefined}
+                              data-testid={`proforma-count-${a.id}`}
+                            >
+                              Proforma sent {times(proforma.count)}
+                            </span>
+                          ) : feeDue ? (
+                            <span className="adm-sub" data-testid={`proforma-count-${a.id}`}>
+                              Proforma not sent
+                            </span>
+                          ) : null}
+                          {feeDue ? (
+                            <div style={{ marginTop: 8 }}>
+                              <ConfirmActionForm
+                                action={resendProformaAction}
+                                fields={{ applicationId: a.id, returnTo: here }}
+                                label={proforma ? "Resend proforma" : "Send proforma"}
+                                prompt={`Email it to ${a.email}?`}
+                                confirmLabel="Send"
+                                pendingLabel="Sending…"
+                                small
+                                testId={`resend-proforma-${a.id}`}
+                              />
+                            </div>
                           ) : null}
                         </td>
                         <td style={{ minWidth: 190 }}>

@@ -15,7 +15,7 @@
  * turns a recorded success back into a failure.
  */
 import { randomInt } from "node:crypto";
-import type { ConferenceApplication, GatewayPayment } from "@prisma/client";
+import type { ApplicationStatus, ConferenceApplication, GatewayPayment } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   formatInrFromPaise,
@@ -28,6 +28,7 @@ import {
 } from "@/lib/conference-access";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import {
+  PROFORMA_EMAIL_ACTION,
   sendPaymentReceipt,
   sendProformaInvoiceEmail,
 } from "@/lib/email/transactions";
@@ -136,6 +137,86 @@ export async function sendProformaInvoice(
     console.error("[conference] proforma", err);
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
+}
+
+export type ProformaStats = { count: number; lastSentAt: Date | null };
+
+/**
+ * How many times each registration's proforma invoice went out, and when it
+ * last did. Read from the email log, which records every successful send
+ * (automatic or resent by an organiser) once; failed sends are not counted.
+ */
+export async function proformaSendStats(
+  applicationIds: string[],
+): Promise<Map<string, ProformaStats>> {
+  if (applicationIds.length === 0) return new Map();
+  const rows = await prisma.auditLog.groupBy({
+    by: ["entityId"],
+    where: {
+      action: PROFORMA_EMAIL_ACTION,
+      entityType: "ConferenceApplication",
+      entityId: { in: applicationIds },
+    },
+    _count: { _all: true },
+    _max: { createdAt: true },
+  });
+  return new Map(
+    rows.map((r) => [r.entityId ?? "", { count: r._count._all, lastSentAt: r._max.createdAt }]),
+  );
+}
+
+const FEE_STATUSES: ApplicationStatus[] = ["SHORTLISTED_PAPER", "SHORTLISTED_POSTER", "ATTENDEE"];
+
+/** A bulk resend skips anyone sent a proforma this recently, so a double click or a retry mails nobody twice. */
+export const PROFORMA_RESEND_GAP_MS = 60 * 60 * 1000;
+
+/**
+ * Registrations in an edition whose fee is due (`due`), and the ones a bulk
+ * resend would email now (`queue`, oldest registration first): everyone due
+ * except those sent a proforma within PROFORMA_RESEND_GAP_MS.
+ */
+export async function proformaResendQueue(
+  editionId: string,
+): Promise<{ due: number; queue: string[] }> {
+  const due = await prisma.conferenceApplication.findMany({
+    where: { editionId, status: { in: FEE_STATUSES }, paymentStatus: "UNPAID" },
+    select: { id: true },
+    orderBy: { createdAt: "asc" },
+  });
+  const stats = await proformaSendStats(due.map((a) => a.id));
+  const cutoff = Date.now() - PROFORMA_RESEND_GAP_MS;
+  const queue = due
+    .filter((a) => {
+      const last = stats.get(a.id)?.lastSentAt;
+      return !last || last.getTime() < cutoff;
+    })
+    .map((a) => a.id);
+  return { due: due.length, queue };
+}
+
+/**
+ * Send the proforma invoice to each registration, three at a time. Stops
+ * starting new sends after `budgetMs` so the admin request returns before the
+ * proxy in front of the site gives up; what is left is reported as remaining.
+ */
+export async function resendProformaInvoices(
+  applicationIds: string[],
+  budgetMs = 70_000,
+): Promise<{ sent: number; failed: number; remaining: number }> {
+  const started = Date.now();
+  let next = 0;
+  let sent = 0;
+  let failed = 0;
+  async function worker() {
+    while (next < applicationIds.length && Date.now() - started < budgetMs) {
+      const id = applicationIds[next++]!;
+      const result = await sendProformaInvoice(id);
+      if (result.ok) sent++;
+      else failed++;
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(3, applicationIds.length) }, worker));
+  return { sent, failed, remaining: applicationIds.length - next };
 }
 
 // ─── Validation ──────────────────────────────────────────────────────────────

@@ -12,6 +12,7 @@ import {
   professionalLabel,
 } from "@/lib/conference";
 import { abstractPdfPublicUrl, conferencePaymentUrl } from "@/lib/conference-server";
+import { proformaSendStats } from "@/lib/conference-payment";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,7 @@ export async function GET() {
         },
       })
     : [];
+  const proformas = await proformaSendStats(rows.map((a) => a.id));
 
   const header = [
     "submittedAt",
@@ -49,6 +51,8 @@ export async function GET() {
     "bankRefs",
     "paidAt",
     "paymentPageUrl",
+    "proformaSentCount",
+    "proformaLastSentAt",
     "name",
     "email",
     "phone",
@@ -75,6 +79,8 @@ export async function GET() {
       a.gatewayPayments.map((p) => p.refNo ?? "").join(" "),
       a.paidAt ? a.paidAt.toISOString() : "",
       conferencePaymentUrl(a.paymentToken),
+      String(proformas.get(a.id)?.count ?? 0),
+      proformas.get(a.id)?.lastSentAt?.toISOString() ?? "",
       a.name,
       a.email,
       a.phone,

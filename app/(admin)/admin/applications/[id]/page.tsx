@@ -18,14 +18,17 @@ import {
   reviewFeePaise,
 } from "@/lib/conference";
 import { conferencePaymentUrl } from "@/lib/conference-server";
-import { gatewayStatusLabel } from "@/lib/conference-payment";
+import { gatewayStatusLabel, proformaSendStats } from "@/lib/conference-payment";
+import { applicationFeeDue } from "@/lib/conference-access";
 import { withBasePath } from "@/lib/base-path";
 import { applicationTone, gatewayTone, istDate, istDateTime, paymentTone } from "@/lib/admin/format";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPanel";
 import { DeleteApplicationForm } from "@/components/admin/DeleteApplicationForm";
+import { ConfirmActionForm } from "@/components/admin/ConfirmActionForm";
 import { Badge, Empty, Notice, PageHeader, Panel } from "@/components/admin/ui";
 import { assignReviewerAction, removeReviewerAction } from "./actions";
+import { resendProformaAction } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -39,10 +42,10 @@ export default async function AdminApplicationDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; updated?: string }>;
 }) {
   const { id } = await params;
-  const { error } = await searchParams;
+  const { error, updated } = await searchParams;
   const application = await prisma.conferenceApplication.findUnique({
     where: { id },
     include: {
@@ -62,6 +65,7 @@ export default async function AdminApplicationDetailPage({
     orderBy: [{ name: "asc" }, { email: "asc" }],
   });
   const assigned = new Set(application.reviews.map((r) => r.reviewer.id));
+  const proforma = (await proformaSendStats([application.id])).get(application.id);
 
   const pdfUrl = application.abstractStorageKey
     ? withBasePath(`/api/conference/abstract/${application.abstractViewToken}`)
@@ -102,9 +106,10 @@ export default async function AdminApplicationDetailPage({
         }
       />
 
+      {updated ? <Notice tone="good" testId="detail-updated">{updated.slice(0, 300)}</Notice> : null}
       {error ? (
         <Notice tone="bad">
-          {error === "confirm" ? "Type DELETE in the confirm field to delete this registration." : error}
+          {error === "confirm" ? "Type DELETE in the confirm field to delete this registration." : error.slice(0, 300)}
         </Notice>
       ) : null}
 
@@ -292,6 +297,24 @@ export default async function AdminApplicationDetailPage({
               tone: gatewayTone(p),
               verified: p.verified,
             }))}
+            proforma={{
+              count: proforma?.count ?? 0,
+              lastSent: proforma?.lastSentAt ? istDateTime(proforma.lastSentAt) : null,
+            }}
+            proformaAction={
+              applicationFeeDue(application) ? (
+                <ConfirmActionForm
+                  action={resendProformaAction}
+                  fields={{ applicationId: application.id, returnTo: `/admin/applications/${application.id}` }}
+                  label={proforma ? "Resend proforma invoice" : "Send proforma invoice"}
+                  prompt={`Email the proforma invoice to ${application.email}?`}
+                  confirmLabel="Send"
+                  pendingLabel="Sending…"
+                  small
+                  testId="resend-proforma"
+                />
+              ) : null
+            }
           />
 
           <DeleteApplicationForm id={application.id} name={application.name} />

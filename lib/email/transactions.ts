@@ -247,6 +247,9 @@ export async function sendPaymentReceipt(opts: {
   });
 }
 
+/** Audit action for each proforma invoice that went out; the admin portal counts these. */
+export const PROFORMA_EMAIL_ACTION = "email.proforma_invoice";
+
 export async function sendProformaInvoiceEmail(opts: {
   to: string;
   name: string;
@@ -265,7 +268,7 @@ export async function sendProformaInvoiceEmail(opts: {
     subject: tpl.subject,
     html: tpl.html,
     text: tpl.text,
-    action: "email.proforma_invoice",
+    action: PROFORMA_EMAIL_ACTION,
     actorId: opts.userId ?? null,
     entityType: "ConferenceApplication",
     entityId: opts.applicationId,

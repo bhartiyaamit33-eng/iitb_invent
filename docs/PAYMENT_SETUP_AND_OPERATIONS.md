@@ -91,6 +91,22 @@ transaction, exactly as on the reference sites. The older
 - **Download CSV** exports every transaction for reconciliation with ASC's report.
 - Offline payments and waivers stay on each application's page (*Mark paid*, *Waive*).
 
+## Admin → Applications: proforma invoices
+
+- Every registration shows how many times its proforma invoice went out
+  (*Proforma sent twice*), counted from the email log: automatic sends and
+  resends alike, failed sends excluded. The application page shows the time of
+  the last one; the CSV export has `proformaSentCount` and `proformaLastSentAt`.
+- **Resend proforma** (on each row with a fee due, and on the application page)
+  emails that person again after a confirm step.
+- **Resend proforma invoices (N)** in the page header emails everyone in the
+  current edition whose fee is due, skipping anyone sent one in the last hour,
+  so a double click or a retry mails nobody twice. It sends three at a time and
+  stops after about 70 seconds; if people remain, the notice says so and the
+  button continues where it stopped.
+- Paid, waived and not-yet-selected registrations have no resend button: there
+  is no fee to invoice.
+
 ## Checking it
 
 `scripts/verify-payments.ts` drives registration and payment end to end against a
