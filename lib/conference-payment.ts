@@ -453,13 +453,27 @@ async function mailReceiptOnce(transId: string): Promise<void> {
     where: { transId },
     include: { application: true },
   });
-  const app = payment.application;
-  if (!app) return;
+  if (!payment.application) return;
+  const result = await sendReceiptEmail(payment, payment.application);
+  if (!result.ok) {
+    // Release the claim so the next notice or an admin re-check retries it.
+    await prisma.gatewayPayment.update({
+      where: { transId },
+      data: { receiptMailedAt: null },
+    });
+  }
+}
+
+/**
+ * One email: the ticket with the receipt in it. Without a ticket (no account
+ * linked to the registration) the receipt goes on its own.
+ */
+async function sendReceiptEmail(payment: GatewayPayment, app: ConferenceApplication) {
   const paise = rupeesToPaise(payment.amount);
   const receipt = {
     payerId: payment.payerId,
     amountLabel: paise === null ? `₹${payment.amount}` : formatInrFromPaise(paise),
-    transId,
+    transId: payment.transId,
     bankRef: payment.refNo ?? "",
     paidOn:
       [payment.imtDate, payment.imtTime].filter(Boolean).join(" ") ||
@@ -467,17 +481,14 @@ async function mailReceiptOnce(transId: string): Promise<void> {
       "",
     payUrl: conferencePaymentUrl(app.paymentToken),
   };
-
-  // One email: the ticket with the receipt in it. Without a ticket (no account
-  // linked to the registration) the receipt goes on its own.
   const ticket = app.userId
     ? await prisma.registration.findUnique({
         where: { userId_editionId: { userId: app.userId, editionId: app.editionId } },
         include: { edition: { select: { name: true, startsAt: true } } },
       })
     : null;
-  const result = ticket
-    ? await sendRegistrationConfirmed({
+  return ticket
+    ? sendRegistrationConfirmed({
         to: app.email,
         name: app.name,
         editionName: ticket.edition.name,
@@ -487,14 +498,29 @@ async function mailReceiptOnce(transId: string): Promise<void> {
         registrationId: ticket.id,
         payment: receipt,
       })
-    : await sendPaymentReceipt({ to: app.email, name: app.name, ...receipt, userId: app.userId });
-  if (!result.ok) {
-    // Release the claim so the next notice or an admin re-check retries it.
-    await prisma.gatewayPayment.update({
-      where: { transId },
-      data: { receiptMailedAt: null },
-    });
+    : sendPaymentReceipt({ to: app.email, name: app.name, ...receipt, userId: app.userId });
+}
+
+/**
+ * Email the receipt (with the ticket) for a confirmed transaction again, when
+ * an organiser asks. Only a confirmed payment that belongs to a registration
+ * has one.
+ */
+export async function resendPaymentReceipt(
+  transId: string,
+): Promise<{ ok: boolean; to?: string; error?: string }> {
+  const payment = await prisma.gatewayPayment.findUnique({
+    where: { transId },
+    include: { application: true },
+  });
+  if (!payment?.verified || !payment.application) {
+    return { ok: false, error: "Only a confirmed payment that belongs to a registration has a receipt." };
   }
+  const to = payment.application.email;
+  const result = await sendReceiptEmail(payment, payment.application);
+  if (!result.ok) return { ok: false, to, error: result.error };
+  await prisma.gatewayPayment.update({ where: { transId }, data: { receiptMailedAt: new Date() } });
+  return { ok: true, to };
 }
 
 // ─── Admin ───────────────────────────────────────────────────────────────────

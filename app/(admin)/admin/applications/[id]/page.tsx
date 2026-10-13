@@ -11,7 +11,6 @@ import {
   formatInrFromPaise,
   needsPhdYear,
   participationLabel,
-  paymentStatusLabel,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
@@ -21,7 +20,7 @@ import { conferencePaymentUrl } from "@/lib/conference-server";
 import { gatewayStatusLabel, proformaSendStats } from "@/lib/conference-payment";
 import { applicationFeeDue } from "@/lib/conference-access";
 import { withBasePath } from "@/lib/base-path";
-import { applicationTone, gatewayTone, istDate, istDateTime, paymentTone } from "@/lib/admin/format";
+import { applicationTone, feeStatusLabel, gatewayTone, istDate, istDateTime, paymentTone } from "@/lib/admin/format";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPanel";
 import { DeleteApplicationForm } from "@/components/admin/DeleteApplicationForm";
@@ -101,7 +100,7 @@ export default async function AdminApplicationDetailPage({
         actions={
           <>
             <Badge tone={applicationTone(application.status)}>{applicationStatusLabel(application.status)}</Badge>
-            <Badge tone={paymentTone(application.paymentStatus)}>Fee: {paymentStatusLabel(application.paymentStatus)}</Badge>
+            <Badge tone={paymentTone(application.paymentStatus)}>Fee: {feeStatusLabel(application)}</Badge>
           </>
         }
       />
@@ -285,6 +284,7 @@ export default async function AdminApplicationDetailPage({
           <ApplicationPaymentPanel
             id={application.id}
             paymentStatus={application.paymentStatus}
+            feeLabel={feeStatusLabel(application)}
             paymentAmountPaise={reviewFeePaise(application)}
             paymentUrl={conferencePaymentUrl(application.paymentToken)}
             paymentRef={application.paymentRef}

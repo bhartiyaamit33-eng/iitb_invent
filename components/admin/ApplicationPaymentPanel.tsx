@@ -22,6 +22,7 @@ const TONE: Record<ApplicationPaymentStatus, Tone> = {
 export function ApplicationPaymentPanel({
   id,
   paymentStatus,
+  feeLabel,
   paymentAmountPaise,
   paymentUrl,
   paymentRef,
@@ -33,6 +34,8 @@ export function ApplicationPaymentPanel({
 }: {
   id: string;
   paymentStatus: ApplicationPaymentStatus;
+  /** Organiser-facing wording, e.g. "Due once selected" before a decision. */
+  feeLabel?: string;
   paymentAmountPaise: number;
   paymentUrl: string;
   paymentRef?: string | null;
@@ -77,7 +80,7 @@ export function ApplicationPaymentPanel({
     <section className="adm-panel" data-testid="payment-panel">
       <div className="adm-panel-head">
         <h2 className="adm-panel-title">Fee</h2>
-        <span className={`adm-badge is-${TONE[paymentStatus]}`}>{paymentStatusLabel(paymentStatus)}</span>
+        <span className={`adm-badge is-${TONE[paymentStatus]}`}>{feeLabel ?? paymentStatusLabel(paymentStatus)}</span>
       </div>
       <div className="adm-panel-body">
         <p style={{ margin: 0, fontSize: 26, fontWeight: 680, fontVariationSettings: '"wdth" 112' }}>

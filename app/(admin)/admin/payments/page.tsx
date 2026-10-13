@@ -7,7 +7,8 @@ import { ackConfirmed, gatewayUrl, onlinePayConfig, rupeesToPaise } from "@/lib/
 import { withBasePath } from "@/lib/base-path";
 import { gatewayTone, istDateTime, plural } from "@/lib/admin/format";
 import { Badge, Empty, Notice, PageHeader } from "@/components/admin/ui";
-import { recheckPayment } from "./actions";
+import { ConfirmActionForm } from "@/components/admin/ConfirmActionForm";
+import { recheckPayment, resendReceiptAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,7 @@ export default async function PaymentsPage({
     const s = params.toString();
     return `/admin/payments${s ? `?${s}` : ""}`;
   };
+  const here = tabHref(current.key);
 
   return (
     <div className="adm-page">
@@ -231,6 +233,20 @@ export default async function PaymentsPage({
                           ) : (
                             <span className="adm-sub" style={{ marginTop: 0, whiteSpace: "nowrap" }}>Not sent</span>
                           )}
+                          {p.verified && p.application ? (
+                            <div style={{ marginTop: 8 }}>
+                              <ConfirmActionForm
+                                action={resendReceiptAction}
+                                fields={{ transId: p.transId, returnTo: here }}
+                                label={p.receiptMailedAt ? "Resend receipt" : "Send receipt"}
+                                prompt={`Email the receipt to ${p.application.email}?`}
+                                confirmLabel="Send"
+                                pendingLabel="Sending…"
+                                small
+                                testId={`resend-receipt-${p.transId}`}
+                              />
+                            </div>
+                          ) : null}
                         </td>
                       </tr>
                     );

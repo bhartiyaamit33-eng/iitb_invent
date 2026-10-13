@@ -6,13 +6,13 @@ import { writeAuditLog } from "@/lib/admin/audit";
 import {
   applicationStatusLabel,
   participationLabel,
-  paymentStatusLabel,
   phdYearLabel,
   postdocLabel,
   professionalLabel,
 } from "@/lib/conference";
 import { abstractPdfPublicUrl, conferencePaymentUrl } from "@/lib/conference-server";
 import { proformaSendStats } from "@/lib/conference-payment";
+import { feeStatusLabel } from "@/lib/admin/format";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +71,7 @@ export async function GET() {
     [
       a.createdAt.toISOString(),
       applicationStatusLabel(a.status),
-      paymentStatusLabel(a.paymentStatus),
+      feeStatusLabel(a),
       (a.paymentAmountPaise / 100).toFixed(0),
       a.paymentRef ?? "",
       a.payerId ?? "",

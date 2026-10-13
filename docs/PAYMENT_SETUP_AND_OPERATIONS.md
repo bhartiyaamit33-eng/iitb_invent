@@ -87,6 +87,9 @@ transaction, exactly as on the reference sites. The older
 - **Not confirmed** rows (success reported but the ACK failed, e.g. a timeout)
   have **Re-check with gateway**, which re-sends the ACK and settles the
   registration if the gateway now confirms it.
+- **Resend receipt** on every confirmed row emails the payer the "You're
+  registered" email again, ticket and payment receipt together, after a confirm
+  step. The receipt column then shows the time of the latest send.
 - Registrations with more than one confirmed payment are flagged for refund.
 - **Download CSV** exports every transaction for reconciliation with ASC's report.
 - Offline payments and waivers stay on each application's page (*Mark paid*, *Waive*).

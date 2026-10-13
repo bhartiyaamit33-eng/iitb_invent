@@ -3,6 +3,7 @@ import type {
   ApplicationStatus,
   GatewayPayment,
 } from "@prisma/client";
+import { paymentStatusLabel } from "@/lib/conference";
 
 /** Badge tones. Colour always travels with a text label, never alone. */
 export type Tone = "good" | "warn" | "bad" | "info" | "neutral";
@@ -75,4 +76,19 @@ export function times(n: number): string {
   if (n === 1) return "once";
   if (n === 2) return "twice";
   return `${n.toLocaleString("en-IN")} times`;
+}
+
+/**
+ * Fee status as organisers read it. Before a decision a presenter (or an
+ * attendee from before attendees paid at registration) owes nothing yet, so
+ * "Not required" is kept for closed registrations only.
+ */
+export function feeStatusLabel(app: {
+  status: ApplicationStatus;
+  paymentStatus: ApplicationPaymentStatus;
+}): string {
+  if (app.paymentStatus === "NOT_REQUIRED" && (app.status === "RECEIVED" || app.status === "WAITLISTED")) {
+    return "Due once selected";
+  }
+  return paymentStatusLabel(app.paymentStatus);
 }

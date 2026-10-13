@@ -7,14 +7,13 @@ import {
   applicationStatusLabel,
   formatInrFromPaise,
   participationLabel,
-  paymentStatusLabel,
   professionalLabel,
   reviewFeePaise,
 } from "@/lib/conference";
 import { applicationFeeDue } from "@/lib/conference-access";
 import { proformaResendQueue, proformaSendStats } from "@/lib/conference-payment";
 import { withBasePath } from "@/lib/base-path";
-import { applicationTone, istDate, istDateTime, paymentTone, plural, times } from "@/lib/admin/format";
+import { applicationTone, feeStatusLabel, istDate, istDateTime, paymentTone, plural, times } from "@/lib/admin/format";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ConfirmActionForm } from "@/components/admin/ConfirmActionForm";
 import { Badge, Empty, Notice, PageHeader } from "@/components/admin/ui";
@@ -267,9 +266,11 @@ export default async function AdminApplicationsPage({
                           )}
                         </td>
                         <td>
-                          <Badge tone={paymentTone(a.paymentStatus)}>{paymentStatusLabel(a.paymentStatus)}</Badge>
+                          <Badge tone={paymentTone(a.paymentStatus)}>{feeStatusLabel(a)}</Badge>
                           {a.paymentStatus !== "NOT_REQUIRED" ? (
                             <span className="adm-sub">{formatInrFromPaise(a.paymentAmountPaise)}</span>
+                          ) : feeStatusLabel(a) === "Due once selected" ? (
+                            <span className="adm-sub">{formatInrFromPaise(reviewFeePaise(a))} if selected</span>
                           ) : null}
                           {proforma ? (
                             <span
