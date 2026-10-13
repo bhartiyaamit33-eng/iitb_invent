@@ -264,6 +264,11 @@ async function main() {
   check("registration marked PAID with the transaction as reference", appA.paymentStatus === "PAID" && appA.paymentRef === paid.transId);
   const ticket = await prisma.registration.findFirst({ where: { userId: appA.userId!, editionId: edition.id } });
   check("event ticket issued", ticket?.status === "CONFIRMED");
+  // The payer gets one email: the ticket with the receipt in it (mail fails here, so attempts count).
+  await new Promise((r) => setTimeout(r, 1500));
+  check("payment: one email carries the ticket and the receipt", await emailAttempted("email.ticket_receipt", paid.transId));
+  check("payment: no separate receipt email", !(await emailAttempted("email.payment_receipt", paid.transId)));
+  check("payment: no separate ticket email", !(await emailAttempted("email.registration_confirmed", ticket!.id)));
   check("validator: INVALID once paid (no double payment)", (await validate({ input_APPID: APP_ID, input_RequestID: "r2", input_UserID: minted.payerId!, input_Amount: "5000" })) === "INVALID");
   const paidPage = await (await get(`${APP_URL}/conference/pay/${a.paymentToken}`)).text();
   check("pay page shows the paid transaction and no gateway link", paidPage.includes(paid.transId) && !paidPage.includes("v2_accessPoint.jsp"));

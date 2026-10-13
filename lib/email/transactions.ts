@@ -12,6 +12,7 @@ import {
   proformaInvoiceEmail,
   profileConfirmationEmail,
   registrationConfirmedEmail,
+  type PaymentReceiptDetails,
 } from "@/emails/templates";
 
 export async function sendAccountCreated(opts: {
@@ -63,8 +64,10 @@ export async function sendRegistrationConfirmed(opts: {
   editionName: string;
   ticketCode: string;
   eventDate: string;
-  userId?: string;
+  userId?: string | null;
   registrationId?: string;
+  /** Include the payment receipt; the email is then logged against the transaction. */
+  payment?: PaymentReceiptDetails;
 }) {
   const tpl = registrationConfirmedEmail(opts);
   return sendEmail({
@@ -72,10 +75,10 @@ export async function sendRegistrationConfirmed(opts: {
     subject: tpl.subject,
     html: tpl.html,
     text: tpl.text,
-    action: "email.registration_confirmed",
+    action: opts.payment ? "email.ticket_receipt" : "email.registration_confirmed",
     actorId: opts.userId ?? null,
-    entityType: "Registration",
-    entityId: opts.registrationId ?? null,
+    entityType: opts.payment ? "GatewayPayment" : "Registration",
+    entityId: opts.payment ? opts.payment.transId : (opts.registrationId ?? null),
   });
 }
 

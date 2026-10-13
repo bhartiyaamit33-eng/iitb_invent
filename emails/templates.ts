@@ -68,6 +68,10 @@ function heading(text: string): string {
   return `<h1 style="margin:0 0 14px;font-family:${FONT};font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-0.01em;color:${C.ink};">${escapeHtml(text)}</h1>`;
 }
 
+function subheading(text: string): string {
+  return `<h2 style="margin:8px 0 8px;font-family:${FONT};font-size:16px;line-height:1.35;font-weight:700;color:${C.ink};">${escapeHtml(text)}</h2>`;
+}
+
 function label(text: string, tone: Tone): string {
   const t = TONES[tone];
   return `<p style="margin:0 0 14px;"><span style="display:inline-block;padding:4px 10px;border-radius:999px;background:${t.bg};color:${t.fg};font-family:${FONT};font-size:12px;font-weight:700;letter-spacing:0.02em;">${escapeHtml(text)}</span></p>`;
@@ -547,36 +551,82 @@ ${textFooter()}`;
   return { subject, html, text };
 }
 
+export type PaymentReceiptDetails = {
+  payerId: string;
+  amountLabel: string;
+  transId: string;
+  bankRef: string;
+  paidOn: string;
+  payUrl: string;
+};
+
+/**
+ * The ticket email. When an online payment issued the ticket, `payment` adds
+ * the receipt, so the payer gets one email with both (a separate receipt was
+ * being held back by some institutional mail filters).
+ */
 export function registrationConfirmedEmail(opts: {
   name: string;
   editionName: string;
   ticketCode: string;
   eventDate: string;
+  payment?: PaymentReceiptDetails;
 }): Email {
   const subject = `You're registered · ${EMAIL_BRAND}`;
+  const pay = opts.payment;
+  const ticketRows = [
+    { label: "Ticket code", value: opts.ticketCode, strong: true },
+    { label: "Dates", value: EVENT_DATES },
+    { label: "Venue", value: VENUE },
+  ];
+  const paymentRows = pay
+    ? [
+        { label: "Received from", value: opts.name },
+        { label: "Registration ID", value: pay.payerId },
+        { label: "Amount paid", value: pay.amountLabel, strong: true },
+        { label: "Transaction ID", value: pay.transId },
+        { label: "Bank reference", value: blank(pay.bankRef) },
+        { label: "Paid on", value: blank(pay.paidOn) },
+      ]
+    : [];
   const html = layout(
-    `Your ticket code is ${opts.ticketCode}.`,
+    pay
+      ? `Your ticket code is ${opts.ticketCode}. We received ${pay.amountLabel}.`
+      : `Your ticket code is ${opts.ticketCode}.`,
     `${label("Confirmed", "good")}
      ${heading("You're registered")}
      ${para(`Hi ${escapeHtml(opts.name)},`)}
      ${para(`Your place at ${escapeHtml(EMAIL_BRAND)} is confirmed. Show the QR code on your dashboard at the entrance.`)}
-     ${details([
-       { label: "Ticket code", value: opts.ticketCode, strong: true },
-       { label: "Dates", value: EVENT_DATES },
-       { label: "Venue", value: VENUE },
-     ])}
+     ${details(ticketRows)}
+     ${
+       pay
+         ? `${subheading("Payment receipt")}
+     ${para("We received your registration fee through IIT Bombay OnlinePay. Keep this email as your payment receipt.", "font-size:14px;")}
+     ${details(paymentRows)}
+     ${para("The amount is inclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}`
+         : ""
+     }
      ${button(`${siteOrigin()}/dashboard`, "View your ticket", false)}
+     ${pay ? para(`Your payment details are also on your ${link(pay.payUrl, "payment page")}.`, "font-size:14px;") : ""}
      ${para("We will write with the final programme and travel details closer to the conference.", "font-size:14px;")}`,
   );
   const text = `Hi ${opts.name},
 
 Your place at ${EMAIL_BRAND} is confirmed. Show the QR code on your dashboard at the entrance.
 
-Ticket code: ${opts.ticketCode}
-Dates: ${EVENT_DATES}
-Venue: ${VENUE}
+${ticketRows.map((r) => `${r.label}: ${r.value}`).join("\n")}
+${
+  pay
+    ? `
+PAYMENT RECEIPT
+We received your registration fee through IIT Bombay OnlinePay. Keep this email as your payment receipt.
 
-Your ticket: ${siteOrigin()}/dashboard
+${paymentRows.map((r) => `${r.label}: ${r.value}`).join("\n")}
+(inclusive of GST; this is a payment receipt, not a tax invoice)
+`
+    : ""
+}
+Your ticket: ${siteOrigin()}/dashboard${pay ? `\nPayment page: ${pay.payUrl}` : ""}
 
 ${textFooter()}`;
   return { subject, html, text };

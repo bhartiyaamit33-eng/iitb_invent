@@ -31,6 +31,7 @@ import {
   PROFORMA_EMAIL_ACTION,
   sendPaymentReceipt,
   sendProformaInvoiceEmail,
+  sendRegistrationConfirmed,
 } from "@/lib/email/transactions";
 import { writeAuditLog } from "@/lib/admin/audit";
 import {
@@ -433,7 +434,8 @@ async function applyVerifiedPayment(transId: string): Promise<void> {
       before: { paymentStatus: marked.before.paymentStatus },
       after: { paymentStatus: "PAID", transId, amount: payment.amount },
     });
-    await issueEventTicketForApplication(applicationId, { notify: true });
+    // The receipt below carries the ticket, so the payer gets one email.
+    await issueEventTicketForApplication(applicationId, { notify: true, email: false });
   }
 
   await mailReceiptOnce(transId);
@@ -454,9 +456,7 @@ async function mailReceiptOnce(transId: string): Promise<void> {
   const app = payment.application;
   if (!app) return;
   const paise = rupeesToPaise(payment.amount);
-  const result = await sendPaymentReceipt({
-    to: app.email,
-    name: app.name,
+  const receipt = {
     payerId: payment.payerId,
     amountLabel: paise === null ? `₹${payment.amount}` : formatInrFromPaise(paise),
     transId,
@@ -466,8 +466,28 @@ async function mailReceiptOnce(transId: string): Promise<void> {
       payment.reconStamp ||
       "",
     payUrl: conferencePaymentUrl(app.paymentToken),
-    userId: app.userId,
-  });
+  };
+
+  // One email: the ticket with the receipt in it. Without a ticket (no account
+  // linked to the registration) the receipt goes on its own.
+  const ticket = app.userId
+    ? await prisma.registration.findUnique({
+        where: { userId_editionId: { userId: app.userId, editionId: app.editionId } },
+        include: { edition: { select: { name: true, startsAt: true } } },
+      })
+    : null;
+  const result = ticket
+    ? await sendRegistrationConfirmed({
+        to: app.email,
+        name: app.name,
+        editionName: ticket.edition.name,
+        ticketCode: ticket.ticketCode,
+        eventDate: ticket.edition.startsAt.toISOString().slice(0, 10),
+        userId: app.userId,
+        registrationId: ticket.id,
+        payment: receipt,
+      })
+    : await sendPaymentReceipt({ to: app.email, name: app.name, ...receipt, userId: app.userId });
   if (!result.ok) {
     // Release the claim so the next notice or an admin re-check retries it.
     await prisma.gatewayPayment.update({

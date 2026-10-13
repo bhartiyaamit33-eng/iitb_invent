@@ -97,7 +97,12 @@ export async function notifyUser(opts: {
  */
 export async function issueEventTicketForApplication(
   applicationId: string,
-  opts?: { notify?: boolean },
+  /**
+   * notify: tell the holder (dashboard notice and ticket email) when the ticket
+   * is new. email: false leaves the email to the caller, e.g. a gateway payment,
+   * whose receipt email carries the ticket.
+   */
+  opts?: { notify?: boolean; email?: boolean },
 ) {
   const application = await prisma.conferenceApplication.findUnique({
     where: { id: applicationId },
@@ -152,7 +157,7 @@ export async function issueEventTicketForApplication(
       body: "Payment is confirmed. Your event ticket and QR code are on the dashboard. An account or an abstract is not a ticket; this confirmation is.",
       href: "/dashboard",
     });
-    if (user?.email) {
+    if (user?.email && opts.email !== false) {
       void sendRegistrationConfirmed({
         to: user.email,
         name: user.name?.trim() || application.name,
