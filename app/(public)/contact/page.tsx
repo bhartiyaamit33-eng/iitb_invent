@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { StudentsSection } from "@/components/StudentsSection";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/site/PageHero";
-import { SitePhoto } from "@/components/site/SitePhoto";
 import { SiteShell } from "@/components/site/SiteShell";
 import { getSiteChrome } from "@/lib/site-chrome";
 import { submitHrefFor } from "@/lib/landing";
@@ -58,27 +56,7 @@ export default async function ContactPage() {
         meta={[`Conference · ${EVENT_DATES}`, "Venue · IIT Bombay"]}
       />
 
-      <section className="site-section is-tight" aria-labelledby="team-heading">
-        <div className="site-shell">
-          <p className="site-kicker">The people</p>
-          <h2 id="team-heading">The DSSE team</h2>
-          <p className="lead">
-            IITB INV.ENT is organised by the Desai Sethi School of Entrepreneurship at IIT
-            Bombay. Both inboxes below are read by this team.
-          </p>
-          <SitePhoto
-            src="/assets/landing/symposium-group.jpg"
-            alt="The DSSE team on stage at the Entrepreneurship Research Symposium, IIT Bombay"
-            caption="DSSE team · IIT Bombay"
-            width={1600}
-            height={1067}
-            testId="contact-dsse-team"
-          />
-          <StudentsSection />
-        </div>
-      </section>
-
-      <section className="site-section is-rule" aria-labelledby="routes-heading">
+      <section className="site-section is-tight" aria-labelledby="routes-heading">
         <div className="site-shell">
           <p className="site-kicker is-blue">Who to write to</p>
           <h2 id="routes-heading">Two inboxes</h2>
@@ -158,6 +136,11 @@ export default async function ContactPage() {
                 <li>
                   <Link href="/programme" style={{ color: "var(--blue)" }}>
                     Programme and session RSVP
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/team" style={{ color: "var(--blue)" }}>
+                    Organising committee, PhD students and the DSSE team
                   </Link>
                 </li>
                 <li>

@@ -27,6 +27,7 @@ export const SITE_NAV: NavItem[] = [
   { href: "/research", label: "Call for papers" },
   { href: "/workshop", label: "Workshops & events" },
   { href: "/faq", label: "FAQs" },
+  { href: "/team", label: "Team" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -87,6 +88,14 @@ export const PARTNERS: SiteOrg[] = [
     tier: "partner",
     logo: "/assets/partners/sine-iitb.png",
     href: "https://www.sineiitb.org/",
+  },
+  {
+    id: "sjmsom",
+    name: "SJMSOM, IIT Bombay",
+    role: "Partner institute",
+    tier: "partner",
+    logo: "/assets/partners/sjmsom-iitb.png",
+    href: "https://www.som.iitb.ac.in/",
   },
   {
     id: "nen",
@@ -289,6 +298,77 @@ export const ACCOMMODATION_STEPS = [
     body: "You will get a written confirmation with the room and the amount payable at the guest house. Do not travel on an unconfirmed request.",
   },
 ] as const;
+
+/* ── Team ────────────────────────────────────────────────────────────────── */
+
+export type CommitteeMember = {
+  name: string;
+  role: string;
+  photo: string;
+  /** CSS object-position so a 4:5 crop keeps the face. */
+  focus: string;
+};
+
+/**
+ * Organising committee, in the order they should appear.
+ * Portraits are the public faculty photos on dsse.iitb.ac.in and iitb.ac.in.
+ */
+export const ORGANIZING_COMMITTEE: CommitteeMember[] = [
+  {
+    name: "Prof. Trupti Mishra",
+    role: "Head, DSSE",
+    photo: "/assets/team/trupti-mishra.jpg",
+    focus: "center 16%",
+  },
+  {
+    name: "Prof. Milind Atrey",
+    role: "DD-ART, IIT Bombay",
+    photo: "/assets/team/milind-atrey.png",
+    focus: "42% 20%",
+  },
+  {
+    name: "Prof. Ramesh Kuruva",
+    role: "Conference Chair",
+    photo: "/assets/team/ramesh-kuruva.jpg",
+    focus: "center 28%",
+  },
+  {
+    name: "Prof. Sankalp Pratap",
+    role: "Member",
+    photo: "/assets/team/sankalp-pratap.png",
+    focus: "center 30%",
+  },
+  {
+    name: "Prof. Anuradha Narasimhan",
+    role: "Member",
+    photo: "/assets/team/anuradha-narasimhan.png",
+    focus: "center 35%",
+  },
+  {
+    name: "Prof. Lina Sonne Vyas",
+    role: "Member",
+    photo: "/assets/team/lina-sonne-vyas.jpg",
+    focus: "center 20%",
+  },
+  {
+    name: "Prof. Vishal Gupta",
+    role: "Member",
+    photo: "/assets/team/vishal-gupta.png",
+    focus: "center",
+  },
+  {
+    name: "Prof. Gokul Krishnan",
+    role: "Member",
+    photo: "/assets/team/gokul-krishnan.jpg",
+    focus: "center 18%",
+  },
+  {
+    name: "Prof. Poyni Bhatt",
+    role: "Member",
+    photo: "/assets/team/poyni-bhatt.jpg",
+    focus: "center 22%",
+  },
+];
 
 /* ── Contact ─────────────────────────────────────────────────────────────── */
 

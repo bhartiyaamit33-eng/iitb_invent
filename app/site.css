@@ -647,6 +647,37 @@ html[data-site] body {
   color: var(--blue);
 }
 
+/* The statement and the two audience columns are one thought; don't leave a
+   blank band of section padding between the link and the headings. */
+#about.site-section {
+  padding-bottom: 28px;
+}
+
+#programme.site-section {
+  padding-top: 28px;
+}
+
+#programme .days-grid {
+  border-top: 0;
+}
+
+#programme .day-col {
+  padding-top: 0;
+}
+
+#audience.site-section {
+  padding-bottom: 20px;
+}
+
+#sponsors.site-section {
+  padding-top: 36px;
+  padding-bottom: 56px;
+}
+
+#sponsors .logo-wall {
+  margin-top: 8px;
+}
+
 .quote-split {
   display: grid;
   grid-template-columns: 1.1fr 1px 0.9fr;
@@ -1151,6 +1182,54 @@ html[data-site] body {
   margin-bottom: 12px;
   border: 1px solid var(--rule);
   filter: grayscale(0.2);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px 22px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-card h3 {
+  margin: 14px 0 0;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--navy);
+}
+
+.team-card p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.team-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #111;
+  border: 1px solid var(--rule);
+}
+
+.team-portrait {
+  object-fit: cover;
+}
+
+.team-follow {
+  margin-top: 72px;
+}
+
+.team-follow .building-photo {
+  margin-bottom: 0;
 }
 
 /* Numbered steps (selection process, how to submit) */
@@ -2350,6 +2429,13 @@ html[data-site] body {
   .site-timeline li:nth-child(odd) {
     padding-left: 0;
     border-left: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .team-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 14px;
   }
 }
 
