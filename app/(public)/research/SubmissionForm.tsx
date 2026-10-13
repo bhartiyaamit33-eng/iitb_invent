@@ -459,7 +459,7 @@ export function SubmissionForm({
           <p className="site-fee-amount">
             {feeLabel ?? "—"}
             {professional ? (
-              <span> · {feeBandLabel(feeBandForProfessional(professional))} · inclusive of GST</span>
+              <span> · {feeBandLabel(feeBandForProfessional(professional))} · exclusive of GST</span>
             ) : null}
           </p>
           <p className="lead">

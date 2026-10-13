@@ -87,7 +87,7 @@ export function ApplicationPaymentPanel({
           {formatInrFromPaise(paymentAmountPaise)}
         </p>
         <p className="adm-hint" style={{ margin: "2px 0 0" }}>
-          Inclusive of GST{paidAt ? `. Recorded ${paidAt}` : ""}
+          Exclusive of GST{paidAt ? `. Recorded ${paidAt}` : ""}
           {paymentRef ? `, reference ${paymentRef}` : ""}.
         </p>
 

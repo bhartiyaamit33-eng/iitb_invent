@@ -210,7 +210,7 @@ export function ApplicationReviewDialog({
             </p>
             {selected ? (
               <p className="adm-notice" style={{ margin: "14px 0 0" }}>
-                {name} will owe {amount}. Their proforma invoice with the payment link
+                {name} will owe {amount}, exclusive of GST. Their proforma invoice with the payment link
                 goes to their email, and the same link appears on their dashboard.
               </p>
             ) : null}

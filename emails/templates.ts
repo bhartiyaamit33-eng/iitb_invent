@@ -437,7 +437,7 @@ export function conferenceStatusUpdateEmail(opts: {
      ${paragraphs(opts.message)}
      ${
        opts.includePayment
-         ? `${details([{ label: "Registration fee", value: `${opts.amountLabel} (inclusive of GST)`, strong: true }])}
+         ? `${details([{ label: "Registration fee", value: `${opts.amountLabel} (exclusive of GST)`, strong: true }])}
             ${button(opts.paymentUrl, "Pay registration fee")}`
          : button(opts.dashboardUrl, "Open your dashboard", false)
      }`,
@@ -447,7 +447,7 @@ export function conferenceStatusUpdateEmail(opts: {
 ${opts.message}
 
 Status: ${opts.statusLabel}
-${opts.includePayment ? `Registration fee: ${opts.amountLabel} (inclusive of GST)\nPay: ${opts.paymentUrl}\n` : `Dashboard: ${opts.dashboardUrl}\n`}
+${opts.includePayment ? `Registration fee: ${opts.amountLabel} (exclusive of GST)\nPay: ${opts.paymentUrl}\n` : `Dashboard: ${opts.dashboardUrl}\n`}
 ${textFooter()}`;
   return { subject, html, text };
 }
@@ -481,7 +481,7 @@ export function proformaInvoiceEmail(opts: {
      ${opts.message?.trim() ? paragraphs(opts.message) : ""}
      ${para(`Thank you for registering for ${escapeHtml(EMAIL_BRAND)}, ${escapeHtml(CONFERENCE_PHRASE)}. Pay the registration fee below to confirm your place.`)}
      ${details(rows)}
-     ${para("The amount is inclusive of GST.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
+     ${para("The amount is exclusive of GST.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
      ${button(opts.payUrl, "Pay registration fee")}
      ${note(
        "Before you pay",
@@ -495,7 +495,7 @@ export function proformaInvoiceEmail(opts: {
 ${opts.message?.trim() ? `\n${opts.message.trim()}\n` : ""}
 Thank you for registering for ${EMAIL_BRAND}. This is your proforma invoice. Pay the registration fee to confirm your place.
 
-${rows.map((r) => `${r.label}: ${r.value}`).join("\n")} (inclusive of GST)
+${rows.map((r) => `${r.label}: ${r.value}`).join("\n")} (exclusive of GST)
 
 Pay the registration fee: ${opts.payUrl}
 
@@ -533,7 +533,7 @@ export function paymentReceiptEmail(opts: {
      ${para(`Hi ${escapeHtml(opts.name)},`)}
      ${para(`We have received your registration fee for ${escapeHtml(EMAIL_BRAND)} through IIT Bombay OnlinePay. Keep this email as your payment receipt.`)}
      ${details(rows)}
-     ${para("The amount is inclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
+     ${para("The amount is exclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
      ${button(`${siteOrigin()}/dashboard`, "View your ticket", false)}
      ${para(`Your payment details are also on your ${link(opts.payUrl, "payment page")}.`, "font-size:14px;")}`,
   );
@@ -542,7 +542,7 @@ export function paymentReceiptEmail(opts: {
 We have received your registration fee for ${EMAIL_BRAND} through IIT Bombay OnlinePay. Keep this email as your payment receipt.
 
 ${rows.map((r) => `${r.label}: ${r.value}`).join("\n")}
-(inclusive of GST; this is a payment receipt, not a tax invoice)
+(exclusive of GST; this is a payment receipt, not a tax invoice)
 
 Your ticket: ${siteOrigin()}/dashboard
 Payment page: ${opts.payUrl}
@@ -603,7 +603,7 @@ export function registrationConfirmedEmail(opts: {
          ? `${subheading("Payment receipt")}
      ${para("We received your registration fee through IIT Bombay OnlinePay. Keep this email as your payment receipt.", "font-size:14px;")}
      ${details(paymentRows)}
-     ${para("The amount is inclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}`
+     ${para("The amount is exclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}`
          : ""
      }
      ${button(`${siteOrigin()}/dashboard`, "View your ticket", false)}
@@ -622,7 +622,7 @@ PAYMENT RECEIPT
 We received your registration fee through IIT Bombay OnlinePay. Keep this email as your payment receipt.
 
 ${paymentRows.map((r) => `${r.label}: ${r.value}`).join("\n")}
-(inclusive of GST; this is a payment receipt, not a tax invoice)
+(exclusive of GST; this is a payment receipt, not a tax invoice)
 `
     : ""
 }

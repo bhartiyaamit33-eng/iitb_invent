@@ -228,7 +228,7 @@ export async function attachConferenceToUser(user: {
       await notifyUser({
         userId: user.id,
         title: "Pay your conference registration fee",
-        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open IIT Bombay Online Pay from this notice. You do not need to apply again.`,
+        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}, exclusive of GST. Open IIT Bombay Online Pay from this notice. You do not need to apply again.`,
         href,
       });
     }

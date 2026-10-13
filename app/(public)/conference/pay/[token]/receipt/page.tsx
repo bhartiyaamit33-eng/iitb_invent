@@ -31,7 +31,7 @@ export default async function Receipt({
     ["Email", app.email],
     ["Registration ID", app.payerId ?? "—"],
     ["Event", app.edition.name],
-    ["Amount paid", `${formatInrFromPaise(paise ?? app.paymentAmountPaise)} (inclusive of GST)`],
+    ["Amount paid", `${formatInrFromPaise(paise ?? app.paymentAmountPaise)} (exclusive of GST)`],
     ...(payment
       ? ([
           ["Transaction ID", payment.transId],

@@ -63,7 +63,7 @@ export function ConferenceStatusCard({
       {showFee ? (
         <p className="mt-1 text-sm text-ink-soft">
           Fee: {paymentStatusLabel(paymentStatus)}
-          {` · ${formatInrFromPaise(paymentAmountPaise)}`}
+          {` · ${formatInrFromPaise(paymentAmountPaise)}, exclusive of GST`}
         </p>
       ) : null}
       {feeDue ? (

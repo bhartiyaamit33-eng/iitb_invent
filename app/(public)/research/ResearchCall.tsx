@@ -240,7 +240,7 @@ export function ResearchCall({
             After organisers select you for a paper, a poster, or as an attendee, you
             receive the registration fee for your category and a personal IIT Bombay
             Online Pay link. The amount is the same whether you present or attend.
-            All registration fees include GST; do not add GST again.
+            These fees are exclusive of GST.
           </p>
           <table className="site-table" data-testid="conference-fee-bands">
             <thead>
@@ -252,7 +252,7 @@ export function ResearchCall({
             <tbody>
               {FEE_BANDS.map((band) => (
                 <tr key={band}>
-                  <td>{band === "student" ? "UG / PG / PhD students" : feeBandLabel(band)}</td>
+                  <td>{feeBandLabel(band)}</td>
                   <td>{formatInrFromPaise(CONFERENCE_FEE_PAISE[band])}</td>
                 </tr>
               ))}

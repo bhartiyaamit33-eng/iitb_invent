@@ -83,7 +83,7 @@ export const PAYMENT_STATUS_OPTIONS: {
   { value: "WAIVED", label: "Waived" },
 ];
 
-/** GST-inclusive totals; the professional category determines the fee band. */
+/** GST-exclusive base amounts; the professional category determines the fee band. */
 export const CONFERENCE_FEE_PAISE = {
   student: 500_000,
   faculty: 1_000_000,
@@ -117,11 +117,11 @@ export function conferenceFeePaiseFor(
 export function feeBandLabel(band: ConferenceFeeBand): string {
   switch (band) {
     case "student":
-      return "Student / research scholar";
+      return "Students";
     case "faculty":
-      return "Faculty / professor";
+      return "Faculty";
     case "industry":
-      return "Corporate / industry";
+      return "Corporate and others";
   }
 }
 

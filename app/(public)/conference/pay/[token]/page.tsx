@@ -165,7 +165,7 @@ export default async function ConferencePayPage({
             {paid ? (
               <>
                 <Row label="Amount paid">
-                  {formatInrFromPaise(rupeesToPaise(paid.amount) ?? amountPaise)} · inclusive of GST
+                  {formatInrFromPaise(rupeesToPaise(paid.amount) ?? amountPaise)} · exclusive of GST
                 </Row>
                 <Row label="Transaction ID">{paid.transId}</Row>
                 {paid.refNo ? <Row label="Bank reference">{paid.refNo}</Row> : null}
@@ -203,7 +203,7 @@ export default async function ConferencePayPage({
             </Row>
             <Row label="Amount payable">
               <span className="font-display text-2xl text-teal-deep">{amount}</span>
-              <span className="block text-right text-xs text-ink-soft">Inclusive of GST</span>
+              <span className="block text-right text-xs text-ink-soft">Exclusive of GST</span>
             </Row>
           </dl>
           {payUrl ? (

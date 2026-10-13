@@ -104,7 +104,7 @@ export function ApplicationPanel({
       {showFee ? (
         <p style={{ margin: "8px 0 0", fontSize: 15, color: "var(--ink-soft)" }}>
           Fee: {paymentStatusLabel(application.paymentStatus)}
-          {` · ${formatInrFromPaise(application.paymentAmountPaise)}`}
+          {` · ${formatInrFromPaise(application.paymentAmountPaise)}, exclusive of GST`}
         </p>
       ) : null}
 
