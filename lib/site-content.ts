@@ -22,12 +22,11 @@ export type NavItem = { href: string; label: string };
 
 /** Primary navbar. Every entry resolves to a real page. */
 export const SITE_NAV: NavItem[] = [
+  { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/programme", label: "Programme" },
-  { href: "/speakers", label: "Speakers" },
-  { href: "/research", label: "Research" },
-  { href: "/workshop", label: "Workshop" },
-  { href: "/accommodation", label: "Accommodation" },
+  { href: "/research", label: "Call for papers" },
+  { href: "/workshop", label: "Workshops & events" },
+  { href: "/faq", label: "FAQs" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -310,11 +309,41 @@ export const CONTACT_ROUTES = [
 
 /* ── Landing copy ────────────────────────────────────────────────────────── */
 
-export const HERO_HEADLINE_LEAD = "Entrepreneurship Research and Venture Practice ";
+export const HERO_HEADLINE_LEAD = "Entrepreneurship Research and Practice ";
 export const HERO_HEADLINE_ACCENT = "Conference";
+
+/** Homepage statement. The About page keeps the longer original line. */
+export const HOME_QUOTE =
+  "Entrepreneurship is studied and practised, but rarely do the two meet.";
+
+export const HOME_BRIDGE =
+  "IITB INV.ENT is filling this gap. We are bringing together entrepreneurship researchers and practitioners in the same room.";
 
 export const ABOUT_QUOTE =
   "Entrepreneurship is studied, and entrepreneurship is practised, and the two almost never sit in the same room.";
+
+/** Two homepage columns. The dated programme on /programme is unchanged. */
+export const HOME_AUDIENCES = [
+  {
+    id: "researchers",
+    title: "For entrepreneurship researchers",
+    items: [
+      "Present your research | Paper & poster presentation",
+      "Workshop on research paper development",
+      "Workshop on teaching entrepreneurship",
+    ],
+  },
+  {
+    id: "practitioners",
+    title: "For entrepreneurship practitioners",
+    items: [
+      "Startup showcase",
+      "Startup pitching competition",
+      "Entrepreneurship bootcamp for startups",
+      "Workshop on AI for incubators",
+    ],
+  },
+] as const;
 
 export const ABOUT_LEAD = [
   "IITB INV.ENT is our attempt to fix that for two days a year.",

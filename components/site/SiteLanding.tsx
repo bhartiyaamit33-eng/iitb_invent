@@ -1,52 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
-import { KeyDates } from "./KeyDates";
-import { LogoWall } from "./LogoWall";
+import { LogoReel, LogoWall } from "./LogoWall";
 import { PhotoLanes } from "./PhotoLanes";
 import { SitePhoto } from "./SitePhoto";
 import { InventMark } from "./InventMark";
 import { CtaOrbits, IntersectField, LineIcon, NavyGeometry } from "./decor";
+import { submitHrefFor, type LandingStat } from "@/lib/landing";
 import {
-  submitHrefFor,
-  type LandingFaq,
-  type LandingStat,
-  type TimelineItem,
-} from "@/lib/landing";
-import {
-  ABOUT_LEAD,
-  ABOUT_QUOTE,
   AUDIENCE,
-  EVENT_DATES,
   EVENT_DATES_SHORT,
   HERO_HEADLINE_ACCENT,
   HERO_HEADLINE_LEAD,
+  HOME_AUDIENCES,
+  HOME_BRIDGE,
+  HOME_QUOTE,
   PARTNERS,
-  PARTNER_JOURNALS,
-  PARTNER_JOURNALS_NOTE,
-  PARTNER_JOURNALS_PROMISE,
-  PIPELINE,
-  PROGRAMME_DAYS,
-  RESEARCH_HIGHLIGHTS,
-  SPEAKER_GROUPS,
-  SPONSORS,
-  SPONSOR_PITCH,
-  SUPPORT_EMAIL,
-  VENTURES,
-  VENUE_LINES,
 } from "@/lib/site-content";
-
-const HIGHLIGHT_ICONS = ["award", "journal", "network", "workshop"] as const;
 
 export function SiteLanding({
   signedInName,
-  faqs,
   stats,
-  timeline,
 }: {
   signedInName: string | null;
-  faqs: LandingFaq[];
   stats: LandingStat[];
-  timeline: TimelineItem[];
 }) {
   const submitHref = submitHrefFor(Boolean(signedInName));
   const registerHref = signedInName ? "/dashboard" : submitHref;
@@ -77,6 +53,7 @@ export function SiteLanding({
             <span>presents</span>
           </div>
           <p className="hero-lockup">
+            <span className="hero-institute">IIT Bombay</span>
             <InventMark className="hero-lockup-mark" />
           </p>
           <h1 id="hero-heading">
@@ -84,17 +61,15 @@ export function SiteLanding({
             <span className="accent">{HERO_HEADLINE_ACCENT}</span>
           </h1>
           <p className="hero-meta">{EVENT_DATES_SHORT.replace("JAN", "JANUARY")}</p>
-          <p className="hero-axes">
-            RESEARCH&nbsp;● INNOVATION&nbsp;● ENTREPRENEURSHIP&nbsp;● IMPACT
-          </p>
           <div className="cta-row" data-testid="cta-hero">
             <Link className="site-btn" href={registerHref} data-testid="hero-register">
-              Register →
+              Register
             </Link>
-            <Link className="site-btn site-btn-ghost" href="/programme">
-              Explore Programme
+            <Link className="site-btn site-btn-ghost" href="/about" data-testid="hero-know-more">
+              Know more
             </Link>
           </div>
+          <LogoReel orgs={PARTNERS} />
         </div>
         <p className="hero-pole is-left">
           <b>
@@ -107,189 +82,33 @@ export function SiteLanding({
 
       <PhotoLanes />
 
-      {/* ── About ────────────────────────────────────────────────────── */}
-      <section id="about" className="site-section is-rule">
+      {/* ── Statement ───────────────────────────────────────────────── */}
+      <section id="about" className="site-section is-rule" data-testid="home-statement">
         <div className="site-shell">
-          <div className="quote-split">
-            <div>
-              <blockquote>“{ABOUT_QUOTE}”</blockquote>
-              <p className="attr">~ IITB INV.ENT</p>
-            </div>
-            <div className="divider" aria-hidden="true" />
-            <div>
-              {ABOUT_LEAD.map((para) => (
-                <p className="lead" key={para.slice(0, 32)}>
-                  {para}
-                </p>
-              ))}
-              <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-                <Link className="site-btn site-btn-ghost" href="/about">
-                  What INV.ENT is →
-                </Link>
-              </div>
-            </div>
+          <div className="home-statement">
+            <blockquote>“{HOME_QUOTE}”</blockquote>
+            <p className="home-statement-body">{HOME_BRIDGE}</p>
+            <p className="home-statement-more">
+              <Link href="/about">Know more about IITB INV.ENT</Link>
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ── Programme ────────────────────────────────────────────────── */}
-      <section className="site-section is-rule" id="programme">
+      {/* ── Who it is for ───────────────────────────────────────────── */}
+      <section className="site-section is-rule" id="programme" data-testid="home-audiences">
         <div className="site-shell">
-          <p className="site-kicker">{EVENT_DATES}</p>
-          <h2>
-            Two days.
-            <br />
-            One ecosystem.
-          </h2>
           <div className="days-grid">
-            {PROGRAMME_DAYS.map((day) => (
-              <article className="day-col" key={day.id}>
-                <p className="site-kicker is-blue">{day.kicker}</p>
-                <p className="date">{day.date}</p>
-                <h3>{day.title}</h3>
-                <p className="lead">{day.lead}</p>
+            {HOME_AUDIENCES.map((group) => (
+              <article className="day-col is-plain" key={group.id}>
+                <h2>{group.title}</h2>
                 <ul>
-                  {day.items.map((item) => (
+                  {group.items.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
               </article>
             ))}
-          </div>
-          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-            <Link className="site-btn site-btn-ghost" href="/programme">
-              View Full Programme →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Research, awards, partner journals ───────────────────────── */}
-      <section className="site-section is-rule" id="research" data-testid="landing-research">
-        <div className="site-shell">
-          <p className="site-kicker is-blue">Call for papers</p>
-          <h2>
-            Present your research.
-            <br />
-            Then publish it.
-          </h2>
-          <p className="lead">
-            The Research tab carries the whole call: research paper presentations, poster
-            presentations, pre-conference workshops, submission guidelines, the review
-            process, and the fee for each category. Abstracts are reviewed by a panel of
-            eminent entrepreneurship scholars.
-          </p>
-
-          <div className="room-grid" data-testid="research-highlights">
-            {RESEARCH_HIGHLIGHTS.map((item, i) => (
-              <div className="room-item" key={item.id}>
-                <LineIcon name={HIGHLIGHT_ICONS[i] ?? "paper"} />
-                <p>
-                  <strong style={{ fontWeight: 500 }}>{item.title}</strong>
-                </p>
-                <p style={{ color: "var(--mute)", fontSize: 13, marginTop: 6 }}>
-                  {item.body}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="site-callout"
-            style={{ marginTop: 44 }}
-            data-testid="partner-journals"
-          >
-            <p className="site-kicker is-green" style={{ marginBottom: 10 }}>
-              Partner journals
-            </p>
-            <p style={{ margin: "0 0 12px" }}>{PARTNER_JOURNALS_PROMISE}</p>
-            {PARTNER_JOURNALS.length > 0 ? (
-              <ul className="journal-list" style={{ marginTop: 8 }}>
-                {PARTNER_JOURNALS.map((journal) => (
-                  <li key={journal.id}>
-                    <b>{journal.name}</b>
-                    <span>{journal.note}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-            <p style={{ margin: 0, fontSize: 13, color: "var(--mute)" }}>
-              {PARTNER_JOURNALS_NOTE}
-            </p>
-          </div>
-
-          <div style={{ marginTop: 48 }}>
-            <p className="site-kicker">Key dates</p>
-            <KeyDates items={timeline} />
-          </div>
-
-          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-            <Link className="site-btn" href="/research" data-testid="landing-research-cta">
-              Read the call for papers →
-            </Link>
-            <Link className="site-btn site-btn-ghost" href={submitHref}>
-              Complete registration
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Ecosystem ────────────────────────────────────────────────── */}
-      <section className="site-section is-rule" id="ecosystem">
-        <div className="site-shell">
-          <p className="site-kicker">The stack</p>
-          <h2>
-            From campus
-            <br />
-            to company
-          </h2>
-          <p className="lead">
-            A complete pipeline, from student clubs to successful ventures.
-          </p>
-          <ol className="pipeline" aria-label="From campus to company">
-            {PIPELINE.map((step, i) => (
-              <li key={step}>
-                <span>{step}</span>
-                {i < PIPELINE.length - 1 ? (
-                  <span className="pipeline-arrow" aria-hidden="true">
-                    →
-                  </span>
-                ) : null}
-              </li>
-            ))}
-          </ol>
-          <p className="site-kicker" style={{ marginTop: 48 }}>
-            Some of our ventures
-          </p>
-          <ul className="venture-list">
-            {VENTURES.map((venture) => (
-              <li key={venture}>{venture}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* ── Speakers ─────────────────────────────────────────────────── */}
-      <section className="site-section is-rule" id="speakers">
-        <div className="site-shell">
-          <p className="site-kicker">Line-up</p>
-          <h2>Speakers.</h2>
-          <p className="lead">
-            Researchers, founders, investors, and operators on the same stage. The 2027
-            line-up is published here as names are confirmed.
-          </p>
-          <div className="room-grid">
-            {SPEAKER_GROUPS.map((group) => (
-              <div className="room-item" key={group}>
-                <p>{group}</p>
-              </div>
-            ))}
-          </div>
-          <p className="coming-card">Coming soon</p>
-          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-            <Link className="site-btn site-btn-ghost" href="/speakers">
-              Speakers →
-            </Link>
           </div>
         </div>
       </section>
@@ -346,107 +165,11 @@ export function SiteLanding({
         </div>
       </section>
 
-      {/* ── Sponsors and partners ───────────────────────────────────── */}
+      {/* ── Partners ────────────────────────────────────────────────── */}
       <section className="site-section is-rule" id="sponsors" data-testid="landing-sponsors">
         <div className="site-shell">
-          <p className="site-kicker is-green">Sponsors &amp; partners</p>
-          <h2>
-            The names
-            <br />
-            behind the two days.
-          </h2>
-          <p className="lead">{SPONSOR_PITCH}</p>
-
-          <p className="site-kicker" style={{ marginTop: 44 }}>
-            Sponsors
-          </p>
-          <LogoWall orgs={SPONSORS} testId="sponsor-wall" />
-
-          <p className="site-kicker" style={{ marginTop: 44 }}>
-            Partners
-          </p>
-          <LogoWall orgs={PARTNERS} testId="partner-wall" />
-
-          <p className="logo-wall-note">
-            More sponsors and partners are added as agreements are signed. To put your
-            name here, write to{" "}
-            <a href={`mailto:${SUPPORT_EMAIL}`} style={{ color: "var(--blue)" }}>
-              {SUPPORT_EMAIL}
-            </a>
-            .
-          </p>
-          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-            <Link className="site-btn site-btn-ghost" href="/sponsors">
-              Sponsors &amp; partners →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ──────────────────────────────────────────────────────── */}
-      <section className="site-section is-rule" id="faq">
-        <div className="site-shell">
-          <p className="site-kicker">FAQ</p>
-          <h2>Before you write in</h2>
-          <dl className="faq-list" data-testid="landing-faqs">
-            {faqs.slice(0, 5).map((faq) => (
-              <div key={faq.question}>
-                <dt>
-                  <h3>{faq.question}</h3>
-                </dt>
-                <dd>{faq.answer}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-            <Link className="site-btn site-btn-ghost" href="/faq">
-              All questions →
-            </Link>
-            <Link className="site-btn site-btn-ghost" href="/contact">
-              Contact
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Support ──────────────────────────────────────────────────── */}
-      <section className="site-section is-rule" id="support" data-testid="landing-support">
-        <div className="site-shell">
-          <p className="site-kicker">Support</p>
-          <h2>Queries</h2>
-          <div className="support-split">
-            <div>
-              <p className="lead">
-                Press, partners, speakers, volunteers, campus access, submissions, or “I
-                have a company and a problem.” One inbox, read by the DSSE team.
-              </p>
-              <p style={{ margin: "0 0 20px" }}>
-                <a className="contact-mail" href={`mailto:${SUPPORT_EMAIL}`}>
-                  {SUPPORT_EMAIL}
-                </a>
-              </p>
-              <p className="lead">
-                {VENUE_LINES.join(" · ")}
-              </p>
-              <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-                <Link className="site-btn site-btn-ghost" href="/contact">
-                  Contact →
-                </Link>
-                <Link className="site-btn site-btn-ghost" href="/accommodation">
-                  Accommodation
-                </Link>
-              </div>
-            </div>
-            <SitePhoto
-              src="/assets/landing/symposium-group.jpg"
-              alt="The DSSE team on stage at the Entrepreneurship Research Symposium, IIT Bombay"
-              caption="DSSE team · IIT Bombay"
-              width={1600}
-              height={1067}
-              sizes="(max-width: 860px) 100vw, 540px"
-              testId="landing-dsse-team"
-            />
-          </div>
+          <h2 className="sr-only">Partners</h2>
+          <LogoWall orgs={PARTNERS} testId="partner-wall" logosOnly />
         </div>
       </section>
 

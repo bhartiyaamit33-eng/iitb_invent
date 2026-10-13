@@ -28,8 +28,8 @@ export type LandingProps = {
   timeline: TimelineItem[];
 };
 
-export const TAGLINE = "Entrepreneurship Research and Venture Practice Conference";
-export const TAGLINE_LEAD = "Entrepreneurship Research and Venture Practice";
+export const TAGLINE = "Entrepreneurship Research and Practice Conference";
+export const TAGLINE_LEAD = "Entrepreneurship Research and Practice";
 export const TAGLINE_REST = "Conference";
 
 /**

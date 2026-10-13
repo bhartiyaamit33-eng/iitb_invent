@@ -39,12 +39,7 @@ export default async function HomePage() {
         )}
       />
       {data.live ? <SiteLiveStrip live={data.live} /> : null}
-      <SiteLanding
-        signedInName={data.signedInName}
-        faqs={data.faqs}
-        stats={data.stats}
-        timeline={data.timeline}
-      />
+      <SiteLanding signedInName={data.signedInName} stats={data.stats} />
     </SiteShell>
   );
 }

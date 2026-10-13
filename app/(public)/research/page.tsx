@@ -51,17 +51,17 @@ export default async function ResearchPage() {
   }
 
   return (
-    <SiteShell crumbs={[{ href: "/research", label: "Research" }]}>
+    <SiteShell crumbs={[{ href: "/research", label: "Call for papers" }]}>
       <JsonLd
         data={graphJsonLd(
           organizationJsonLd(),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "Research", path: "/research" },
+            { name: "Call for papers", path: "/research" },
           ]),
           {
             "@type": "Event",
-            name: "IITB INV.ENT Entrepreneurship Research and Venture Practice Conference",
+            name: "IITB INV.ENT Entrepreneurship Research and Practice Conference",
             description:
               "A conference where people meet, network, attend sessions, workshops, and events, get exposure to entrepreneurship research, and hear talks on entrepreneurship in practice.",
             url: absoluteUrl("/research"),

@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     "iitbinvent",
     "iitb_invent",
     "DSSE",
-    "Entrepreneurship Research and Venture Practice Conference",
+    "Entrepreneurship Research and Practice Conference",
     "IIT Bombay",
     "Desai Sethi School of Entrepreneurship",
   ],

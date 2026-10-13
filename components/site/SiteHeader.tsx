@@ -25,6 +25,7 @@ export function SiteHeader({
   const accountLabel = signedInName ?? "Login";
 
   function isCurrent(href: string) {
+    if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
@@ -32,24 +33,24 @@ export function SiteHeader({
     <header className="site-header" data-testid="site-header">
       <div className="site-header-bar">
         <Link href="/" className="site-wordmark" data-testid="site-home-link">
-          <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span className="site-brand">
             <Image
               src="/assets/iitb-logo.png"
               alt="IIT Bombay"
               width={512}
               height={499}
-              style={{ height: 30, width: "auto", display: "block" }}
+              className="site-brand-iitb"
               priority
             />
-            <span
-              aria-hidden="true"
-              style={{
-                display: "block",
-                width: 1,
-                height: 22,
-                background: "rgba(11,37,69,0.16)",
-              }}
+            <Image
+              src="/assets/dsse-wordmark.png"
+              alt="Desai Sethi School of Entrepreneurship"
+              width={1600}
+              height={320}
+              className="site-brand-dsse"
+              priority
             />
+            <span className="site-brand-rule" aria-hidden="true" />
             <InventMark style={{ fontSize: 26 }} />
           </span>
         </Link>

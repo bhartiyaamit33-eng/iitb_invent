@@ -191,7 +191,7 @@ export function eventJsonLd() {
     alternateName: [
       "INVENT 2027",
       "IIT Bombay INV.ENT 2027",
-      "Entrepreneurship Research and Venture Practice Conference",
+      "Entrepreneurship Research and Practice Conference",
     ],
     description: DEFAULT_DESCRIPTION,
     url: `${origin}/`,

@@ -22,9 +22,7 @@ import {
   ACCOMMODATION_INTRO,
   CONFERENCE_EMAIL,
   EVENT_DATES,
-  PARTNER_JOURNALS,
-  PARTNER_JOURNALS_NOTE,
-  PARTNER_JOURNALS_PROMISE,
+  RESEARCH_HIGHLIGHTS,
   RESEARCH_TRACKS,
 } from "@/lib/site-content";
 
@@ -35,6 +33,7 @@ const TRACK_ICONS: Record<string, LineIconName> = {
 };
 
 const APPLICANT_ICONS: LineIconName[] = ["paper", "journal", "person"];
+const HIGHLIGHT_ICONS: LineIconName[] = ["award", "journal", "network", "workshop"];
 const FEE_BANDS: ConferenceFeeBand[] = ["student", "faculty", "industry"];
 
 export function ResearchCall({
@@ -53,7 +52,7 @@ export function ResearchCall({
       <PageHero
         kicker="Call for papers"
         title="Research at INV.ENT"
-        lede="Research paper presentations, poster presentations, and pre-conference workshops — everything you need to take part, in one place. The strongest submissions are forwarded to our partner journals."
+        lede="Research paper presentations, poster presentations, and pre-conference workshops — everything you need to take part, in one place."
         meta={[
           `Conference · ${EVENT_DATES}`,
           "Venue · IIT Bombay, Mumbai",
@@ -69,6 +68,31 @@ export function ResearchCall({
           </a>
         </div>
       </PageHero>
+
+      <section
+        className="site-section is-tight"
+        aria-labelledby="highlights-heading"
+        data-testid="research-highlights"
+      >
+        <div className="site-shell">
+          <h2 id="highlights-heading">
+            Present your research.
+            <br />
+            Then publish it.
+          </h2>
+          <div className="room-grid">
+            {RESEARCH_HIGHLIGHTS.map((item, i) => (
+              <div className="room-item" key={item.id}>
+                <LineIcon name={HIGHLIGHT_ICONS[i] ?? "paper"} />
+                <p>
+                  <strong style={{ fontWeight: 500 }}>{item.title}</strong>
+                </p>
+                <p style={{ color: "var(--mute)", fontSize: 13, marginTop: 6 }}>{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── Overview ─────────────────────────────────────────────────── */}
       <section className="site-section is-tight" aria-labelledby="overview-heading">
@@ -120,41 +144,6 @@ export function ResearchCall({
             On a broad range of innovation and entrepreneurship research themes. Case
             studies may be submitted as papers.
           </p>
-        </div>
-      </section>
-
-      {/* ── Partner journals ─────────────────────────────────────────── */}
-      <section
-        className="site-section is-rule"
-        id="journals"
-        aria-labelledby="journals-heading"
-        data-testid="research-journals"
-      >
-        <div className="site-shell">
-          <p className="site-kicker is-green">Beyond the conference</p>
-          <h2 id="journals-heading">
-            Publish with
-            <br />
-            our partner journals.
-          </h2>
-          <p className="lead" style={{ maxWidth: "68ch", fontSize: 18 }}>
-            {PARTNER_JOURNALS_PROMISE}
-          </p>
-          {PARTNER_JOURNALS.length > 0 ? (
-            <ul className="journal-list">
-              {PARTNER_JOURNALS.map((journal) => (
-                <li key={journal.id}>
-                  <b>{journal.name}</b>
-                  <span>{journal.note}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="coming-card" style={{ borderTop: "1px solid var(--rule)", marginTop: 28 }}>
-              Partner journal titles — announced with the acceptance list
-            </p>
-          )}
-          <div className="site-callout">{PARTNER_JOURNALS_NOTE}</div>
         </div>
       </section>
 

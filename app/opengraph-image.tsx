@@ -28,7 +28,7 @@ export default function OpenGraphImage() {
             INV.ENT
           </div>
           <div style={{ display: "flex", marginTop: 16, fontSize: 32, color: "#0c3a6b" }}>
-            Entrepreneurship Research and Venture Practice Conference
+            Entrepreneurship Research and Practice Conference
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#44505c" }}>
