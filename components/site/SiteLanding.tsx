@@ -117,10 +117,10 @@ export function SiteLanding({
       <section className="site-section is-navy is-ecosystem">
         <NavyGeometry />
         <div className="site-shell ecosystem-row" style={{ position: "relative" }}>
-          <h2 className="ecosystem-title">
-            <span className="site-kicker is-green">DSSE</span>
-            The ecosystem behind the conference
-          </h2>
+          <div className="ecosystem-copy">
+            <p className="ecosystem-school">Desai Sethi School of Entrepreneurship</p>
+            <h2 className="ecosystem-title">The ecosystem behind the conference</h2>
+          </div>
           <div className="stats-grid" data-testid="landing-stats">
             {stats.map((stat) => (
               <div className="stat-block" key={`${stat.value}-${stat.label}`}>
@@ -141,7 +141,7 @@ export function SiteLanding({
             IITB INV.ENT brings together the people who study entrepreneurship and the
             people who live it.
           </p>
-          <div className="room-grid">
+          <div className="room-grid is-five">
             {AUDIENCE.map((item) => (
               <div className="room-item" key={item.id}>
                 <LineIcon name={item.icon} />

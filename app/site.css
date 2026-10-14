@@ -863,19 +863,24 @@ html[data-site] body {
   gap: 28px 40px;
 }
 
+.ecosystem-copy {
+  min-width: 0;
+}
+
+.ecosystem-school {
+  margin: 0 0 6px;
+  color: var(--green);
+  font-size: clamp(0.95rem, 1.35vw, 1.2rem);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+
 .site h2.ecosystem-title {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
   margin: 0;
   font-size: clamp(1.05rem, 1.55vw, 1.35rem);
   line-height: 1.15;
   white-space: nowrap;
-}
-
-.site h2.ecosystem-title .site-kicker {
-  margin: 0;
-  font-size: 11px;
 }
 
 .is-ecosystem .stats-grid {
@@ -964,6 +969,14 @@ html[data-site] body {
 .room-item {
   padding: 28px 20px 28px 0;
   border-bottom: 1px solid var(--rule);
+}
+
+.room-grid.is-five {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.room-grid.is-five .room-item {
+  padding-right: 12px;
 }
 
 .room-item p {
