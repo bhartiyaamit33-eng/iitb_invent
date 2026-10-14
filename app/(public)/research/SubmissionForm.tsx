@@ -12,6 +12,7 @@ import {
   feeBandForProfessional,
   feeBandLabel,
   formatInrFromPaise,
+  gstPaise,
   needsAbstract,
   payableAtRegistration,
   type ParticipationCategory,
@@ -461,8 +462,9 @@ export function SubmissionForm({
             {feeLabel ?? "—"}
             {professional ? (
               <span>
-                {" "}· {feeBandLabel(feeBandForProfessional(professional))} ·{" "}
-                {formatInrFromPaise(feePaise ?? 0)} + {GST_PERCENT}% GST
+                {" "}total · {feeBandLabel(feeBandForProfessional(professional))} · Subtotal{" "}
+                {formatInrFromPaise(feePaise ?? 0)} + GST ({GST_PERCENT}%){" "}
+                {formatInrFromPaise(gstPaise(feePaise ?? 0))}
               </span>
             ) : null}
           </p>

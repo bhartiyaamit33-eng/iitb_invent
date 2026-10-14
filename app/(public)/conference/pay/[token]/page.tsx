@@ -204,11 +204,10 @@ export default async function ConferencePayPage({
             <Row label="Category">
               {professionalLabel(application.professionalCategory, application.professionalOther)}
             </Row>
-            <Row label="Registration fee">{formatInrFromPaise(application.paymentAmountPaise)}</Row>
+            <Row label="Subtotal">{formatInrFromPaise(application.paymentAmountPaise)}</Row>
             <Row label={`GST (${GST_PERCENT}%)`}>{formatInrFromPaise(gstPaise(application.paymentAmountPaise))}</Row>
-            <Row label="Amount payable">
+            <Row label="Total">
               <span className="font-display text-2xl text-teal-deep" data-testid="amount-payable">{amount}</span>
-              <span className="block text-right text-xs text-ink-soft">Including {GST_PERCENT}% GST</span>
             </Row>
           </dl>
           {payUrl ? (

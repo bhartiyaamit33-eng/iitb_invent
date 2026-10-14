@@ -260,9 +260,9 @@ export function ResearchCall({
             <thead>
               <tr>
                 <th scope="col">Category</th>
-                <th scope="col">Registration fee</th>
+                <th scope="col">Subtotal</th>
                 <th scope="col">GST ({GST_PERCENT}%)</th>
-                <th scope="col">Total payable</th>
+                <th scope="col">Total</th>
               </tr>
             </thead>
             <tbody>

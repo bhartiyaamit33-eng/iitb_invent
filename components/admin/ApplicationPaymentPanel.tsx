@@ -90,7 +90,8 @@ export function ApplicationPaymentPanel({
           {formatInrFromPaise(withGstPaise(paymentAmountPaise))}
         </p>
         <p className="adm-hint" style={{ margin: "2px 0 0" }}>
-          Fee {formatInrFromPaise(paymentAmountPaise)} + {GST_PERCENT}% GST {formatInrFromPaise(gstPaise(paymentAmountPaise))}
+          Total. Subtotal {formatInrFromPaise(paymentAmountPaise)} + GST ({GST_PERCENT}%){" "}
+          {formatInrFromPaise(gstPaise(paymentAmountPaise))}
           {paidAt ? `. Recorded ${paidAt}` : ""}
           {paymentRef ? `, reference ${paymentRef}` : ""}.
         </p>

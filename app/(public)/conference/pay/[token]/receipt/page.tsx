@@ -36,11 +36,11 @@ export default async function Receipt({
     ["Event", app.edition.name],
     ...(itemised
       ? ([
-          ["Registration fee", formatInrFromPaise(fee)],
+          ["Subtotal", formatInrFromPaise(fee)],
           [`GST (${GST_PERCENT}%)`, formatInrFromPaise(gstPaise(fee))],
         ] as [string, string][])
       : []),
-    ["Amount paid", formatInrFromPaise(paise ?? withGstPaise(fee))],
+    [itemised ? "Total" : "Amount paid", formatInrFromPaise(paise ?? withGstPaise(fee))],
     ...(payment
       ? ([
           ["Transaction ID", payment.transId],
@@ -64,7 +64,7 @@ export default async function Receipt({
       </dl>
       <p className="rounded bg-paper p-4 text-sm">
         Paid through IIT Bombay OnlinePay.
-        {itemised ? ` The amount paid includes ${GST_PERCENT}% GST on the registration fee.` : ""} This
+        {itemised ? ` The total includes ${GST_PERCENT}% GST on the subtotal.` : ""} This
         is a payment receipt, not a GST tax invoice.
       </p>
       <p className="mt-6 text-sm print:hidden">

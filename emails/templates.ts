@@ -454,14 +454,15 @@ ${textFooter()}`;
 
 // ─── Payment ─────────────────────────────────────────────────────────────────
 
-/** Registration fee, GST and total, already formatted (see feeLines). */
+/** Subtotal (the registration fee), GST and total, already formatted (see feeLines). */
 export type FeeLines = { fee: string; gst: string; gstPercent: number; total: string };
 
-function feeRows(fee: FeeLines, totalLabel: string) {
+/** Subtotal, then GST, then total. */
+function feeRows(fee: FeeLines) {
   return [
-    { label: "Registration fee", value: fee.fee },
+    { label: "Subtotal", value: fee.fee },
     { label: `GST (${fee.gstPercent}%)`, value: fee.gst },
-    { label: totalLabel, value: fee.total, strong: true },
+    { label: "Total", value: fee.total, strong: true },
   ];
 }
 
@@ -482,17 +483,17 @@ export function proformaInvoiceEmail(opts: {
     { label: "Category", value: opts.category },
     { label: "Participation", value: opts.participation },
     { label: "Particulars", value: `Registration fee, ${EMAIL_BRAND} (${EVENT_DATES})` },
-    ...feeRows(opts.fee, "Amount payable"),
+    ...feeRows(opts.fee),
   ];
   const html = layout(
-    `Amount payable ${opts.fee.total}, including ${opts.fee.gstPercent}% GST. Pay to confirm your place.`,
+    `Total ${opts.fee.total}, including ${opts.fee.gstPercent}% GST. Pay to confirm your place.`,
     `${label("Payment pending", "warn")}
      ${heading("Proforma invoice")}
      ${para(`Hi ${escapeHtml(opts.name)},`)}
      ${opts.message?.trim() ? paragraphs(opts.message) : ""}
      ${para(`Thank you for registering for ${escapeHtml(EMAIL_BRAND)}, ${escapeHtml(CONFERENCE_PHRASE)}. Pay the registration fee below to confirm your place.`)}
      ${details(rows)}
-     ${para(`The registration fee is exclusive of GST; ${opts.fee.gstPercent}% GST is added to it above.`, `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
+     ${para(`Fees are exclusive of GST; ${opts.fee.gstPercent}% GST is added to the subtotal.`, `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
      ${button(opts.payUrl, "Pay registration fee")}
      ${note(
        "Before you pay",
@@ -507,7 +508,7 @@ ${opts.message?.trim() ? `\n${opts.message.trim()}\n` : ""}
 Thank you for registering for ${EMAIL_BRAND}. This is your proforma invoice. Pay the registration fee to confirm your place.
 
 ${rows.map((r) => `${r.label}: ${r.value}`).join("\n")}
-(the registration fee is exclusive of GST; ${opts.fee.gstPercent}% GST is added to it above)
+(fees are exclusive of GST; ${opts.fee.gstPercent}% GST is added to the subtotal)
 
 Pay the registration fee: ${opts.payUrl}
 
@@ -535,7 +536,7 @@ export function paymentReceiptEmail(opts: {
   const rows = [
     { label: "Received from", value: opts.name },
     { label: "Registration ID", value: opts.payerId },
-    ...(opts.fee ? feeRows(opts.fee, "Amount paid") : [{ label: "Amount paid", value: opts.amountLabel, strong: true }]),
+    ...(opts.fee ? feeRows(opts.fee) : [{ label: "Amount paid", value: opts.amountLabel, strong: true }]),
     { label: "Transaction ID", value: opts.transId },
     { label: "Bank reference", value: blank(opts.bankRef) },
     { label: "Paid on", value: blank(opts.paidOn) },
@@ -567,7 +568,7 @@ ${textFooter()}`;
 
 function receiptNote(fee?: FeeLines): string {
   return fee
-    ? `Amount paid includes ${fee.gstPercent}% GST on the registration fee. This is a payment receipt, not a tax invoice.`
+    ? `The total includes ${fee.gstPercent}% GST on the subtotal. This is a payment receipt, not a tax invoice.`
     : "This is a payment receipt, not a tax invoice.";
 }
 
@@ -605,7 +606,7 @@ export function registrationConfirmedEmail(opts: {
     ? [
         { label: "Received from", value: opts.name },
         { label: "Registration ID", value: pay.payerId },
-        ...(pay.fee ? feeRows(pay.fee, "Amount paid") : [{ label: "Amount paid", value: pay.amountLabel, strong: true }]),
+        ...(pay.fee ? feeRows(pay.fee) : [{ label: "Amount paid", value: pay.amountLabel, strong: true }]),
         { label: "Transaction ID", value: pay.transId },
         { label: "Bank reference", value: blank(pay.bankRef) },
         { label: "Paid on", value: blank(pay.paidOn) },
