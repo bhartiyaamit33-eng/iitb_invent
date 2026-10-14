@@ -6,6 +6,9 @@ import {
   formatInrFromPaise,
   paymentStatusLabel,
   type ApplicationPaymentStatus,
+  GST_PERCENT,
+  gstPaise,
+  withGstPaise,
 } from "@/lib/conference";
 import { withBasePath } from "@/lib/base-path";
 import { times, type Tone } from "@/lib/admin/format";
@@ -84,10 +87,11 @@ export function ApplicationPaymentPanel({
       </div>
       <div className="adm-panel-body">
         <p style={{ margin: 0, fontSize: 26, fontWeight: 680, fontVariationSettings: '"wdth" 112' }}>
-          {formatInrFromPaise(paymentAmountPaise)}
+          {formatInrFromPaise(withGstPaise(paymentAmountPaise))}
         </p>
         <p className="adm-hint" style={{ margin: "2px 0 0" }}>
-          Inclusive of GST{paidAt ? `. Recorded ${paidAt}` : ""}
+          Fee {formatInrFromPaise(paymentAmountPaise)} + {GST_PERCENT}% GST {formatInrFromPaise(gstPaise(paymentAmountPaise))}
+          {paidAt ? `. Recorded ${paidAt}` : ""}
           {paymentRef ? `, reference ${paymentRef}` : ""}.
         </p>
 

@@ -83,7 +83,10 @@ export const PAYMENT_STATUS_OPTIONS: {
   { value: "WAIVED", label: "Waived" },
 ];
 
-/** GST-inclusive totals; the professional category determines the fee band. */
+/**
+ * Registration fees before GST; the professional category determines the band.
+ * GST_PERCENT is added on top when the fee is charged (see withGstPaise).
+ */
 export const CONFERENCE_FEE_PAISE = {
   student: 500_000,
   faculty: 1_000_000,
@@ -91,6 +94,18 @@ export const CONFERENCE_FEE_PAISE = {
 } as const;
 
 export type ConferenceFeeBand = keyof typeof CONFERENCE_FEE_PAISE;
+
+/** GST charged on the registration fee, in percent. */
+export const GST_PERCENT = 18;
+
+export function gstPaise(feePaise: number): number {
+  return Math.round((feePaise * GST_PERCENT) / 100);
+}
+
+/** What the participant pays: the registration fee plus GST. */
+export function withGstPaise(feePaise: number): number {
+  return feePaise + gstPaise(feePaise);
+}
 
 export function feeBandForProfessional(
   category: ProfessionalCategory,
@@ -262,11 +277,14 @@ export function statusRequiresPayment(status: ApplicationStatus): boolean {
   );
 }
 
+/** "₹5,900", or "₹11.80" when there are paise. */
 export function formatInrFromPaise(paise: number): string {
+  const digits = paise % 100 === 0 ? 0 : 2;
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
   }).format(paise / 100);
 }
 

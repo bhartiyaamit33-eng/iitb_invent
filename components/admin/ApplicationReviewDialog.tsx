@@ -9,6 +9,8 @@ import {
   formatInrFromPaise,
   statusRequiresPayment,
   type ApplicationStatus,
+  GST_PERCENT,
+  withGstPaise,
 } from "@/lib/conference";
 import { BASE_PATH, withBasePath } from "@/lib/base-path";
 
@@ -40,7 +42,7 @@ export function ApplicationReviewDialog({
   const [notice, setNotice] = useState<string | null>(null);
 
   const selected = statusRequiresPayment(status);
-  const amount = useMemo(() => formatInrFromPaise(feePaise), [feePaise]);
+  const amount = useMemo(() => `${formatInrFromPaise(withGstPaise(feePaise))} (including ${GST_PERCENT}% GST)`, [feePaise]);
   const unchanged = status === currentStatus;
 
   function chooseStatus(next: ApplicationStatus) {

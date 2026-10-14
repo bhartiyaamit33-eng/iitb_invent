@@ -7,6 +7,7 @@ import {
   type ApplicationPaymentStatus,
   type ApplicationStatus,
   type ParticipationCategory,
+  withGstPaise,
 } from "@/lib/conference";
 import { applicationFeeDue, applicationPaymentVisible } from "@/lib/conference-access";
 import { conferencePayPath } from "@/lib/conference-server";
@@ -18,7 +19,7 @@ export function ConferencePayCta({
   token: string;
   amountPaise: number;
 }) {
-  const amount = formatInrFromPaise(amountPaise);
+  const amount = formatInrFromPaise(withGstPaise(amountPaise));
   return (
     <Link
       href={conferencePayPath(token)}
@@ -63,7 +64,7 @@ export function ConferenceStatusCard({
       {showFee ? (
         <p className="mt-1 text-sm text-ink-soft">
           Fee: {paymentStatusLabel(paymentStatus)}
-          {` · ${formatInrFromPaise(paymentAmountPaise)}`}
+          {` · ${formatInrFromPaise(withGstPaise(paymentAmountPaise))} including GST`}
         </p>
       ) : null}
       {feeDue ? (

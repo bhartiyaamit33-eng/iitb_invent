@@ -18,10 +18,14 @@ import { randomInt } from "node:crypto";
 import type { ApplicationStatus, ConferenceApplication, GatewayPayment } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
+  GST_PERCENT,
   formatInrFromPaise,
+  gstPaise,
   participationLabel,
   professionalLabel,
+  withGstPaise,
 } from "@/lib/conference";
+import type { FeeLines } from "@/emails/templates";
 import {
   applicationFeeDue,
   issueEventTicketForApplication,
@@ -48,13 +52,23 @@ import {
 
 /**
  * What the gateway is asked for and what the validator accepts. Both call
- * this, so they cannot disagree. Organisers fix the amount when they select
- * an applicant (fee band for their category), so the stored figure is it.
+ * this, so they cannot disagree. The stored figure is the registration fee
+ * (fixed when the fee falls due: the band for the category); GST is added here.
  */
 export function payableAmountPaise(
   app: Pick<ConferenceApplication, "paymentAmountPaise">,
 ): number {
-  return app.paymentAmountPaise;
+  return withGstPaise(app.paymentAmountPaise);
+}
+
+/** Fee, GST and total as display strings, for invoices and receipts. */
+export function feeLines(feePaise: number): FeeLines {
+  return {
+    fee: formatInrFromPaise(feePaise),
+    gst: formatInrFromPaise(gstPaise(feePaise)),
+    gstPercent: GST_PERCENT,
+    total: formatInrFromPaise(withGstPaise(feePaise)),
+  };
 }
 
 function initials(name: string): string {
@@ -77,17 +91,15 @@ function isUniqueViolation(err: unknown): boolean {
 }
 
 /**
- * The registration ID the gateway knows this applicant by, e.g. AB_inv27_483920.
- * Minted once and never changed, because settlement reports quote it.
+ * The registration ID the gateway knows this applicant by, minted once as
+ * <initials>_inv_<4 digits> (e.g. RS_inv_7976).
  */
 export async function ensurePayerId(
   app: Pick<ConferenceApplication, "id" | "name" | "payerId">,
-  editionYear: number,
 ): Promise<string> {
   if (app.payerId) return app.payerId;
-  const tag = `inv${String(editionYear).slice(-2)}`;
-  for (let attempt = 0; attempt < 8; attempt++) {
-    const candidate = `${initials(app.name)}_${tag}_${randomInt(100_000, 1_000_000)}`;
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const candidate = `${initials(app.name)}_inv_${randomInt(1000, 10_000)}`;
     try {
       const set = await prisma.conferenceApplication.updateMany({
         where: { id: app.id, payerId: null },
@@ -120,14 +132,14 @@ export async function sendProformaInvoice(
       where: { id: applicationId },
       include: { edition: { select: { year: true } } },
     });
-    const payerId = await ensurePayerId(app, app.edition.year);
+    const payerId = await ensurePayerId(app);
     const result = await sendProformaInvoiceEmail({
       to: app.email,
       name: app.name,
       payerId,
       category: professionalLabel(app.professionalCategory, app.professionalOther),
       participation: participationLabel(app.participationCategory, app.participationOther),
-      amountLabel: formatInrFromPaise(payableAmountPaise(app)),
+      fee: feeLines(app.paymentAmountPaise),
       payUrl: conferencePaymentUrl(app.paymentToken),
       message: opts?.message,
       userId: app.userId,
@@ -238,9 +250,7 @@ export async function validatePaymentRequest(
   else if (req.appId !== cfg.appId) reason = "app id mismatch";
 
   if (!reason) {
-    const app = await prisma.conferenceApplication.findUnique({
-      where: { payerId: req.userId },
-    });
+    const app = await findApplicationByPayerId(req.userId);
     if (!app) reason = "unknown registration";
     else if (!applicationFeeDue(app)) reason = `fee not due (${app.status}/${app.paymentStatus})`;
     else if (!amountEqualsPaise(req.amount, payableAmountPaise(app)))
@@ -275,10 +285,28 @@ function isVerified(p: Pick<GatewayPayment, "imtStatus" | "imtAck" | "reconStatu
   );
 }
 
+/**
+ * Registration IDs were <initials>_inv27_<6 digits> until 13 Oct 2026; those
+ * were shortened to <initials>_inv_<first 4 digits>. The gateway can still send
+ * an old one (a payment started before the change, a later reconciliation), so
+ * an ID is looked up as given and then in its short form.
+ */
+export function shortPayerId(payerId: string): string {
+  const old = /^([A-Z]+)_inv\d{2}_(\d{4})\d{2}$/.exec(payerId);
+  return old ? `${old[1]}_inv_${old[2]}` : payerId;
+}
+
+async function findApplicationByPayerId(payerId: string) {
+  const exact = await prisma.conferenceApplication.findUnique({ where: { payerId } });
+  if (exact) return exact;
+  const short = shortPayerId(payerId);
+  return short === payerId
+    ? null
+    : prisma.conferenceApplication.findUnique({ where: { payerId: short } });
+}
+
 async function findApplicationForNotice(payerId: string, reqId: string) {
-  const byPayer = await prisma.conferenceApplication.findUnique({
-    where: { payerId },
-  });
+  const byPayer = await findApplicationByPayerId(payerId);
   if (byPayer) return byPayer;
   // A request started under the pre-October flow can still settle afterwards.
   return reqId
@@ -471,8 +499,11 @@ async function mailReceiptOnce(transId: string): Promise<void> {
 async function sendReceiptEmail(payment: GatewayPayment, app: ConferenceApplication) {
   const paise = rupeesToPaise(payment.amount);
   const receipt = {
-    payerId: payment.payerId,
+    payerId: app.payerId ?? payment.payerId,
     amountLabel: paise === null ? `₹${payment.amount}` : formatInrFromPaise(paise),
+    // The breakdown only when the payment is exactly fee + GST (not, say, a
+    // payment made before GST was added on top).
+    fee: paise === withGstPaise(app.paymentAmountPaise) ? feeLines(app.paymentAmountPaise) : undefined,
     transId: payment.transId,
     bankRef: payment.refNo ?? "",
     paidOn:

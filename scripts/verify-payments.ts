@@ -235,21 +235,23 @@ async function main() {
   const a = await seedApplication(edition, { name: "Asha Rao" });
   const link = await payLink(a.paymentToken);
   const minted = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: a.id } });
-  check("pay page mints a registration ID", /^AR_inv27_\d{6}$/.test(minted.payerId ?? ""), minted.payerId);
+  check("pay page mints a registration ID", /^AR_inv_\d{4}$/.test(minted.payerId ?? ""), minted.payerId);
   check("pay page shows the registration ID", !!link && link.html.includes(minted.payerId!));
   check("gateway link carries the reference sMsg fields", !!link &&
     link.fields.sAppId === APP_ID && link.fields.sUserId === minted.payerId &&
-    link.fields.sAmountDue === "5000" && link.fields.sCurrency === "INR" &&
-    /^[0-9a-f]{24}$/.test(link.fields.sReqId ?? "") && link.fields.sUserName === "Asha Rao", link?.fields);
+    link.fields.sAmountDue === "5900" && link.fields.sCurrency === "INR" &&
+    /^[0-9a-f]{10}$/.test(link.fields.sReqId ?? "") && link.fields.sUserName === "Asha Rao", link?.fields);
   const second = await payLink(a.paymentToken);
   check("each page load gets a fresh request id", second?.fields.sReqId !== link?.fields.sReqId);
   check("registration ID is stable across loads", second?.fields.sUserId === minted.payerId);
 
-  check("validator: VALID for the exact request", (await validate({ input_APPID: APP_ID, input_RequestID: "r1", input_UserID: minted.payerId!, input_Amount: "5000.00" })) === "VALID");
+  check("validator: VALID for the exact request", (await validate({ input_APPID: APP_ID, input_RequestID: "r1", input_UserID: minted.payerId!, input_Amount: "5900.00" })) === "VALID");
+  check("validator: INVALID for the fee without GST", (await validate({ input_APPID: APP_ID, input_RequestID: "r1", input_UserID: minted.payerId!, input_Amount: "5000" })) === "INVALID");
+  check("pay page itemises fee, 18% GST and total", !!link && link.html.includes("GST (18%)") && link.html.includes("₹900") && link.html.includes("₹5,900"));
   check("validator: INVALID for a different amount", (await validate({ input_APPID: APP_ID, input_RequestID: "r1", input_UserID: minted.payerId!, input_Amount: "50" })) === "INVALID");
-  check("validator: INVALID for another app id", (await validate({ input_APPID: "12345", input_RequestID: "r1", input_UserID: minted.payerId!, input_Amount: "5000" })) === "INVALID");
-  check("validator: INVALID for an unknown registration", (await validate({ input_APPID: APP_ID, input_RequestID: "r1", input_UserID: "ZZ_inv27_000000", input_Amount: "5000" })) === "INVALID");
-  check("validator: INVALID for a missing field", (await validate({ input_APPID: APP_ID, input_UserID: minted.payerId!, input_Amount: "5000" })) === "INVALID");
+  check("validator: INVALID for another app id", (await validate({ input_APPID: "12345", input_RequestID: "r1", input_UserID: minted.payerId!, input_Amount: "5900" })) === "INVALID");
+  check("validator: INVALID for an unknown registration", (await validate({ input_APPID: APP_ID, input_RequestID: "r1", input_UserID: "ZZ_inv_0000", input_Amount: "5900" })) === "INVALID");
+  check("validator: INVALID for a missing field", (await validate({ input_APPID: APP_ID, input_UserID: minted.payerId!, input_Amount: "5900" })) === "INVALID");
   const garbage = await fetch(`${APP_URL}/api/onlinepay/validate`, { method: "POST", body: "not json" });
   check("validator: non-JSON gets the JSON envelope, INVALID", ((await garbage.json()) as { Records: Record<string, string> }).Records.output_Validation_Status === "INVALID");
 
@@ -269,14 +271,14 @@ async function main() {
   check("payment: one email carries the ticket and the receipt", await emailAttempted("email.ticket_receipt", paid.transId));
   check("payment: no separate receipt email", !(await emailAttempted("email.payment_receipt", paid.transId)));
   check("payment: no separate ticket email", !(await emailAttempted("email.registration_confirmed", ticket!.id)));
-  check("validator: INVALID once paid (no double payment)", (await validate({ input_APPID: APP_ID, input_RequestID: "r2", input_UserID: minted.payerId!, input_Amount: "5000" })) === "INVALID");
+  check("validator: INVALID once paid (no double payment)", (await validate({ input_APPID: APP_ID, input_RequestID: "r2", input_UserID: minted.payerId!, input_Amount: "5900" })) === "INVALID");
   const paidPage = await (await get(`${APP_URL}/conference/pay/${a.paymentToken}`)).text();
   check("pay page shows the paid transaction and no gateway link", paidPage.includes(paid.transId) && !paidPage.includes("v2_accessPoint.jsp"));
   const receipt = await get(`${APP_URL}/conference/pay/${a.paymentToken}/receipt`);
   check("receipt page renders", receipt.status === 200 && (await receipt.text()).includes(paid.transId));
 
   // 2. A repeat notice never downgrades a confirmed success.
-  const downgrade = await get(noticeUrl({ requestType: "I", userId: minted.payerId!, reqId: "x", totalAmt: "5000", transId: paid.transId, status: "F", transDate: "11-10-2026", transTime: "12:05:00" }));
+  const downgrade = await get(noticeUrl({ requestType: "I", userId: minted.payerId!, reqId: "x", totalAmt: "5900", transId: paid.transId, status: "F", transDate: "11-10-2026", transTime: "12:05:00" }));
   const rowA2 = await prisma.gatewayPayment.findUniqueOrThrow({ where: { transId: paid.transId } });
   check("repeat F notice keeps the recorded success", downgrade.status === 303 && rowA2.imtStatus === "S" && rowA2.verified);
 
@@ -284,7 +286,7 @@ async function main() {
   const b = await seedApplication(edition, { name: "Bala K" });
   await payLink(b.paymentToken);
   const bId = (await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: b.id } })).payerId!;
-  const forged = await get(noticeUrl({ requestType: "I", userId: bId, reqId: "x", totalAmt: "5000", transId: `FORGED123${RUN}`, status: "S" }));
+  const forged = await get(noticeUrl({ requestType: "I", userId: bId, reqId: "x", totalAmt: "5900", transId: `FORGED123${RUN}`, status: "S" }));
   const rowB = await prisma.gatewayPayment.findUnique({ where: { transId: `FORGED123${RUN}` } });
   const appB = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: b.id } });
   check("forged success: ACK says FAIL, not verified, not paid",
@@ -294,7 +296,7 @@ async function main() {
   check("pay page warns about the unconfirmed transaction", bPage.includes(`FORGED123${RUN}`));
 
   // 4. Return URLs: /payack needs no token; the older /callback paths run the same handler.
-  const legacy = encodeURIComponent(`requestType=I&userId=${bId}&reqId=x&totalAmt=5000&transId=LEGACY${RUN}&status=S`);
+  const legacy = encodeURIComponent(`requestType=I&userId=${bId}&reqId=x&totalAmt=5900&transId=LEGACY${RUN}&status=S`);
   const viaCallback = await get(`${APP_URL}/api/onlinepay/callback?sMsg=${legacy}`);
   const viaCallbackAck = await get(`${APP_URL}/api/onlinepay/callback/ack?sMsg=${legacy}`);
   check("older /callback and /callback/ack URLs still record notices",
@@ -302,7 +304,7 @@ async function main() {
     (await prisma.gatewayPayment.count({ where: { transId: `LEGACY${RUN}` } })) === 1);
   check("a notice through any URL is still unconfirmed without ASC's ACK",
     (await prisma.gatewayPayment.findUniqueOrThrow({ where: { transId: `LEGACY${RUN}` } })).verified === false);
-  const stray = await get(`${CALLBACK}?sMsg=${encodeURIComponent(`requestType=I&userId=NOBODY_inv27_000000&reqId=x&totalAmt=5000&transId=STRAY${RUN}&status=S`)}`);
+  const stray = await get(`${CALLBACK}?sMsg=${encodeURIComponent(`requestType=I&userId=NOBODY_inv27_000000&reqId=x&totalAmt=5900&transId=STRAY${RUN}&status=S`)}`);
   const strayHtml = await stray.text();
   check("immediate notice for an unknown payer gets a readable page, not an error",
     stray.status === 200 && (stray.headers.get("content-type") ?? "").includes("text/html") && strayHtml.includes(`STRAY${RUN}`), stray.status);
@@ -316,7 +318,7 @@ async function main() {
   nextOutcome = "S";
   const cAfterFail = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: c.id } });
   check("failed payment: result=F, still unpaid", (failed.back.headers.get("location") ?? "").includes("result=F") && cAfterFail.paymentStatus === "UNPAID");
-  check("single-word name gets two initials", /^CH_inv27_\d{6}$/.test(cAfterFail.payerId ?? ""), cAfterFail.payerId);
+  check("single-word name gets two initials", /^CH_inv_\d{4}$/.test(cAfterFail.payerId ?? ""), cAfterFail.payerId);
   const retry = await payThroughMock(c.paymentToken);
   const cAfterRetry = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: c.id } });
   check("retry after failure succeeds", cAfterRetry.paymentStatus === "PAID" && cAfterRetry.paymentRef === retry.transId);
@@ -326,7 +328,7 @@ async function main() {
   await payLink(d.paymentToken);
   const dId = (await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: d.id } })).payerId!;
   known.add(`RECON001${RUN}`);
-  const recon = await get(noticeUrl({ requestType: "R", userId: dId, reqId: "rq", totalAmt: "5000", refNo: "B1", transId: `RECON001${RUN}`, reconDate: "12-10-2026", reconTime: "09:00:00" }));
+  const recon = await get(noticeUrl({ requestType: "R", userId: dId, reqId: "rq", totalAmt: "5900", refNo: "B1", transId: `RECON001${RUN}`, reconDate: "12-10-2026", reconTime: "09:00:00" }));
   const rowD = await prisma.gatewayPayment.findUniqueOrThrow({ where: { transId: `RECON001${RUN}` } });
   const appD = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: d.id } });
   check("reconciliation-only: OK, DIRECT_RECON row, verified, PAID",
@@ -337,7 +339,7 @@ async function main() {
   await payLink(d2.paymentToken);
   const d2Id = (await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: d2.id } })).payerId!;
   known.add(`SPLIT${RUN}`);
-  const split = await get(`${CALLBACK}?${new URLSearchParams({ requestType: "R", userId: d2Id, reqId: "rq", totalAmt: "5000", transId: `SPLIT${RUN}`, reconDate: "12-10-2026", reconTime: "11:00:00" })}`);
+  const split = await get(`${CALLBACK}?${new URLSearchParams({ requestType: "R", userId: d2Id, reqId: "rq", totalAmt: "5900", transId: `SPLIT${RUN}`, reconDate: "12-10-2026", reconTime: "11:00:00" })}`);
   const appD2 = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: d2.id } });
   check("direct recon with fields outside sMsg still settles the fee",
     split.status === 200 && appD2.paymentStatus === "PAID" && appD2.paymentRef === `SPLIT${RUN}`, { status: split.status, pay: appD2.paymentStatus });
@@ -352,7 +354,7 @@ async function main() {
   check("underpaid transaction: verified row but registration stays UNPAID", rowE.verified && appE.paymentStatus === "UNPAID");
 
   // 8. D notice is acknowledged and kept, and changes nothing.
-  const dNotice = await get(noticeUrl({ requestType: "D", userId: minted.payerId!, transId: paid.transId, totalAmt: "-5000" }));
+  const dNotice = await get(noticeUrl({ requestType: "D", userId: minted.payerId!, transId: paid.transId, totalAmt: "-5900" }));
   const rowA3 = await prisma.gatewayPayment.findUniqueOrThrow({ where: { transId: paid.transId } });
   const appA3 = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: a.id } });
   check("D notice: OK, stored, payment untouched", dNotice.status === 200 && !!rowA3.dRaw && rowA3.verified && appA3.paymentStatus === "PAID");
@@ -363,7 +365,7 @@ async function main() {
   const fId = (await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: f.id } })).payerId!;
   known.add(`FLAKY001${RUN}`);
   flaky.add(`FLAKY001${RUN}`);
-  await get(noticeUrl({ requestType: "I", userId: fId, reqId: "rq", totalAmt: "5000", transId: `FLAKY001${RUN}`, status: "S" }));
+  await get(noticeUrl({ requestType: "I", userId: fId, reqId: "rq", totalAmt: "5900", transId: `FLAKY001${RUN}`, status: "S" }));
   const rowF = await prisma.gatewayPayment.findUniqueOrThrow({ where: { transId: `FLAKY001${RUN}` } });
   check("ACK outage: success recorded but unconfirmed", rowF.imtStatus === "S" && !rowF.verified && rowF.imtAck === "Err HTTP 500", rowF.imtAck);
   const { reacknowledgePayment } = await import("@/lib/conference-payment");
@@ -377,13 +379,26 @@ async function main() {
   const gId = (await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: g.id } })).payerId!;
   known.add(`RACE001${RUN}`);
   const [ri, rr] = await Promise.all([
-    get(noticeUrl({ requestType: "I", userId: gId, reqId: "rq", totalAmt: "5000", transId: `RACE001${RUN}`, status: "S" })),
-    get(noticeUrl({ requestType: "R", userId: gId, reqId: "rq", totalAmt: "5000", transId: `RACE001${RUN}`, reconDate: "12-10-2026", reconTime: "10:00:00" })),
+    get(noticeUrl({ requestType: "I", userId: gId, reqId: "rq", totalAmt: "5900", transId: `RACE001${RUN}`, status: "S" })),
+    get(noticeUrl({ requestType: "R", userId: gId, reqId: "rq", totalAmt: "5900", transId: `RACE001${RUN}`, reconDate: "12-10-2026", reconTime: "10:00:00" })),
   ]);
   const rowG = await prisma.gatewayPayment.findUniqueOrThrow({ where: { transId: `RACE001${RUN}` } });
   const tickets = await prisma.registration.count({ where: { userId: g.userId!, editionId: edition.id } });
   check("racing I + R: one row, both recorded, verified, one ticket",
     ri.status === 303 && rr.status === 200 && rowG.imtStatus === "S" && rowG.reconStatus === "RECONCILED" && rowG.verified && tickets === 1, { imt: rowG.imtStatus, recon: rowG.reconStatus, tickets });
+
+  // 10b. Registration IDs minted before the short format still resolve.
+  const lg = await seedApplication(edition, { name: "Lata Gokhale" });
+  const lgDigits = String(1000 + (randomBytes(2).readUInt16BE(0) % 9000));
+  await prisma.conferenceApplication.update({ where: { id: lg.id }, data: { payerId: `LG_inv_${lgDigits}` } });
+  const lgOld = `LG_inv27_${lgDigits}42`;
+  check("validator: an old-format ID resolves to its short form",
+    (await validate({ input_APPID: APP_ID, input_RequestID: "lg", input_UserID: lgOld, input_Amount: "5900" })) === "VALID");
+  known.add(`OLDID${RUN}`);
+  const lgBack = await get(noticeUrl({ requestType: "I", userId: lgOld, reqId: "lg", totalAmt: "5900", transId: `OLDID${RUN}`, refNo: "REFLG", status: "S" }));
+  const lgAfter = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: lg.id } });
+  check("old-format ID in a payment notice settles the right registration",
+    lgAfter.paymentStatus === "PAID" && lgAfter.paymentRef === `OLDID${RUN}`, { status: lgBack.status, pay: lgAfter.paymentStatus });
 
   // 11. Not selected: no payment offered, validator refuses.
   const h = await seedApplication(edition, { name: "Hari", status: "RECEIVED" });
@@ -397,7 +412,7 @@ async function main() {
   const attApp = await prisma.conferenceApplication.findFirst({ where: { email: att.email } });
   check("attendee registration: fee due at once", attReg.status === 200 && attReg.body.feeDue === true && !!attReg.body.paymentToken, attReg);
   check("attendee registration: ATTENDEE / UNPAID, student fee, ID minted, no paper title",
-    attApp?.status === "ATTENDEE" && attApp.paymentStatus === "UNPAID" && attApp.paymentAmountPaise === 500_000 && /^IS_inv27_\d{6}$/.test(attApp.payerId ?? "") && attApp.paperTitle === null, attApp);
+    attApp?.status === "ATTENDEE" && attApp.paymentStatus === "UNPAID" && attApp.paymentAmountPaise === 500_000 && /^IS_inv_\d{4}$/.test(attApp.payerId ?? "") && attApp.paperTitle === null, attApp);
   await new Promise((r) => setTimeout(r, 1500)); // the proforma is sent in the background
   check("attendee registration: proforma invoice emailed", await emailAttempted("email.proforma_invoice", attApp!.id));
   check("attendee registration: no 'thank you for applying' copy instead", !(await emailAttempted("email.conference_application_copy", attApp!.id)));
@@ -427,7 +442,7 @@ async function main() {
   });
   const presSelected = await prisma.conferenceApplication.findUniqueOrThrow({ where: { id: presApp!.id } });
   check("shortlisting a presenter makes the fee due and mints the ID",
-    review.status === 200 && presSelected.paymentStatus === "UNPAID" && /^JV_inv27_\d{6}$/.test(presSelected.payerId ?? ""), presSelected);
+    review.status === 200 && presSelected.paymentStatus === "UNPAID" && /^JV_inv_\d{4}$/.test(presSelected.payerId ?? ""), presSelected);
   check("shortlisting emails the proforma invoice", await emailAttempted("email.proforma_invoice", presApp!.id));
   check("shortlisted presenter's pay page offers checkout", (await payLink(presSelected.paymentToken)) !== null);
 

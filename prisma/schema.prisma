@@ -530,7 +530,8 @@ model ConferenceApplication {
   paymentRef         String?
   paidAt             DateTime?
 
-  /// Registration ID sent to IIT Bombay OnlinePay as sUserId, e.g. AB_inv27_483920.
+  /// Registration ID sent to IIT Bombay OnlinePay as sUserId, e.g. AB_inv_4839
+  /// (AB_inv27_483920 before 13 Oct 2026; see shortPayerId).
   /// Minted the first time the payment page offers checkout.
   payerId         String?          @unique
   gatewayPayments GatewayPayment[]

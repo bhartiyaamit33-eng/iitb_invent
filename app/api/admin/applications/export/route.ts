@@ -9,6 +9,8 @@ import {
   phdYearLabel,
   postdocLabel,
   professionalLabel,
+  gstPaise,
+  withGstPaise,
 } from "@/lib/conference";
 import { abstractPdfPublicUrl, conferencePaymentUrl } from "@/lib/conference-server";
 import { proformaSendStats } from "@/lib/conference-payment";
@@ -45,6 +47,8 @@ export async function GET() {
     "status",
     "paymentStatus",
     "paymentAmountInr",
+    "gstInr",
+    "totalPayableInr",
     "paymentRef",
     "registrationId",
     "gatewayTransIds",
@@ -72,7 +76,9 @@ export async function GET() {
       a.createdAt.toISOString(),
       applicationStatusLabel(a.status),
       feeStatusLabel(a),
-      (a.paymentAmountPaise / 100).toFixed(0),
+      (a.paymentAmountPaise / 100).toFixed(2),
+      (gstPaise(a.paymentAmountPaise) / 100).toFixed(2),
+      (withGstPaise(a.paymentAmountPaise) / 100).toFixed(2),
       a.paymentRef ?? "",
       a.payerId ?? "",
       a.gatewayPayments.map((p) => p.transId).join(" "),

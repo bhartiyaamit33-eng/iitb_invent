@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
+  GST_PERCENT,
   PARTICIPATION_OPTIONS,
   PHD_YEAR_OPTIONS,
   POSTDOC_OPTIONS,
@@ -15,6 +16,7 @@ import {
   payableAtRegistration,
   type ParticipationCategory,
   type ProfessionalCategory,
+  withGstPaise,
 } from "@/lib/conference";
 import { LOGIN_TO_SUBMIT_HREF } from "@/lib/landing";
 import { withBasePath } from "@/lib/base-path";
@@ -71,9 +73,8 @@ export function SubmissionForm({
   ];
   const index = Math.max(0, steps.indexOf(current));
   const payNow = participation ? payableAtRegistration(participation) : false;
-  const feeLabel = professional
-    ? formatInrFromPaise(conferenceFeePaiseFor(professional))
-    : null;
+  const feePaise = professional ? conferenceFeePaiseFor(professional) : null;
+  const feeLabel = feePaise === null ? null : formatInrFromPaise(withGstPaise(feePaise));
 
   useEffect(() => {
     if (!moved.current) return;
@@ -459,7 +460,10 @@ export function SubmissionForm({
           <p className="site-fee-amount">
             {feeLabel ?? "—"}
             {professional ? (
-              <span> · {feeBandLabel(feeBandForProfessional(professional))} · inclusive of GST</span>
+              <span>
+                {" "}· {feeBandLabel(feeBandForProfessional(professional))} ·{" "}
+                {formatInrFromPaise(feePaise ?? 0)} + {GST_PERCENT}% GST
+              </span>
             ) : null}
           </p>
           <p className="lead">

@@ -4,6 +4,7 @@ import {
   applicationStatusLabel,
   formatInrFromPaise,
   statusRequiresPayment,
+  withGstPaise,
 } from "@/lib/conference";
 import { conferencePayPath } from "@/lib/conference-server";
 import { sendRegistrationConfirmed } from "@/lib/email/transactions";
@@ -228,7 +229,7 @@ export async function attachConferenceToUser(user: {
       await notifyUser({
         userId: user.id,
         title: "Pay your conference registration fee",
-        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(app.paymentAmountPaise)}. Open IIT Bombay Online Pay from this notice. You do not need to apply again.`,
+        body: `${applicationStatusLabel(app.status)} · ${formatInrFromPaise(withGstPaise(app.paymentAmountPaise))} including GST. Open IIT Bombay Online Pay from this notice. You do not need to apply again.`,
         href,
       });
     }

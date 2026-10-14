@@ -4,8 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import {
+  GST_PERCENT,
   applicationStatusLabel,
   formatInrFromPaise,
+  gstPaise,
   professionalLabel,
 } from "@/lib/conference";
 import {
@@ -94,7 +96,7 @@ export default async function ConferencePayPage({
   let payerId = application.payerId;
   let payUrl: string | null = null;
   if (due && cfg) {
-    payerId = await ensurePayerId(application, application.edition.year);
+    payerId = await ensurePayerId(application);
     payUrl = paymentRequestUrl(cfg, {
       payerId,
       payerName: application.name,
@@ -165,7 +167,8 @@ export default async function ConferencePayPage({
             {paid ? (
               <>
                 <Row label="Amount paid">
-                  {formatInrFromPaise(rupeesToPaise(paid.amount) ?? amountPaise)} · inclusive of GST
+                  {formatInrFromPaise(rupeesToPaise(paid.amount) ?? amountPaise)}
+                  {rupeesToPaise(paid.amount) === amountPaise ? ` · includes ${GST_PERCENT}% GST` : ""}
                 </Row>
                 <Row label="Transaction ID">{paid.transId}</Row>
                 {paid.refNo ? <Row label="Bank reference">{paid.refNo}</Row> : null}
@@ -201,9 +204,11 @@ export default async function ConferencePayPage({
             <Row label="Category">
               {professionalLabel(application.professionalCategory, application.professionalOther)}
             </Row>
+            <Row label="Registration fee">{formatInrFromPaise(application.paymentAmountPaise)}</Row>
+            <Row label={`GST (${GST_PERCENT}%)`}>{formatInrFromPaise(gstPaise(application.paymentAmountPaise))}</Row>
             <Row label="Amount payable">
-              <span className="font-display text-2xl text-teal-deep">{amount}</span>
-              <span className="block text-right text-xs text-ink-soft">Inclusive of GST</span>
+              <span className="font-display text-2xl text-teal-deep" data-testid="amount-payable">{amount}</span>
+              <span className="block text-right text-xs text-ink-soft">Including {GST_PERCENT}% GST</span>
             </Row>
           </dl>
           {payUrl ? (

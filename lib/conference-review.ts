@@ -4,10 +4,12 @@ import type {
 } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
+  GST_PERCENT,
   applicationStatusLabel,
   conferenceFeePaiseFor,
   formatInrFromPaise,
   statusRequiresPayment,
+  withGstPaise,
 } from "@/lib/conference";
 import {
   conferencePayPath,
@@ -84,7 +86,7 @@ export async function reviewConferenceApplication(opts: {
     ? conferencePaymentUrl(after.paymentToken)
     : undefined;
   const statusLabel = applicationStatusLabel(after.status);
-  const amountLabel = formatInrFromPaise(after.paymentAmountPaise);
+  const amountLabel = `${formatInrFromPaise(withGstPaise(after.paymentAmountPaise))} (including ${GST_PERCENT}% GST)`;
   const message = opts.message.trim();
 
   // Dashboard notice always — email is best-effort and may fail (SES, keys).

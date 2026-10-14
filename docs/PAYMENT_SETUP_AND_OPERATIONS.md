@@ -26,9 +26,11 @@ iitbinvent.com → Log in / create account → /register (multi-step form)
   **Complete registration**.
 - **Fees** (GST inclusive, by professional category, `lib/conference.ts`):
   students / PhD / postdoc ₹5,000; faculty and other ₹10,000; industry ₹20,000.
-- **Registration ID** (`sUserId` at the gateway): `<initials>_inv27_<6 digits>`,
-  minted once per registration and printed on the proforma, the payment page,
-  the receipt and the admin desk.
+- **Registration ID** (`sUserId` at the gateway): `<initials>_inv_<4 digits>`
+  (e.g. `RS_inv_7976`), minted once per registration and printed on the
+  proforma, the payment page, the receipt and the admin desk. IDs minted before
+  13 Oct 2026 had the form `RS_inv27_797664` and were shortened to their first
+  four digits; the validator and payment notices still accept the old form.
 - **Proforma invoice**: emailed when the fee becomes due, with the registration
   ID, category, amount and a personal *Pay registration fee* link. Selecting a
   presenter in the admin desk sends it, carrying the organisers' message.

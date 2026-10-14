@@ -275,7 +275,7 @@ export async function processConferenceApplication(
   const feeDue = payNow && !lockFee;
   if (feeDue) {
     // Mint the registration ID now so the email and the pay page agree on it.
-    await ensurePayerId(saved, edition.year);
+    await ensurePayerId(saved);
     void sendProformaInvoice(saved.id);
   } else {
     void sendConferenceApplicationCopy({

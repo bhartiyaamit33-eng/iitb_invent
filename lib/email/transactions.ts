@@ -12,6 +12,7 @@ import {
   proformaInvoiceEmail,
   profileConfirmationEmail,
   registrationConfirmedEmail,
+  type FeeLines,
   type PaymentReceiptDetails,
 } from "@/emails/templates";
 
@@ -231,6 +232,7 @@ export async function sendPaymentReceipt(opts: {
   name: string;
   payerId: string;
   amountLabel: string;
+  fee?: FeeLines;
   transId: string;
   bankRef: string;
   paidOn: string;
@@ -259,7 +261,7 @@ export async function sendProformaInvoiceEmail(opts: {
   payerId: string;
   category: string;
   participation: string;
-  amountLabel: string;
+  fee: FeeLines;
   payUrl: string;
   message?: string;
   userId?: string | null;

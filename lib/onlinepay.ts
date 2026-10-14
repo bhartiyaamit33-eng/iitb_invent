@@ -98,9 +98,9 @@ export function formatRupees(paise: number): string {
   return paise % 100 === 0 ? String(paise / 100) : (paise / 100).toFixed(2);
 }
 
-/** Fresh per page load and never stored, as in the reference flow; echoed back by the gateway. */
+/** Fresh per page load and never stored, as in the reference flow; echoed back by the gateway. 10 hex characters. */
 export function newRequestId(): string {
-  return randomBytes(12).toString("hex");
+  return randomBytes(5).toString("hex");
 }
 
 export function paymentRequestUrl(

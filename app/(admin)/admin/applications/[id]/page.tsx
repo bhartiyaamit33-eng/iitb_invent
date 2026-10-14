@@ -15,6 +15,7 @@ import {
   postdocLabel,
   professionalLabel,
   reviewFeePaise,
+  GST_PERCENT,
 } from "@/lib/conference";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import { gatewayStatusLabel, proformaSendStats } from "@/lib/conference-payment";
@@ -81,7 +82,7 @@ export default async function AdminApplicationDetailPage({
     ["Seeking post-doctoral roles", postdocLabel(application.seekingPostdoc)],
     [
       "Fee band",
-      `${feeBandLabel(feeBandForProfessional(application.professionalCategory))}, ${formatInrFromPaise(conferenceFeePaiseFor(application.professionalCategory))}`,
+      `${feeBandLabel(feeBandForProfessional(application.professionalCategory))}, ${formatInrFromPaise(conferenceFeePaiseFor(application.professionalCategory))} + ${GST_PERCENT}% GST`,
     ],
     [
       "Registration ID",

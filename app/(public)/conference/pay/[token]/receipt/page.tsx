@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { formatInrFromPaise } from "@/lib/conference";
+import { GST_PERCENT, formatInrFromPaise, gstPaise, withGstPaise } from "@/lib/conference";
 import { rupeesToPaise } from "@/lib/onlinepay";
 import { noIndex } from "@/lib/seo";
 
@@ -25,13 +25,22 @@ export default async function Receipt({
   if (!app || app.paymentStatus !== "PAID") notFound();
   const payment = app.gatewayPayments[0];
   const paise = payment ? rupeesToPaise(payment.amount) : null;
+  // Fee and GST lines when the payment is exactly fee + GST.
+  const fee = app.paymentAmountPaise;
+  const itemised = paise === withGstPaise(fee);
 
   const rows: [string, string][] = [
     ["Name", app.name],
     ["Email", app.email],
     ["Registration ID", app.payerId ?? "—"],
     ["Event", app.edition.name],
-    ["Amount paid", `${formatInrFromPaise(paise ?? app.paymentAmountPaise)} (inclusive of GST)`],
+    ...(itemised
+      ? ([
+          ["Registration fee", formatInrFromPaise(fee)],
+          [`GST (${GST_PERCENT}%)`, formatInrFromPaise(gstPaise(fee))],
+        ] as [string, string][])
+      : []),
+    ["Amount paid", formatInrFromPaise(paise ?? withGstPaise(fee))],
     ...(payment
       ? ([
           ["Transaction ID", payment.transId],
@@ -54,8 +63,9 @@ export default async function Receipt({
         ))}
       </dl>
       <p className="rounded bg-paper p-4 text-sm">
-        Paid through IIT Bombay OnlinePay. This is a payment receipt, not a GST
-        tax invoice.
+        Paid through IIT Bombay OnlinePay.
+        {itemised ? ` The amount paid includes ${GST_PERCENT}% GST on the registration fee.` : ""} This
+        is a payment receipt, not a GST tax invoice.
       </p>
       <p className="mt-6 text-sm print:hidden">
         Use your browser’s Print → Save as PDF to keep a copy.

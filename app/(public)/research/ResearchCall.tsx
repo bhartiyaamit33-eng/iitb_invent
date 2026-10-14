@@ -13,8 +13,11 @@ import {
 } from "@/lib/conference-cfp";
 import {
   CONFERENCE_FEE_PAISE,
+  GST_PERCENT,
   feeBandLabel,
   formatInrFromPaise,
+  gstPaise,
+  withGstPaise,
   type ConferenceFeeBand,
 } from "@/lib/conference";
 import { SUBMIT_HREF, submitHrefFor, type TimelineItem } from "@/lib/landing";
@@ -251,13 +254,15 @@ export function ResearchCall({
             After organisers select you for a paper, a poster, or as an attendee, you
             receive the registration fee for your category and a personal IIT Bombay
             Online Pay link. The amount is the same whether you present or attend.
-            All registration fees include GST; do not add GST again.
+            Registration fees are exclusive of GST; {GST_PERCENT}% GST is added when you pay.
           </p>
           <table className="site-table" data-testid="conference-fee-bands">
             <thead>
               <tr>
                 <th scope="col">Category</th>
                 <th scope="col">Registration fee</th>
+                <th scope="col">GST ({GST_PERCENT}%)</th>
+                <th scope="col">Total payable</th>
               </tr>
             </thead>
             <tbody>
@@ -265,6 +270,8 @@ export function ResearchCall({
                 <tr key={band}>
                   <td>{band === "student" ? "UG / PG / PhD students" : feeBandLabel(band)}</td>
                   <td>{formatInrFromPaise(CONFERENCE_FEE_PAISE[band])}</td>
+                  <td>{formatInrFromPaise(gstPaise(CONFERENCE_FEE_PAISE[band]))}</td>
+                  <td>{formatInrFromPaise(withGstPaise(CONFERENCE_FEE_PAISE[band]))}</td>
                 </tr>
               ))}
             </tbody>

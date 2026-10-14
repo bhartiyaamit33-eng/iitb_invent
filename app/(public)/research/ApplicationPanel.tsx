@@ -7,6 +7,7 @@ import {
   type ApplicationPaymentStatus,
   type ApplicationStatus,
   type ParticipationCategory,
+  withGstPaise,
 } from "@/lib/conference";
 import {
   applicationFeeDue,
@@ -104,7 +105,7 @@ export function ApplicationPanel({
       {showFee ? (
         <p style={{ margin: "8px 0 0", fontSize: 15, color: "var(--ink-soft)" }}>
           Fee: {paymentStatusLabel(application.paymentStatus)}
-          {` · ${formatInrFromPaise(application.paymentAmountPaise)}`}
+          {` · ${formatInrFromPaise(withGstPaise(application.paymentAmountPaise))} including GST`}
         </p>
       ) : null}
 
@@ -119,7 +120,7 @@ export function ApplicationPanel({
             className="site-btn"
             data-testid="conference-pay-cta"
           >
-            Pay {formatInrFromPaise(application.paymentAmountPaise)}
+            Pay {formatInrFromPaise(withGstPaise(application.paymentAmountPaise))}
           </Link>
         </div>
       ) : application.paymentStatus === "PAID" ||
