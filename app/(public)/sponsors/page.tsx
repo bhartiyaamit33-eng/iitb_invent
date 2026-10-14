@@ -11,7 +11,6 @@ import {
 } from "@/lib/seo";
 import {
   EVENT_DATES,
-  HOSTS,
   PARTNERS,
   PARTNER_JOURNALS,
   PARTNER_JOURNALS_NOTE,
@@ -144,14 +143,6 @@ export default function SponsorsPage() {
               Call for papers
             </Link>
           </div>
-        </div>
-      </section>
-
-      <section className="site-section is-rule" aria-labelledby="hosts-heading">
-        <div className="site-shell">
-          <p className="site-kicker">Hosts</p>
-          <h2 id="hosts-heading">Organised by</h2>
-          <LogoWall orgs={HOSTS} testId="sponsors-page-hosts" />
         </div>
       </section>
 
