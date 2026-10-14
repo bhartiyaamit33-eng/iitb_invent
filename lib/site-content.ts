@@ -518,15 +518,15 @@ export const PIPELINE = [
   "MARKET",
 ] as const;
 
-export const VENTURES = [
-  "Khatabook",
-  "Manastu Space",
-  "NeoDocs",
-  "Rephrase.ai",
-  "Proactive For Her",
-  "Ushva CleanTech",
-  "CareMother",
-] as const;
+export const VENTURES: { name: string; href: string; shot?: string }[] = [
+  { name: "Khatabook", href: "https://khatabook.com/", shot: "/assets/ventures/khatabook.jpg" },
+  { name: "Manastu Space", href: "https://manastuspace.com/", shot: "/assets/ventures/manastu.jpg" },
+  { name: "NeoDocs", href: "https://www.neodocs.in/", shot: "/assets/ventures/neodocs.jpg" },
+  { name: "Rephrase.ai", href: "https://www.rephrase.ai/" },
+  { name: "Proactive For Her", href: "https://proactiveforher.com/", shot: "/assets/ventures/proactive.jpg" },
+  { name: "Ushva CleanTech", href: "https://www.ushva.com/", shot: "/assets/ventures/ushva.jpg" },
+  { name: "CareMother", href: "https://caremother.in/", shot: "/assets/ventures/caremother.jpg" },
+];
 
 export type PastSpeaker = {
   name: string;

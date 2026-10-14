@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/site/PageHero";
@@ -137,9 +138,49 @@ export default function AboutPage() {
           </p>
           <ul className="venture-list" style={{ color: "var(--paper)" }}>
             {VENTURES.map((venture) => (
-              <li key={venture}>{venture}</li>
+              <li key={venture.name}>
+                <a href={venture.href} target="_blank" rel="noopener noreferrer">
+                  {venture.name}
+                </a>
+              </li>
             ))}
           </ul>
+          <div className="venture-reel" aria-label="Venture websites" data-testid="venture-reel">
+            <div className="venture-reel-track">
+              {[false, true].map((hidden) => (
+                <ul
+                  className="venture-reel-set"
+                  key={hidden ? "dup" : "src"}
+                  aria-hidden={hidden || undefined}
+                >
+                  {VENTURES.map((venture) => (
+                    <li key={`${hidden ? "d" : "s"}-${venture.name}`}>
+                      <a
+                        href={venture.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        tabIndex={hidden ? -1 : undefined}
+                      >
+                        {venture.shot ? (
+                          <Image
+                            src={venture.shot}
+                            alt=""
+                            width={960}
+                            height={600}
+                          />
+                        ) : (
+                          <span className="venture-reel-fallback" aria-hidden="true">
+                            {venture.name}
+                          </span>
+                        )}
+                        <span>{venture.name}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
