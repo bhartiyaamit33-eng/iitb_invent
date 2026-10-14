@@ -9,6 +9,7 @@ import {
   participationLabel,
   professionalLabel,
   reviewFeePaise,
+  withGstPaise,
 } from "@/lib/conference";
 import { applicationFeeDue } from "@/lib/conference-access";
 import { proformaResendQueue, proformaSendStats } from "@/lib/conference-payment";
@@ -268,9 +269,9 @@ export default async function AdminApplicationsPage({
                         <td>
                           <Badge tone={paymentTone(a.paymentStatus)}>{feeStatusLabel(a)}</Badge>
                           {a.paymentStatus !== "NOT_REQUIRED" ? (
-                            <span className="adm-sub">{formatInrFromPaise(a.paymentAmountPaise)}</span>
+                            <span className="adm-sub">{formatInrFromPaise(withGstPaise(a.paymentAmountPaise))} with GST</span>
                           ) : feeStatusLabel(a) === "Due once selected" ? (
-                            <span className="adm-sub">{formatInrFromPaise(reviewFeePaise(a))} if selected</span>
+                            <span className="adm-sub">{formatInrFromPaise(withGstPaise(reviewFeePaise(a)))} with GST if selected</span>
                           ) : null}
                           {proforma ? (
                             <span

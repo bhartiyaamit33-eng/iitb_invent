@@ -9,6 +9,8 @@ import {
   formatInrFromPaise,
   statusRequiresPayment,
   type ApplicationStatus,
+  GST_PERCENT,
+  withGstPaise,
 } from "@/lib/conference";
 import { BASE_PATH, withBasePath } from "@/lib/base-path";
 
@@ -40,7 +42,7 @@ export function ApplicationReviewDialog({
   const [notice, setNotice] = useState<string | null>(null);
 
   const selected = statusRequiresPayment(status);
-  const amount = useMemo(() => formatInrFromPaise(feePaise), [feePaise]);
+  const amount = useMemo(() => `${formatInrFromPaise(withGstPaise(feePaise))} (including ${GST_PERCENT}% GST)`, [feePaise]);
   const unchanged = status === currentStatus;
 
   function chooseStatus(next: ApplicationStatus) {
@@ -210,7 +212,7 @@ export function ApplicationReviewDialog({
             </p>
             {selected ? (
               <p className="adm-notice" style={{ margin: "14px 0 0" }}>
-                {name} will owe {amount}, exclusive of GST. Their proforma invoice with the payment link
+                {name} will owe {amount}. Their proforma invoice with the payment link
                 goes to their email, and the same link appears on their dashboard.
               </p>
             ) : null}

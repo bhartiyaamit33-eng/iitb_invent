@@ -437,7 +437,7 @@ export function conferenceStatusUpdateEmail(opts: {
      ${paragraphs(opts.message)}
      ${
        opts.includePayment
-         ? `${details([{ label: "Registration fee", value: `${opts.amountLabel} (exclusive of GST)`, strong: true }])}
+         ? `${details([{ label: "Total", value: opts.amountLabel, strong: true }])}
             ${button(opts.paymentUrl, "Pay registration fee")}`
          : button(opts.dashboardUrl, "Open your dashboard", false)
      }`,
@@ -447,19 +447,31 @@ export function conferenceStatusUpdateEmail(opts: {
 ${opts.message}
 
 Status: ${opts.statusLabel}
-${opts.includePayment ? `Registration fee: ${opts.amountLabel} (exclusive of GST)\nPay: ${opts.paymentUrl}\n` : `Dashboard: ${opts.dashboardUrl}\n`}
+${opts.includePayment ? `Total: ${opts.amountLabel}\nPay: ${opts.paymentUrl}\n` : `Dashboard: ${opts.dashboardUrl}\n`}
 ${textFooter()}`;
   return { subject, html, text };
 }
 
 // ─── Payment ─────────────────────────────────────────────────────────────────
 
+/** Subtotal (the registration fee), GST and total, already formatted (see feeLines). */
+export type FeeLines = { fee: string; gst: string; gstPercent: number; total: string };
+
+/** Subtotal, then GST, then total. */
+function feeRows(fee: FeeLines) {
+  return [
+    { label: "Subtotal", value: fee.fee },
+    { label: `GST (${fee.gstPercent}%)`, value: fee.gst },
+    { label: "Total", value: fee.total, strong: true },
+  ];
+}
+
 export function proformaInvoiceEmail(opts: {
   name: string;
   payerId: string;
   category: string;
   participation: string;
-  amountLabel: string;
+  fee: FeeLines;
   payUrl: string;
   /** Organiser's note when a shortlisted presenter is asked to pay. */
   message?: string;
@@ -471,17 +483,17 @@ export function proformaInvoiceEmail(opts: {
     { label: "Category", value: opts.category },
     { label: "Participation", value: opts.participation },
     { label: "Particulars", value: `Registration fee, ${EMAIL_BRAND} (${EVENT_DATES})` },
-    { label: "Amount payable", value: opts.amountLabel, strong: true },
+    ...feeRows(opts.fee),
   ];
   const html = layout(
-    `Registration fee ${opts.amountLabel}. Pay to confirm your place.`,
+    `Total ${opts.fee.total}, including ${opts.fee.gstPercent}% GST. Pay to confirm your place.`,
     `${label("Payment pending", "warn")}
      ${heading("Proforma invoice")}
      ${para(`Hi ${escapeHtml(opts.name)},`)}
      ${opts.message?.trim() ? paragraphs(opts.message) : ""}
      ${para(`Thank you for registering for ${escapeHtml(EMAIL_BRAND)}, ${escapeHtml(CONFERENCE_PHRASE)}. Pay the registration fee below to confirm your place.`)}
      ${details(rows)}
-     ${para("The amount is exclusive of GST.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
+     ${para(`Fees are exclusive of GST; ${opts.fee.gstPercent}% GST is added to the subtotal.`, `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
      ${button(opts.payUrl, "Pay registration fee")}
      ${note(
        "Before you pay",
@@ -495,7 +507,8 @@ export function proformaInvoiceEmail(opts: {
 ${opts.message?.trim() ? `\n${opts.message.trim()}\n` : ""}
 Thank you for registering for ${EMAIL_BRAND}. This is your proforma invoice. Pay the registration fee to confirm your place.
 
-${rows.map((r) => `${r.label}: ${r.value}`).join("\n")} (exclusive of GST)
+${rows.map((r) => `${r.label}: ${r.value}`).join("\n")}
+(fees are exclusive of GST; ${opts.fee.gstPercent}% GST is added to the subtotal)
 
 Pay the registration fee: ${opts.payUrl}
 
@@ -512,6 +525,8 @@ export function paymentReceiptEmail(opts: {
   name: string;
   payerId: string;
   amountLabel: string;
+  /** Fee and GST breakdown; omitted when the amount paid does not match it. */
+  fee?: FeeLines;
   transId: string;
   bankRef: string;
   paidOn: string;
@@ -521,7 +536,7 @@ export function paymentReceiptEmail(opts: {
   const rows = [
     { label: "Received from", value: opts.name },
     { label: "Registration ID", value: opts.payerId },
-    { label: "Amount paid", value: opts.amountLabel, strong: true },
+    ...(opts.fee ? feeRows(opts.fee) : [{ label: "Amount paid", value: opts.amountLabel, strong: true }]),
     { label: "Transaction ID", value: opts.transId },
     { label: "Bank reference", value: blank(opts.bankRef) },
     { label: "Paid on", value: blank(opts.paidOn) },
@@ -533,7 +548,7 @@ export function paymentReceiptEmail(opts: {
      ${para(`Hi ${escapeHtml(opts.name)},`)}
      ${para(`We have received your registration fee for ${escapeHtml(EMAIL_BRAND)} through IIT Bombay OnlinePay. Keep this email as your payment receipt.`)}
      ${details(rows)}
-     ${para("The amount is exclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
+     ${para(receiptNote(opts.fee), `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}
      ${button(`${siteOrigin()}/dashboard`, "View your ticket", false)}
      ${para(`Your payment details are also on your ${link(opts.payUrl, "payment page")}.`, "font-size:14px;")}`,
   );
@@ -542,7 +557,7 @@ export function paymentReceiptEmail(opts: {
 We have received your registration fee for ${EMAIL_BRAND} through IIT Bombay OnlinePay. Keep this email as your payment receipt.
 
 ${rows.map((r) => `${r.label}: ${r.value}`).join("\n")}
-(exclusive of GST; this is a payment receipt, not a tax invoice)
+(${receiptNote(opts.fee)})
 
 Your ticket: ${siteOrigin()}/dashboard
 Payment page: ${opts.payUrl}
@@ -551,9 +566,17 @@ ${textFooter()}`;
   return { subject, html, text };
 }
 
+function receiptNote(fee?: FeeLines): string {
+  return fee
+    ? `The total includes ${fee.gstPercent}% GST on the subtotal. This is a payment receipt, not a tax invoice.`
+    : "This is a payment receipt, not a tax invoice.";
+}
+
 export type PaymentReceiptDetails = {
   payerId: string;
   amountLabel: string;
+  /** Fee and GST breakdown; omitted when the amount paid does not match it. */
+  fee?: FeeLines;
   transId: string;
   bankRef: string;
   paidOn: string;
@@ -583,7 +606,7 @@ export function registrationConfirmedEmail(opts: {
     ? [
         { label: "Received from", value: opts.name },
         { label: "Registration ID", value: pay.payerId },
-        { label: "Amount paid", value: pay.amountLabel, strong: true },
+        ...(pay.fee ? feeRows(pay.fee) : [{ label: "Amount paid", value: pay.amountLabel, strong: true }]),
         { label: "Transaction ID", value: pay.transId },
         { label: "Bank reference", value: blank(pay.bankRef) },
         { label: "Paid on", value: blank(pay.paidOn) },
@@ -603,7 +626,7 @@ export function registrationConfirmedEmail(opts: {
          ? `${subheading("Payment receipt")}
      ${para("We received your registration fee through IIT Bombay OnlinePay. Keep this email as your payment receipt.", "font-size:14px;")}
      ${details(paymentRows)}
-     ${para("The amount is exclusive of GST. This is a payment receipt, not a tax invoice.", `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}`
+     ${para(receiptNote(pay.fee), `margin-top:-12px;font-size:12.5px;color:${C.mute};`)}`
          : ""
      }
      ${button(`${siteOrigin()}/dashboard`, "View your ticket", false)}
@@ -622,7 +645,7 @@ PAYMENT RECEIPT
 We received your registration fee through IIT Bombay OnlinePay. Keep this email as your payment receipt.
 
 ${paymentRows.map((r) => `${r.label}: ${r.value}`).join("\n")}
-(exclusive of GST; this is a payment receipt, not a tax invoice)
+(${receiptNote(pay.fee)})
 `
     : ""
 }
