@@ -370,7 +370,7 @@ export const ORGANIZING_COMMITTEE: CommitteeMember[] = [
   {
     name: "Prof. Milind Atrey",
     role: "DD-ART, IIT Bombay",
-    photo: "/assets/team/milind-atrey.png",
+    photo: "/assets/team/milind-atrey.jpg",
     focus: "42% 20%",
   },
   {
@@ -583,7 +583,7 @@ export const PAST_SPEAKERS: PastSpeaker[] = [
     name: "Prof. Milind Atrey",
     title: "Deputy Director (ART)",
     organisation: "IIT Bombay",
-    photo: "/assets/team/milind-atrey.png",
+    photo: "/assets/team/milind-atrey.jpg",
     focus: "42% 20%",
   },
   {
