@@ -852,10 +852,47 @@ html[data-site] body {
   color: var(--paper);
 }
 
+.site-section.is-navy.is-ecosystem {
+  padding: 22px 0;
+}
+
+.ecosystem-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px 40px;
+}
+
 .site h2.ecosystem-title {
-  font-size: clamp(1.45rem, 2.6vw, 2.2rem);
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.55vw, 1.35rem);
   line-height: 1.15;
   white-space: nowrap;
+}
+
+.site h2.ecosystem-title .site-kicker {
+  margin: 0;
+  font-size: 11px;
+}
+
+.is-ecosystem .stats-grid {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  gap: 22px 32px;
+  margin-top: 0;
+}
+
+.is-ecosystem .stat-block b {
+  font-size: clamp(1.15rem, 1.7vw, 1.45rem);
+}
+
+.is-ecosystem .stat-block span {
+  margin-top: 4px;
+  font-size: 10px;
 }
 
 .site-section.is-navy .lead {
@@ -2563,6 +2600,20 @@ html[data-site] body {
 }
 
 @media (max-width: 860px) {
+  .ecosystem-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .is-ecosystem .stats-grid {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .site h2.ecosystem-title {
+    white-space: normal;
+  }
+
   .awards-list,
   .quote-split,
   .days-grid,

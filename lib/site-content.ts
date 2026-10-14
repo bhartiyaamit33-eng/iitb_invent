@@ -362,16 +362,16 @@ export type CommitteeMember = {
  */
 export const ORGANIZING_COMMITTEE: CommitteeMember[] = [
   {
-    name: "Prof. Trupti Mishra",
-    role: "Head, DSSE",
-    photo: "/assets/team/trupti-mishra.jpg",
-    focus: "center 16%",
-  },
-  {
     name: "Prof. Milind Atrey",
     role: "DD-ART, IIT Bombay",
     photo: "/assets/team/milind-atrey.jpg",
     focus: "42% 20%",
+  },
+  {
+    name: "Prof. Trupti Mishra",
+    role: "Head, DSSE",
+    photo: "/assets/team/trupti-mishra.jpg",
+    focus: "center 16%",
   },
   {
     name: "Prof. Ramesh Kuruva",
@@ -573,18 +573,18 @@ export const PAST_SPEAKERS: PastSpeaker[] = [
     focus: "center 30%",
   },
   {
-    name: "Prof. Trupti Mishra",
-    title: "Head, DSSE",
-    organisation: "IIT Bombay",
-    photo: "/assets/team/trupti-mishra.jpg",
-    focus: "center 16%",
-  },
-  {
     name: "Prof. Milind Atrey",
     title: "Deputy Director (ART)",
     organisation: "IIT Bombay",
     photo: "/assets/team/milind-atrey.jpg",
     focus: "42% 20%",
+  },
+  {
+    name: "Prof. Trupti Mishra",
+    title: "Head, DSSE",
+    organisation: "IIT Bombay",
+    photo: "/assets/team/trupti-mishra.jpg",
+    focus: "center 16%",
   },
   {
     name: "Prof. Poyni Bhatt",

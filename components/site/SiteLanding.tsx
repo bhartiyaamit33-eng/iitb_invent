@@ -114,13 +114,13 @@ export function SiteLanding({
       </section>
 
       {/* ── DSSE scoreboard ─────────────────────────────────────────── */}
-      <section className="site-section is-navy">
+      <section className="site-section is-navy is-ecosystem">
         <NavyGeometry />
-        <div className="site-shell" style={{ position: "relative" }}>
-          <p className="site-kicker is-green" style={{ fontSize: 12 }}>
-            DSSE
-          </p>
-          <h2 className="ecosystem-title">The ecosystem behind the conference</h2>
+        <div className="site-shell ecosystem-row" style={{ position: "relative" }}>
+          <h2 className="ecosystem-title">
+            <span className="site-kicker is-green">DSSE</span>
+            The ecosystem behind the conference
+          </h2>
           <div className="stats-grid" data-testid="landing-stats">
             {stats.map((stat) => (
               <div className="stat-block" key={`${stat.value}-${stat.label}`}>
