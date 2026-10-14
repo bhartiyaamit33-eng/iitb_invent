@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { LogoReel, LogoWall } from "./LogoWall";
 import { PhotoLanes } from "./PhotoLanes";
-import { SitePhoto } from "./SitePhoto";
 import { InventMark } from "./InventMark";
 import { CtaOrbits, IntersectField, LineIcon, NavyGeometry } from "./decor";
 import { submitHrefFor, type LandingStat } from "@/lib/landing";
@@ -121,11 +120,7 @@ export function SiteLanding({
           <p className="site-kicker is-green" style={{ fontSize: 12 }}>
             DSSE
           </p>
-          <h2>
-            The ecosystem
-            <br />
-            behind the conference
-          </h2>
+          <h2 className="ecosystem-title">The ecosystem behind the conference</h2>
           <div className="stats-grid" data-testid="landing-stats">
             {stats.map((stat) => (
               <div className="stat-block" key={`${stat.value}-${stat.label}`}>
@@ -134,15 +129,6 @@ export function SiteLanding({
               </div>
             ))}
           </div>
-          <SitePhoto
-            className="is-wide"
-            src="/assets/dsse-building.jpg"
-            alt="The Desai Sethi School of Entrepreneurship building at IIT Bombay"
-            caption="DSSE Building · IIT Bombay"
-            width={1600}
-            height={900}
-            testId="landing-dsse-building"
-          />
         </div>
       </section>
 

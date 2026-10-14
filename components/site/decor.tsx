@@ -19,7 +19,7 @@ export function IntersectField() {
           <path d="M 72 744 H 112 M 72 744 V 704" />
           <path d="M 1368 744 H 1328 M 1368 744 V 704" />
         </g>
-        <line className="intersect-axis draw" x1="40" y1="400" x2="1400" y2="400" />
+        <line className="intersect-axis" x1="0" y1="400" x2="1440" y2="400" />
         <circle className="intersect-orbit is-practice" cx="560" cy="400" r="300" />
         <circle className="intersect-orbit is-research" cx="880" cy="400" r="300" />
         <circle className="intersect-orbit is-inner" cx="720" cy="400" r="188" />
@@ -39,7 +39,6 @@ export function NavyGeometry() {
         <line x1="0" y1="300" x2="1200" y2="300" stroke="#145BEF" strokeWidth="0.6" opacity="0.5" />
         <circle cx="200" cy="140" r="90" fill="none" stroke="#69B33F" strokeWidth="0.6" opacity="0.45" />
         <circle cx="980" cy="420" r="140" fill="none" stroke="#145BEF" strokeWidth="0.6" opacity="0.35" />
-        <line x1="600" y1="0" x2="600" y2="600" stroke="#69B33F" strokeWidth="0.5" opacity="0.35" />
       </svg>
     </div>
   );

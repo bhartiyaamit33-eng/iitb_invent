@@ -26,7 +26,7 @@ export const SITE_NAV: NavItem[] = [
   { href: "/about", label: "About" },
   { href: "/research", label: "Call for papers" },
   { href: "/workshop", label: "Workshops & events" },
-  { href: "/faq", label: "FAQs" },
+  { href: "/speakers", label: "Speakers" },
   { href: "/team", label: "Team" },
   { href: "/contact", label: "Contact" },
 ];

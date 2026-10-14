@@ -574,7 +574,18 @@ html[data-site] body {
 .intersect-grid { opacity: 0.28; }
 .intersect-axis {
   stroke: rgba(20, 91, 239, 0.28);
-  stroke-width: 0.8;
+  stroke-width: 1;
+  stroke-dasharray: none;
+}
+
+/* The axis sits on the vertical centre. Knock it out behind the side labels
+   so the stroke stays one line and does not run through the words. */
+.hero-pole b {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  padding: 0.45em 0.2em;
+  background: var(--paper);
 }
 .intersect-orbit {
   fill: none;
@@ -839,6 +850,12 @@ html[data-site] body {
 .site-section.is-navy h2,
 .site-section.is-navy .lead {
   color: var(--paper);
+}
+
+.site h2.ecosystem-title {
+  font-size: clamp(1.45rem, 2.6vw, 2.2rem);
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 .site-section.is-navy .lead {
@@ -2640,6 +2657,7 @@ html[data-site] body {
 
 @media (max-width: 720px) {
   .hero-pole { display: none; }
+  .site h2.ecosystem-title { white-space: normal; }
   .site-brand-dsse { max-width: 88px; height: 16px; }
   .site-brand-iitb { height: 24px; }
   .site-table th,
