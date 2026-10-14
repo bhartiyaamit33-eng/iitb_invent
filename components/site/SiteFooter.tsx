@@ -4,8 +4,8 @@ import { InventMark } from "./InventMark";
 import {
   EVENT_DATES,
   EVENT_VENUE,
+  FOOTER_COLUMNS,
   FOOTER_POLICY_NAV,
-  SITE_NAV,
   SUPPORT_EMAIL,
   VENUE_LINES,
 } from "@/lib/site-content";
@@ -58,16 +58,18 @@ export function SiteFooter() {
           </p>
         </div>
 
-        <nav aria-label="Footer">
-          <p className="site-kicker">Navigate</p>
-          <ul>
-            {SITE_NAV.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href}>{item.label}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {FOOTER_COLUMNS.map((column) => (
+          <nav key={column.title} aria-label={column.title}>
+            <p className="site-kicker">{column.title}</p>
+            <ul>
+              {column.items.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
 
         <div>
           <p className="site-kicker">Write</p>

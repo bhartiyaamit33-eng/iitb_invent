@@ -15,6 +15,7 @@ import {
   HOME_BRIDGE,
   HOME_QUOTE,
   PARTNERS,
+  TRAVEL_GRANT,
 } from "@/lib/site-content";
 
 export function SiteLanding({
@@ -168,8 +169,30 @@ export function SiteLanding({
       {/* ── Partners ────────────────────────────────────────────────── */}
       <section className="site-section is-rule" id="sponsors" data-testid="landing-sponsors">
         <div className="site-shell">
-          <h2 className="sr-only">Partners</h2>
+          <h2>Our Partners</h2>
           <LogoWall orgs={PARTNERS} testId="partner-wall" logosOnly />
+          <div className="partner-aside">
+            <article data-testid="landing-joe">
+              <p className="site-kicker is-green">Publication partner</p>
+              <h3>The Journal of Entrepreneurship</h3>
+              <p>
+                JoE is the publication partner for IITB INV.ENT 2027. Authors of the
+                best selected entrepreneurship papers may submit. Papers are reviewed
+                as regular submissions, and publication is not assured.
+              </p>
+              <Link href="/sponsors#journals">How submission works →</Link>
+            </article>
+            <article data-testid="landing-travel-grant">
+              <p className="site-kicker is-blue">Travel support</p>
+              <h3>Up to {TRAVEL_GRANT.amount} to present</h3>
+              <p>
+                {TRAVEL_GRANT.partner} offers travel support for eligible full-time PhD
+                and FPM scholars at recognised Indian institutions. The grant is
+                awarded by application, not with conference acceptance.
+              </p>
+              <Link href="/travel#grant">Grant details →</Link>
+            </article>
+          </div>
         </div>
       </section>
 

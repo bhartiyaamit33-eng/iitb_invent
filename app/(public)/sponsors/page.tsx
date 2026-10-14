@@ -24,7 +24,7 @@ import {
 export const metadata = pageMetadata({
   title: "Sponsors & partners",
   description:
-    "Sponsors and partners of IITB INV.ENT 2027 at IIT Bombay, hosted by the Desai Sethi School of Entrepreneurship. Partners include ServiceSetu Academics, SINE, and the National Entrepreneurship Network.",
+    "Sponsors and partners of IITB INV.ENT 2027 at IIT Bombay. The Journal of Entrepreneurship (JoE) is the publication partner: selected authors may submit, and publication is not assured.",
   path: "/sponsors",
 });
 
@@ -104,8 +104,17 @@ export default function SponsorsPage() {
             <ul className="journal-list" data-testid="sponsors-page-journals">
               {PARTNER_JOURNALS.map((journal) => (
                 <li key={journal.id}>
-                  <b>{journal.name}</b>
-                  <span>{journal.note}</span>
+                  <div className="journal-head">
+                    <b>
+                      <a href={journal.href} target="_blank" rel="noopener noreferrer">
+                        {journal.name}
+                      </a>
+                    </b>
+                    <span>
+                      {journal.shortName} · {journal.role}
+                    </span>
+                  </div>
+                  <p>{journal.summary}</p>
                 </li>
               ))}
             </ul>
@@ -117,10 +126,22 @@ export default function SponsorsPage() {
               Partner journal titles — announced with the acceptance list
             </p>
           )}
-          <div className="site-callout">{PARTNER_JOURNALS_NOTE}</div>
+          <div className="site-callout" data-testid="journal-disclaimer">
+            {PARTNER_JOURNALS_NOTE}
+          </div>
           <div className="cta-row" style={{ justifyContent: "flex-start" }}>
-            <Link className="site-btn site-btn-ghost" href="/research#journals">
-              How forwarding works →
+            {PARTNER_JOURNALS[0] ? (
+              <a
+                className="site-btn site-btn-ghost"
+                href={PARTNER_JOURNALS[0].href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {PARTNER_JOURNALS[0].shortName} →
+              </a>
+            ) : null}
+            <Link className="site-btn site-btn-ghost" href="/research">
+              Call for papers
             </Link>
           </div>
         </div>

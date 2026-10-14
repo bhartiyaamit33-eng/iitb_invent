@@ -27,7 +27,7 @@ export const revalidate = 0;
 export const metadata: Metadata = pageMetadata({
   title: "Research · Call for Papers",
   description:
-    "Research papers, poster presentations, and pre-conference workshops at IITB INV.ENT, IIT Bombay, 30-31 January 2027. Abstract deadline 15 October 2026. Top submissions are forwarded to partner journals.",
+    "Research papers, poster presentations, and pre-conference workshops at IITB INV.ENT, IIT Bombay, 30-31 January 2027. Abstract deadline 15 October 2026. Authors of the best selected papers may submit to The Journal of Entrepreneurship. Publication is not assured.",
   path: "/research",
 });
 

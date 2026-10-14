@@ -31,12 +31,35 @@ export const SITE_NAV: NavItem[] = [
   { href: "/contact", label: "Contact" },
 ];
 
+/** Public pages, grouped for the footer. Header stays shorter. */
+export const FOOTER_COLUMNS: { title: string; items: NavItem[] }[] = [
+  {
+    title: "Conference",
+    items: [
+      { href: "/", label: "Home" },
+      { href: "/about", label: "About" },
+      { href: "/research", label: "Call for papers" },
+      { href: "/programme", label: "Programme" },
+      { href: "/speakers", label: "Speakers" },
+      { href: "/workshop", label: "Workshops & events" },
+      { href: "/team", label: "Team" },
+    ],
+  },
+  {
+    title: "Plan",
+    items: [
+      { href: "/travel", label: "Travel" },
+      { href: "/accommodation", label: "Accommodation" },
+      { href: "/sponsors", label: "Sponsors & partners" },
+      { href: "/faq", label: "FAQs" },
+      { href: "/contact", label: "Contact" },
+      { href: "/login", label: "Login" },
+      { href: "/signup", label: "Create account" },
+    ],
+  },
+];
+
 export const FOOTER_POLICY_NAV: NavItem[] = [
-  { href: "/research", label: "Call for papers" },
-  { href: "/workshop", label: "Workshop" },
-  { href: "/sponsors", label: "Sponsors" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/travel", label: "Travel" },
   { href: "/privacy", label: "Privacy" },
   { href: "/code-of-conduct", label: "Code of conduct" },
 ];
@@ -134,21 +157,45 @@ export const SPONSOR_PITCH =
 export type PartnerJournal = {
   id: string;
   name: string;
-  note: string;
+  shortName: string;
+  href: string;
+  role: string;
+  summary: string;
 };
 
 /**
- * Named journals are announced with the acceptance list. Until organisers
- * confirm the titles this stays empty and the page shows the commitment
- * without inventing a masthead.
+ * Publication partners only. Copy must say selected authors may submit, and
+ * must not imply the conference or the journal has promised publication.
  */
-export const PARTNER_JOURNALS: PartnerJournal[] = [];
+export const PARTNER_JOURNALS: PartnerJournal[] = [
+  {
+    id: "joe",
+    name: "The Journal of Entrepreneurship",
+    shortName: "JoE",
+    href: "https://journals.sagepub.com/home/joe",
+    role: "Publication partner",
+    summary:
+      "Authors of the best selected papers on entrepreneurship may submit to JoE. Those papers are read as regular submissions.",
+  },
+];
 
 export const PARTNER_JOURNALS_PROMISE =
-  "The strongest submissions do not stop at the conference. Papers the review panel rates highest are forwarded to our partner journals for editorial review, giving authors a route to publication beyond the two days on campus.";
+  "The Journal of Entrepreneurship (JoE) is the publication partner for IITB INV.ENT 2027. The partnership invites selected authors to submit. It does not place a paper in the journal.";
 
 export const PARTNER_JOURNALS_NOTE =
-  "Partner journal titles are announced alongside the acceptance list. Forwarding is a recommendation to the journal, not a guarantee of publication — each title runs its own editorial and peer-review process, and authors keep full control over whether they submit.";
+  "Selected papers are eligible for submission to JoE. They are not assured of publication. Each paper is treated as a regular submission and goes through JoE’s standard review. The decision rests solely with the journal’s editorial team.";
+
+/** ServiceSetu Research Travel Grant. Awarded by ServiceSetu, not by the conference. */
+export const TRAVEL_GRANT = {
+  name: "ServiceSetu Research Travel Grant",
+  partner: "ServiceSetu Academics",
+  href: "https://www.servicesetu.org/travel-grant",
+  amount: "₹15,000",
+  who: "Full-time PhD and FPM scholars enrolled at a recognised Indian institution",
+  purpose: "Travel support to present research at IITB INV.ENT",
+  caveat:
+    "Apply separately on the ServiceSetu site. Every request is reviewed, and approval rests with ServiceSetu Academics. Acceptance at the conference does not award the grant.",
+} as const;
 
 /* ── Research tracks ─────────────────────────────────────────────────────── */
 
@@ -171,7 +218,7 @@ export const RESEARCH_TRACKS: ResearchTrack[] = [
       "Extended abstract up to 1,500 words",
       "Presented in a chaired research session",
       "Eligible for the Best Paper award",
-      "Top-rated papers forwarded to partner journals",
+      "Best selected papers may be submitted to JoE",
     ],
   },
   {
@@ -211,9 +258,9 @@ export const RESEARCH_HIGHLIGHTS = [
   },
   {
     id: "journals",
-    title: "Chance to publish with partner journals",
+    title: "Eligible to submit to JoE",
     body:
-      "Highest-rated submissions are forwarded to our partner journals for editorial review.",
+      "Authors of the best selected entrepreneurship papers may submit to The Journal of Entrepreneurship. Publication is not assured.",
   },
   {
     id: "network",

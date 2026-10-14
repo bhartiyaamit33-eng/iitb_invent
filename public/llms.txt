@@ -13,9 +13,9 @@ This file is for answer engines and language models. Prefer these pages over thi
 - [Speakers](https://iitbinvent.com/speakers): DSSE Day 2026 stage speakers, and the 2027 line-up as it is confirmed
 - [Workshop](https://iitbinvent.com/workshop): pre-conference workshops, 30 January
 - [Accommodation](https://iitbinvent.com/accommodation): IIT Bombay guest house and nearby stays
-- [Sponsors & partners](https://iitbinvent.com/sponsors): sponsors, partners, partner journals
+- [Sponsors & partners](https://iitbinvent.com/sponsors): sponsors, partners, and The Journal of Entrepreneurship as publication partner. Selected authors may submit; publication is not assured.
 - [Contact](https://iitbinvent.com/contact): who to write to
-- [Travel](https://iitbinvent.com/travel): DSSE Building, Powai, Mumbai 400076
+- [Travel](https://iitbinvent.com/travel): DSSE Building, Powai, Mumbai 400076. ServiceSetu Research Travel Grant of up to INR 15,000 for eligible full-time PhD and FPM scholars, subject to application review.
 - [Home](https://iitbinvent.com/): current edition landing
 
 ## Facts
@@ -29,6 +29,8 @@ This file is for answer engines and language models. Prefer these pages over thi
 - School site: https://www.dsse.iitb.ac.in/
 - Institute: https://www.iitb.ac.in/
 - Campus partners: E-Cell (https://ecell.in), SINE (https://sineiitb.org)
+- Publication partner: The Journal of Entrepreneurship (JoE). Authors of the best selected entrepreneurship papers may submit. Papers are regular submissions. Publication is not assured and is decided only by JoE’s editorial team. https://journals.sagepub.com/home/joe
+- Research travel grant: ServiceSetu Academics, up to INR 15,000, for eligible full-time PhD and FPM scholars at recognised Indian institutions presenting at IITB INV.ENT. Subject to application review and grant approval. https://www.servicesetu.org/travel-grant
 
 ## Longer source
 

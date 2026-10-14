@@ -24,6 +24,7 @@ import {
   EVENT_DATES,
   RESEARCH_HIGHLIGHTS,
   RESEARCH_TRACKS,
+  TRAVEL_GRANT,
 } from "@/lib/site-content";
 
 const TRACK_ICONS: Record<string, LineIconName> = {
@@ -78,7 +79,7 @@ export function ResearchCall({
           <h2 id="highlights-heading">
             Present your research.
             <br />
-            Then publish it.
+            Submit the best of it.
           </h2>
           <div className="room-grid">
             {RESEARCH_HIGHLIGHTS.map((item, i) => (
@@ -267,12 +268,20 @@ export function ResearchCall({
           <p className="site-kicker">Before you travel</p>
           <h2 id="stay-heading">Stay at IIT Bombay</h2>
           <p className="lead">{ACCOMMODATION_INTRO}</p>
+          <p className="lead">
+            Eligible full-time PhD and FPM scholars can also apply to the{" "}
+            {TRAVEL_GRANT.name} for up to {TRAVEL_GRANT.amount} toward presenting.
+            The grant is reviewed separately from conference acceptance.
+          </p>
           <div className="cta-row" style={{ justifyContent: "flex-start" }}>
             <Link className="site-btn site-btn-ghost" href="/accommodation">
               Accommodation →
             </Link>
             <Link className="site-btn site-btn-ghost" href="/travel">
               Getting to campus
+            </Link>
+            <Link className="site-btn site-btn-ghost" href="/travel#grant">
+              Travel grant
             </Link>
           </div>
         </div>

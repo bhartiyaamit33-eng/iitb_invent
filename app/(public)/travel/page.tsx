@@ -12,11 +12,11 @@ import {
   pageMetadata,
   VENUE,
 } from "@/lib/seo";
-import { ANANTHA_HOTEL, EVENT_DATES } from "@/lib/site-content";
+import { ANANTHA_HOTEL, EVENT_DATES, TRAVEL_GRANT } from "@/lib/site-content";
 
 export const metadata = pageMetadata({
   title: "Travel to IITB INV.ENT at IIT Bombay",
-  description: `Directions to IITB INV.ENT at the ${VENUE.formatted}, and partner rates at Anantha Hotels in Bhandup West for off-campus stays. 30-31 January 2027.`,
+  description: `Directions to IITB INV.ENT at the ${VENUE.formatted}, partner rates at Anantha Hotels, and the ServiceSetu Research Travel Grant of up to ₹15,000 for eligible PhD and FPM scholars. 30-31 January 2027.`,
   path: "/travel",
 });
 
@@ -52,6 +52,9 @@ export default async function TravelPage() {
           >
             Open in maps →
           </a>
+          <Link className="site-btn site-btn-ghost" href="#grant">
+            Travel grant
+          </Link>
           <Link className="site-btn site-btn-ghost" href="/accommodation">
             Accommodation
           </Link>
@@ -61,6 +64,49 @@ export default async function TravelPage() {
       <section className="site-section is-tight">
         <div className="site-shell">
           <SiteProse text={body} />
+        </div>
+      </section>
+
+      <section
+        className="site-section is-rule"
+        id="grant"
+        aria-labelledby="grant-heading"
+        data-testid="travel-grant"
+      >
+        <div className="site-shell">
+          <p className="site-kicker is-green">Research travel grant</p>
+          <h2 id="grant-heading">{TRAVEL_GRANT.name}</h2>
+          <p className="lead">
+            Scholars presenting at IITB INV.ENT may apply to {TRAVEL_GRANT.partner} for
+            travel support of up to {TRAVEL_GRANT.amount}. The conference is presented by
+            the Desai Sethi School of Entrepreneurship on {EVENT_DATES}.
+          </p>
+          <ul className="grant-facts">
+            <li>
+              <b>Up to {TRAVEL_GRANT.amount}</b>
+              <span>Toward travel, to present accepted research.</span>
+            </li>
+            <li>
+              <b>PhD and FPM</b>
+              <span>{TRAVEL_GRANT.who}.</span>
+            </li>
+            <li>
+              <b>By application</b>
+              <span>Reviewed by ServiceSetu. Not awarded with acceptance.</span>
+            </li>
+          </ul>
+          <div className="site-callout">{TRAVEL_GRANT.caveat}</div>
+          <div className="cta-row" style={{ justifyContent: "flex-start" }}>
+            <a
+              className="site-btn"
+              href={TRAVEL_GRANT.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="travel-grant-apply"
+            >
+              Apply for the grant →
+            </a>
+          </div>
         </div>
       </section>
 
