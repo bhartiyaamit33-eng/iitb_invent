@@ -5,6 +5,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import sharp from "sharp";
+import { contentDisposition } from "@/lib/content-disposition";
 
 const region = process.env.AWS_REGION || "ap-south-1";
 const bucket = process.env.S3_BUCKET || "";
@@ -141,7 +142,6 @@ export async function uploadAbstractPdf(opts: {
   if (opts.bytes.length > 10 * 1024 * 1024) {
     throw new Error("PDF must be under 10 MB");
   }
-  const safeName = opts.fileName.replace(/["\r\n]/g, "");
   const key = `${prefix}abstracts/${opts.applicationId}-${Date.now()}.pdf`;
   try {
     await client.send(
@@ -150,7 +150,7 @@ export async function uploadAbstractPdf(opts: {
         Key: key,
         Body: opts.bytes,
         ContentType: "application/pdf",
-        ContentDisposition: `attachment; filename="${safeName}"`,
+        ContentDisposition: contentDisposition(opts.fileName),
         CacheControl: "private, max-age=0, no-store",
       }),
       { abortSignal: AbortSignal.timeout(15_000) },

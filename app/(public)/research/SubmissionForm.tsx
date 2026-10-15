@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   GST_PERCENT,
@@ -56,6 +56,7 @@ export function SubmissionForm({
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const abstractFileRef = useRef<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [participation, setParticipation] = useState<ParticipationCategory | "">("");
@@ -168,18 +169,33 @@ export function SubmissionForm({
       }
     }
 
+    const form = formRef.current;
+    if (!form) return;
     setError(null);
     setPending(true);
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS);
-    try {
-      const res = await fetch(withBasePath("/api/conference/apply"), {
+    const body = new FormData(form);
+    const picked = abstractFileRef.current;
+    if (picked && picked.size > 0) {
+      body.set("abstract", picked, picked.name);
+    }
+    const send = () =>
+      fetch(withBasePath("/api/conference/apply"), {
         method: "POST",
-        body: new FormData(event.currentTarget),
+        body,
         credentials: "same-origin",
         headers: { Accept: "application/json" },
         signal: controller.signal,
       });
+    try {
+      let res: Response;
+      try {
+        res = await send();
+      } catch (err) {
+        if (controller.signal.aborted) throw err;
+        res = await send();
+      }
       const data = (await res.json().catch(() => null)) as
         | { ok?: boolean; error?: string; paymentToken?: string; feeDue?: boolean }
         | null;
@@ -200,7 +216,7 @@ export function SubmissionForm({
       setError(
         controller.signal.aborted
           ? "Registration timed out. Please try again, or email support@iitbinvent.com if this continues."
-          : "Could not reach the server. Please try again.",
+          : "Could not reach the server. Please try again. If you already completed this form, check your dashboard before submitting once more.",
       );
     } finally {
       window.clearTimeout(timer);
@@ -208,8 +224,16 @@ export function SubmissionForm({
     }
   }
 
-  /** Every step stays mounted (so typed values and the chosen PDF survive); only one shows. */
-  const stepProps = (step: StepKey) => ({ "data-step": step, hidden: current !== step });
+  /**
+   * Every step stays mounted so typed values and the chosen PDF survive.
+   * Inactive steps are clipped, not `hidden`: a `hidden` file input drops the
+   * PDF on some phones, and the submit then fails as a network error.
+   */
+  const stepProps = (step: StepKey) => ({
+    "data-step": step,
+    className: current === step ? "site-step" : "site-step site-step-off",
+    "aria-hidden": current === step ? undefined : true,
+  });
 
   return (
     <form
@@ -441,6 +465,9 @@ export function SubmissionForm({
               required
               className="site-file"
               data-testid="field-abstract"
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                abstractFileRef.current = event.target.files?.[0] ?? null;
+              }}
             />
             <span className="hint">PDF only. Max 10 MB.</span>
           </label>

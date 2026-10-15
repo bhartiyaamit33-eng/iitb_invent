@@ -2134,6 +2134,26 @@ html[data-site] body {
   background: rgba(105, 179, 63, 0.05);
 }
 
+.site-form-steps {
+  position: relative;
+}
+
+/* Keep inactive steps in the form so the PDF stays attached, without display:none. */
+.site-step-off {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .site-form-foot {
   padding: 26px 0 0;
 }
