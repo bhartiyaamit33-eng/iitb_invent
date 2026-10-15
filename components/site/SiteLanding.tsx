@@ -4,7 +4,8 @@ import { LogoReel, LogoWall } from "./LogoWall";
 import { PhotoLanes } from "./PhotoLanes";
 import { InventMark } from "./InventMark";
 import { CtaOrbits, IntersectField, LineIcon, NavyGeometry } from "./decor";
-import { submitHrefFor, type LandingStat } from "@/lib/landing";
+import { ABSTRACT_EXTENSION_NOTE, submitHrefFor, type LandingStat } from "@/lib/landing";
+import { DeadlineNotice } from "./DeadlineNotice";
 import {
   AUDIENCE,
   EVENT_DATES_SHORT,
@@ -61,6 +62,9 @@ export function SiteLanding({
             <span className="accent">{HERO_HEADLINE_ACCENT}</span>
           </h1>
           <p className="hero-meta">{EVENT_DATES_SHORT.replace("JAN", "JANUARY")}</p>
+          <p className="hero-deadline" data-testid="deadline-extension">
+            {ABSTRACT_EXTENSION_NOTE}
+          </p>
           <div className="cta-row" data-testid="cta-hero">
             <Link className="site-btn" href={registerHref} data-testid="hero-register">
               Register
@@ -181,6 +185,8 @@ export function SiteLanding({
           </div>
         </div>
       </section>
+
+      <DeadlineNotice />
 
       {/* ── Final CTA ────────────────────────────────────────────────── */}
       <section className="site-section is-blue" id="register">

@@ -9,7 +9,7 @@ import {
   findMyConferenceApplication,
 } from "@/lib/conference-access";
 import { conferencePayPath } from "@/lib/conference-server";
-import { LOGIN_TO_SUBMIT_HREF } from "@/lib/landing";
+import { ABSTRACT_DEADLINE_LONG, LOGIN_TO_SUBMIT_HREF } from "@/lib/landing";
 import { EVENT_DATES } from "@/lib/site-content";
 import { noIndex, pageMetadata } from "@/lib/seo";
 import { ApplicationPanel } from "../research/ApplicationPanel";
@@ -60,7 +60,11 @@ export default async function RegisterPage({
         kicker="Registration"
         title="Complete registration"
         lede="Attendees pay when they register and receive a proforma invoice by email. Paper, poster and other presenters add an extended abstract (PDF, max 10 MB) and pay once organisers shortlist it."
-        meta={[`Conference · ${EVENT_DATES}`, "Venue · IIT Bombay, Mumbai", "Abstract deadline · 15 October 2026"]}
+        meta={[
+          `Conference · ${EVENT_DATES}`,
+          "Venue · IIT Bombay, Mumbai",
+          `Abstract deadline · ${ABSTRACT_DEADLINE_LONG} (midnight)`,
+        ]}
       />
       <section className="site-section is-tight" id="submit" data-testid="conference-submit">
         <div className="site-shell" style={{ maxWidth: 820 }}>

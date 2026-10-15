@@ -20,7 +20,12 @@ import {
   withGstPaise,
   type ConferenceFeeBand,
 } from "@/lib/conference";
-import { SUBMIT_HREF, submitHrefFor, type TimelineItem } from "@/lib/landing";
+import {
+  ABSTRACT_DEADLINE_LONG,
+  SUBMIT_HREF,
+  submitHrefFor,
+  type TimelineItem,
+} from "@/lib/landing";
 import {
   ACCOMMODATION_INTRO,
   CONFERENCE_EMAIL,
@@ -60,7 +65,7 @@ export function ResearchCall({
         meta={[
           `Conference · ${EVENT_DATES}`,
           "Venue · IIT Bombay, Mumbai",
-          "Abstract deadline · 15 October 2026",
+          `Abstract deadline · ${ABSTRACT_DEADLINE_LONG} (midnight)`,
         ]}
       >
         <div className="cta-row" style={{ justifyContent: "flex-start" }}>
@@ -347,7 +352,7 @@ export function ResearchCall({
             Contribute.
           </h2>
           <p className="lead">
-            Abstracts are due by 15 October 2026. For any queries, write to{" "}
+            Abstracts are due by {ABSTRACT_DEADLINE_LONG} (midnight). For any queries, write to{" "}
             <a href={`mailto:${CONFERENCE_EMAIL}`} style={{ color: "#fff" }}>
               {CONFERENCE_EMAIL}
             </a>
