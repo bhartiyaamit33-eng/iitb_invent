@@ -140,7 +140,7 @@ export default async function ContactPage() {
                 </li>
                 <li>
                   <Link href="/team" style={{ color: "var(--blue)" }}>
-                    Organising committee, PhD students and the DSSE team
+                    Organising committee, technical committee, PhD students and the DSSE team
                   </Link>
                 </li>
                 <li>

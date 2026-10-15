@@ -11,14 +11,50 @@ import {
   organizationJsonLd,
   pageMetadata,
 } from "@/lib/seo";
-import { EVENT_DATES, ORGANIZING_COMMITTEE } from "@/lib/site-content";
+import {
+  EVENT_DATES,
+  ORGANIZING_COMMITTEE,
+  TECHNICAL_COMMITTEE,
+  type CommitteeMember,
+} from "@/lib/site-content";
 
 export const metadata = pageMetadata({
   title: "Team",
   description:
-    "The organising committee, PhD students and DSSE team behind IITB INV.ENT at the Desai Sethi School of Entrepreneurship, IIT Bombay.",
+    "The organising committee, technical committee, PhD students and DSSE team behind IITB INV.ENT at the Desai Sethi School of Entrepreneurship, IIT Bombay.",
   path: "/team",
 });
+
+function CommitteeList({
+  members,
+  testId,
+}: {
+  members: readonly CommitteeMember[];
+  testId: string;
+}) {
+  return (
+    <ul className="team-grid" data-testid={testId}>
+      {members.map((member) => (
+        <li key={member.name}>
+          <article className="team-card" data-testid="committee-card">
+            <div className="team-photo">
+              <Image
+                src={member.photo}
+                alt=""
+                fill
+                sizes="(max-width: 900px) 50vw, 360px"
+                className="team-portrait"
+                style={{ objectPosition: member.focus }}
+              />
+            </div>
+            <h3>{member.name}</h3>
+            <p>{member.role}</p>
+          </article>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function TeamPage() {
   return (
@@ -49,26 +85,14 @@ export default function TeamPage() {
         <div className="site-shell">
           <p className="site-kicker">IIT Bombay · DSSE</p>
           <h2 id="committee-heading">Organising committee</h2>
-          <ul className="team-grid" data-testid="organizing-committee">
-            {ORGANIZING_COMMITTEE.map((member) => (
-              <li key={member.name}>
-                <article className="team-card" data-testid="committee-card">
-                  <div className="team-photo">
-                    <Image
-                      src={member.photo}
-                      alt=""
-                      fill
-                      sizes="(max-width: 900px) 50vw, 360px"
-                      className="team-portrait"
-                      style={{ objectPosition: member.focus }}
-                    />
-                  </div>
-                  <h3>{member.name}</h3>
-                  <p>{member.role}</p>
-                </article>
-              </li>
-            ))}
-          </ul>
+          <CommitteeList members={ORGANIZING_COMMITTEE} testId="organizing-committee" />
+        </div>
+      </section>
+
+      <section className="site-section is-rule" aria-labelledby="technical-committee-heading">
+        <div className="site-shell">
+          <h2 id="technical-committee-heading">Technical committee</h2>
+          <CommitteeList members={TECHNICAL_COMMITTEE} testId="technical-committee" />
         </div>
       </section>
 

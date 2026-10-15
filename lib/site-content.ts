@@ -417,6 +417,74 @@ export const ORGANIZING_COMMITTEE: CommitteeMember[] = [
   },
 ];
 
+/**
+ * Technical committee, in the order they should appear.
+ * Portraits are the public faculty photos on som.iitb.ac.in, hss.iitb.ac.in,
+ * me.iitb.ac.in, homepages.iitb.ac.in and iimb.ac.in.
+ */
+export const TECHNICAL_COMMITTEE: CommitteeMember[] = [
+  {
+    name: "Prof. Sawan Rathi",
+    role: "IIT Bombay",
+    photo: "/assets/team/sawan-rathi.jpg",
+    focus: "center 22%",
+  },
+  {
+    name: "Prof. Rohan Chinchwadkar",
+    role: "IIT Bombay",
+    photo: "/assets/team/rohan-chinchwadkar.jpg",
+    focus: "center 30%",
+  },
+  {
+    name: "Prof. Snehal Awate",
+    role: "IIT Bombay",
+    photo: "/assets/team/snehal-awate.jpg",
+    focus: "center 18%",
+  },
+  {
+    name: "Prof. Kirankumar Momaya",
+    role: "IIT Bombay",
+    photo: "/assets/team/kirankumar-momaya.jpg",
+    focus: "58% 28%",
+  },
+  {
+    name: "Prof. Lina Sonne Vyas",
+    role: "IIT Bombay",
+    photo: "/assets/team/lina-sonne-vyas.jpg",
+    focus: "center 20%",
+  },
+  {
+    name: "Prof. Pooja Purang",
+    role: "IIT Bombay",
+    photo: "/assets/team/pooja-purang.jpg",
+    focus: "center 18%",
+  },
+  {
+    name: "Prof. Rajendra Sonar",
+    role: "IIT Bombay",
+    photo: "/assets/team/rajendra-sonar.jpg",
+    focus: "center 28%",
+  },
+  {
+    name: "Prof. Amber Shrivastava",
+    role: "IIT Bombay",
+    photo: "/assets/team/amber-shrivastava.jpg",
+    focus: "center 62%",
+  },
+  {
+    name: "Prof. Suresh Bhagavatula",
+    role: "IIM Bangalore",
+    photo: "/assets/team/suresh-bhagavatula.jpg",
+    focus: "center 30%",
+  },
+  {
+    name: "Prof. Sayan Sarkar",
+    role: "IIM Bangalore",
+    photo: "/assets/team/sayan-sarkar.jpg",
+    focus: "center 22%",
+  },
+];
+
 /* ── Contact ─────────────────────────────────────────────────────────────── */
 
 export const CONTACT_ROUTES = [
