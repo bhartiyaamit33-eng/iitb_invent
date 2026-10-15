@@ -52,6 +52,13 @@ export function registerHrefFor(signedIn: boolean) {
   return submitHrefFor(signedIn);
 }
 
+/** Extended abstract window. Midnight is the end of this calendar day, IST. */
+export const ABSTRACT_DEADLINE_SHORT = "18 Oct 2026";
+export const ABSTRACT_DEADLINE_LONG = "18 October 2026";
+export const ABSTRACT_DEADLINE_AT = "2026-10-18";
+export const ABSTRACT_EXTENSION_NOTE =
+  "The abstract submission deadline has been extended till 18 Oct 2026 (midnight).";
+
 /**
  * The four milestones from the Call for Papers artwork, which is the source of
  * truth for dates. One list, used by the landing page and the Research page, so
@@ -61,8 +68,8 @@ export const KEY_DATES: Omit<TimelineItem, "state">[] = [
   {
     id: "abstract",
     kicker: "Abstract submission deadline",
-    date: "15 Oct 2026",
-    at: "2026-10-15",
+    date: ABSTRACT_DEADLINE_SHORT,
+    at: ABSTRACT_DEADLINE_AT,
   },
   {
     id: "accept",
