@@ -104,6 +104,14 @@ export const PARTNERS: SiteOrg[] = [
     tier: "partner",
     logo: "/assets/partners/servicesetu-academics.png",
   },
+  {
+    id: "edii",
+    name: "Entrepreneurship Development Institute of India",
+    role: "Partner institute",
+    tier: "partner",
+    logo: "/assets/partners/edii.png",
+    href: "https://www.ediindia.org/",
+  },
 ];
 
 export const HOSTS: SiteOrg[] = [
