@@ -53,11 +53,11 @@ export function registerHrefFor(signedIn: boolean) {
 }
 
 /** Extended abstract window. Midnight is the end of this calendar day, IST. */
-export const ABSTRACT_DEADLINE_SHORT = "18 Oct 2026";
-export const ABSTRACT_DEADLINE_LONG = "18 October 2026";
-export const ABSTRACT_DEADLINE_AT = "2026-10-18";
+export const ABSTRACT_DEADLINE_SHORT = "25 Oct 2026";
+export const ABSTRACT_DEADLINE_LONG = "25 October 2026";
+export const ABSTRACT_DEADLINE_AT = "2026-10-25";
 export const ABSTRACT_EXTENSION_NOTE =
-  "The abstract submission deadline has been extended till 18 Oct 2026 (midnight).";
+  "The abstract submission deadline has been extended till 25 Oct 2026 (midnight).";
 
 /**
  * The four milestones from the Call for Papers artwork, which is the source of

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ABSTRACT_EXTENSION_NOTE } from "@/lib/landing";
 
-const SEEN_KEY = "invent-deadline-notice";
+const SEEN_KEY = "invent-deadline-notice-25oct";
 const SPLASH_KEY = "invent-splash-seen";
 
 /**
