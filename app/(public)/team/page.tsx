@@ -14,6 +14,7 @@ import {
 import {
   EVENT_DATES,
   ORGANIZING_COMMITTEE,
+  ORGANIZING_MEMBERS,
   TECHNICAL_COMMITTEE,
   type CommitteeMember,
 } from "@/lib/site-content";
@@ -21,7 +22,7 @@ import {
 export const metadata = pageMetadata({
   title: "Team",
   description:
-    "The organising committee, technical committee, PhD students and DSSE team behind IITB INV.ENT at the Desai Sethi School of Entrepreneurship, IIT Bombay.",
+    "The organising committee, technical committee, PhD students, organising members and DSSE team behind IITB INV.ENT at the Desai Sethi School of Entrepreneurship, IIT Bombay.",
   path: "/team",
 });
 
@@ -99,18 +100,28 @@ export default function TeamPage() {
       <section className="site-section is-rule">
         <div className="site-shell">
           <StudentsSection />
-          <div className="team-follow">
-            <p className="site-kicker">The school</p>
-            <h2 id="dsse-team-heading">The DSSE team</h2>
-            <SitePhoto
-              src="/assets/landing/symposium-group.jpg"
-              alt="The DSSE team on stage at the Entrepreneurship Research Symposium, IIT Bombay"
-              caption="DSSE team · IIT Bombay"
-              width={1600}
-              height={1067}
-              testId="team-dsse-team"
-            />
-          </div>
+        </div>
+      </section>
+
+      <section className="site-section is-rule" aria-labelledby="organizing-members-heading">
+        <div className="site-shell">
+          <h2 id="organizing-members-heading">Organising members</h2>
+          <CommitteeList members={ORGANIZING_MEMBERS} testId="organizing-members" />
+        </div>
+      </section>
+
+      <section className="site-section is-rule" aria-labelledby="dsse-team-heading">
+        <div className="site-shell">
+          <p className="site-kicker">The school</p>
+          <h2 id="dsse-team-heading">The DSSE team</h2>
+          <SitePhoto
+            src="/assets/landing/symposium-group.jpg"
+            alt="The DSSE team on stage at the Entrepreneurship Research Symposium, IIT Bombay"
+            caption="DSSE team · IIT Bombay"
+            width={1600}
+            height={1067}
+            testId="team-dsse-team"
+          />
         </div>
       </section>
     </SiteShell>

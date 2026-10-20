@@ -402,6 +402,25 @@ export const ORGANIZING_COMMITTEE: CommitteeMember[] = [
 ];
 
 /**
+ * DSSE project managers on the organising team.
+ * Kept apart from the faculty committee.
+ */
+export const ORGANIZING_MEMBERS: CommitteeMember[] = [
+  {
+    name: "Sanjay Kharat",
+    role: "Project Manager, DSSE",
+    photo: "/assets/team/sanjay-kharat.jpg",
+    focus: "center 28%",
+  },
+  {
+    name: "Alka Chavan",
+    role: "Project Manager, DSSE",
+    photo: "/assets/team/alka-chavan.jpg",
+    focus: "center 30%",
+  },
+];
+
+/**
  * Technical committee, in the order they should appear.
  * Portraits are the public faculty photos on som.iitb.ac.in, hss.iitb.ac.in,
  * me.iitb.ac.in, homepages.iitb.ac.in and iimb.ac.in.
