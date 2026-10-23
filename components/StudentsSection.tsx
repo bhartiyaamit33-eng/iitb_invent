@@ -8,7 +8,7 @@ const STUDENTS: { name: string; photo?: string; focus: string }[] = [
   { name: "Swarna Raut", photo: "swarna-raut.webp", focus: "center top" },
   { name: "Fiza Mansoori", photo: "fiza-mansoori.webp", focus: "center top" },
   { name: "Mallika", photo: "mallika.webp", focus: "center top" },
-  { name: "Krishna Tupe", focus: "center" },
+  { name: "Krishna Tupe", photo: "krishna-tupe.webp", focus: "center 28%" },
 ];
 
 function initials(name: string): string {
