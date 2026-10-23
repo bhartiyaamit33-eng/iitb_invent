@@ -448,7 +448,7 @@ export const ORGANIZING_MEMBERS: CommitteeMember[] = [
 /**
  * Technical committee, in the order they should appear.
  * Portraits are the public faculty photos on som.iitb.ac.in, hss.iitb.ac.in,
- * me.iitb.ac.in, homepages.iitb.ac.in and iimb.ac.in.
+ * me.iitb.ac.in, homepages.iitb.ac.in, iimb.ac.in and home.iitk.ac.in.
  */
 export const TECHNICAL_COMMITTEE: CommitteeMember[] = [
   {
@@ -510,6 +510,24 @@ export const TECHNICAL_COMMITTEE: CommitteeMember[] = [
     role: "IIM Bangalore",
     photo: "/assets/team/sayan-sarkar.jpg",
     focus: "center 22%",
+  },
+  {
+    name: "Prof. Ramesh Kuruva",
+    role: "IIT Bombay",
+    photo: "/assets/team/ramesh-kuruva.jpg",
+    focus: "center 28%",
+  },
+  {
+    name: "Prof. Sankalp Pratap",
+    role: "IIT Bombay",
+    photo: "/assets/team/sankalp-pratap.png",
+    focus: "center 30%",
+  },
+  {
+    name: "Prof. B. V. Phani",
+    role: "IIT Kanpur",
+    photo: "/assets/speakers/bv-phani.jpg",
+    focus: "center 35%",
   },
 ];
 
