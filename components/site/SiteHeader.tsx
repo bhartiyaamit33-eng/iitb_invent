@@ -51,7 +51,7 @@ export function SiteHeader({
               priority
             />
             <span className="site-brand-rule" aria-hidden="true" />
-            <InventMark style={{ fontSize: 26 }} />
+            <InventMark className="site-brand-mark" />
           </span>
         </Link>
 
@@ -104,6 +104,11 @@ export function SiteHeader({
         aria-label="Primary (mobile)"
         data-testid="nav-mobile"
       >
+        {signedInName ? null : (
+          <Link href={registerHref} className="site-btn site-btn-sm site-nav-mobile-register">
+            Register
+          </Link>
+        )}
         {SITE_NAV.map((item) => (
           <Link
             key={item.href}
