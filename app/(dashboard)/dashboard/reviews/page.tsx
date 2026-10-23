@@ -100,22 +100,46 @@ export default async function AssignedReviewsPage() {
 
                 <form action={saveAssignedReviewAction} className="mt-5 space-y-4">
                   <input type="hidden" name="reviewId" value={review.id} />
-                  <label className="block max-w-sm text-sm">
-                    <span className="text-ink">Decision</span>
-                    <select
-                      name="decision"
-                      defaultValue={review.decision ?? ""}
-                      className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-                      data-testid={`review-decision-${review.id}`}
-                    >
-                      <option value="">Choose…</option>
-                      {Object.entries(REVIEW_DECISION_LABELS).map(([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    <label className="text-sm">
+                      <span className="text-ink">Decision</span>
+                      <select
+                        name="decision"
+                        defaultValue={review.decision ?? ""}
+                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
+                        data-testid={`review-decision-${review.id}`}
+                      >
+                        <option value="">Choose…</option>
+                        {Object.entries(REVIEW_DECISION_LABELS).map(([value, label]) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="text-sm">
+                      <span className="text-ink">Overall score (1–10)</span>
+                      <input
+                        type="number"
+                        name="score"
+                        min={1}
+                        max={10}
+                        defaultValue={review.score ?? ""}
+                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      <span className="text-ink">Expertise (1–5)</span>
+                      <input
+                        type="number"
+                        name="expertise"
+                        min={1}
+                        max={5}
+                        defaultValue={review.expertise ?? ""}
+                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
+                      />
+                    </label>
+                  </div>
                   <label className="block text-sm">
                     <span className="text-ink">Comments for the authors</span>
                     <textarea

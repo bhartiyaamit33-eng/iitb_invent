@@ -96,7 +96,7 @@ export default async function AdminApplicationsPage({
   const [applications, counts, resend] = await Promise.all([
     prisma.conferenceApplication.findMany({
       where: { AND: [base, current.where, statusFilter ? { status: statusFilter } : {}] },
-      include: { reviews: { select: { status: true, decision: true } } },
+      include: { reviews: { select: { status: true, score: true, decision: true } } },
       orderBy: { createdAt: "desc" },
       take: 500,
     }),
@@ -231,6 +231,10 @@ export default async function AdminApplicationsPage({
                 <tbody>
                   {applications.map((a) => {
                     const done = a.reviews.filter((r) => r.status === "COMPLETED").length;
+                    const scored = a.reviews.filter((r) => r.score !== null);
+                    const avg = scored.length
+                      ? scored.reduce((sum, r) => sum + (r.score ?? 0), 0) / scored.length
+                      : null;
                     const summary = shortlistSummary(a.reviews);
                     const shortlisted = reviewerShortlisted(a.reviews);
                     const proforma = proformas.get(a.id);
@@ -277,6 +281,7 @@ export default async function AdminApplicationsPage({
                           ) : (
                             <>
                               {done} of {a.reviews.length} done
+                              {avg !== null ? <span className="adm-sub">Average {avg.toFixed(1)} of 10</span> : null}
                               {summary ? <span className="adm-sub">{summary}</span> : null}
                               {shortlisted ? (
                                 <span className="adm-sub">
