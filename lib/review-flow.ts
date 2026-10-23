@@ -95,7 +95,7 @@ export const reviewerShortlistView = {
   reviews: {
     some: {
       status: "COMPLETED" as const,
-      decision: { in: ["SHORTLIST_PAPER", "SHORTLIST_POSTER"] as const },
+      decision: { in: ["SHORTLIST_PAPER", "SHORTLIST_POSTER"] as ReviewDecision[] },
     },
   },
 };
@@ -104,11 +104,11 @@ export const reviewerShortlistView = {
 export const readyToConfirmView = {
   status: "RECEIVED" as const,
   participationCategory: { not: "ATTENDEE" as const },
-  plagiarismStatus: { in: ["CLEAR", "FLAGGED"] as const },
+  plagiarismStatus: { in: ["CLEAR", "FLAGGED"] as PlagiarismStatus[] },
   reviews: {
     some: {
       status: "COMPLETED" as const,
-      decision: { in: ["SHORTLIST_PAPER", "SHORTLIST_POSTER"] as const },
+      decision: { in: ["SHORTLIST_PAPER", "SHORTLIST_POSTER"] as ReviewDecision[] },
     },
   },
 };
