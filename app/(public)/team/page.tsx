@@ -22,9 +22,18 @@ import {
 export const metadata = pageMetadata({
   title: "Team",
   description:
-    "The organising committee, technical committee, PhD students, organising members and DSSE team behind IITB INV.ENT at the Desai Sethi School of Entrepreneurship, IIT Bombay.",
+    "The organising committee, technical committee, organising members and DSSE team behind IITB INV.ENT at the Desai Sethi School of Entrepreneurship, IIT Bombay.",
   path: "/team",
 });
+
+function initials(name: string): string {
+  const words = name
+    .replace(/^Prof\.\s*/i, "")
+    .split(/\s+/)
+    .filter(Boolean);
+  const letters = words.slice(0, 2).map((word) => word[0] ?? "");
+  return letters.join("").toUpperCase();
+}
 
 function CommitteeList({
   members,
@@ -39,14 +48,20 @@ function CommitteeList({
         <li key={member.name}>
           <article className="team-card" data-testid="committee-card">
             <div className="team-photo">
-              <Image
-                src={member.photo}
-                alt=""
-                fill
-                sizes="(max-width: 900px) 50vw, 360px"
-                className="team-portrait"
-                style={{ objectPosition: member.focus }}
-              />
+              {member.photo ? (
+                <Image
+                  src={member.photo}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 46vw, (max-width: 900px) 30vw, 18vw"
+                  className="team-portrait"
+                  style={{ objectPosition: member.focus }}
+                />
+              ) : (
+                <span className="team-initials" aria-hidden="true">
+                  {initials(member.name)}
+                </span>
+              )}
             </div>
             <h3>{member.name}</h3>
             <p>{member.role}</p>
@@ -97,16 +112,17 @@ export default function TeamPage() {
         </div>
       </section>
 
-      <section className="site-section is-rule">
-        <div className="site-shell">
-          <StudentsSection />
-        </div>
-      </section>
-
       <section className="site-section is-rule" aria-labelledby="organizing-members-heading">
         <div className="site-shell">
           <h2 id="organizing-members-heading">Organising members</h2>
+          <h3 className="team-subhead" id="staff-heading">
+            Staff
+          </h3>
           <CommitteeList members={ORGANIZING_MEMBERS} testId="organizing-members" />
+          <h3 className="team-subhead" id="students-heading">
+            Students
+          </h3>
+          <StudentsSection />
         </div>
       </section>
 

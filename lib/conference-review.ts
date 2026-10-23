@@ -23,6 +23,7 @@ import {
 import { sendConferenceStatusUpdate } from "@/lib/email/transactions";
 import { sendProformaInvoice } from "@/lib/conference-payment";
 import { writeAuditLog } from "@/lib/admin/audit";
+import { isOfficialShortlist, officialShortlistBlock } from "@/lib/review-flow";
 import { siteOrigin } from "@/lib/ticket";
 
 export async function reviewConferenceApplication(opts: {
@@ -42,6 +43,20 @@ export async function reviewConferenceApplication(opts: {
   });
   if (!before) {
     throw new Error("Application not found");
+  }
+
+  const alreadyOfficial = isOfficialShortlist(before.status);
+  if (!alreadyOfficial && isOfficialShortlist(opts.status) && before.participationCategory !== "ATTENDEE") {
+    const reviews = await prisma.applicationReview.findMany({
+      where: { applicationId: before.id },
+      select: { status: true, decision: true },
+    });
+    const block = officialShortlistBlock({
+      participationCategory: before.participationCategory,
+      plagiarismStatus: before.plagiarismStatus,
+      reviews,
+    });
+    if (block) throw new Error(block);
   }
 
   const selected = statusRequiresPayment(opts.status);

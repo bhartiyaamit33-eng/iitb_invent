@@ -1,35 +1,53 @@
 import Image from "next/image";
 
-const STUDENTS = [
-  { name: "Midhun K S", photo: "midhun-k-s.webp" },
-  { name: "Amisha Pathak Choudhury", photo: "amisha-pathak-choudhury.webp" },
-  { name: "Aditya Kumar Yadav", photo: "aditya-kumar-yadav.webp" },
-  { name: "Lakshita Sheera", photo: "lakshita-sheera.webp" },
-  { name: "Swarna Raut", photo: "swarna-raut.webp" },
-  { name: "Fiza Mansoori", photo: "fiza-mansoori.webp" },
-  { name: "Mallika", photo: "mallika.webp" },
+const STUDENTS: { name: string; photo?: string; focus: string }[] = [
+  { name: "Midhun K S", photo: "midhun-k-s.webp", focus: "center top" },
+  { name: "Amisha Pathak Choudhury", photo: "amisha-pathak-choudhury.webp", focus: "center top" },
+  { name: "Aditya Kumar Yadav", photo: "aditya-kumar-yadav.webp", focus: "center top" },
+  { name: "Lakshita Sheera", photo: "lakshita-sheera.webp", focus: "center top" },
+  { name: "Swarna Raut", photo: "swarna-raut.webp", focus: "center top" },
+  { name: "Fiza Mansoori", photo: "fiza-mansoori.webp", focus: "center top" },
+  { name: "Mallika", photo: "mallika.webp", focus: "center top" },
+  { name: "Krishna Tupe", focus: "center" },
 ];
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0] ?? "")
+    .join("")
+    .toUpperCase();
+}
 
 export function StudentsSection() {
   return (
-    <section aria-labelledby="students-heading" data-testid="students-section">
-      <h2 id="students-heading" className="mb-6">Our PhD Students</h2>
-      <div className="grid grid-cols-1 gap-x-6 gap-y-8 min-[400px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {STUDENTS.map((student) => (
-          <article key={student.name} data-testid="student-card">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-slate-100">
-              <Image
-                src={`/assets/students/${student.photo}`}
-                alt={student.name}
-                fill
-                sizes="(max-width: 399px) 100vw, (max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
-                className="object-cover object-top"
-              />
+    <ul className="team-grid" data-testid="students-section">
+      {STUDENTS.map((student) => (
+        <li key={student.name}>
+          <article className="team-card" data-testid="student-card">
+            <div className="team-photo">
+              {student.photo ? (
+                <Image
+                  src={`/assets/students/${student.photo}`}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 46vw, (max-width: 900px) 30vw, 18vw"
+                  className="team-portrait"
+                  style={{ objectPosition: student.focus }}
+                />
+              ) : (
+                <span className="team-initials" aria-hidden="true">
+                  {initials(student.name)}
+                </span>
+              )}
             </div>
-            <h3 className="mt-4 text-lg font-semibold">{student.name}</h3>
+            <h3>{student.name}</h3>
+            <p>PhD student</p>
           </article>
-        ))}
-      </div>
-    </section>
+        </li>
+      ))}
+    </ul>
   );
 }

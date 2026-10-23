@@ -13,6 +13,7 @@ import {
   withGstPaise,
 } from "@/lib/conference";
 import { BASE_PATH, withBasePath } from "@/lib/base-path";
+import { isOfficialShortlist } from "@/lib/review-flow";
 
 /** Change an application's status, with a confirmation that says exactly what the applicant will receive. */
 export function ApplicationReviewDialog({
@@ -22,6 +23,8 @@ export function ApplicationReviewDialog({
   adminNotes,
   feePaise,
   compact,
+  shortlistBlock,
+  plagiarismFlagged,
 }: {
   id: string;
   name: string;
@@ -29,6 +32,9 @@ export function ApplicationReviewDialog({
   adminNotes?: string;
   feePaise: number;
   compact?: boolean;
+  /** Set when paper or poster shortlist must wait for a reviewer decision and a Turnitin check. */
+  shortlistBlock?: string | null;
+  plagiarismFlagged?: boolean;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<ApplicationStatus>(currentStatus);
@@ -42,6 +48,8 @@ export function ApplicationReviewDialog({
   const [notice, setNotice] = useState<string | null>(null);
 
   const selected = statusRequiresPayment(status);
+  const official = isOfficialShortlist(status);
+  const blocked = official && Boolean(shortlistBlock);
   const amount = useMemo(() => `${formatInrFromPaise(withGstPaise(feePaise))} (including ${GST_PERCENT}% GST)`, [feePaise]);
   const unchanged = status === currentStatus;
 
@@ -210,10 +218,20 @@ export function ApplicationReviewDialog({
                 </>
               )}
             </p>
-            {selected ? (
+            {selected && !blocked ? (
               <p className="adm-notice" style={{ margin: "14px 0 0" }}>
                 {name} will owe {amount}. Their proforma invoice with the payment link
                 goes to their email, and the same link appears on their dashboard.
+              </p>
+            ) : null}
+            {blocked ? (
+              <p className="adm-notice is-bad" style={{ margin: "14px 0 0" }} role="alert" data-testid="shortlist-block">
+                {shortlistBlock}
+              </p>
+            ) : null}
+            {official && !blocked && plagiarismFlagged ? (
+              <p className="adm-notice" style={{ margin: "14px 0 0" }}>
+                Turnitin was flagged. Shortlisting anyway asks {name} to pay.
               </p>
             ) : null}
             <label className="adm-field" style={{ marginTop: 16 }}>
@@ -250,7 +268,7 @@ export function ApplicationReviewDialog({
               <button
                 type="button"
                 onClick={() => void confirm()}
-                disabled={pending}
+                disabled={pending || blocked}
                 className="adm-btn is-primary"
                 data-testid="status-confirm"
               >

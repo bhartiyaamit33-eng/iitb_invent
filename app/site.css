@@ -1383,26 +1383,39 @@ html[data-site] body {
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 40px 22px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px 14px;
   margin: 8px 0 0;
   padding: 0;
   list-style: none;
 }
 
-.team-card h3 {
-  margin: 14px 0 0;
+.team-subhead {
+  margin: 28px 0 4px;
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 650;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  color: var(--navy);
+}
+
+.team-subhead + .team-grid {
+  margin-top: 14px;
+}
+
+.team-card h3 {
+  margin: 10px 0 0;
+  font-family: var(--font-serif);
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
   color: var(--navy);
 }
 
 .team-card p {
-  margin: 6px 0 0;
-  font-size: 13px;
+  margin: 4px 0 0;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1411,14 +1424,25 @@ html[data-site] body {
 
 .team-photo {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #111;
+  background: var(--navy);
   border: 1px solid var(--rule);
 }
 
 .team-portrait {
   object-fit: cover;
+}
+
+.team-initials {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  color: #fff;
 }
 
 .team-follow {
@@ -1744,6 +1768,24 @@ html[data-site] body {
   object-position: center;
 }
 
+.logo-plate.is-wide {
+  grid-column: span 2;
+}
+
+.logo-plate.is-wide img,
+.logo-plate.is-mark.is-wide img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 84px;
+}
+
+@media (max-width: 520px) {
+  .logo-plate.is-wide {
+    grid-column: auto;
+  }
+}
+
 /* Partner institute strip under the hero actions. */
 .partner-reel {
   width: min(100%, 40rem);
@@ -1776,9 +1818,9 @@ html[data-site] body {
 }
 
 .partner-reel-set img {
-  height: 40px;
+  height: 44px;
   width: auto;
-  max-width: 148px;
+  max-width: 240px;
   object-fit: contain;
 }
 
@@ -2751,10 +2793,22 @@ html[data-site] body {
   }
 }
 
+@media (min-width: 1240px) {
+  .team-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 900px) {
   .team-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .team-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px 14px;
   }
 }
 

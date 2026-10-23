@@ -32,6 +32,7 @@ export function ConferencePayCta({
 }
 
 export function ConferenceStatusCard({
+  applicationNumber,
   status,
   participationCategory,
   participationOther,
@@ -40,6 +41,7 @@ export function ConferenceStatusCard({
   paymentAmountPaise,
   paymentToken,
 }: {
+  applicationNumber?: string | null;
   status: ApplicationStatus;
   participationCategory: ParticipationCategory;
   participationOther?: string | null;
@@ -54,6 +56,11 @@ export function ConferenceStatusCard({
 
   return (
     <div data-testid="conference-status-card">
+      {applicationNumber ? (
+        <p className="mt-2 text-sm font-semibold text-ink" data-testid="application-number">
+          Application number {applicationNumber}
+        </p>
+      ) : null}
       <p className="mt-2 text-lg font-semibold text-ink">
         {applicationStatusLabel(status)}
       </p>

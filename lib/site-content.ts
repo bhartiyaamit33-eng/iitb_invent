@@ -77,6 +77,8 @@ export type SiteOrg = {
   /** Optional path under /public. When absent the name is set in serif. */
   logo?: string;
   href?: string;
+  /** Wide lockups need two columns or the mark becomes unreadable. */
+  wide?: boolean;
 };
 
 /**
@@ -85,6 +87,7 @@ export type SiteOrg = {
  *
  * Logos drop in by adding `logo: "/assets/partners/<file>.png"`; a plate with
  * no logo falls back to the name set in serif.
+ * British Academy of Management joins this list when their logo arrives.
  */
 export const SPONSORS: SiteOrg[] = [];
 
@@ -94,8 +97,17 @@ export const PARTNERS: SiteOrg[] = [
     name: "SBERTC, IIT Kanpur",
     role: "Conference partner",
     tier: "partner",
-    logo: "/assets/partners/sbertc.png",
+    logo: "/assets/partners/sbertc-iitk.png",
     href: "https://sbertc.iitk.ac.in/",
+  },
+  {
+    id: "iimb",
+    name: "IIM Bangalore",
+    role: "Partner institute",
+    tier: "partner",
+    logo: "/assets/partners/iimb.png",
+    href: "https://www.iimb.ac.in/",
+    wide: true,
   },
   {
     id: "service-setu-academics",
@@ -335,8 +347,9 @@ export const ACCOMMODATION_STEPS = [
 export type CommitteeMember = {
   name: string;
   role: string;
-  photo: string;
-  /** CSS object-position so a 4:5 crop keeps the face. */
+  /** Omitted when a portrait has not been supplied yet. */
+  photo?: string;
+  /** CSS object-position so a square crop keeps the face. */
   focus: string;
 };
 
@@ -345,6 +358,12 @@ export type CommitteeMember = {
  * Portraits are the public faculty photos on dsse.iitb.ac.in and iitb.ac.in.
  */
 export const ORGANIZING_COMMITTEE: CommitteeMember[] = [
+  {
+    name: "Prof. Shireesh Kedare",
+    role: "Director, IIT Bombay",
+    photo: "/assets/speakers/shireesh-kedare.jpg",
+    focus: "center 30%",
+  },
   {
     name: "Prof. Milind Atrey",
     role: "DD-ART, IIT Bombay",
@@ -402,13 +421,13 @@ export const ORGANIZING_COMMITTEE: CommitteeMember[] = [
 ];
 
 /**
- * DSSE project managers on the organising team.
- * Kept apart from the faculty committee.
+ * DSSE staff on the organising team.
+ * PhD students are listed with them on the team page.
  */
 export const ORGANIZING_MEMBERS: CommitteeMember[] = [
   {
     name: "Sanjay Kharat",
-    role: "Project Manager, DSSE",
+    role: "Assistant Project Manager, DSSE",
     photo: "/assets/team/sanjay-kharat.jpg",
     focus: "center 28%",
   },
@@ -417,6 +436,12 @@ export const ORGANIZING_MEMBERS: CommitteeMember[] = [
     role: "Project Manager, DSSE",
     photo: "/assets/team/alka-chavan.jpg",
     focus: "center 30%",
+  },
+  {
+    name: "Raja Shaw",
+    role: "Jr Administrative Assistant",
+    photo: "/assets/team/raja-shaw.jpg",
+    focus: "center 22%",
   },
 ];
 

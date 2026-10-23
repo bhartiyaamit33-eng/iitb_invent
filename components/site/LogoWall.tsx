@@ -19,7 +19,13 @@ function Plate({ org, logosOnly }: { org: SiteOrg; logosOnly?: boolean }) {
     </>
   );
 
-  const className = logosOnly ? "logo-plate is-mark" : "logo-plate";
+  const className = [
+    "logo-plate",
+    logosOnly ? "is-mark" : "",
+    org.wide ? "is-wide" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   if (org.href) {
     return (

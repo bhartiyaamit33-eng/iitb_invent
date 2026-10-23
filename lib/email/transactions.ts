@@ -164,6 +164,7 @@ export async function sendConferenceApplicationCopy(opts: {
   applicationId?: string;
   isPaperOrPoster?: boolean;
   participationCategory?: string;
+  applicationNumber?: string;
 }) {
   const tpl = conferenceApplicationCopyEmail(opts);
   return sendEmail({
@@ -264,6 +265,7 @@ export async function sendProformaInvoiceEmail(opts: {
   fee: FeeLines;
   payUrl: string;
   message?: string;
+  applicationNumber?: string;
   userId?: string | null;
   applicationId: string;
 }) {

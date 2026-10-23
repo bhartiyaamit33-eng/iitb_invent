@@ -19,6 +19,7 @@ import {
 } from "@/lib/conference";
 import { conferencePaymentUrl } from "@/lib/conference-server";
 import { gatewayStatusLabel, proformaSendStats } from "@/lib/conference-payment";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { applicationFeeDue } from "@/lib/conference-access";
 import { withBasePath } from "@/lib/base-path";
 import { applicationTone, feeStatusLabel, gatewayTone, istDate, istDateTime, paymentTone } from "@/lib/admin/format";
@@ -27,7 +28,14 @@ import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPa
 import { DeleteApplicationForm } from "@/components/admin/DeleteApplicationForm";
 import { ConfirmActionForm } from "@/components/admin/ConfirmActionForm";
 import { Badge, Empty, Notice, PageHeader, Panel } from "@/components/admin/ui";
-import { assignReviewerAction, removeReviewerAction } from "./actions";
+import { assignReviewerAction, recordPlagiarismCheckAction, removeReviewerAction } from "./actions";
+import {
+  PLAGIARISM_LABELS,
+  REVIEW_DECISION_LABELS,
+  officialShortlistBlock,
+  reviewerShortlisted,
+  shortlistSummary,
+} from "@/lib/review-flow";
 import { resendProformaAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +54,7 @@ export default async function AdminApplicationDetailPage({
 }) {
   const { id } = await params;
   const { error, updated } = await searchParams;
+  await ensureApplicationNumbers();
   const application = await prisma.conferenceApplication.findUnique({
     where: { id },
     include: {
@@ -65,6 +74,13 @@ export default async function AdminApplicationDetailPage({
     orderBy: [{ name: "asc" }, { email: "asc" }],
   });
   const assigned = new Set(application.reviews.map((r) => r.reviewer.id));
+  const presenting = application.participationCategory !== "ATTENDEE";
+  const shortlistBlock = officialShortlistBlock({
+    participationCategory: application.participationCategory,
+    plagiarismStatus: application.plagiarismStatus,
+    reviews: application.reviews,
+  });
+  const reviewerSummary = shortlistSummary(application.reviews);
   const proforma = (await proformaSendStats([application.id])).get(application.id);
 
   const pdfUrl = application.abstractStorageKey
@@ -72,6 +88,7 @@ export default async function AdminApplicationDetailPage({
     : null;
 
   const applicant: [string, ReactNode][] = [
+    ["Application number", application.applicationNumber ? <span key="n" className="adm-mono" data-testid="application-number">{application.applicationNumber}</span> : "—"],
     ["Email", <a key="e" className="adm-link" href={`mailto:${application.email}`}>{application.email}</a>],
     ["Phone", application.phone],
     ["Institution", application.institution],
@@ -97,7 +114,7 @@ export default async function AdminApplicationDetailPage({
       <PageHeader
         back={{ href: "/admin/applications", label: "Applications" }}
         title={application.name}
-        description={`${participationLabel(application.participationCategory, application.participationOther)} for ${application.edition.name}, registered ${istDate(application.createdAt)}.`}
+        description={`${application.applicationNumber ? `${application.applicationNumber} · ` : ""}${participationLabel(application.participationCategory, application.participationOther)} for ${application.edition.name}, registered ${istDate(application.createdAt)}.`}
         actions={
           <>
             <Badge tone={applicationTone(application.status)}>{applicationStatusLabel(application.status)}</Badge>
@@ -174,7 +191,7 @@ export default async function AdminApplicationDetailPage({
 
           <Panel
             title="Programme committee reviews"
-            note="Assign the submission to one or more reviewers; each scores it independently."
+            note="Assign one or more reviewers. Each one decides whether to shortlist it. You confirm that shortlist only after the Turnitin check, and that is when the author can pay."
             flush
           >
             <form
@@ -240,19 +257,17 @@ export default async function AdminApplicationDetailPage({
                         </button>
                       </form>
                     </div>
-                    {review.recommendation ? (
+                    {review.decision || review.recommendation || review.publicComments || review.confidentialComments ? (
                       <dl className="adm-dl" style={{ marginTop: 10 }}>
                         <div>
-                          <dt>Recommendation</dt>
-                          <dd>{sentence(review.recommendation)}</dd>
-                        </div>
-                        <div>
-                          <dt>Score</dt>
-                          <dd>{review.score ?? "Not given"} of 10</dd>
-                        </div>
-                        <div>
-                          <dt>Expertise</dt>
-                          <dd>{review.expertise ?? "Not given"} of 5</dd>
+                          <dt>{review.decision ? "Decision" : "Recommendation"}</dt>
+                          <dd>
+                            {review.decision
+                              ? REVIEW_DECISION_LABELS[review.decision]
+                              : review.recommendation
+                                ? sentence(review.recommendation)
+                                : "Not given"}
+                          </dd>
                         </div>
                         <div>
                           <dt>Comments for the author</dt>
@@ -272,13 +287,73 @@ export default async function AdminApplicationDetailPage({
         </div>
 
         <div className="adm-stack">
+          {presenting ? (
+            <Panel
+              title="Turnitin check"
+              note="After a reviewer shortlists this submission, check it and record the result. Official shortlist, and payment, stay closed until you do."
+            >
+              <form action={recordPlagiarismCheckAction} className="adm-form">
+                <input type="hidden" name="applicationId" value={application.id} />
+                <label className="adm-field">
+                  <span className="adm-label">Result</span>
+                  <select
+                    name="plagiarismStatus"
+                    defaultValue={application.plagiarismStatus}
+                    className="adm-select"
+                    data-testid="plagiarism-status"
+                  >
+                    {Object.entries(PLAGIARISM_LABELS).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="adm-field">
+                  <span className="adm-label">Notes</span>
+                  <textarea
+                    name="plagiarismNotes"
+                    rows={3}
+                    defaultValue={application.plagiarismNotes ?? ""}
+                    className="adm-textarea"
+                    placeholder="Similarity score, report link, or anything else you checked."
+                  />
+                </label>
+                <div>
+                  <button type="submit" className="adm-btn is-primary" data-testid="save-plagiarism">
+                    Save check
+                  </button>
+                </div>
+              </form>
+              <p className="adm-hint" style={{ marginTop: 10 }}>
+                {application.plagiarismCheckedAt
+                  ? `Recorded ${istDateTime(application.plagiarismCheckedAt)}.`
+                  : reviewerShortlisted(application.reviews)
+                    ? "A reviewer has shortlisted this. It is waiting for this check."
+                    : "Waiting for a reviewer to shortlist it."}
+              </p>
+            </Panel>
+          ) : null}
+
           <Panel title="Decision">
+            {presenting && reviewerSummary ? (
+              <p className="adm-hint" style={{ marginBottom: 12 }}>
+                Reviewer decisions: {reviewerSummary}.
+              </p>
+            ) : null}
+            {presenting && shortlistBlock ? (
+              <p className="adm-hint" style={{ marginBottom: 12 }} data-testid="shortlist-hint">
+                {shortlistBlock}
+              </p>
+            ) : null}
             <ApplicationReviewDialog
               id={application.id}
               name={application.name}
               currentStatus={application.status}
               adminNotes={application.adminNotes ?? ""}
               feePaise={reviewFeePaise(application)}
+              shortlistBlock={shortlistBlock}
+              plagiarismFlagged={application.plagiarismStatus === "FLAGGED"}
             />
           </Panel>
 

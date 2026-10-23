@@ -1,4 +1,5 @@
 import { randomBytes } from "crypto";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { prisma } from "@/lib/db";
 import {
   applicationStatusLabel,
@@ -192,6 +193,7 @@ export async function findMyConferenceApplication(opts: {
   }
   if (or.length === 0) return null;
 
+  await ensureApplicationNumbers();
   return prisma.conferenceApplication.findFirst({
     where: { OR: or, edition: { isCurrent: true } },
     orderBy: { createdAt: "desc" },

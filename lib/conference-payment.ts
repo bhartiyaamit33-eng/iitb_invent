@@ -26,6 +26,7 @@ import {
   withGstPaise,
 } from "@/lib/conference";
 import type { FeeLines } from "@/emails/templates";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import {
   applicationFeeDue,
   issueEventTicketForApplication,
@@ -128,6 +129,7 @@ export async function sendProformaInvoice(
   opts?: { message?: string },
 ): Promise<{ ok: boolean; error?: string }> {
   try {
+    await ensureApplicationNumbers();
     const app = await prisma.conferenceApplication.findUniqueOrThrow({
       where: { id: applicationId },
       include: { edition: { select: { year: true } } },
@@ -137,6 +139,7 @@ export async function sendProformaInvoice(
       to: app.email,
       name: app.name,
       payerId,
+      applicationNumber: app.applicationNumber ?? undefined,
       category: professionalLabel(app.professionalCategory, app.professionalOther),
       participation: participationLabel(app.participationCategory, app.participationOther),
       fee: feeLines(app.paymentAmountPaise),

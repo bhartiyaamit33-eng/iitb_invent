@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { prisma } from "@/lib/db";
 import { GST_PERCENT, formatInrFromPaise, gstPaise, withGstPaise } from "@/lib/conference";
 import { rupeesToPaise } from "@/lib/onlinepay";
@@ -15,6 +16,7 @@ export default async function Receipt({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
+  await ensureApplicationNumbers();
   const app = await prisma.conferenceApplication.findUnique({
     where: { paymentToken: token },
     include: {
@@ -31,6 +33,7 @@ export default async function Receipt({
 
   const rows: [string, string][] = [
     ["Name", app.name],
+    ["Application number", app.applicationNumber ?? "—"],
     ["Email", app.email],
     ["Registration ID", app.payerId ?? "—"],
     ["Event", app.edition.name],

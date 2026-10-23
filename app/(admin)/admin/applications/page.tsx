@@ -11,10 +11,19 @@ import {
   reviewFeePaise,
   withGstPaise,
 } from "@/lib/conference";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { applicationFeeDue } from "@/lib/conference-access";
 import { proformaResendQueue, proformaSendStats } from "@/lib/conference-payment";
 import { withBasePath } from "@/lib/base-path";
-import { applicationTone, feeStatusLabel, istDate, istDateTime, paymentTone, plural, times } from "@/lib/admin/format";
+import { applicationTone, feeStatusLabel, istDate, istDateTime, paymentTone, plagiarismTone, plural, times } from "@/lib/admin/format";
+import {
+  PLAGIARISM_LABELS,
+  officialShortlistBlock,
+  readyToConfirmView,
+  reviewerShortlistView,
+  reviewerShortlisted,
+  shortlistSummary,
+} from "@/lib/review-flow";
 import { ApplicationReviewDialog } from "@/components/admin/ApplicationReviewDialog";
 import { ConfirmActionForm } from "@/components/admin/ConfirmActionForm";
 import { Badge, Empty, Notice, PageHeader } from "@/components/admin/ui";
@@ -32,6 +41,8 @@ const VIEWS: { key: string; label: string; where: Prisma.ConferenceApplicationWh
     label: "No reviewer",
     where: { status: "RECEIVED", participationCategory: { not: "ATTENDEE" }, reviews: { none: {} } },
   },
+  { key: "reviewer-shortlist", label: "Reviewer shortlist", where: reviewerShortlistView },
+  { key: "ready", label: "Ready to confirm", where: readyToConfirmView },
   { key: "selected", label: "Selected", where: { status: { in: SELECTED } } },
   { key: "due", label: "Fee due", where: { status: { in: SELECTED }, paymentStatus: "UNPAID" } },
   { key: "paid", label: "Paid", where: { paymentStatus: { in: ["PAID", "WAIVED"] } } },
@@ -53,6 +64,7 @@ export default async function AdminApplicationsPage({
   }>;
 }) {
   const { q, view, status, participation, deleted, error, updated } = await searchParams;
+  await ensureApplicationNumbers();
   const query = q?.trim() ?? "";
   const current = VIEWS.find((v) => v.key === view) ?? VIEWS[0]!;
   // Older links filter by a single status; they still work.
@@ -75,6 +87,7 @@ export default async function AdminApplicationsPage({
             { institution: { contains: query, mode: "insensitive" } },
             { paperTitle: { contains: query, mode: "insensitive" } },
             { payerId: { contains: query, mode: "insensitive" } },
+            { applicationNumber: { contains: query, mode: "insensitive" } },
           ],
         }
       : {}),
@@ -83,7 +96,7 @@ export default async function AdminApplicationsPage({
   const [applications, counts, resend] = await Promise.all([
     prisma.conferenceApplication.findMany({
       where: { AND: [base, current.where, statusFilter ? { status: statusFilter } : {}] },
-      include: { reviews: { select: { status: true, score: true } } },
+      include: { reviews: { select: { status: true, decision: true } } },
       orderBy: { createdAt: "desc" },
       take: 500,
     }),
@@ -110,7 +123,7 @@ export default async function AdminApplicationsPage({
         title="Applications"
         description={
           edition
-            ? `${plural(total, "registration")} for ${edition.name}${query || participationFilter ? " match your search" : ""}. Open a name to read the abstract, assign reviewers and record a decision.`
+            ? `${plural(total, "registration")} for ${edition.name}${query || participationFilter ? " match your search" : ""}. Assign a reviewer, then confirm a shortlist only after their decision and a Turnitin check. That is when the author can pay.`
             : "There is no current edition."
         }
         actions={
@@ -172,7 +185,7 @@ export default async function AdminApplicationsPage({
                 className="adm-input"
                 name="q"
                 defaultValue={query}
-                placeholder="Name, email, institution, title or ID"
+                placeholder="Name, email, institution, title or application number"
                 aria-label="Search applications"
               />
               <select
@@ -205,6 +218,7 @@ export default async function AdminApplicationsPage({
               <table className="adm-table" data-testid="applications-table">
                 <thead>
                   <tr>
+                    <th>No.</th>
                     <th>Applicant</th>
                     <th>Institution</th>
                     <th>Participation</th>
@@ -217,14 +231,15 @@ export default async function AdminApplicationsPage({
                 <tbody>
                   {applications.map((a) => {
                     const done = a.reviews.filter((r) => r.status === "COMPLETED").length;
-                    const scored = a.reviews.filter((r) => r.score !== null);
-                    const avg = scored.length
-                      ? scored.reduce((sum, r) => sum + (r.score ?? 0), 0) / scored.length
-                      : null;
+                    const summary = shortlistSummary(a.reviews);
+                    const shortlisted = reviewerShortlisted(a.reviews);
                     const proforma = proformas.get(a.id);
                     const feeDue = applicationFeeDue(a);
                     return (
                       <tr key={a.id}>
+                        <td className="adm-mono" data-testid={`application-number-${a.id}`}>
+                          {a.applicationNumber ?? "—"}
+                        </td>
                         <td>
                           <Link className="primary-link" href={`/admin/applications/${a.id}`}>
                             {a.name}
@@ -262,7 +277,12 @@ export default async function AdminApplicationsPage({
                           ) : (
                             <>
                               {done} of {a.reviews.length} done
-                              {avg !== null ? <span className="adm-sub">Average {avg.toFixed(1)} of 10</span> : null}
+                              {summary ? <span className="adm-sub">{summary}</span> : null}
+                              {shortlisted ? (
+                                <span className="adm-sub">
+                                  <Badge tone={plagiarismTone(a.plagiarismStatus)}>{PLAGIARISM_LABELS[a.plagiarismStatus]}</Badge>
+                                </span>
+                              ) : null}
                             </>
                           )}
                         </td>
@@ -310,6 +330,12 @@ export default async function AdminApplicationsPage({
                               currentStatus={a.status}
                               feePaise={reviewFeePaise(a)}
                               compact
+                              shortlistBlock={officialShortlistBlock({
+                                participationCategory: a.participationCategory,
+                                plagiarismStatus: a.plagiarismStatus,
+                                reviews: a.reviews,
+                              })}
+                              plagiarismFlagged={a.plagiarismStatus === "FLAGGED"}
                             />
                           </div>
                         </td>

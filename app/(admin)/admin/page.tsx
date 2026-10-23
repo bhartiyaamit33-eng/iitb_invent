@@ -7,6 +7,7 @@ import {
 } from "@/lib/conference";
 import { rupeesToPaise } from "@/lib/onlinepay";
 import { applicationTone, istDate, istDateTime, plural } from "@/lib/admin/format";
+import { readyToConfirmView, reviewerShortlistView } from "@/lib/review-flow";
 import { Badge, Empty, PageHeader, Panel } from "@/components/admin/ui";
 import { withBasePath } from "@/lib/base-path";
 
@@ -48,6 +49,8 @@ export default async function AdminOverviewPage() {
     unconfirmed,
     overdueReviews,
     unassigned,
+    turnitinPending,
+    readyToConfirm,
     latest,
     sessions,
     publishedSessions,
@@ -86,6 +89,8 @@ export default async function AdminOverviewPage() {
     prisma.conferenceApplication.count({
       where: { ...e, status: "RECEIVED", participationCategory: { not: "ATTENDEE" }, reviews: { none: {} } },
     }),
+    prisma.conferenceApplication.count({ where: { ...e, ...reviewerShortlistView } }),
+    prisma.conferenceApplication.count({ where: { ...e, ...readyToConfirmView } }),
     prisma.conferenceApplication.findMany({
       where: e,
       orderBy: { createdAt: "desc" },
@@ -181,6 +186,18 @@ export default async function AdminOverviewPage() {
       text: `${plural(unassigned, "submission")} awaiting a decision with no reviewer assigned`,
       href: "/admin/applications?view=unassigned",
       cta: "Assign",
+    },
+    {
+      n: turnitinPending,
+      text: `${plural(turnitinPending, "reviewer shortlist")} still need a Turnitin check`,
+      href: "/admin/applications?view=reviewer-shortlist",
+      cta: "Check",
+    },
+    {
+      n: readyToConfirm,
+      text: `${plural(readyToConfirm, "checked submission")} ready to officially shortlist`,
+      href: "/admin/applications?view=ready",
+      cta: "Confirm",
     },
     {
       n: paidTwice,

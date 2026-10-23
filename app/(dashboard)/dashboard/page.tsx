@@ -9,6 +9,7 @@ import { ticketBadgeUrl } from "@/lib/ticket";
 import { ConferenceStatusCard } from "@/components/conference/ConferenceStatusCard";
 import { DeleteMyApplicationForm } from "@/components/conference/DeleteMyApplicationForm";
 import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import {
   applicationFeeDue,
   applicationGrantsTicket,
@@ -26,6 +27,7 @@ export default async function DashboardPage({
   if (!user) redirect("/login");
 
   const params = await searchParams;
+  await ensureApplicationNumbers();
   const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
   const application = await prisma.conferenceApplication.findFirst({
     where: {
@@ -164,6 +166,7 @@ export default async function DashboardPage({
           {application ? (
             <>
               <ConferenceStatusCard
+                applicationNumber={application.applicationNumber}
                 status={application.status}
                 participationCategory={application.participationCategory}
                 participationOther={application.participationOther}

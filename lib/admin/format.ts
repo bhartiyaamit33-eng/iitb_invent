@@ -2,6 +2,7 @@ import type {
   ApplicationPaymentStatus,
   ApplicationStatus,
   GatewayPayment,
+  PlagiarismStatus,
 } from "@prisma/client";
 import { paymentStatusLabel } from "@/lib/conference";
 
@@ -18,6 +19,17 @@ export function applicationTone(status: ApplicationStatus): Tone {
       return "warn";
     default:
       return "neutral";
+  }
+}
+
+export function plagiarismTone(status: PlagiarismStatus): Tone {
+  switch (status) {
+    case "CLEAR":
+      return "good";
+    case "FLAGGED":
+      return "bad";
+    default:
+      return "warn";
   }
 }
 

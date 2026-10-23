@@ -134,6 +134,21 @@ enum ReviewRecommendation {
   REJECT
 }
 
+/// The reviewer's shortlist call. It does not ask the author to pay.
+enum ReviewDecision {
+  SHORTLIST_PAPER
+  SHORTLIST_POSTER
+  NOT_SELECTED
+  NOT_MY_EXPERTISE
+}
+
+/// Organiser check (Turnitin or otherwise) before an official shortlist.
+enum PlagiarismStatus {
+  NOT_CHECKED
+  CLEAR
+  FLAGGED
+}
+
 // ─── Identity (edition-independent) ──────────────────────────────────────────
 
 model User {
@@ -521,6 +536,12 @@ model ConferenceApplication {
   status    ApplicationStatus @default(RECEIVED)
   adminNotes String? @db.Text
 
+  /// Recorded by an organiser after a reviewer shortlists the submission.
+  /// Paper and poster shortlists that ask the author to pay stay closed until this is set.
+  plagiarismStatus    PlagiarismStatus @default(NOT_CHECKED)
+  plagiarismNotes     String?          @db.Text
+  plagiarismCheckedAt DateTime?
+
   /// Unguessable token so organisers can open/export the PDF without a session.
   abstractViewToken String @unique
 
@@ -534,6 +555,9 @@ model ConferenceApplication {
   /// (AB_inv27_483920 before 13 Oct 2026; see shortPayerId).
   /// Minted the first time the payment page offers checkout.
   payerId         String?          @unique
+
+  /// Public application number, e.g. INV2027-001. Assigned in arrival order.
+  applicationNumber String? @unique
   gatewayPayments GatewayPayment[]
 
   /// LEGACY (payment flow before October 2026). No longer written; the columns
@@ -599,6 +623,8 @@ model ApplicationReview {
   expertise            Int?
   score                Int?
   recommendation       ReviewRecommendation?
+  /// Shortlist call. Completing a review with this set does not change the author's status.
+  decision             ReviewDecision?
   publicComments       String?                @db.Text
   confidentialComments String?                @db.Text
   dueAt                 DateTime?

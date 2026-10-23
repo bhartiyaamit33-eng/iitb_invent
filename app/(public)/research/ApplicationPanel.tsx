@@ -19,6 +19,7 @@ import { deleteMyApplicationAction } from "./actions";
 export type ResearchApplication = {
   id: string;
   name: string;
+  applicationNumber?: string | null;
   status: ApplicationStatus;
   participationCategory: ParticipationCategory;
   participationOther: string | null;
@@ -89,6 +90,14 @@ export function ApplicationPanel({
   return (
     <div className="site-panel" data-testid="conference-status-card">
       <p className="site-kicker is-blue">Your application</p>
+      {application.applicationNumber ? (
+        <p style={{ margin: "12px 0 0", fontSize: 15, color: "var(--ink-soft)" }} data-testid="application-number">
+          Application number{" "}
+          <strong style={{ color: "var(--navy)", letterSpacing: "0.04em" }}>
+            {application.applicationNumber}
+          </strong>
+        </p>
+      ) : null}
       <p
         className="site-serif"
         style={{ margin: "0 0 6px", fontSize: "1.9rem", color: "var(--navy)" }}

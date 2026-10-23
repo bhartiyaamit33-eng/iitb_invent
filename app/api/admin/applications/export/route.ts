@@ -14,7 +14,9 @@ import {
 } from "@/lib/conference";
 import { abstractPdfPublicUrl, conferencePaymentUrl } from "@/lib/conference-server";
 import { proformaSendStats } from "@/lib/conference-payment";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { feeStatusLabel } from "@/lib/admin/format";
+import { PLAGIARISM_LABELS } from "@/lib/review-flow";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,7 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  await ensureApplicationNumbers();
   const edition = await prisma.edition.findFirst({ where: { isCurrent: true } });
   const rows = edition
     ? await prisma.conferenceApplication.findMany({
@@ -44,6 +47,7 @@ export async function GET() {
 
   const header = [
     "submittedAt",
+    "applicationNumber",
     "status",
     "paymentStatus",
     "paymentAmountInr",
@@ -70,10 +74,13 @@ export async function GET() {
     "abstractPdfUrl",
     "sendCopy",
     "adminNotes",
+    "plagiarismStatus",
+    "plagiarismNotes",
   ];
   const bodyRows = rows.map((a) =>
     [
       a.createdAt.toISOString(),
+      a.applicationNumber ?? "",
       applicationStatusLabel(a.status),
       feeStatusLabel(a),
       (a.paymentAmountPaise / 100).toFixed(2),
@@ -100,6 +107,8 @@ export async function GET() {
       a.abstractStorageKey ? abstractPdfPublicUrl(a.abstractViewToken) : "",
       a.sendCopy ? "yes" : "no",
       a.adminNotes ?? "",
+      PLAGIARISM_LABELS[a.plagiarismStatus],
+      a.plagiarismNotes ?? "",
     ]
       .map(csvEscape)
       .join(","),

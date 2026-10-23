@@ -435,6 +435,57 @@ async function main() {
 
   const admin = await newUser("Admin", "ADMIN");
   const cookie = admin.cookie;
+  const blocked = await fetch(`${APP_URL}/api/admin/applications/${presApp!.id}/review`, {
+    method: "POST",
+    headers: { ...cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "SHORTLISTED_PAPER", message: "Too soon.", sendEmail: false }),
+  });
+  const blockedBody = (await blocked.json().catch(() => null)) as { error?: string } | null;
+  check(
+    "official shortlist is refused before a reviewer shortlists it",
+    blocked.status === 400 && /reviewer/i.test(blockedBody?.error ?? ""),
+    blockedBody,
+  );
+
+  const reviewer = await prisma.user.create({
+    data: {
+      email: `reviewer-${randomBytes(4).toString("hex")}@example.invalid`,
+      name: "Reviewer",
+      role: "REVIEWER",
+    },
+  });
+  await prisma.applicationReview.create({
+    data: {
+      applicationId: presApp!.id,
+      reviewerId: reviewer.id,
+      status: "COMPLETED",
+      decision: "SHORTLIST_PAPER",
+      score: 8,
+      expertise: 4,
+      publicComments: "Shortlist.",
+      submittedAt: new Date(),
+    },
+  });
+  const blockedCheck = await fetch(`${APP_URL}/api/admin/applications/${presApp!.id}/review`, {
+    method: "POST",
+    headers: { ...cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "SHORTLISTED_PAPER", message: "Still too soon.", sendEmail: false }),
+  });
+  const blockedCheckBody = (await blockedCheck.json().catch(() => null)) as { error?: string } | null;
+  check(
+    "official shortlist is refused before the Turnitin check is recorded",
+    blockedCheck.status === 400 && /Turnitin/i.test(blockedCheckBody?.error ?? ""),
+    blockedCheckBody,
+  );
+  await prisma.conferenceApplication.update({
+    where: { id: presApp!.id },
+    data: {
+      plagiarismStatus: "CLEAR",
+      plagiarismNotes: "Turnitin 4%",
+      plagiarismCheckedAt: new Date(),
+    },
+  });
+
   const review = await fetch(`${APP_URL}/api/admin/applications/${presApp!.id}/review`, {
     method: "POST",
     headers: { ...cookie, "Content-Type": "application/json" },

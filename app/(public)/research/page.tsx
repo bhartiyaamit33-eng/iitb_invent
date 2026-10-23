@@ -89,6 +89,7 @@ export default async function ResearchPage() {
             ? {
                 id: application.id,
                 name: application.name,
+                applicationNumber: application.applicationNumber,
                 status: application.status,
                 participationCategory: application.participationCategory,
                 participationOther: application.participationOther,

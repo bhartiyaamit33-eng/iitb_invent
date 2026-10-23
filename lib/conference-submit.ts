@@ -21,6 +21,7 @@ import {
   professionalLabel,
 } from "@/lib/conference";
 import { newConferenceToken } from "@/lib/conference-server";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { ensurePayerId, sendProformaInvoice } from "@/lib/conference-payment";
 import {
   sendConferenceApplicationCopy,
@@ -272,6 +273,12 @@ export async function processConferenceApplication(
     participationCategory: saved.participationCategory,
   };
 
+  await ensureApplicationNumbers();
+  const numbered = await prisma.conferenceApplication.findUniqueOrThrow({
+    where: { id: saved.id },
+    select: { applicationNumber: true },
+  });
+
   const feeDue = payNow && !lockFee;
   if (feeDue) {
     // Mint the registration ID now so the email and the pay page agree on it.
@@ -280,6 +287,7 @@ export async function processConferenceApplication(
   } else {
     void sendConferenceApplicationCopy({
       ...payload,
+      applicationNumber: numbered.applicationNumber ?? "",
       to: saved.email,
       userId: saved.userId,
       applicationId: saved.id,

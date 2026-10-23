@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
+import { Role } from "@prisma/client";
 import { auth, oauthProvidersEnabled, signIn } from "@/auth";
 import { attendeeHome } from "@/lib/auth/attendee";
+import { prisma } from "@/lib/db";
 import { SUBMIT_HREF } from "@/lib/landing";
 import { withBasePath } from "@/lib/base-path";
 import { IconGoogle } from "@/components/icons";
@@ -24,6 +26,21 @@ function safeCallback(raw: string | undefined): string {
   return raw;
 }
 
+/** Reviewers land on assigned submissions unless they asked for another page. */
+function postLoginPath(role: Role | undefined, requested: string): string {
+  const reviewerHome =
+    !requested ||
+    requested === "/" ||
+    requested === "/login" ||
+    requested === "/signup" ||
+    requested === "/dashboard" ||
+    requested === "/research" ||
+    requested === SUBMIT_HREF;
+  if (role === Role.REVIEWER && reviewerHome) return "/dashboard/reviews";
+  if (requested.startsWith("/admin")) return requested;
+  return attendeeHome(requested);
+}
+
 export default async function LoginPage({
   searchParams,
 }: {
@@ -35,7 +52,7 @@ export default async function LoginPage({
   const oauth = oauthProvidersEnabled();
 
   if (session?.user) {
-    redirect(callbackUrl);
+    redirect(postLoginPath(session.user.role, callbackUrl));
   }
 
   async function loginAction(formData: FormData) {
@@ -45,7 +62,16 @@ export default async function LoginPage({
       .toLowerCase();
     const password = String(formData.get("password") ?? "");
     const requested = safeCallback(String(formData.get("callbackUrl") ?? SUBMIT_HREF));
-    const next = requested.startsWith("/admin") ? requested : attendeeHome(requested);
+    const account = email
+      ? await prisma.user.findUnique({
+          where: { email },
+          select: { role: true, deletedAt: true },
+        })
+      : null;
+    const next = postLoginPath(
+      account && !account.deletedAt ? account.role : undefined,
+      requested,
+    );
 
     try {
       await signIn("credentials", { email, password, redirectTo: withBasePath(next) });
@@ -82,6 +108,10 @@ export default async function LoginPage({
           <p className="lead" style={{ marginTop: 18 }}>
             Sign in to submit a paper or poster abstract, register as an attendee, and
             manage your profile. An account is not a ticket to the event.
+          </p>
+          <p style={{ marginTop: 12, fontSize: 14.5, color: "var(--mute)", maxWidth: "46ch" }}>
+            Programme-committee reviewers sign in with the email and password sent to
+            them. That opens the submissions assigned for evaluation.
           </p>
 
           {params.error ? (

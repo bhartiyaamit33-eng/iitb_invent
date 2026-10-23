@@ -3,34 +3,19 @@
 import { revalidatePath } from "next/cache";
 import {
   ReviewAssignmentStatus,
-  ReviewRecommendation,
   Role,
 } from "@prisma/client";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { getCurrentUser } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
-
-const RECOMMENDATIONS = new Set<ReviewRecommendation>(
-  Object.values(ReviewRecommendation),
-);
-
-function boundedInteger(value: FormDataEntryValue | null, min: number, max: number) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed >= min && parsed <= max
-    ? parsed
-    : null;
-}
+import { isReviewDecision } from "@/lib/review-flow";
 
 export async function saveAssignedReviewAction(formData: FormData) {
   const actor = requireRole(await getCurrentUser(), [Role.REVIEWER, Role.ADMIN]);
   const reviewId = String(formData.get("reviewId") ?? "");
   const intent = String(formData.get("intent") ?? "draft");
-  const recommendation = String(
-    formData.get("recommendation") ?? "",
-  ) as ReviewRecommendation;
-  const score = boundedInteger(formData.get("score"), 1, 10);
-  const expertise = boundedInteger(formData.get("expertise"), 1, 5);
+  const decision = String(formData.get("decision") ?? "");
   const publicComments =
     String(formData.get("publicComments") ?? "").trim() || null;
   const confidentialComments =
@@ -41,26 +26,14 @@ export async function saveAssignedReviewAction(formData: FormData) {
     where: { id: reviewId, reviewerId: actor.id },
   });
   if (!existing) throw new Error("Review assignment not found.");
-  if (
-    completing &&
-    (!RECOMMENDATIONS.has(recommendation) ||
-      score === null ||
-      expertise === null ||
-      !publicComments)
-  ) {
-    throw new Error(
-      "A recommendation, score, expertise rating, and author-facing comments are required.",
-    );
+  if (completing && (!isReviewDecision(decision) || !publicComments)) {
+    throw new Error("A decision and author-facing comments are required.");
   }
 
   const review = await prisma.applicationReview.update({
     where: { id: reviewId },
     data: {
-      recommendation: RECOMMENDATIONS.has(recommendation)
-        ? recommendation
-        : null,
-      score,
-      expertise,
+      decision: isReviewDecision(decision) ? decision : null,
       publicComments,
       confidentialComments,
       status: completing
@@ -78,10 +51,11 @@ export async function saveAssignedReviewAction(formData: FormData) {
     before: { status: existing.status },
     after: {
       status: review.status,
-      recommendation: review.recommendation,
-      score: review.score,
+      decision: review.decision,
     },
   });
   revalidatePath("/dashboard/reviews");
+  revalidatePath("/admin");
+  revalidatePath("/admin/applications");
   revalidatePath(`/admin/applications/${review.applicationId}`);
 }

@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/auth/roles";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { deleteConferenceApplication } from "@/lib/conference-delete";
+import { isPlagiarismStatus } from "@/lib/review-flow";
 
 export async function assignReviewerAction(formData: FormData) {
   const actor = requireAdmin(await getCurrentUser());
@@ -66,6 +67,43 @@ export async function assignReviewerAction(formData: FormData) {
   revalidatePath(`/admin/applications/${applicationId}`);
   revalidatePath("/admin/applications");
   revalidatePath("/dashboard/reviews");
+}
+
+export async function recordPlagiarismCheckAction(formData: FormData) {
+  const actor = requireAdmin(await getCurrentUser());
+  const applicationId = String(formData.get("applicationId") ?? "");
+  const plagiarismStatus = String(formData.get("plagiarismStatus") ?? "");
+  const plagiarismNotes = String(formData.get("plagiarismNotes") ?? "").trim() || null;
+  if (!applicationId || !isPlagiarismStatus(plagiarismStatus)) {
+    throw new Error("Choose a Turnitin result.");
+  }
+
+  const before = await prisma.conferenceApplication.findUnique({
+    where: { id: applicationId },
+    select: { id: true, plagiarismStatus: true, plagiarismNotes: true },
+  });
+  if (!before) throw new Error("Application not found.");
+
+  const checked = plagiarismStatus !== "NOT_CHECKED";
+  await prisma.conferenceApplication.update({
+    where: { id: applicationId },
+    data: {
+      plagiarismStatus,
+      plagiarismNotes,
+      plagiarismCheckedAt: checked ? new Date() : null,
+    },
+  });
+  await writeAuditLog({
+    actorId: actor.id,
+    action: "application.plagiarism",
+    entityType: "ConferenceApplication",
+    entityId: applicationId,
+    before,
+    after: { plagiarismStatus, plagiarismNotes },
+  });
+  revalidatePath("/admin");
+  revalidatePath("/admin/applications");
+  revalidatePath(`/admin/applications/${applicationId}`);
 }
 
 export async function removeReviewerAction(formData: FormData) {

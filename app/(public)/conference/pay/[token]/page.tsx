@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { prisma } from "@/lib/db";
 import {
   GST_PERCENT,
@@ -74,6 +75,7 @@ export default async function ConferencePayPage({
 }) {
   const { token } = await params;
   const { result, txn, registered } = await searchParams;
+  await ensureApplicationNumbers();
   const application = await prisma.conferenceApplication.findUnique({
     where: { paymentToken: token },
     include: {
@@ -122,6 +124,11 @@ export default async function ConferencePayPage({
       <p className="mt-2 text-sm text-ink-soft">
         Application status: {applicationStatusLabel(application.status)}
       </p>
+      {application.applicationNumber ? (
+        <p className="mt-2 text-sm font-semibold text-ink" data-testid="application-number">
+          Application number {application.applicationNumber}
+        </p>
+      ) : null}
 
       {registered && !notice ? (
         <div className="mt-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900" role="status" data-testid="registration-complete">

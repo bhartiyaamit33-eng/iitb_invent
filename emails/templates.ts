@@ -343,9 +343,13 @@ export function conferenceApplicationCopyEmail(opts: {
   eventName: string;
   isPaperOrPoster?: boolean;
   participationCategory?: string;
+  applicationNumber?: string;
 }): Email {
   const copy = submissionLead(opts.participationCategory || opts.participation);
   const rows = [
+    ...(opts.applicationNumber
+      ? [{ label: "Application number", value: opts.applicationNumber }]
+      : []),
     { label: "Name", value: opts.name },
     { label: "Email", value: opts.email },
     { label: "Phone", value: opts.phone },
@@ -475,10 +479,14 @@ export function proformaInvoiceEmail(opts: {
   payUrl: string;
   /** Organiser's note when a shortlisted presenter is asked to pay. */
   message?: string;
+  applicationNumber?: string;
 }): Email {
   const subject = `Proforma invoice: complete your registration · ${EMAIL_BRAND}`;
   const rows = [
     { label: "Billed to", value: opts.name },
+    ...(opts.applicationNumber
+      ? [{ label: "Application number", value: opts.applicationNumber }]
+      : []),
     { label: "Registration ID", value: opts.payerId },
     { label: "Category", value: opts.category },
     { label: "Participation", value: opts.participation },

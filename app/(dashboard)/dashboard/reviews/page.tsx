@@ -1,21 +1,14 @@
 import { redirect } from "next/navigation";
-import { ReviewRecommendation, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { participationLabel } from "@/lib/conference";
+import { REVIEW_DECISION_LABELS } from "@/lib/review-flow";
 import { saveAssignedReviewAction } from "./actions";
+import { ensureApplicationNumbers } from "@/lib/application-number";
 import { withBasePath } from "@/lib/base-path";
 
 export const dynamic = "force-dynamic";
-
-const RECOMMENDATION_LABELS: Record<ReviewRecommendation, string> = {
-  STRONG_ACCEPT: "Strong accept",
-  ACCEPT: "Accept",
-  WEAK_ACCEPT: "Weak accept",
-  BORDERLINE: "Borderline",
-  WEAK_REJECT: "Weak reject",
-  REJECT: "Reject",
-};
 
 export default async function AssignedReviewsPage() {
   const user = await getCurrentUser();
@@ -24,6 +17,7 @@ export default async function AssignedReviewsPage() {
     redirect("/dashboard");
   }
 
+  await ensureApplicationNumbers();
   const reviews = await prisma.applicationReview.findMany({
     where: { reviewerId: user.id },
     include: {
@@ -43,7 +37,7 @@ export default async function AssignedReviewsPage() {
         Assigned reviews
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
-        Read each abstract, save a draft, and submit an independent recommendation.
+        Read each abstract and decide whether to shortlist it. If the topic is outside your field, choose Not my expertise. Organisers check shortlisted submissions, including in Turnitin, before the author is officially shortlisted and asked to pay.
       </p>
 
       {reviews.length === 0 ? (
@@ -63,6 +57,9 @@ export default async function AssignedReviewsPage() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.1em] text-mute">
+                      {application.applicationNumber ? (
+                        <span data-testid="application-number">{application.applicationNumber} · </span>
+                      ) : null}
                       {application.edition.name} ·{" "}
                       {participationLabel(
                         application.participationCategory,
@@ -103,45 +100,22 @@ export default async function AssignedReviewsPage() {
 
                 <form action={saveAssignedReviewAction} className="mt-5 space-y-4">
                   <input type="hidden" name="reviewId" value={review.id} />
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <label className="text-sm">
-                      <span className="text-ink">Recommendation</span>
-                      <select
-                        name="recommendation"
-                        defaultValue={review.recommendation ?? ""}
-                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-                      >
-                        <option value="">Choose…</option>
-                        {Object.entries(RECOMMENDATION_LABELS).map(([value, label]) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="text-sm">
-                      <span className="text-ink">Overall score (1–10)</span>
-                      <input
-                        type="number"
-                        name="score"
-                        min={1}
-                        max={10}
-                        defaultValue={review.score ?? ""}
-                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-                      />
-                    </label>
-                    <label className="text-sm">
-                      <span className="text-ink">Expertise (1–5)</span>
-                      <input
-                        type="number"
-                        name="expertise"
-                        min={1}
-                        max={5}
-                        defaultValue={review.expertise ?? ""}
-                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-                      />
-                    </label>
-                  </div>
+                  <label className="block max-w-sm text-sm">
+                    <span className="text-ink">Decision</span>
+                    <select
+                      name="decision"
+                      defaultValue={review.decision ?? ""}
+                      className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
+                      data-testid={`review-decision-${review.id}`}
+                    >
+                      <option value="">Choose…</option>
+                      {Object.entries(REVIEW_DECISION_LABELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                   <label className="block text-sm">
                     <span className="text-ink">Comments for the authors</span>
                     <textarea
@@ -177,7 +151,7 @@ export default async function AssignedReviewsPage() {
                       className="rounded-md bg-teal-deep px-4 py-2 text-sm font-semibold text-white"
                       data-testid={`submit-review-${review.id}`}
                     >
-                      Submit review
+                      Submit decision
                     </button>
                   </div>
                 </form>
