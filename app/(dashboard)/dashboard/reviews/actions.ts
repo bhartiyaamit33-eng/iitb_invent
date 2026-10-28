@@ -9,22 +9,13 @@ import { writeAuditLog } from "@/lib/admin/audit";
 import { getCurrentUser } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
-import { isReviewDecision } from "@/lib/review-flow";
-
-function boundedInteger(value: FormDataEntryValue | null, min: number, max: number) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed >= min && parsed <= max
-    ? parsed
-    : null;
-}
+import { isReviewChoice, isReviewDecision, isReviewRecommendation } from "@/lib/review-flow";
 
 export async function saveAssignedReviewAction(formData: FormData) {
   const actor = requireRole(await getCurrentUser(), [Role.REVIEWER, Role.ADMIN]);
   const reviewId = String(formData.get("reviewId") ?? "");
   const intent = String(formData.get("intent") ?? "draft");
-  const decision = String(formData.get("decision") ?? "");
-  const score = boundedInteger(formData.get("score"), 1, 10);
-  const expertise = boundedInteger(formData.get("expertise"), 1, 5);
+  const choice = String(formData.get("choice") ?? "");
   const publicComments =
     String(formData.get("publicComments") ?? "").trim() || null;
   const confidentialComments =
@@ -35,24 +26,22 @@ export async function saveAssignedReviewAction(formData: FormData) {
     where: { id: reviewId, reviewerId: actor.id },
   });
   if (!existing) throw new Error("Review assignment not found.");
-  if (
-    completing &&
-    (!isReviewDecision(decision) ||
-      score === null ||
-      expertise === null ||
-      !publicComments)
-  ) {
-    throw new Error(
-      "A decision, score, expertise rating, and author-facing comments are required.",
-    );
+  if (completing && (!isReviewChoice(choice) || !publicComments)) {
+    throw new Error("A recommendation and author-facing comments are required.");
   }
 
+  const chosen = isReviewChoice(choice);
   const review = await prisma.applicationReview.update({
     where: { id: reviewId },
     data: {
-      decision: isReviewDecision(decision) ? decision : null,
-      score,
-      expertise,
+      ...(chosen
+        ? {
+            recommendation: isReviewRecommendation(choice) ? choice : null,
+            decision: isReviewDecision(choice) ? choice : null,
+          }
+        : {}),
+      score: null,
+      expertise: null,
       publicComments,
       confidentialComments,
       status: completing
@@ -71,7 +60,7 @@ export async function saveAssignedReviewAction(formData: FormData) {
     after: {
       status: review.status,
       decision: review.decision,
-      score: review.score,
+      recommendation: review.recommendation,
     },
   });
   revalidatePath("/dashboard/reviews");

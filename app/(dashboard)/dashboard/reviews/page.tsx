@@ -3,7 +3,7 @@ import { Role } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { participationLabel } from "@/lib/conference";
-import { REVIEW_DECISION_LABELS } from "@/lib/review-flow";
+import { REVIEW_FORM_CHOICES } from "@/lib/review-flow";
 import { saveAssignedReviewAction } from "./actions";
 import { ensureApplicationNumbers } from "@/lib/application-number";
 import { withBasePath } from "@/lib/base-path";
@@ -37,7 +37,7 @@ export default async function AssignedReviewsPage() {
         Assigned reviews
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
-        Read each abstract and decide whether to shortlist it. If the topic is outside your field, choose Not my expertise. Organisers check shortlisted submissions, including in Turnitin, before the author is officially shortlisted and asked to pay.
+        Read each abstract and choose a recommendation. If the topic is outside your field, choose Not my expertise. That choice does not recommend acceptance. Organisers check recommended submissions, including in Turnitin, before the author is officially shortlisted and asked to pay.
       </p>
 
       {reviews.length === 0 ? (
@@ -100,46 +100,26 @@ export default async function AssignedReviewsPage() {
 
                 <form action={saveAssignedReviewAction} className="mt-5 space-y-4">
                   <input type="hidden" name="reviewId" value={review.id} />
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <label className="text-sm">
-                      <span className="text-ink">Decision</span>
-                      <select
-                        name="decision"
-                        defaultValue={review.decision ?? ""}
-                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-                        data-testid={`review-decision-${review.id}`}
-                      >
-                        <option value="">Choose…</option>
-                        {Object.entries(REVIEW_DECISION_LABELS).map(([value, label]) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="text-sm">
-                      <span className="text-ink">Overall score (1–10)</span>
-                      <input
-                        type="number"
-                        name="score"
-                        min={1}
-                        max={10}
-                        defaultValue={review.score ?? ""}
-                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-                      />
-                    </label>
-                    <label className="text-sm">
-                      <span className="text-ink">Expertise (1–5)</span>
-                      <input
-                        type="number"
-                        name="expertise"
-                        min={1}
-                        max={5}
-                        defaultValue={review.expertise ?? ""}
-                        className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
-                      />
-                    </label>
-                  </div>
+                  <label className="block max-w-sm text-sm">
+                    <span className="text-ink">Recommendation</span>
+                    <select
+                      name="choice"
+                      defaultValue={
+                        review.decision === "NOT_MY_EXPERTISE"
+                          ? "NOT_MY_EXPERTISE"
+                          : (review.recommendation ?? "")
+                      }
+                      className="mt-1.5 w-full rounded-md border border-line px-3 py-2.5"
+                      data-testid={`review-decision-${review.id}`}
+                    >
+                      <option value="">Choose…</option>
+                      {REVIEW_FORM_CHOICES.map((choice) => (
+                        <option key={choice.value} value={choice.value}>
+                          {choice.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                   <label className="block text-sm">
                     <span className="text-ink">Comments for the authors</span>
                     <textarea

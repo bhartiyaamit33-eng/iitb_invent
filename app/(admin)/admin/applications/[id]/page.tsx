@@ -32,6 +32,7 @@ import { assignReviewerAction, recordPlagiarismCheckAction, removeReviewerAction
 import {
   PLAGIARISM_LABELS,
   REVIEW_DECISION_LABELS,
+  REVIEW_RECOMMENDATION_LABELS,
   officialShortlistBlock,
   reviewerShortlisted,
   shortlistSummary,
@@ -257,25 +258,17 @@ export default async function AdminApplicationDetailPage({
                         </button>
                       </form>
                     </div>
-                    {review.decision || review.recommendation || review.score != null ? (
+                    {review.decision || review.recommendation || review.publicComments || review.confidentialComments ? (
                       <dl className="adm-dl" style={{ marginTop: 10 }}>
                         <div>
-                          <dt>{review.decision ? "Decision" : "Recommendation"}</dt>
+                          <dt>{review.recommendation && !review.decision ? "Recommendation" : "Decision"}</dt>
                           <dd>
                             {review.decision
                               ? REVIEW_DECISION_LABELS[review.decision]
                               : review.recommendation
-                                ? sentence(review.recommendation)
+                                ? REVIEW_RECOMMENDATION_LABELS[review.recommendation]
                                 : "Not given"}
                           </dd>
-                        </div>
-                        <div>
-                          <dt>Score</dt>
-                          <dd>{review.score ?? "Not given"} of 10</dd>
-                        </div>
-                        <div>
-                          <dt>Expertise</dt>
-                          <dd>{review.expertise ?? "Not given"} of 5</dd>
                         </div>
                         <div>
                           <dt>Comments for the author</dt>
