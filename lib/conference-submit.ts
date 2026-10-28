@@ -8,6 +8,8 @@ import {
   isValidEmail,
   isValidPhone,
   MAX_ABSTRACT_BYTES,
+  CFP_CLOSED_MESSAGE,
+  CFP_SUBMISSIONS_OPEN,
   needsAbstract,
   needsPhdYear,
   parseParticipation,
@@ -121,6 +123,9 @@ export async function processConferenceApplication(
   if (participation === "OTHER" && !participationOther) {
     return { error: "Please describe your participation category." };
   }
+  if (!CFP_SUBMISSIONS_OPEN && participation !== "ATTENDEE") {
+    return { error: CFP_CLOSED_MESSAGE };
+  }
 
   const abstractRequired = needsAbstract(participation);
   const payNow = payableAtRegistration(participation);
@@ -161,8 +166,18 @@ export async function processConferenceApplication(
   const feePaise = conferenceFeePaiseFor(professional);
   const existing = await prisma.conferenceApplication.findUnique({
     where: { editionId_email: { editionId: edition.id, email } },
-    select: { id: true, paymentStatus: true },
+    select: { id: true, paymentStatus: true, participationCategory: true },
   });
+  if (
+    !CFP_SUBMISSIONS_OPEN &&
+    existing &&
+    existing.participationCategory !== "ATTENDEE"
+  ) {
+    return {
+      error:
+        "You already have a paper or poster submission. The call for papers is closed, so that registration cannot be changed here.",
+    };
+  }
   const lockFee =
     existing?.paymentStatus === "PAID" || existing?.paymentStatus === "WAIVED";
   if (existing && !lockFee) {

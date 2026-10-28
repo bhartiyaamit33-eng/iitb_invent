@@ -21,7 +21,6 @@ import {
   type ConferenceFeeBand,
 } from "@/lib/conference";
 import {
-  ABSTRACT_DEADLINE_LONG,
   SUBMIT_HREF,
   submitHrefFor,
   type TimelineItem,
@@ -59,18 +58,19 @@ export function ResearchCall({
   return (
     <>
       <PageHero
-        kicker="Call for papers"
+        kicker="Call for papers · closed"
         title="Research at INV.ENT"
-        lede="Research paper presentations, poster presentations, and pre-conference workshops — everything you need to take part, in one place."
+        lede="The call for papers is closed. Anyone can still register as a general attendee and pay the registration fee."
         meta={[
           `Conference · ${EVENT_DATES}`,
           "Venue · IIT Bombay, Mumbai",
-          `Abstract deadline · ${ABSTRACT_DEADLINE_LONG} (midnight)`,
+          "Abstract submissions · closed",
+          "General registration · open",
         ]}
       >
         <div className="cta-row" style={{ justifyContent: "flex-start" }}>
           <Link className="site-btn" href={submitHref} data-testid="hero-submit-cta">
-            Complete registration →
+            Register as an attendee →
           </Link>
           <a className="site-btn site-btn-ghost" href="#tracks">
             See the tracks
@@ -85,9 +85,7 @@ export function ResearchCall({
       >
         <div className="site-shell">
           <h2 id="highlights-heading">
-            Present your research.
-            <br />
-            Submit the best of it.
+            Research at the conference.
           </h2>
           <div className="room-grid">
             {RESEARCH_HIGHLIGHTS.map((item, i) => (
@@ -150,8 +148,8 @@ export function ResearchCall({
             ))}
           </div>
           <p className="lead" style={{ marginTop: 32 }}>
-            On a broad range of innovation and entrepreneurship research themes. Case
-            studies may be submitted as papers.
+            On a broad range of innovation and entrepreneurship research themes. New
+            paper, poster and workshop submissions are closed.
           </p>
         </div>
       </section>
@@ -170,7 +168,7 @@ export function ResearchCall({
             ))}
             <div className="room-item">
               <LineIcon name="network" />
-              <p>Attendees, without a submission</p>
+              <p>General attendees — registration is open</p>
             </div>
           </div>
         </div>
@@ -194,7 +192,10 @@ export function ResearchCall({
         <div className="site-shell">
           <p className="site-kicker">Submission guidelines</p>
           <h2 id="guidelines-heading">What to send</h2>
-          <p className="lead">Extended abstract, up to 1,500 words, covering:</p>
+          <p className="lead">
+            New abstracts are not being accepted. Submissions already received asked for
+            an extended abstract of up to 1,500 words, covering:
+          </p>
           <ul className="theme-list" style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
             {CFP_GUIDELINE_POINTS.map((point) => (
               <li key={point}>{point}</li>
@@ -246,9 +247,9 @@ export function ResearchCall({
 
           <h3 style={{ marginTop: 56 }}>Registration fee</h3>
           <p className="lead">
-            After organisers select you for a paper, a poster, or as an attendee, you
-            receive the registration fee for your category and a personal IIT Bombay
-            Online Pay link. The amount is the same whether you present or attend.
+            General attendees pay this fee when they register, through IIT Bombay Online
+            Pay. Paper and poster submissions are closed. Submissions already with the
+            committee are charged the same fee only after organisers shortlist them.
             These fees are exclusive of GST; {GST_PERCENT}% GST is added when you pay.
           </p>
           <table className="site-table" data-testid="conference-fee-bands">
@@ -309,11 +310,10 @@ export function ResearchCall({
       >
         <div className="site-shell">
           <p className="site-kicker is-blue">Registration</p>
-          <h2 id="submit-heading">Complete registration</h2>
+          <h2 id="submit-heading">Register as an attendee</h2>
           <p className="lead">
-            A few short steps, tied to your account. Attendees pay when they register and
-            receive a proforma invoice by email. Paper, poster and other presenters add an
-            extended abstract (PDF, max 10 MB) and pay once organisers shortlist it.
+            The call for papers is closed. Register as a general attendee in a few short
+            steps. You pay when you register and receive a proforma invoice by email.
           </p>
 
           {application ? (
@@ -322,12 +322,12 @@ export function ResearchCall({
             <div className="site-panel" data-testid="submit-login-gate">
               <p className="lead">
                 {signedIn
-                  ? "Register as an attendee or presenter in a few short steps."
-                  : "Log in to complete your registration as an attendee or presenter. Creating an account is not a ticket to the event."}
+                  ? "Register as a general attendee. You pay when you finish the form."
+                  : "Log in to register as a general attendee and pay. Creating an account is not a ticket to the event."}
               </p>
               <div className="cta-row" style={{ justifyContent: "flex-start" }}>
                 <Link className="site-btn" href={submitHref} data-testid="submit-login-cta">
-                  {signedIn ? "Complete registration →" : "Log in to register →"}
+                  {signedIn ? "Register as an attendee →" : "Log in to register →"}
                 </Link>
                 {signedIn ? null : (
                   <Link
@@ -352,7 +352,8 @@ export function ResearchCall({
             Contribute.
           </h2>
           <p className="lead">
-            Abstracts are due by {ABSTRACT_DEADLINE_LONG} (midnight). For any queries, write to{" "}
+            The call for papers is closed. Register as a general attendee and pay online.
+            For any queries, write to{" "}
             <a href={`mailto:${CONFERENCE_EMAIL}`} style={{ color: "#fff" }}>
               {CONFERENCE_EMAIL}
             </a>
@@ -364,7 +365,7 @@ export function ResearchCall({
               href={submitHref}
               data-testid="cfp-submit-cta"
             >
-              Complete registration →
+              Register as an attendee →
             </Link>
           </div>
         </div>

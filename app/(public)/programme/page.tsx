@@ -258,8 +258,7 @@ export default async function ProgrammePage() {
                       <div style={{ marginTop: 18 }}>
                         {!canRsvp ? (
                           <p style={{ margin: 0, fontSize: 14, color: "var(--mute)" }}>
-                            Session RSVP opens after organisers select your abstract and
-                            you pay the category fee.
+                            Session RSVP opens after you pay the registration fee.
                           </p>
                         ) : mine && mine.status !== "CANCELLED" ? (
                           <div

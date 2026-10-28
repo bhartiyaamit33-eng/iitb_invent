@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
+  CFP_SUBMISSIONS_OPEN,
   GST_PERCENT,
   PARTICIPATION_OPTIONS,
   PHD_YEAR_OPTIONS,
@@ -59,7 +60,9 @@ export function SubmissionForm({
   const abstractFileRef = useRef<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const [participation, setParticipation] = useState<ParticipationCategory | "">("");
+  const [participation, setParticipation] = useState<ParticipationCategory | "">(
+    CFP_SUBMISSIONS_OPEN ? "" : "ATTENDEE",
+  );
   const [professional, setProfessional] = useState<ProfessionalCategory | "">("");
   const [current, setCurrent] = useState<StepKey>("you");
   const [summary, setSummary] = useState<Summary>([]);
@@ -410,38 +413,50 @@ export function SubmissionForm({
           <legend>
             Participation category <span className="req">*</span>
           </legend>
-          <div className="site-radio-list">
-            {PARTICIPATION_OPTIONS.map((opt) => (
-              <label key={opt.value} className="site-radio">
-                <input
-                  type="radio"
-                  name="participationCategory"
-                  value={opt.value}
-                  required
-                  data-testid={`participation-${opt.value}`}
-                  onChange={() => setParticipation(opt.value)}
-                />
-                <span>
-                  {opt.label}
-                  {opt.hint ? <span className="opt-hint">{opt.hint}</span> : null}
-                  {opt.value === "OTHER" ? (
-                    <input
-                      name="participationOther"
-                      placeholder="Please specify"
-                      required={participation === "OTHER"}
-                      className="site-input site-input-inline"
-                    />
-                  ) : null}
-                </span>
-              </label>
-            ))}
-          </div>
+          {CFP_SUBMISSIONS_OPEN ? (
+            <div className="site-radio-list">
+              {PARTICIPATION_OPTIONS.map((opt) => (
+                <label key={opt.value} className="site-radio">
+                  <input
+                    type="radio"
+                    name="participationCategory"
+                    value={opt.value}
+                    required
+                    data-testid={`participation-${opt.value}`}
+                    onChange={() => setParticipation(opt.value)}
+                  />
+                  <span>
+                    {opt.label}
+                    {opt.hint ? <span className="opt-hint">{opt.hint}</span> : null}
+                    {opt.value === "OTHER" ? (
+                      <input
+                        name="participationOther"
+                        placeholder="Please specify"
+                        required={participation === "OTHER"}
+                        className="site-input site-input-inline"
+                      />
+                    ) : null}
+                  </span>
+                </label>
+              ))}
+            </div>
+          ) : (
+            <>
+              <input type="hidden" name="participationCategory" value="ATTENDEE" />
+              <p className="lead" data-testid="participation-ATTENDEE">
+                General attendee. The call for papers is closed, so paper, poster and
+                workshop submissions are not being accepted.
+              </p>
+            </>
+          )}
           <p className="site-step-note">
-            {participation === ""
-              ? "Attendees pay when they register. Every other choice asks for your abstract next, and the fee is due once organisers shortlist it."
-              : payNow
-                ? "As an attendee you pay when you register: the proforma invoice is emailed to you and the payment page opens next."
-                : "Next, add the title and extended abstract for organisers to review. The fee is due once they shortlist it."}
+            {CFP_SUBMISSIONS_OPEN
+              ? participation === ""
+                ? "Attendees pay when they register. Every other choice asks for your abstract next, and the fee is due once organisers shortlist it."
+                : payNow
+                  ? "As an attendee you pay when you register: the proforma invoice is emailed to you and the payment page opens next."
+                  : "Next, add the title and extended abstract for organisers to review. The fee is due once they shortlist it."
+              : "You pay when you register. The proforma invoice is emailed to you and the payment page opens next."}
           </p>
         </fieldset>
       </div>

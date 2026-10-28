@@ -423,15 +423,31 @@ async function main() {
   check("attendee pays through the gateway and is PAID", attAfter.paymentStatus === "PAID" && attAfter.paymentRef === attPaid.transId);
 
   const pres = await newUser("Jai Verma");
-  const noPdf = await register(pres.cookie, { ...base, name: "Jai Verma", email: pres.email, participationCategory: "PAPER_ONLY", paperTitle: "Founders and fields" });
-  check("paper registration without an abstract PDF is refused", noPdf.status === 400 && /abstract/i.test(noPdf.body.error ?? ""), noPdf);
-  const noTitle = await register(pres.cookie, { ...base, name: "Jai Verma", email: pres.email, participationCategory: "OTHER", participationOther: "Panel" }, true);
-  check("'Other' participation also needs abstract details", noTitle.status === 400 && /title/i.test(noTitle.body.error ?? ""), noTitle);
-  const presReg = await register(pres.cookie, { ...base, name: "Jai Verma", email: pres.email, participationCategory: "PAPER_ONLY", paperTitle: "Founders and fields" }, true);
-  const presApp = await prisma.conferenceApplication.findFirst({ where: { email: pres.email } });
-  check("paper registration: under review, nothing due yet",
-    presReg.status === 200 && presReg.body.feeDue === false && presApp?.status === "RECEIVED" && presApp.paymentStatus === "NOT_REQUIRED" && !!presApp.abstractStorageKey, { presReg, presApp });
-  check("paper registration: no payment link before shortlisting", (await payLink(presApp!.paymentToken)) === null);
+  const closedPaper = await register(pres.cookie, { ...base, name: "Jai Verma", email: pres.email, participationCategory: "PAPER_ONLY", paperTitle: "Founders and fields" }, true);
+  check("paper registration is closed", closedPaper.status === 400 && /call for papers is closed/i.test(closedPaper.body.error ?? ""), closedPaper);
+  const closedOther = await register(pres.cookie, { ...base, name: "Jai Verma", email: pres.email, participationCategory: "OTHER", participationOther: "Panel" });
+  check("other presenter registration is closed", closedOther.status === 400 && /call for papers is closed/i.test(closedOther.body.error ?? ""), closedOther);
+  const presUser = await prisma.user.findUniqueOrThrow({ where: { email: pres.email } });
+  const presApp = await prisma.conferenceApplication.create({
+    data: {
+      editionId: edition.id,
+      userId: presUser.id,
+      email: pres.email,
+      name: "Jai Verma",
+      phone: "9999999999",
+      institution: "IIT Bombay",
+      professionalCategory: "PHD_SCHOLAR",
+      phdYear: "YEARS_1_3",
+      participationCategory: "PAPER_ONLY",
+      paperTitle: "Founders and fields",
+      status: "RECEIVED",
+      paymentStatus: "NOT_REQUIRED",
+      paymentAmountPaise: 500_000,
+      paymentToken: randomBytes(24).toString("hex"),
+      abstractViewToken: randomBytes(24).toString("hex"),
+    },
+  });
+  check("a paper already with the committee has no payment link before shortlisting", (await payLink(presApp.paymentToken)) === null);
 
   const admin = await newUser("Admin", "ADMIN");
   const cookie = admin.cookie;

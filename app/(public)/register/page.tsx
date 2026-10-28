@@ -9,7 +9,7 @@ import {
   findMyConferenceApplication,
 } from "@/lib/conference-access";
 import { conferencePayPath } from "@/lib/conference-server";
-import { ABSTRACT_DEADLINE_LONG, LOGIN_TO_SUBMIT_HREF } from "@/lib/landing";
+import { LOGIN_TO_SUBMIT_HREF } from "@/lib/landing";
 import { EVENT_DATES } from "@/lib/site-content";
 import { noIndex, pageMetadata } from "@/lib/seo";
 import { ApplicationPanel } from "../research/ApplicationPanel";
@@ -19,8 +19,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Complete registration",
-    description: "Register for IITB INV.ENT 2027 at IIT Bombay as an attendee or presenter.",
+    title: "Register as an attendee",
+    description:
+      "Register for IITB INV.ENT 2027 as a general attendee and pay the registration fee. The call for papers is closed.",
     path: "/register",
   }),
   ...noIndex,
@@ -57,13 +58,13 @@ export default async function RegisterPage({
   return (
     <SiteShell crumbs={[{ href: "/register", label: "Registration" }]}>
       <PageHero
-        kicker="Registration"
-        title="Complete registration"
-        lede="Attendees pay when they register and receive a proforma invoice by email. Paper, poster and other presenters add an extended abstract (PDF, max 10 MB) and pay once organisers shortlist it."
+        kicker="Registration · open"
+        title="Register as an attendee"
+        lede="The call for papers is closed. Register as a general attendee, pay when you finish, and receive a proforma invoice by email."
         meta={[
           `Conference · ${EVENT_DATES}`,
           "Venue · IIT Bombay, Mumbai",
-          `Abstract deadline · ${ABSTRACT_DEADLINE_LONG} (midnight)`,
+          "General registration · open",
         ]}
       />
       <section className="site-section is-tight" id="submit" data-testid="conference-submit">
@@ -99,8 +100,11 @@ export default async function RegisterPage({
           )}
 
           <p className="site-form-fine">
-            Read the <Link href="/research" style={{ textDecoration: "underline" }}>call for papers</Link> for
-            tracks, guidelines and fees. Questions: support@iitbinvent.com
+            The call for papers is closed. Fees are on the{" "}
+            <Link href="/research" style={{ textDecoration: "underline" }}>
+              research page
+            </Link>
+            . Questions: support@iitbinvent.com
           </p>
         </div>
       </section>

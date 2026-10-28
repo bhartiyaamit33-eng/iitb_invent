@@ -106,8 +106,8 @@ export default async function LoginPage({
           <p className="site-kicker is-blue">IITB INV.ENT · Sign in</p>
           <h1>Login</h1>
           <p className="lead" style={{ marginTop: 18 }}>
-            Sign in to submit a paper or poster abstract, register as an attendee, and
-            manage your profile. An account is not a ticket to the event.
+            Sign in to register as a general attendee and pay, or to manage a submission
+            already with the committee. An account is not a ticket to the event.
           </p>
           <p style={{ marginTop: 12, fontSize: 14.5, color: "var(--mute)", maxWidth: "46ch" }}>
             Programme-committee reviewers sign in with the email and password sent to

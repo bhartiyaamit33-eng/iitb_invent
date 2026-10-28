@@ -53,23 +53,6 @@ const THEMES = [
   },
 ];
 
-const RUN_A_WORKSHOP = [
-  {
-    n: "1",
-    title: "Send a proposal",
-    body: "Workshops come through the same submissions desk as papers and posters. Choose the participation category that fits and describe the session, the room format, and who it is for.",
-  },
-  {
-    n: "2",
-    title: "Review",
-    body: "Proposals are read by the same panel that reviews research submissions, against the same bar: relevance, originality, and whether a delegate leaves better off.",
-  },
-  {
-    n: "3",
-    title: "Scheduling",
-    body: "Accepted workshops are scheduled on 30 January and published on the programme page with seat limits, so delegates can plan the pre-conference day.",
-  },
-];
 
 export default async function WorkshopPage() {
   const { signedInName } = await getSiteChrome();
@@ -100,7 +83,7 @@ export default async function WorkshopPage() {
       >
         <div className="cta-row" style={{ justifyContent: "flex-start" }}>
           <Link className="site-btn" href={submitHref} data-testid="workshop-submit-cta">
-            Propose a workshop →
+            Register as an attendee →
           </Link>
           <Link className="site-btn site-btn-ghost" href="/programme">
             See the programme
@@ -170,28 +153,15 @@ export default async function WorkshopPage() {
 
       <section className="site-section is-rule" aria-labelledby="propose-heading">
         <div className="site-shell">
-          <p className="site-kicker is-green">Run one</p>
-          <h2 id="propose-heading">Proposing a workshop</h2>
+          <p className="site-kicker is-green">Proposals</p>
+          <h2 id="propose-heading">Workshop proposals are closed</h2>
           <p className="lead">
-            Workshops are accepted through the submissions desk on the Research page, not
-            a separate form. That keeps one review panel and one timeline across papers,
-            posters and workshops.
+            The call for papers is closed, so new workshop proposals are not being
+            accepted. Confirmed sessions will appear on the programme page. Anyone can
+            still register as a general attendee and pay the registration fee.
           </p>
-          <ol className="site-steps">
-            {RUN_A_WORKSHOP.map((step) => (
-              <li key={step.n}>
-                <span className="n" aria-hidden="true">
-                  {step.n}
-                </span>
-                <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
           <div className="site-callout is-blue">
-            Questions about a workshop proposal before you send it? Write to{" "}
+            Questions about a workshop already proposed? Write to{" "}
             <a href={`mailto:${CONFERENCE_EMAIL}`} style={{ color: "var(--blue)" }}>
               {CONFERENCE_EMAIL}
             </a>
@@ -199,7 +169,7 @@ export default async function WorkshopPage() {
           </div>
           <div className="cta-row" style={{ justifyContent: "flex-start" }}>
             <Link className="site-btn" href={submitHref}>
-              Go to the submissions desk →
+              Register as an attendee →
             </Link>
             <Link className="site-btn site-btn-ghost" href="/research">
               Read the call for papers

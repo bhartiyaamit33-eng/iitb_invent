@@ -4,8 +4,7 @@ import { LogoReel, LogoWall } from "./LogoWall";
 import { PhotoLanes } from "./PhotoLanes";
 import { InventMark } from "./InventMark";
 import { CtaOrbits, IntersectField, LineIcon, NavyGeometry } from "./decor";
-import { ABSTRACT_EXTENSION_NOTE, submitHrefFor, type LandingStat } from "@/lib/landing";
-import { DeadlineNotice } from "./DeadlineNotice";
+import { REGISTRATION_STATUS_NOTE, submitHrefFor, type LandingStat } from "@/lib/landing";
 import {
   AUDIENCE,
   EVENT_DATES_SHORT,
@@ -62,8 +61,8 @@ export function SiteLanding({
             <span className="accent">{HERO_HEADLINE_ACCENT}</span>
           </h1>
           <p className="hero-meta">{EVENT_DATES_SHORT.replace("JAN", "JANUARY")}</p>
-          <p className="hero-deadline" data-testid="deadline-extension">
-            {ABSTRACT_EXTENSION_NOTE}
+          <p className="hero-deadline" data-testid="registration-status">
+            {REGISTRATION_STATUS_NOTE}
           </p>
           <div className="cta-row" data-testid="cta-hero">
             <Link className="site-btn" href={registerHref} data-testid="hero-register">
@@ -186,8 +185,6 @@ export function SiteLanding({
         </div>
       </section>
 
-      <DeadlineNotice />
-
       {/* ── Final CTA ────────────────────────────────────────────────── */}
       <section className="site-section is-blue" id="register">
         <CtaOrbits />
@@ -198,8 +195,8 @@ export function SiteLanding({
             the conversation.
           </h2>
           <p className="lead">
-            Researchers, founders, investors, incubators, students and operators — all in
-            the same room.
+            The call for papers is closed. Researchers, founders, investors, incubators,
+            students and operators can still register as general attendees and pay.
           </p>
           <p className="lead">That’s IITB INV.ENT.</p>
           <div className="cta-row" data-testid="cta-register">

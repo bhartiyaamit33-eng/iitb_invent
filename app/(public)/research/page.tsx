@@ -10,7 +10,7 @@ import {
   findMyConferenceApplication,
 } from "@/lib/conference-access";
 import { conferencePayPath } from "@/lib/conference-server";
-import { ABSTRACT_DEADLINE_LONG, KEY_DATES, markTimeline } from "@/lib/landing";
+import { KEY_DATES, markTimeline } from "@/lib/landing";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -27,7 +27,7 @@ export const revalidate = 0;
 export const metadata: Metadata = pageMetadata({
   title: "Research · Call for Papers",
   description:
-    `Research papers, poster presentations, and pre-conference workshops at IITB INV.ENT, IIT Bombay, 30-31 January 2027. Abstract deadline ${ABSTRACT_DEADLINE_LONG} (midnight). Authors of the best selected papers may submit to The Journal of Entrepreneurship. Publication is not assured.`,
+    "The call for papers for IITB INV.ENT 2027 is closed. General attendee registration is open: anyone can register and pay. The conference is at IIT Bombay, 30-31 January 2027.",
   path: "/research",
 });
 

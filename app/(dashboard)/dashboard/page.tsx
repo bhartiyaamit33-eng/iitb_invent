@@ -87,9 +87,9 @@ export default async function DashboardPage({
         >
           <p className="font-semibold text-teal-deep">Account created</p>
           <p className="mt-1 text-sm text-ink-soft">
-            Logging in is not a ticket to INV.ENT. Complete your registration
-            next: attendees pay right away, presenters pay once organisers
-            shortlist their abstract. The ticket follows payment.
+            Logging in is not a ticket to INV.ENT. The call for papers is
+            closed. Register as a general attendee and pay. The ticket follows
+            payment.
           </p>
           <Link
             href="/register"
@@ -161,7 +161,7 @@ export default async function DashboardPage({
           data-testid="conference-dashboard-card"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mute">
-            Paper or poster
+            Registration
           </p>
           {application ? (
             <>
@@ -183,9 +183,8 @@ export default async function DashboardPage({
           ) : (
             <>
               <p className="mt-2 text-sm text-ink-soft">
-                Register as an attendee and pay right away, or as a presenter
-                with an abstract that organisers review. Your ticket follows
-                payment.
+                The call for papers is closed. Register as a general attendee
+                and pay. Your ticket follows payment.
               </p>
               <Link
                 href="/register"

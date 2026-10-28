@@ -512,7 +512,7 @@ async function main() {
         editionId: edition2027.id,
         question: "How do I apply for the research conference?",
         answer:
-          "Use the on-site form at /conference. Paper and poster applicants upload an extended abstract (PDF, 10 MB). Organisers review submissions in the admin CMS.",
+          "The call for papers is closed. Register as a general attendee and pay the registration fee. Submissions already received stay with the committee.",
         sortOrder: 3,
         isPublished: true,
       },

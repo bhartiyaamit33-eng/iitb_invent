@@ -199,6 +199,16 @@ export function payableAtRegistration(cat: ParticipationCategory): boolean {
   return cat === "ATTENDEE";
 }
 
+/**
+ * Paper, poster, workshop and other presenter submissions.
+ * General attendee registration stays open when this is false: anyone can
+ * register and pay the category fee immediately.
+ */
+export const CFP_SUBMISSIONS_OPEN = false;
+
+export const CFP_CLOSED_MESSAGE =
+  "The call for papers is closed. You can still register as a general attendee and pay the registration fee.";
+
 const PROFESSIONAL = new Set<ProfessionalCategory>(
   PROFESSIONAL_OPTIONS.map((o) => o.value),
 );

@@ -220,7 +220,7 @@ export function accountCreatedEmail(opts: {
      ${button(applyUrl, "Complete registration", false)}
      ${note(
        "How registration works",
-       "Attendees receive a proforma invoice by email and pay right away.<br/>Paper and poster presenters add an extended abstract; once the committee shortlists it, the proforma invoice follows.<br/>Your ticket is issued as soon as the fee is paid.",
+       "The call for papers is closed. Register as a general attendee: the proforma invoice arrives by email and you pay right away.<br/>Your ticket is issued as soon as the fee is paid.",
        "info",
      )}
      ${para(`You can return to your registration any time from your ${link(opts.dashboardUrl, "dashboard")}.`, "font-size:14px;")}`,
@@ -232,8 +232,8 @@ Welcome to ${EMAIL_BRAND}. An account is not yet a place at the conference: the 
 Complete registration: ${applyUrl}
 
 How registration works:
-- Attendees receive a proforma invoice by email and pay right away.
-- Paper and poster presenters add an extended abstract; once the committee shortlists it, the proforma invoice follows.
+- The call for papers is closed.
+- Register as a general attendee. The proforma invoice arrives by email and you pay right away.
 - Your ticket is issued as soon as the fee is paid.
 
 Dashboard: ${opts.dashboardUrl}

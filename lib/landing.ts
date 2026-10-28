@@ -56,8 +56,9 @@ export function registerHrefFor(signedIn: boolean) {
 export const ABSTRACT_DEADLINE_SHORT = "25 Oct 2026";
 export const ABSTRACT_DEADLINE_LONG = "25 October 2026";
 export const ABSTRACT_DEADLINE_AT = "2026-10-25";
-export const ABSTRACT_EXTENSION_NOTE =
-  "The abstract submission deadline has been extended till 25 Oct 2026 (midnight).";
+/** Shown where the old deadline extension used to sit. */
+export const REGISTRATION_STATUS_NOTE =
+  "The call for papers is closed. General attendee registration is open: anyone can register and pay.";
 
 /**
  * The four milestones from the Call for Papers artwork, which is the source of
@@ -129,7 +130,7 @@ export const FALLBACK_FAQS: LandingFaq[] = [
   {
     question: "How do I register?",
     answer:
-      "Log in (or create an account) and complete the registration form on the Research page. Attendees are emailed a proforma invoice and pay right away. Paper and poster presenters add an extended abstract; organisers review it and email the proforma invoice if it is shortlisted. An account is not a ticket.",
+      "The call for papers is closed. Log in (or create an account) and register as a general attendee. You are emailed a proforma invoice and pay the registration fee right away. An account is not a ticket.",
   },
   {
     question: "How do I get a ticket?",

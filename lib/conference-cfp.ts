@@ -5,7 +5,7 @@
  */
 
 export const CFP_OVERVIEW =
-  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice. Emerging scholars are invited to submit work for presentation. Conference dates: 30-31 January 2027.";
+  "IITB INV.ENT is an entrepreneurship research and practice conference conducted by the Desai Sethi School of Entrepreneurship, IIT Bombay. People meet, network, attend sessions, workshops, and events, get exposure to research across the entrepreneurship ecosystem, and hear talks on entrepreneurship in practice. The call for papers is closed. General attendee registration is open. Conference dates: 30-31 January 2027.";
 
 export const CFP_APPLICANTS = [
   { id: "phd", label: "PhD Scholars" },

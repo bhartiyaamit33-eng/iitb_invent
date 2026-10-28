@@ -235,9 +235,9 @@ export const RESEARCH_TRACKS: ResearchTrack[] = [
     kicker: "Track three",
     title: "Pre-conference workshop",
     body:
-      "Hands-on sessions on 30 January on entrepreneurship education, AI for incubators and related themes. Workshop proposals come through the same submissions desk as papers and posters.",
+      "Hands-on sessions on 30 January on entrepreneurship education, AI for incubators and related themes. New workshop proposals are closed with the call for papers.",
     points: [
-      "Proposed through the submissions desk",
+      "New proposals are closed",
       "Runs on the pre-conference day",
       "Practitioner and educator led",
       "Limited seats per session",

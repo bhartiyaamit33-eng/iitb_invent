@@ -125,7 +125,7 @@ export default async function ContactPage() {
               <ul className="theme-list" style={{ gridTemplateColumns: "1fr" }}>
                 <li>
                   <Link href="/research" style={{ color: "var(--blue)" }}>
-                    Call for papers, deadlines, fees and the review process
+                    Call for papers (closed), fees and general registration
                   </Link>
                 </li>
                 <li>
@@ -163,11 +163,11 @@ export default async function ContactPage() {
         <div className="site-shell" style={{ position: "relative" }}>
           <h2 id="take-part-heading">Or just take part.</h2>
           <p className="lead">
-            Papers, posters, workshops and attendee registration all go through one desk.
+            The call for papers is closed. General attendee registration is open: anyone can register and pay.
           </p>
           <div className="cta-row">
             <Link className="site-btn site-btn-white" href={submitHref}>
-              Register or submit →
+              Register as an attendee →
             </Link>
             <a className="site-btn site-btn-white" href={`mailto:${SUPPORT_EMAIL}`}>
               {SUPPORT_EMAIL}

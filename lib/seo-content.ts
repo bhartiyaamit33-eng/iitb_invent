@@ -37,7 +37,7 @@ export const CANONICAL_FAQS: FaqItem[] = [
   {
     question: "How do I register for IITB INV.ENT?",
     answer:
-      "Log in at https://iitbinvent.com/login, then submit a paper or poster abstract. An account is not a ticket. After organisers select you, pay the fee for your category. The ticket then appears on your dashboard and in email.",
+      "The call for papers is closed. Log in at https://iitbinvent.com/login and register as a general attendee. You pay the fee for your category through IIT Bombay Online Pay. An account is not a ticket. The ticket appears on your dashboard and in email after payment.",
   },
   {
     question: "What happens at IITB INV.ENT?",
@@ -66,7 +66,7 @@ export const ABOUT_SECTIONS: { heading: string; body: string }[] = [
   },
   {
     heading: "IITB INV.ENT 2027",
-    body: "The current edition is IITB INV.ENT 2027, on 30-31 January 2027 at the DSSE Building, IIT Bombay, Powai, Mumbai, with sessions from about 9:00 to 19:30 IST. Log in, submit a paper or poster abstract, and complete your profile. An account is not a ticket.",
+    body: "The current edition is IITB INV.ENT 2027, on 30-31 January 2027 at the DSSE Building, IIT Bombay, Powai, Mumbai, with sessions from about 9:00 to 19:30 IST. The call for papers is closed. Log in and register as a general attendee, then pay the registration fee. An account is not a ticket.",
   },
 ];
 
