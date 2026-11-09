@@ -13,12 +13,14 @@ export function AdminSidebar({
   userEmail,
   awaitingDecision,
   unconfirmedPayments,
+  pendingReviews,
 }: {
   editionName: string | null;
   userName: string;
   userEmail: string;
   awaitingDecision: number;
   unconfirmedPayments: number;
+  pendingReviews: number;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -42,6 +44,12 @@ export function AdminSidebar({
           label: "Applications",
           count: awaitingDecision,
           countLabel: "awaiting a decision",
+        },
+        {
+          href: "/admin/reviews",
+          label: "Review load",
+          count: pendingReviews,
+          countLabel: "reviews still pending",
         },
         {
           href: "/admin/payments",

@@ -1,15 +1,34 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import {
   ReviewAssignmentStatus,
   Role,
+  type ReviewDecision,
+  type ReviewRecommendation,
 } from "@prisma/client";
 import { writeAuditLog } from "@/lib/admin/audit";
 import { getCurrentUser } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/roles";
 import { prisma } from "@/lib/db";
 import { isReviewChoice, isReviewDecision, isReviewRecommendation } from "@/lib/review-flow";
+
+/** A scored recommendation needs author comments. Not my expertise does not. */
+function authorCommentsRequired(choice: string): boolean {
+  return isReviewRecommendation(choice);
+}
+
+function choiceFields(choice: string): {
+  recommendation: ReviewRecommendation | null;
+  decision: ReviewDecision | null;
+} {
+  if (!isReviewChoice(choice)) return { recommendation: null, decision: null };
+  return {
+    recommendation: isReviewRecommendation(choice) ? choice : null,
+    decision: isReviewDecision(choice) ? choice : null,
+  };
+}
 
 export async function saveAssignedReviewAction(formData: FormData) {
   const actor = requireRole(await getCurrentUser(), [Role.REVIEWER, Role.ADMIN]);
@@ -25,21 +44,33 @@ export async function saveAssignedReviewAction(formData: FormData) {
   const existing = await prisma.applicationReview.findFirst({
     where: { id: reviewId, reviewerId: actor.id },
   });
-  if (!existing) throw new Error("Review assignment not found.");
-  if (completing && (!isReviewChoice(choice) || !publicComments)) {
-    throw new Error("A recommendation and author-facing comments are required.");
+  if (!existing) redirect("/dashboard/reviews?error=missing");
+
+  const fields = choiceFields(choice);
+  if (completing && (!isReviewChoice(choice) || (authorCommentsRequired(choice) && !publicComments))) {
+    await prisma.applicationReview.update({
+      where: { id: existing.id },
+      data: {
+        ...fields,
+        score: null,
+        expertise: null,
+        publicComments,
+        confidentialComments,
+        status: ReviewAssignmentStatus.IN_PROGRESS,
+        startedAt: existing.startedAt ?? new Date(),
+        submittedAt: null,
+      },
+    });
+    const reason = !isReviewChoice(choice) ? "choice" : "comments";
+    redirect(
+      `/dashboard/reviews?error=${reason}&review=${encodeURIComponent(existing.id)}&edit=${encodeURIComponent(existing.id)}`,
+    );
   }
 
-  const chosen = isReviewChoice(choice);
   const review = await prisma.applicationReview.update({
     where: { id: reviewId },
     data: {
-      ...(chosen
-        ? {
-            recommendation: isReviewRecommendation(choice) ? choice : null,
-            decision: isReviewDecision(choice) ? choice : null,
-          }
-        : {}),
+      ...fields,
       score: null,
       expertise: null,
       publicComments,
@@ -48,7 +79,7 @@ export async function saveAssignedReviewAction(formData: FormData) {
         ? ReviewAssignmentStatus.COMPLETED
         : ReviewAssignmentStatus.IN_PROGRESS,
       startedAt: existing.startedAt ?? new Date(),
-      submittedAt: completing ? new Date() : existing.submittedAt,
+      submittedAt: completing ? new Date() : null,
     },
   });
   await writeAuditLog({
@@ -63,8 +94,15 @@ export async function saveAssignedReviewAction(formData: FormData) {
       recommendation: review.recommendation,
     },
   });
+  revalidatePath("/dashboard");
   revalidatePath("/dashboard/reviews");
   revalidatePath("/admin");
+  revalidatePath("/admin/reviews");
   revalidatePath("/admin/applications");
   revalidatePath(`/admin/applications/${review.applicationId}`);
+  redirect(
+    completing
+      ? `/dashboard/reviews?saved=${encodeURIComponent(review.id)}`
+      : `/dashboard/reviews?draft=${encodeURIComponent(review.id)}`,
+  );
 }

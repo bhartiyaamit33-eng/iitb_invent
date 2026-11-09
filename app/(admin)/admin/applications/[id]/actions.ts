@@ -29,10 +29,6 @@ export async function assignReviewerAction(formData: FormData) {
     throw new Error("The selected user needs Reviewer or Admin access.");
   }
 
-  const existing = await prisma.applicationReview.findUnique({
-    where: { applicationId_reviewerId: { applicationId, reviewerId } },
-    select: { id: true },
-  });
   const review = await prisma.applicationReview.upsert({
     where: { applicationId_reviewerId: { applicationId, reviewerId } },
     create: {
@@ -46,16 +42,6 @@ export async function assignReviewerAction(formData: FormData) {
       dueAt: dueRaw ? new Date(`${dueRaw}T23:59:59+05:30`) : null,
     },
   });
-  if (!existing) {
-    await prisma.userNotification.create({
-      data: {
-        userId: reviewerId,
-        title: "New research review assigned",
-        body: "A colloquium submission is ready for your review.",
-        href: "/dashboard/reviews",
-      },
-    });
-  }
 
   await writeAuditLog({
     actorId: actor.id,
@@ -66,6 +52,8 @@ export async function assignReviewerAction(formData: FormData) {
   });
   revalidatePath(`/admin/applications/${applicationId}`);
   revalidatePath("/admin/applications");
+  revalidatePath("/admin/reviews");
+  revalidatePath("/dashboard");
   revalidatePath("/dashboard/reviews");
 }
 
@@ -124,6 +112,8 @@ export async function removeReviewerAction(formData: FormData) {
   });
   revalidatePath(`/admin/applications/${review.applicationId}`);
   revalidatePath("/admin/applications");
+  revalidatePath("/admin/reviews");
+  revalidatePath("/dashboard");
   revalidatePath("/dashboard/reviews");
 }
 
@@ -150,6 +140,7 @@ export async function deleteApplicationAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
+  revalidatePath("/admin/reviews");
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/reviews");
   revalidatePath("/research");

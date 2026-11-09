@@ -28,6 +28,7 @@ import { ApplicationPaymentPanel } from "@/components/admin/ApplicationPaymentPa
 import { DeleteApplicationForm } from "@/components/admin/DeleteApplicationForm";
 import { ConfirmActionForm } from "@/components/admin/ConfirmActionForm";
 import { Badge, Empty, Notice, PageHeader, Panel } from "@/components/admin/ui";
+import { reviewerLoadsForEdition } from "@/lib/review-load";
 import { assignReviewerAction, recordPlagiarismCheckAction, removeReviewerAction } from "./actions";
 import {
   PLAGIARISM_LABELS,
@@ -69,11 +70,15 @@ export default async function AdminApplicationDetailPage({
   });
   if (!application) notFound();
 
-  const reviewers = await prisma.user.findMany({
-    where: { deletedAt: null, role: { in: [Role.REVIEWER, Role.ADMIN] } },
-    select: { id: true, name: true, email: true },
-    orderBy: [{ name: "asc" }, { email: "asc" }],
-  });
+  const [reviewers, loads] = await Promise.all([
+    prisma.user.findMany({
+      where: { deletedAt: null, role: { in: [Role.REVIEWER, Role.ADMIN] } },
+      select: { id: true, name: true, email: true },
+      orderBy: [{ name: "asc" }, { email: "asc" }],
+    }),
+    reviewerLoadsForEdition(application.editionId),
+  ]);
+  const loadByReviewer = new Map(loads.map((row) => [row.id, row]));
   const assigned = new Set(application.reviews.map((r) => r.reviewer.id));
   const presenting = application.participationCategory !== "ATTENDEE";
   const shortlistBlock = officialShortlistBlock({
@@ -192,7 +197,15 @@ export default async function AdminApplicationDetailPage({
 
           <Panel
             title="Programme committee reviews"
-            note="Assign one or more reviewers. Each one decides whether to shortlist it. You confirm that shortlist only after the Turnitin check, and that is when the author can pay."
+            note={
+              <>
+                Assign one or more reviewers. The numbers next to each name are how many applications are already allotted to them, and how many of those are still pending.{" "}
+                <Link className="adm-link" href="/admin/reviews">
+                  Open the review load
+                </Link>
+                .
+              </>
+            }
             flush
           >
             <form
@@ -207,11 +220,17 @@ export default async function AdminApplicationDetailPage({
                   <option value="" disabled>
                     Choose a reviewer
                   </option>
-                  {reviewers.map((r) => (
-                    <option key={r.id} value={r.id} disabled={assigned.has(r.id)}>
-                      {r.name} ({r.email}){assigned.has(r.id) ? ", assigned" : ""}
-                    </option>
-                  ))}
+                  {reviewers.map((r) => {
+                    const load = loadByReviewer.get(r.id);
+                    const allotted = load?.allotted ?? 0;
+                    const pending = load?.pending ?? 0;
+                    return (
+                      <option key={r.id} value={r.id} disabled={assigned.has(r.id)}>
+                        {r.name} ({r.email}) — {allotted} allotted, {pending} pending
+                        {assigned.has(r.id) ? ", already on this application" : ""}
+                      </option>
+                    );
+                  })}
                 </select>
               </label>
               <label className="adm-field">
@@ -272,11 +291,11 @@ export default async function AdminApplicationDetailPage({
                         </div>
                         <div>
                           <dt>Comments for the author</dt>
-                          <dd style={{ whiteSpace: "pre-wrap" }}>{review.publicComments || "None"}</dd>
+                          <dd style={{ whiteSpace: "pre-wrap" }}>{review.publicComments || "No comments"}</dd>
                         </div>
                         <div>
                           <dt>Confidential to the committee</dt>
-                          <dd style={{ whiteSpace: "pre-wrap" }}>{review.confidentialComments || "None"}</dd>
+                          <dd style={{ whiteSpace: "pre-wrap" }}>{review.confidentialComments || "No comments"}</dd>
                         </div>
                       </dl>
                     ) : null}

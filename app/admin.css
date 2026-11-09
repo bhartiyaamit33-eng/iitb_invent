@@ -354,6 +354,13 @@
   border-bottom: 0;
 }
 
+.adm-table tfoot td {
+  border-bottom: 0;
+  border-top: 1px solid var(--adm-rule);
+  background: #f8f9fb;
+  font-weight: 620;
+}
+
 .adm-table tbody tr:hover td {
   background: #fafbfc;
 }

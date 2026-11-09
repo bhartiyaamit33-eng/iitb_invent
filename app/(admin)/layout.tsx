@@ -52,7 +52,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     where: { isCurrent: true },
     select: { id: true, name: true },
   });
-  const [awaitingDecision, unconfirmedPayments] = await Promise.all([
+  const [awaitingDecision, unconfirmedPayments, pendingReviews] = await Promise.all([
     edition
       ? prisma.conferenceApplication.count({
           where: { editionId: edition.id, status: "RECEIVED" },
@@ -61,6 +61,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     prisma.gatewayPayment.count({
       where: { verified: false, imtStatus: { in: ["S", "DIRECT_RECON"] } },
     }),
+    edition
+      ? prisma.applicationReview.count({
+          where: { application: { editionId: edition.id }, status: { not: "COMPLETED" } },
+        })
+      : 0,
   ]);
 
   return (
@@ -71,6 +76,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         userEmail={user.email}
         awaitingDecision={awaitingDecision}
         unconfirmedPayments={unconfirmedPayments}
+        pendingReviews={pendingReviews}
       />
       <main className="adm-main" id="main">
         {children}

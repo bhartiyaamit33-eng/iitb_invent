@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Role } from "@prisma/client";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { ReviewLoad } from "@/components/dashboard/ReviewLoad";
+import { reviewLoadForUser } from "@/lib/review-load";
 import { TicketQr } from "@/components/TicketQr";
 import { formatIstRange } from "@/lib/editions";
 import { getNextForUser } from "@/lib/live";
@@ -46,7 +49,13 @@ export default async function DashboardPage({
     include: { edition: true },
   });
   const notices = await prisma.userNotification.findMany({
-    where: { userId: user.id },
+    where: {
+      userId: user.id,
+      // One row was created for every assignment, so a reviewer's inbox
+      // filled with duplicates. The review load above is the record of
+      // what is allotted and what is still pending.
+      title: { not: "New research review assigned" },
+    },
     orderBy: [{ createdAt: "desc" }],
     take: 8,
   });
@@ -77,6 +86,13 @@ export default async function DashboardPage({
 
   const showProfileNudge =
     Boolean(application) && completeness < 60 && !params.welcome;
+
+  const reviewLoad =
+    user.role === Role.REVIEWER || user.role === Role.ADMIN
+      ? await reviewLoadForUser(user.id)
+      : null;
+  const showReviewLoad =
+    reviewLoad != null && (user.role === Role.REVIEWER || reviewLoad.counts.allotted > 0);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -126,9 +142,14 @@ export default async function DashboardPage({
         Hi, {user.name.split(" ")[0] || "there"}
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
-        An account is for submitting an abstract and managing your profile. It
-        is not confirmation for the event.
+        {showReviewLoad
+          ? "These counts are the applications allotted to you for the current edition. Pending includes anything you have not submitted, including drafts."
+          : "An account is for submitting an abstract and managing your profile. It is not confirmation for the event."}
       </p>
+
+      {showReviewLoad && reviewLoad ? (
+        <ReviewLoad editionName={reviewLoad.editionName} {...reviewLoad.counts} showLink />
+      ) : null}
 
       <NotificationsPanel
         notices={notices.map((n) => ({

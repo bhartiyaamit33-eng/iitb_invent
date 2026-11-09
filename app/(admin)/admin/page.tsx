@@ -48,6 +48,7 @@ export default async function AdminOverviewPage() {
     verifiedPayments,
     unconfirmed,
     overdueReviews,
+    pendingReviews,
     unassigned,
     turnitinPending,
     readyToConfirm,
@@ -85,6 +86,9 @@ export default async function AdminOverviewPage() {
         status: { not: "COMPLETED" },
         dueAt: { lt: new Date() },
       },
+    }),
+    prisma.applicationReview.count({
+      where: { application: { editionId: edition.id }, status: { not: "COMPLETED" } },
     }),
     prisma.conferenceApplication.count({
       where: { ...e, status: "RECEIVED", participationCategory: { not: "ATTENDEE" }, reviews: { none: {} } },
@@ -351,6 +355,10 @@ export default async function AdminOverviewPage() {
             <li>
               <Link className="adm-link" href="/admin/stats">Homepage figures</Link>
               <span className="value">{figures}</span>
+            </li>
+            <li>
+              <Link className="adm-link" href="/admin/reviews">Review load</Link>
+              <span className="value">{plural(pendingReviews, "pending review")}</span>
             </li>
             <li>
               <Link className="adm-link" href="/admin/users">Registered tickets</Link>

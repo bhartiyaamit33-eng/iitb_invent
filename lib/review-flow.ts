@@ -23,6 +23,17 @@ export const REVIEW_RECOMMENDATION_LABELS: Record<ReviewRecommendation, string> 
   REJECT: "Reject",
 };
 
+/** The choice already saved on a review, in the words the reviewer picked. */
+export function savedReviewChoiceLabel(review: {
+  decision: ReviewDecision | null;
+  recommendation: ReviewRecommendation | null;
+}): string {
+  if (review.decision === "NOT_MY_EXPERTISE") return REVIEW_DECISION_LABELS.NOT_MY_EXPERTISE;
+  if (review.recommendation) return REVIEW_RECOMMENDATION_LABELS[review.recommendation];
+  if (review.decision) return REVIEW_DECISION_LABELS[review.decision];
+  return "Not given";
+}
+
 /** Dropdown on the assigned-review form, in the order reviewers see it. */
 export const REVIEW_FORM_CHOICES: { value: string; label: string }[] = [
   ...Object.entries(REVIEW_RECOMMENDATION_LABELS).map(([value, label]) => ({ value, label })),

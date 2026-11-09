@@ -150,6 +150,9 @@ export default async function AdminApplicationsPage({
                 testId="resend-all-proformas"
               />
             ) : null}
+            <Link className="adm-btn" href="/admin/reviews">
+              Review load
+            </Link>
             <a className="adm-btn" href={withBasePath("/api/admin/applications/export")}>
               Export CSV
             </a>
