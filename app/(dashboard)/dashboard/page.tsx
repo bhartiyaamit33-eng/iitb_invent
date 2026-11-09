@@ -25,9 +25,11 @@ type SearchParams = Promise<{ welcome?: string; submitted?: string }>;
 function dashboardGreeting(name: string): string {
   const clean = name.trim().replace(/\s+/g, " ");
   const titled = clean.match(/^(prof\.?|professor|dr\.?)\s+(.+)$/i);
-  if (titled) {
-    const title = /^dr/i.test(titled[1]) ? "Dr." : "Prof.";
-    return `Hi, ${title} ${titled[2]}`;
+  const titleWord = titled?.[1];
+  const rest = titled?.[2];
+  if (titleWord && rest) {
+    const title = /^dr/i.test(titleWord) ? "Dr." : "Prof.";
+    return `Hi, ${title} ${rest}`;
   }
   return `Hi, ${clean.split(" ")[0] || "there"}`;
 }
