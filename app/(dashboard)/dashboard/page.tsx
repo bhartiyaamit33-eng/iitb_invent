@@ -21,6 +21,17 @@ import {
 
 type SearchParams = Promise<{ welcome?: string; submitted?: string }>;
 
+/** "Prof. Amber Shrivastava" stays intact. Other accounts use the first name. */
+function dashboardGreeting(name: string): string {
+  const clean = name.trim().replace(/\s+/g, " ");
+  const titled = clean.match(/^(prof\.?|professor|dr\.?)\s+(.+)$/i);
+  if (titled) {
+    const title = /^dr/i.test(titled[1]) ? "Dr." : "Prof.";
+    return `Hi, ${title} ${titled[2]}`;
+  }
+  return `Hi, ${clean.split(" ")[0] || "there"}`;
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -139,7 +150,7 @@ export default async function DashboardPage({
         Account
       </p>
       <h1 className="mt-2 font-display text-4xl tracking-wide text-teal-deep">
-        Hi, {user.name.split(" ")[0] || "there"}
+        {dashboardGreeting(user.name)}
       </h1>
       <p className="mt-2 text-sm text-ink-soft">
         {showReviewLoad
