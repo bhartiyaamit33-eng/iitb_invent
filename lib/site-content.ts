@@ -129,7 +129,7 @@ export const PARTNERS: SiteOrg[] = [
     name: "University of Bristol, Mumbai Enterprise Campus",
     role: "Partner institute",
     tier: "partner",
-    logo: "/assets/partners/bristol-mumbai.png",
+    logo: "/assets/partners/bristol.png",
     href: "https://www.mumbai.bristol.ac.uk/",
   },
 ];
