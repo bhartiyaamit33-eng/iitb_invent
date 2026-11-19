@@ -124,6 +124,14 @@ export const PARTNERS: SiteOrg[] = [
     logo: "/assets/partners/edii.png",
     href: "https://www.ediindia.org/",
   },
+  {
+    id: "bristol",
+    name: "University of Bristol, Mumbai Enterprise Campus",
+    role: "Partner institute",
+    tier: "partner",
+    logo: "/assets/partners/bristol-mumbai.png",
+    href: "https://www.mumbai.bristol.ac.uk/",
+  },
 ];
 
 export const HOSTS: SiteOrg[] = [
